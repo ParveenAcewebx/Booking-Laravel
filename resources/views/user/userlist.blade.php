@@ -71,8 +71,8 @@
 											<td>
 												<span class="badge badge-light-success">Active</span>
 												<div class="overlay-edit">
-													<button type="button" class="btn btn-icon btn-success"><i class="feather icon-check-circle"></i></button>
-													<a href="{{route('user.delete', [$user->id])}}" class="btn btn-icon btn-danger"><i class="feather icon-trash-2"></i></a>
+													<button type="button" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="click it to edit the user"><i class="feather   icon-file-text"></i></button>
+													<a href="{{route('user.delete', [$user->id])}}" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="click it to delete the user"><i class="feather icon-trash-2"></i></a>
 												</div>
 											</td>
 										</tr>
@@ -94,5 +94,6 @@
 		</div>
 		<!-- [ Main Content ] end -->
 	</div>
+			
 </div>
 @endsection

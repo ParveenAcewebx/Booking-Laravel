@@ -46,7 +46,7 @@
         @yield('content')
     </div>
 <script src="{{ asset('assets/js/vendor-all.min.js') }}"></script>
-<script src="{{ asset('assets/js/plugins/bootstrap.min.js') }}"></script>
+
 <script src="{{ asset('assets/js/pcoded.min.js') }}"></script>
 <script src="{{ asset('assets/js/menu-setting.min.js') }}"></script>
 
@@ -57,6 +57,7 @@
 <script src="{{ asset('assets/js/pages/dashboard-main.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+<script src="{{ asset('assets/js/plugins/bootstrap.min.js') }}"></script>
 <script src="https://formbuilder.online/assets/js/form-builder.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-rateyo@2.3.0/jquery.rateyo.min.js"></script>
 <script>
