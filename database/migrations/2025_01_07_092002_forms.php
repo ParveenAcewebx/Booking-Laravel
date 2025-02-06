@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        
         Schema::create('forms', function (Blueprint $table) {
             $table->id();
-            $table->longText('data');
+           
+            $table->string('data');
+            
             $table->timestamps();
         });
     }
