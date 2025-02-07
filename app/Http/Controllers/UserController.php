@@ -55,9 +55,10 @@ class UserController extends Controller
         $username=$user->name;
         if($authuser_id!=$id){
            $user->delete();
-           return redirect('/user')->with('success', $username.' User deleted successful!');
+           return response()->json(['success' => true]);
         }else{
-           return redirect('/user')->with('success', $username.' User not deleted!');
+            return response()->json(['success' => 'login', 'message' => 'Item not found']);
+
         }
 
     }

@@ -12,7 +12,7 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label class="floating-label" for="">Form Name</label>
-                                <input type="text" id="formTemplatesname" class="form-control"  value="{{ $forms->form_name }}">                                     </div>
+                                <input type="text" id="formTemplatesname" class="form-control"  value="{{ $forms->form_name }}"> </div>
                             </div>
                         </div>
                         <input type="hidden" name="formTemplates" id="formTemplates" class="form-control"  value="{{ $forms->data }}">

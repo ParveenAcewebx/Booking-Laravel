@@ -54,6 +54,7 @@
 									<tr>
 										<th>Name</th>
 										<th>Start date</th>
+										<th>Status</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -70,8 +71,13 @@
 										<td>
 											<span class="badge badge-light-success">Active</span>
 											<div class="overlay-edit">
-                                            <a href="{{route('form.edit', [$form->id])}}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="click it to edit the form" ><i class="feather   icon-file-text"></i></a>
-											<a href="{{route('form.delete', [$form->id])}}" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="click it to delete the form"><i class="feather icon-trash-2"></i></a>
+                                            <a href="{{route('form.edit', [$form->id])}}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit Form" ><i class="feather   icon-file-text"></i></a>
+											<!-- <a href="{{route('form.delete', [$form->id])}}" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="click it to delete the form"><i class="feather icon-trash-2"></i></a> -->
+											<form action="{{ route('form.delete', [$form->id]) }}" method="POST" id="deleteForm-{{$form->id}}">
+												<input type="hidden" name="_method" value="DELETE">
+												@csrf
+												<button onclick="return deleteForm({{$form->id}})" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Form"><i class="feather icon-trash-2"></i></button>
+                                           </form>
 											</div>
 										</td>
 									</tr>
@@ -92,6 +98,8 @@
 		</div>
 		<!-- [ Main Content ] end -->
 	</div>
+	
 </div>
 
+  
  @endsection
