@@ -43,7 +43,4 @@ Route::middleware('auth')->group(function () {
     Route::post('/form/save', [FormController::class, 'formSave'])->name('form.save');
     Route::delete('/form/{formid}/delete', [FormController::class, 'formDelete'])->name('form.delete');
     Route::get('/form/{formid}/edit', [FormController::class, 'formEdit'])->name('form.edit');
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
-
 });
