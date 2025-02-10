@@ -71,7 +71,7 @@
 											<td>
 												<span class="badge badge-light-success">Active</span>
 												<div class="overlay-edit">
-												  <a href="{{route('user.edit', [$user->id])}}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit User"><i class="feather icon-file-text"></i></a>
+												  <a href="{{route('user.edit', [$user->id])}}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit User"><i class="fas fa-pencil-alt"></i></a>
 													<form action="{{route('user.delete', [$user->id])}}" method="POST" id="deleteUser-{{$user->id}}">
 														<input type="hidden" name="_method" value="DELETE">
 														@csrf
