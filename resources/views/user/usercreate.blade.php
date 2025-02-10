@@ -1,7 +1,5 @@
 @extends('layouts.app')
-
 @section('content')
-
 <section class="pcoded-main-container">
     <div class="pcoded-content">
         <!-- [ breadcrumb ] start -->
@@ -10,12 +8,12 @@
                 <div class="row align-items-center">
                     <div class="col-md-12">
                         <div class="page-header-title">
-                            <h5 class="m-b-10">Form Validation</h5>
+                            <h5 class="m-b-10">Add User</h5>
                         </div>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="#!">Form Components</a></li>
-                            <li class="breadcrumb-item"><a href="#!">Form Validation</a></li>
+                            <li class="breadcrumb-item"><i class="feather icon-home"></i></li>
+                            <li class="breadcrumb-item"><a href="#!">Users</a></li>
+                            <li class="breadcrumb-item"><a href="#!">Add User</a></li>
                         </ul>
                     </div>
                 </div>
@@ -97,5 +95,4 @@
         <!-- [ Main Content ] end -->
     </div>
 </section>
-
 @endsection

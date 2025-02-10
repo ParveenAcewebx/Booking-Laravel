@@ -10,12 +10,12 @@
 				<div class="row align-items-center">
 					<div class="col-md-12">
 						<div class="page-header-title">
-							<h5>User List</h5>
+							<h5>All Forms</h5>
 						</div>
 						<ul class="breadcrumb">
 							<li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
 							<li class="breadcrumb-item"><a href="#!">Form</a></li>
-							<li class="breadcrumb-item"><a href="#!">Form list</a></li>
+							<li class="breadcrumb-item"><a href="#!">All Forms</a></li>
 						</ul>
 
                         @if(session('success'))
