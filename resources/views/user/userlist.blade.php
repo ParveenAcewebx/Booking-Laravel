@@ -10,12 +10,12 @@
 				<div class="row align-items-center">
 					<div class="col-md-12">
 						<div class="page-header-title">
-							<h5>User List</h5>
+							<h5>All Users</h5>
 						</div>
 						<ul class="breadcrumb">
-							<li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
-							<li class="breadcrumb-item"><a href="#!">user</a></li>
-							<li class="breadcrumb-item"><a href="#!">User list</a></li>
+							<li class="breadcrumb-item"><a href="{{route('home') }}"><i class="feather icon-home"></i></a></li>
+							<li class="breadcrumb-item"><a href="#!">User</a></li>
+							<li class="breadcrumb-item"><a href="#!">All Users</a></li>
 						</ul>
 						@if(session('success'))
                         <div id="exampleModalCenter" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -71,9 +71,9 @@
 											<td>
 												<span class="badge badge-light-success">Active</span>
 												<div class="overlay-edit">
-													<button type="button" class="btn btn-icon btn-success sweet-multiple" data-toggle="tooltip" data-placement="top" title="Edit User"><i class="feather   icon-file-text"></i></button>
+													<button type="button" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit User"><i class="feather   icon-file-text"></i></button>
 													
-													<!-- <a href="{{route('user.delete', [$user->id])}}" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="click it to delete the user"><i class="feather icon-trash-2"></i></a> -->
+													 <!-- <a href="#" class="btn btn-icon btn-succes" data-toggle="tooltip" data-placement="top" title="Edit User"><i class="feather   icon-file-text"></i></a> -->
 												    <form action="{{route('user.delete', [$user->id])}}" method="POST" id="deleteUser-{{$user->id}}">
 														<input type="hidden" name="_method" value="DELETE">
 														@csrf

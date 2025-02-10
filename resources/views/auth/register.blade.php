@@ -24,10 +24,16 @@
 						<div class="form-group mb-4">
                         <input  class="form-control" type="password" name="password" placeholder="Password">
 						</div>
+						<div class="form-group mb-4">
+                        <input  class="form-control" type="password" name="password_confirmation" placeholder="Confirm Password">
+						@error('password')
+                            <div class="error">{{ $message }}</div>
+                        @enderror
+						</div>
 						<button class="btn btn-primary btn-block mb-4" type="submit">Register</button>
 						</form>
 						<hr>
-						<p class="mb-2">Already have an account? <a href="auth-signin.html" class="f-w-400">Signin</a></p>
+						<p class="mb-2">Already have an account? <a href="{{route('login.form')}}" class="f-w-400">Signin</a></p>
 					</div>
 				</div>
 			</div>

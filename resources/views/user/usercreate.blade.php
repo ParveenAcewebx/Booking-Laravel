@@ -10,12 +10,12 @@
                 <div class="row align-items-center">
                     <div class="col-md-12">
                         <div class="page-header-title">
-                            <h5 class="m-b-10">Form Validation</h5>
+                            <h5 class="m-b-10">Add User</h5>
                         </div>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="#!">Form Components</a></li>
-                            <li class="breadcrumb-item"><a href="#!">Form Validation</a></li>
+                            <li class="breadcrumb-item"><a href="{{route('home') }}"><i class="feather icon-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="#!">User</a></li>
+                            <li class="breadcrumb-item"><a href="#!">Add User</a></li>
                         </ul>
                     </div>
                 </div>
@@ -28,7 +28,7 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5>Form Validation</h5>
+                        <h5>User details </h5>
                         @if(session('success'))
                             <div class="alert alert-success" role="alert">
                                 {{ session('success') }}   
