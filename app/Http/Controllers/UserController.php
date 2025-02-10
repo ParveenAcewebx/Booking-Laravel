@@ -33,23 +33,74 @@ class UserController extends Controller
             'username' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
-
+    
+        // Initialize avatar path
+        $avatarPath = null;
+    
+        // Check if an avatar file is uploaded
+        if ($request->hasFile('avatar')) {
+            // Store the uploaded image in the 'avatars' folder
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+        }
+    
         // Save user data to the database
         $user = User::create([
             'name' => $request->username,
             'email' => $request->email,
             'password' => bcrypt($request->password), 
+            'avatar' => $avatarPath, // Save the uploaded avatar path or null
         ]);
-
+    
         // Check if the user was created successfully
         if ($user) {
-            return redirect('/user')->with('success', 'User Added successful!');
+            return redirect('/user')->with('success', 'User Added successfully!');
         } else {
-            return redirect()->back()->with('error', 'It is failed. Please try again.');
+            return redirect()->back()->with('error', 'It failed. Please try again.');
         }
     }
 
+    public function userEdit($id)
+    {
+        $user = User::findOrFail($id);
+        return view('user.useredit', ['user' => $user]);
+    }
+    
+    public function userUpdate(Request $request, $id)
+    {
+        // Validate input data
+        $request->validate([
+            'username' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'nullable|min:6|confirmed',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+    
+        $user = User::findOrFail($id);
+    
+        // Handle avatar update
+        $avatarPath = $user->avatar; // Keep existing avatar
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+        }
+    
+        // Update user details
+        $user->update([
+            'name' => $request->username,
+            'email' => $request->email,
+            'avatar' => $avatarPath,
+        ]);
+    
+        // Update password if provided
+        if ($request->password) {
+            $user->update(['password' => bcrypt($request->password)]);
+        }
+    
+        return redirect('/user')->with('success', 'User updated successfully!');
+    }
+    
+    
     public function userDelete($id) {
 
         $user = User::find($id);
@@ -64,7 +115,6 @@ class UserController extends Controller
         }
 
     }
-
 
     public function createUser()
     {
@@ -85,7 +135,6 @@ class UserController extends Controller
         if (Auth::attempt($credentials,$remember)) {
             return redirect()->intended('/');
         }
-
         return redirect('/login')->with('error', 'Invalid credentials. Please try again.');
     }
 
@@ -101,13 +150,11 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6|confirmed',
         ]);
-
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-
         return redirect('/login')->with('success', 'Registration successful! Please log in.');
     }
 
@@ -120,27 +167,20 @@ class UserController extends Controller
         return view('layouts.home');
     }
 
-    // public function innersection()
-    // {
-    //     return view('layouts.innersecation');
-    // }
-
     public function logout(){
         Auth::logout();
         return redirect('/login');
-    
     }
 
     public function todo(){
-    
         return redirect('/home');
-    
     }
     
     public function noFound() 
     { 
       return view('404'); 
     }
+  
     public function forgotPassword(){
         return view('auth.forgot-password');
     }
@@ -148,11 +188,7 @@ class UserController extends Controller
     {
         
         $request->validate(['email' => 'required|email']);
-
-       
         $response = Password::sendResetLink($request->only('email'));
-
-        
         return $response == Password::RESET_LINK_SENT
             ? back()->with('status', 'We have emailed your password reset link!')
             : back()->withErrors(['email' => 'We couldn\'t find an account with that email address.']);

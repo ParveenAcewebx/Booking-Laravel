@@ -70,15 +70,13 @@
 											<td>{{ $user->created_at }}</td>
 											<td>
 												<span class="badge badge-light-success">Active</span>
-												<div class="overlay-edit">
-													<button type="button" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit User"><i class="feather   icon-file-text"></i></button>
-													
-													 <!-- <a href="#" class="btn btn-icon btn-succes" data-toggle="tooltip" data-placement="top" title="Edit User"><i class="feather   icon-file-text"></i></a> -->
-												    <form action="{{route('user.delete', [$user->id])}}" method="POST" id="deleteUser-{{$user->id}}">
+												<div class="overlay-edit">													
+                        <button type="button" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit User"><i class="feather   icon-file-text"></i></button>
+												<form action="{{route('user.delete', [$user->id])}}" method="POST" id="deleteUser-{{$user->id}}">
 														<input type="hidden" name="_method" value="DELETE">
 														@csrf
 												       <button onclick="return deleteUser({{$user->id}})" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete User"><i class="feather icon-trash-2"></i></button>
-                                                    </form>
+                           </form>
 												</div>
 											</td>
 										</tr>
