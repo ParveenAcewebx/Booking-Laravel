@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\form;
+use App\Models\Bookingform;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
@@ -14,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 class FormController extends Controller
 {
     public function index(){
-        $allform=form::all();
+        $allform=Bookingform::all();
         return view('form.formlist', ['allform' => $allform]);
     }
 
@@ -23,13 +23,13 @@ class FormController extends Controller
         $fromname = $request->input('formname');
         $fromid = $request->input('formid');
         if (!empty($fromid)) {
-            $form = Form::find($fromid);
+            $form = Bookingform::find($fromid);
             if($form) {
                $form->data = $data;
                $form->form_name = $fromname;
                $form->save();  
             }else{
-                $form = Form::create([
+                $form = Bookingform::create([
                     'data' => $data,
                     'form_name' => $fromname
                 ]);
@@ -38,7 +38,7 @@ class FormController extends Controller
             session()->flash('success', $fromname." form edited successful!");
         } else {
             $data = json_encode($data);
-            $id = Form::create([
+            $id = Bookingform::create([
             'data' => $data,
             'form_name' => $fromname
              ]);
@@ -48,7 +48,7 @@ class FormController extends Controller
     
 
     public function formDelete($id) {
-        $form = form::find($id);
+        $form = Bookingform::find($id);
         $formname=$form->form_name;
         $form->delete();
         return response()->json(['success' => true]);
@@ -56,7 +56,7 @@ class FormController extends Controller
     }
 
     public function formEdit($id) {
-        $form = form::find($id);
+        $form = Bookingform::find($id);
         return view('form.formedit', ['forms' =>$form]);
     }
     public function formAdd() {
