@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
 
 <section class="pcoded-main-container">
@@ -10,12 +9,12 @@
                 <div class="row align-items-center">
                     <div class="col-md-12">
                         <div class="page-header-title">
-                            <h5 class="m-b-10">Form Validation</h5>
+                            <h5 class="m-b-10">User Edit</h5>
                         </div>
                         <ul class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="#!">Form Components</a></li>
-                            <li class="breadcrumb-item"><a href="#!">Form Validation</a></li>
+                            <li class="breadcrumb-item"><a href="/user">User</a></li>
+                            <li class="breadcrumb-item"><a href="#!">User Edit</a></li>
                         </ul>
                     </div>
                 </div>
@@ -28,7 +27,7 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5>Form Validation</h5>
+                        <h5>User Edit</h5>
                         @if(session('success'))
                             <div class="alert alert-success" role="alert">
                                 {{ session('success') }}   
@@ -41,13 +40,13 @@
                         @endif
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('user.save') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('user.update', $user->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label">Name</label>
-                                        <input type="text" class="form-control" name="username" placeholder="Name">
+                                        <input type="text" class="form-control" name="username" value="{{ old('username', $user->name) }}" placeholder="Name">
                                         @error('username')
                                         <div class="error">{{ $message }}</div>
                                         @enderror
@@ -56,7 +55,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label">Email</label>
-                                        <input type="email" class="form-control" name="email" placeholder="Email">
+                                        <input type="email" class="form-control" name="email" value="{{ old('email', $user->email) }}" placeholder="Email">
                                         @error('email')
                                         <div class="error">{{ $message }}</div>
                                         @enderror
@@ -77,17 +76,18 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6 profile-avatar">
                                     <div class="form-group">
                                         <label class="form-label">Avatar</label>
                                         <input type="file" class="form-control" name="avatar">
+                                        <small>Current Avatar: <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" width="50"></small>
                                         @error('avatar')
                                         <div class="error">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary">Update</button>
                         </form>
                     </div>
                 </div>

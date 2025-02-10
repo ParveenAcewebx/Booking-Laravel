@@ -32070,3 +32070,14 @@ new-task label input[type=checkbox] {
     display: none !important;
 }
 /**====== user card css end ======**/
+
+.profile-avatar {
+    margin-bottom: 1rem;
+    margin-top: 1rem !important;
+}
+.profile-avatar img {
+    width: 20%;
+}
+.profile-avatar img {
+    width: 20%;
+}

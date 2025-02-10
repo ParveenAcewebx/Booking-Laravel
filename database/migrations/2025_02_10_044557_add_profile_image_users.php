@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('forms', function (Blueprint $table) {
-            $table->string('form_name');
+        Schema::table('users', function (Blueprint $table) {
+            $table->longText('avatar');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('forms', function (Blueprint $table) {
-            $table->dropColumn('form_name');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('avatar');
         });
     }
 };
