@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/user', [UserController::class, 'index'])->name('user.list');
     Route::get('/user/add', [UserController::class, 'userAdd'])->name('user.add');
     Route::post('/user/save', [UserController::class, 'userSave'])->name('user.save');
-    Route::get('/user/delete/{userid}', [UserController::class, 'userDelete'])->name('user.delete');
+    Route::delete('/user/delete/{userid}', [UserController::class, 'userDelete'])->name('user.delete');
     Route::get('/home', [UserController::class, 'home'])->name('home');
     Route::get('/logout', [UserController::class, 'logout'])->name('logout');
     Route::get('/todo', [UserController::class, 'todo'])->name('todo');
@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/form', [FormController::class, 'index'])->name('form.list');
     Route::get('/form/add', [FormController::class, 'formAdd'])->name('form.add');
     Route::post('/form/save', [FormController::class, 'formSave'])->name('form.save');
-    Route::get('/form/{formid}/delete', [FormController::class, 'formDelete'])->name('form.delete');
+    Route::delete('/form/{formid}/delete', [FormController::class, 'formDelete'])->name('form.delete');
     Route::get('/form/{formid}/edit', [FormController::class, 'formEdit'])->name('form.edit');
 
 });

@@ -51,7 +51,8 @@ class FormController extends Controller
         $form = form::find($id);
         $formname=$form->form_name;
         $form->delete();
-        return redirect('/form')->with('success',  $formname.' form deleted successful!');
+        return response()->json(['success' => true]);
+
     }
 
     public function formEdit($id) {
