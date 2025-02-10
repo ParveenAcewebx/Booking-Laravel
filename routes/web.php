@@ -22,10 +22,14 @@ Route::get('/', function () {
 
 Route::middleware('guest')->group(function () {
 
-    Route::get('/register', [UserController::class, 'showRegistrationForm']);
+    Route::get('/register', [UserController::class, 'showRegistrationForm'])->name('registration.form');
     Route::post('/register', [UserController::class, 'register'])->name('register');
-    Route::get('/login', [UserController::class, 'showLoginForm']);
+    Route::get('/login', [UserController::class, 'showLoginForm'])->name("login.form");
     Route::post('/login', [UserController::class, 'login'])->name('login');
+    Route::get('/forgot-password', [UserController::class, 'forgotPassword'])->name('password.request');
+    Route::post('password/email', [UserController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('password/reset/{token}',[UserController::class, 'showResetForm'])->name('password.reset');
+    Route::post('password/reset', [UserController::class, 'reset'])->name('password.update');
 });
 
 Route::middleware('auth')->group(function () {    
