@@ -41,17 +41,8 @@
                     <div class="card-body">
                         <form action="{{ route('user.save') }}" method="POST" enctype="multipart/form-data">
                             @csrf
-                        <form action="{{ route('user.save') }}" method="POST" enctype="multipart/form-data">
-                            @csrf
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Name</label>
-                                        <input type="text" class="form-control" name="username" placeholder="Name">
-                                        @error('username')
-                                        <div class="error">{{ $message }}</div>
-                                        @enderror
-                                    </div>
                                     <div class="form-group">
                                         <label class="form-label">Name</label>
                                         <input type="text" class="form-control" name="username" placeholder="Name">
@@ -85,9 +76,15 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Avatar</label>
-                                        <input type="file" class="form-control" name="avatar">
+                                    <label class="form-label">Avatar</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Upload</span>
+                                        </div>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="avatar" id="inputGroupFile01">
+                                            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                                        </div>
                                         @error('avatar')
                                         <div class="error">{{ $message }}</div>
                                         @enderror
