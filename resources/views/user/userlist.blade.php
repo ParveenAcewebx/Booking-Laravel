@@ -83,13 +83,13 @@
 									@endforeach
 
 								</tbody>
-								<tfoot>
+								<!-- <tfoot>
 									<tr>
 										<th>Name</th>
 										<th>Start date</th>
 										<th>Status</th>
 									</tr>
-								</tfoot>
+								</tfoot> -->
 							</table>
 						</div>
 					</div>
