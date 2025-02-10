@@ -26,7 +26,7 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5>User details </h5>
+                        <h5>Add User</h5>
                         @if(session('success'))
                             <div class="alert alert-success" role="alert">
                                 {{ session('success') }}   
@@ -75,10 +75,25 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <!-- <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label">Avatar</label>
                                         <input type="file" class="form-control" name="avatar">
+                                        @error('avatar')
+                                        <div class="error">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div> -->
+                                <div class="col-md-6">
+                                    <label class="form-label">Avatar</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Upload</span>
+                                        </div>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="avatar" id="inputGroupFile01">
+                                            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                                        </div>
                                         @error('avatar')
                                         <div class="error">{{ $message }}</div>
                                         @enderror
