@@ -10,12 +10,12 @@
 				<div class="row align-items-center">
 					<div class="col-md-12">
 						<div class="page-header-title">
-							<h5>User List</h5>
+							<h5>All Forms</h5>
 						</div>
 						<ul class="breadcrumb">
-							<li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
+							<li class="breadcrumb-item"><a href="{{route('home') }}"><i class="feather icon-home"></i></a></li>
 							<li class="breadcrumb-item"><a href="#!">Form</a></li>
-							<li class="breadcrumb-item"><a href="#!">Form list</a></li>
+							<li class="breadcrumb-item"><a href="#!">All Forms</a></li>
 						</ul>
 
                         @if(session('success'))
@@ -71,8 +71,7 @@
 										<td>
 											<span class="badge badge-light-success">Active</span>
 											<div class="overlay-edit">
-                      <a href="{{route('form.edit', [$form->id])}}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit Form" ><i class="feather   icon-file-text"></i></a>
-											<!-- <a href="{{route('form.delete', [$form->id])}}" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="click it to delete the form"><i class="feather icon-trash-2"></i></a> -->
+                      						<a href="{{route('form.edit', [$form->id])}}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit Form" ><i class="fas fa-pencil-alt"></i></a>
 											<form action="{{ route('form.delete', [$form->id]) }}" method="POST" id="deleteForm-{{$form->id}}">
 												<input type="hidden" name="_method" value="DELETE">
 												@csrf

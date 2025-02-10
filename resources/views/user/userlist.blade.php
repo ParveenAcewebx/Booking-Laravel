@@ -10,12 +10,12 @@
 				<div class="row align-items-center">
 					<div class="col-md-12">
 						<div class="page-header-title">
-							<h5>User List</h5>
+							<h5>All Users</h5>
 						</div>
 						<ul class="breadcrumb">
-							<li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
-							<li class="breadcrumb-item"><a href="#!">user</a></li>
-							<li class="breadcrumb-item"><a href="#!">User list</a></li>
+							<li class="breadcrumb-item"><a href="{{route('home') }}"><i class="feather icon-home"></i></a></li>
+							<li class="breadcrumb-item"><a href="#!">User</a></li>
+							<li class="breadcrumb-item"><a href="#!">All Users</a></li>
 						</ul>
 						@if(session('success'))
                         <div id="exampleModalCenter" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

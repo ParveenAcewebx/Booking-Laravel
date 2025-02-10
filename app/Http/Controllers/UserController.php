@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 
@@ -145,7 +147,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
+            'password' => 'required|min:6|confirmed',
         ]);
         User::create([
             'name' => $request->name,
@@ -167,13 +169,10 @@ class UserController extends Controller
     public function logout(){
         Auth::logout();
         return redirect('/login');
-    
     }
 
     public function todo(){
-    
         return redirect('/home');
-    
     }
     
     public function noFound() 
