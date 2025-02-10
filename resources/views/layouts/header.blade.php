@@ -28,9 +28,9 @@
 								<a class="dropdown-toggle h-drop" href="#" data-toggle="dropdown">
 									Dropdown
 								</a>
-								<div class="dropdown-menu profile-notification ">
+								<div class="dropdown-menu profile-notification">
 									<ul class="pro-body">
-										<li><a href="user-profile.html" class="dropdown-item"><i class="fas fa-circle"></i> Profile</a></li>
+										<li><a href="{{ route('user.edit', Auth::id()) }}" class="dropdown-item"><i class="fas fa-circle"></i> Profile</a></li>
 										<li><a href="email_inbox.html" class="dropdown-item"><i class="fas fa-circle"></i> My Messages</a></li>
 										<li><a href="auth-signin.html" class="dropdown-item"><i class="fas fa-circle"></i> Lock Screen</a></li>
 									</ul>
@@ -163,7 +163,7 @@
 										</a>
 									</div>
 									<ul class="pro-body">
-										<li><a href="user-profile.html" class="dropdown-item"><i class="feather icon-user"></i> Profile</a></li>
+										<li><a href="{{ route('user.edit', Auth::id()) }}" class="dropdown-item"><i class="feather icon-user"></i> Profile</a></li>
 										<li><a href="email_inbox.html" class="dropdown-item"><i class="feather icon-mail"></i> My Messages</a></li>
 										<li><a href="auth-signin.html" class="dropdown-item"><i class="feather icon-lock"></i> Lock Screen</a></li>
 									</ul>

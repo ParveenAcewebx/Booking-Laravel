@@ -6,8 +6,7 @@
 					<div class="main-menu-header">
 						<img class="img-radius" src="{{ asset('assets/images/avatar-2.jpg') }}" alt="User-Profile-Image">
 						<div class="user-details">
-							<span class="mb-0 font-weight-bold">{{ Auth::user()->name }}</span>
-							<div id="more-details"><small>UX Designer<i class="fa fa-chevron-down m-l-5"></i></small></div>
+							<div id="more-details"><span class="mb-0 font-weight-bold">{{ Auth::user()->name }}<i class="fa fa-chevron-down m-l-5"></i></span></div>
 						</div>
 					</div>
 					<div class="collapse" id="nav-user-link">
