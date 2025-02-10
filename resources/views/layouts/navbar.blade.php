@@ -4,7 +4,7 @@
 				
 				<div class="">
 					<div class="main-menu-header">
-						<img class="img-radius" src="{{ asset('assets/images/avatar-2.jpg') }}" alt="User-Profile-Image">
+					<img class="img-radius" src="{{ Auth::user()->avatar ? Storage::url(Auth::user()->avatar) : asset('assets/images/avatar-2.jpg') }}" alt="User-Profile-Image">
 						<div class="user-details">
 							<div id="more-details"><span class="mb-0 font-weight-bold">{{ Auth::user()->name }}<i class="fa fa-chevron-down m-l-5"></i></span></div>
 						</div>
