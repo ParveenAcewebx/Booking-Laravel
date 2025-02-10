@@ -25,10 +25,6 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [UserController::class, 'register'])->name('register');
     Route::get('/login', [UserController::class, 'showLoginForm'])->name("login.form");
     Route::post('/login', [UserController::class, 'login'])->name('login');
-    Route::get('/forgot-password', [UserController::class, 'forgotPassword'])->name('password.request');
-    Route::post('password/email', [UserController::class, 'sendResetLinkEmail'])->name('password.email');
-    Route::get('password/reset/{token}',[UserController::class, 'showResetForm'])->name('password.reset');
-    Route::post('password/reset', [UserController::class, 'reset'])->name('password.update');
 });
 
 Route::middleware('auth')->group(function () {    
@@ -36,10 +32,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/add', [UserController::class, 'userAdd'])->name('user.add');
     Route::post('/user/save', [UserController::class, 'userSave'])->name('user.save');
     Route::get('/user/edit/{id}', [UserController::class, 'userEdit'])->name('user.edit');
-    Route::get('/profile/{id}', [UserController::class, 'userEdit'])->name('profile.edit');
-    Route::get('/profile', function () {
-        return redirect()->route('profile.edit', ['id' => auth()->id()]);
-    })->name('profile');
     Route::post('/user/update/{id}', [UserController::class, 'userUpdate'])->name('user.update');
     Route::delete('/user/delete/{userid}', [UserController::class, 'userDelete'])->name('user.delete');
     Route::get('/home', [UserController::class, 'home'])->name('home');

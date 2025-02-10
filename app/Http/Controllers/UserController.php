@@ -131,8 +131,7 @@ class UserController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
-        $remember = $request->has('rememberme');
-        if (Auth::attempt($credentials,$remember)) {
+        if (Auth::attempt($credentials)) {
             return redirect()->intended('/');
         }
         return redirect('/login')->with('error', 'Invalid credentials. Please try again.');
@@ -178,61 +177,6 @@ class UserController extends Controller
     
     public function noFound() 
     { 
-      return view('404'); 
+        return view('404'); 
     }
-  
-    public function forgotPassword(){
-        return view('auth.forgot-password');
-    }
-    public function sendResetLinkEmail(Request $request)
-    {
-        
-        $request->validate(['email' => 'required|email']);
-        $response = Password::sendResetLink($request->only('email'));
-        return $response == Password::RESET_LINK_SENT
-            ? back()->with('status', 'We have emailed your password reset link!')
-            : back()->withErrors(['email' => 'We couldn\'t find an account with that email address.']);
-    }
-
-    public function showResetForm(Request $request, $token = null)
-    {
-        return view('auth.reset')->with(['token' => $token, 'email' => $request->email]);
-    }
-
-    public function reset(Request $request)
-    {
-        $tokenData = DB::table('password_resets')
-        ->where('token', $token) 
-        ->first();  
-
-    if ($tokenData) {
-        
-        $email = $tokenData->email;
-        $request->merge(['email' => $email]);
-    }
-    
-        $request->validate([
-            'email'    => 'required',
-            'password' => 'required|confirmed|min:8',
-            'token' => 'required',
-        ]);
-
-       
-        $response = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password),
-                ])->save();
-
-                event(new PasswordReset($user));
-            }
-        );
-
-      
-        return $response == Password::PASSWORD_RESET
-            ? redirect()->route('login')->with('status', 'Your password has been reset!')
-            : back()->withErrors(['email' => 'There was an error resetting your password.']);
-    }
-   
 }
