@@ -24,6 +24,8 @@
     <!-- vendor css -->
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <!-- data tables css -->
+    <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap4.min.css') }}">
     <style>
         li.input-control.input-control-14.ui-sortable-handle::before {
     /* content: 'sd'; */
@@ -55,10 +57,10 @@
 <script src="{{ asset('assets/js/plugins/apexcharts.min.js') }}"></script>
 
 <!-- custom-chart js -->
-<script src="{{ asset('assets/js/pages/dashboard-main.js') }}"></script>
+<script src="{{asset('assets/js/pages/dashboard-main.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-<script src="{{ asset('assets/js/plugins/bootstrap.min.js') }}"></script>
+<script src="{{asset('assets/js/plugins/bootstrap.min.js')}}"></script>
 <script src="https://formbuilder.online/assets/js/form-builder.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-rateyo@2.3.0/jquery.rateyo.min.js"></script>
 <!-- sweet alert Js -->
@@ -67,7 +69,9 @@
 <script src="{{asset('assets/js/plugins/jquery.dataTables.min.js')}}"></script>
 <script src="{{asset('assets/js/plugins/dataTables.bootstrap4.min.js')}}"></script>
 <script src="{{asset('assets/js/custom.js')}}"></script>
-
+<!-- DataTable Js -->
+<script src="{{asset('assets/js/plugins/jquery.dataTables.min.js')}}"></script>
+<script src="{{asset('assets/js/plugins/dataTables.bootstrap4.min.js')}}"></script>
 </body>
 
 </html>
