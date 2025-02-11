@@ -335,5 +335,7 @@ jQuery(function($) {
     $('#user-list-table').DataTable();
     // DataTable For Forms Lists
     $('#form-list-table').DataTable();
+    // DataTable For Booking Lists
+    $('#booking-list-table').DataTable();
   });
   
