@@ -99,6 +99,11 @@
 									</tr>
 								</tfoot>
 							</table>
+							<script>
+								// DataTable start
+								$('#user-list-table').DataTable();
+								// DataTable end
+							</script>
 						</div>
 					</div>
 				</div>

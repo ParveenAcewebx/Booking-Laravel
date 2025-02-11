@@ -331,5 +331,9 @@ jQuery(function($) {
     jQuery(window).on('load', function() {
       jQuery('#mymodelsformessage').click();
     });
+    // DataTable For Users Lists
+    $('#user-list-table').DataTable();
+    // DataTable For Forms Lists
+    $('#form-list-table').DataTable();
   });
   
