@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\BookingController;
 use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
@@ -48,4 +49,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/form/save', [FormController::class, 'formSave'])->name('form.save');
     Route::delete('/form/{formid}/delete', [FormController::class, 'formDelete'])->name('form.delete');
     Route::get('/form/{formid}/edit', [FormController::class, 'formEdit'])->name('form.edit');
+    Route::get('/bookings', [BookingController::class, 'index'])->name('booking.list');
+    Route::get('/booking/add', [BookingController::class, 'bookingAdd'])->name('booking.add');
+    Route::post('/booking/save', [BookingController::class, 'bookingSave'])->name('booking.save');
+    Route::get('/booking/edit/{id}', [BookingController::class, 'bookingEdit'])->name('booking.edit');
+    Route::post('/booking/update/{id}', [BookingController::class, 'bookingUpdate'])->name('booking.update');
+    Route::delete('/booking/delete/{id}', [BookingController::class, 'bookingDelete'])->name('booking.delete');
 });
