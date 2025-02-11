@@ -22,6 +22,7 @@
     <link rel="icon" href="{{ asset('assets/images/favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-rateyo@2.3.0/jquery.rateyo.min.css"/>
     <!-- vendor css -->
+    <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <!-- data tables css -->
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap4.min.css') }}">
@@ -65,6 +66,8 @@
 <!-- sweet alert Js -->
 <script src="{{asset('assets/js/plugins/sweetalert.min.js')}}"></script>
 <script src="{{asset('assets/js/pages/ac-alert.js')}}"></script>
+<script src="{{asset('assets/js/plugins/jquery.dataTables.min.js')}}"></script>
+<script src="{{asset('assets/js/plugins/dataTables.bootstrap4.min.js')}}"></script>
 <script src="{{asset('assets/js/custom.js')}}"></script>
 <!-- DataTable Js -->
 <script src="{{asset('assets/js/plugins/jquery.dataTables.min.js')}}"></script>
