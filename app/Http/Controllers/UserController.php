@@ -61,14 +61,20 @@ class UserController extends Controller
         }
     }
 
-    public function userEdit($id)
+    public function userEdit($id=null)
     {
+        if($id==null){
+            $id= Auth::id();
+        }
         $user = User::findOrFail($id);
         return view('user.useredit', ['user' => $user]);
     }
     
-    public function userUpdate(Request $request, $id)
+    public function userUpdate(Request $request, $id=null)
     {
+        if($id==null){
+            $id= Auth::id();
+        }
         // Validate input data
         $request->validate([
             'username' => 'required|string|max:255',
