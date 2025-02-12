@@ -177,7 +177,8 @@ jQuery(function($) {
 
   const formBuilder = $(fbEditor).formBuilder({
     fields: newfield,
-    templates: temp
+    templates: temp,
+    controlPosition: 'left'
   });
 
   const templates = [{
