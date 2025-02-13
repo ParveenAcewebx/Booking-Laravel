@@ -100,6 +100,30 @@
                                             @enderror
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Role</label>
+                                            <select class="form-control" name="role">
+                                                @foreach($allRoles as $role)
+                                                    @if(Auth::id() == $user->id)
+                                                        @if($role->id == $currentRole)
+                                                                <option value="{{ $role->id }}">
+                                                                    {{ $role->name }}
+                                                                </option>
+                                                        @endif
+                                                    @else
+                                                        <option value="{{ $role->id }}" 
+                                                                @if($role->id == $currentRole) selected @endif>
+                                                                {{ $role->name }}
+                                                        </option>
+                                                    @endif    
+                                                @endforeach 
+                                            </select>
+                                            @error('role')
+                                                <div class="error">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Update</button>
                         </div>

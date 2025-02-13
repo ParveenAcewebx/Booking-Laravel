@@ -76,6 +76,24 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Role</label>
+                                        <select class="form-control" name="role">
+                                            
+                                            @foreach($allRoles as $role)
+                                                <option value="{{ $role->id }}" 
+                                                    @if($role->name == 'Customer') selected @endif>
+                                                    {{ $role->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+
+                                        @error('role')
+                                            <div class="error">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
                                     <label class="form-label">Avatar</label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
@@ -85,7 +103,7 @@
                                             <input type="file" class="custom-file-input" name="avatar" id="inputGroupFile01">
                                             <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                                         </div>
-                                        @error('avatar')
+                                        @error('avatar') 
                                         <div class="error">{{ $message }}</div>
                                         @enderror
                                     </div>

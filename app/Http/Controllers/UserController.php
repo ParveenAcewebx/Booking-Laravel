@@ -12,19 +12,26 @@ use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use DB; 
+use Carbon\Carbon; 
+use Mail; 
+
+use Illuminate\Support\Str;
 
 
 class UserController extends Controller
 {
+
     public function index(){
         $alluser=User::all();
-       
+        $currentUserId = Auth::id();
         return view('user.userlist', ['alluser' => $alluser]);
 
     }
 
     public function userAdd(){
-        return view('user.usercreate');
+        $allRole=Role::all();
+        return view('user.usercreate',['allRoles' => $allRole]);
     }
 
     public function userSave(Request $request)
@@ -53,7 +60,8 @@ class UserController extends Controller
             'password' => bcrypt($request->password), 
             'avatar' => $avatarPath, // Save the uploaded avatar path or null
         ]);
-    
+        $userRole=Role::find($request->role);
+        $user->assignRole($userRole);
         // Check if the user was created successfully
         if ($user) {
             return redirect('/user')->with('success', 'User Added successfully!');
@@ -62,14 +70,23 @@ class UserController extends Controller
         }
     }
 
-    public function userEdit($id)
+    public function userEdit($id=null)
     {
+        if($id==null){
+            $id= Auth::id();
+        }
         $user = User::findOrFail($id);
-        return view('user.useredit', ['user' => $user]);
+       
+        $user->unsetRelation('roles')->unsetRelation('permissions');
+        $roles = $user->roles;
+        return view('user.useredit', ['user' => $user,'allRoles'=> Role::all(),'currentRole'=> $roles[0]->id]);
     }
     
-    public function userUpdate(Request $request, $id)
+    public function userUpdate(Request $request, $id=null)
     {
+        if($id==null){
+            $id= Auth::id();
+        }
         // Validate input data
         $request->validate([
             'username' => 'required|string|max:255',
@@ -97,8 +114,10 @@ class UserController extends Controller
         if ($request->password) {
             $user->update(['password' => bcrypt($request->password)]);
         }
-    
-        return redirect('/user')->with('success', 'User updated successfully!');
+        $userRole=Role::find($request->role);
+        $user->roles()->detach();
+        $user->assignRole($userRole);
+        return back()->with('success', 'User updated successfully!');
     }
     
     
@@ -133,7 +152,11 @@ class UserController extends Controller
         $credentials = $request->only('email', 'password');
         $remember = $request->has('rememberme');
         if (Auth::attempt($credentials,$remember)) {
+           if(Auth::user()->hasRole('Customer')){
+            return redirect()->intended('/welcome');
+           }else{
             return redirect()->intended('/');
+           }
         }
         return redirect('/login')->with('error', 'Invalid credentials. Please try again.');
     }
@@ -182,12 +205,27 @@ class UserController extends Controller
 
     public function sendResetLinkEmail(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email|exists:users',
+        ]);
+        $token = Str::random(64);
+        DB::table('password_reset_tokens')->updateOrInsert(
+            ['email' => $request->email], 
+            [
+                'token' => $token,          
+                'created_at' => Carbon::now() 
+            ]
+        );
         
-        $request->validate(['email' => 'required|email']);
-        $response = Password::sendResetLink($request->only('email'));
-        return $response == Password::RESET_LINK_SENT
-            ? back()->with('status', 'We have emailed your password reset link!')
-            : back()->withErrors(['email' => 'We couldn\'t find an account with that email address.']);
+        $resetLink = route('password.reset', ['token' => $token]);
+
+        Mail::send([], [], function($message) use($request, $resetLink) {
+            $message->to($request->email)
+                    ->subject('Reset Password')
+                    ->setBody('Here is your reset password link: <a href="' . $resetLink . '">Click here to reset your password</a>', 'text/html');
+        });
+             
+        return back()->with('message', 'We have e-mailed your password reset link!');
     }
 
     public function showResetForm(Request $request, $token = null)
@@ -197,31 +235,54 @@ class UserController extends Controller
 
     public function reset(Request $request)
     {
-        $tokenData = DB::table('password_resets')
-        ->where('token', $token) 
-        ->first();
-        if ($tokenData) {
-            $email = $tokenData->email;
-            $request->merge(['email' => $email]);
-        }
         $request->validate([
-            'email'    => 'required',
-            'password' => 'required|confirmed|min:8',
-            'token' => 'required',
+            'email' => 'required|email|exists:users',
+            'password' => 'required|string|min:6|confirmed',
+            'password_confirmation' => 'required'
         ]);
-        $response = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password),
-                ])->save();
-
-                event(new PasswordReset($user));
-            }
-        );
-        return $response == Password::PASSWORD_RESET
-            ? redirect()->route('login')->with('status', 'Your password has been reset!')
-            : back()->withErrors(['email' => 'There was an error resetting your password.']);
+        $updatePassword = DB::table('password_reset_tokens')
+                            ->where([
+                              'email' => $request->email, 
+                              'token' => $request->token
+                            ])
+                            ->first();
+        if(!$updatePassword){
+            return back()->withInput()->with('error', 'Invalid token!');
+        }
+        $user = User::where('email', $request->email)->update(['password' => Hash::make($request->password)]);
+        DB::table('password_reset_tokens')->where(['email'=> $request->email])->delete();
+        return redirect('/login')->with('message', 'Your password has been changed!');
     }
-   
+    public function welcome()
+    {
+        return view('auth.welcome');
+    }
+   // Create roles
+   public function userrole(){
+        $adminRole = Role::firstOrCreate(['name' => 'Administrator']);
+        $staffRole = Role::firstOrCreate(['name' => 'Staff']);
+        $bookingRole = Role::firstOrCreate(['name' => 'Booking Manager']);
+        $customerRole = Role::firstOrCreate(['name' => 'Customer']);
+
+        // Create permissions
+        $editPermission = Permission::firstOrCreate(['name' => 'edit']);
+        $managePermission = Permission::firstOrCreate(['name' => 'manage']);
+        $viewPermission = Permission::firstOrCreate(['name' => 'view']);
+
+        // Assign all permissions to the admin role
+        $adminRole->givePermissionTo($editPermission, $managePermission, $viewPermission);
+
+        // Assign 'view' permission to staff
+        $staffRole->givePermissionTo($viewPermission);
+
+        // Assign 'edit' and 'view' permissions to the booking manager
+        $bookingRole->givePermissionTo($editPermission, $viewPermission);
+        $user = User::where('id', User::min('id'))->first();
+        echo $user->id;
+        $user->assignRole($adminRole);
+        $users = User::where('id', '!=', $user->id)->get();
+        foreach ($users as $userToUpdate) {
+            $userToUpdate->assignRole($bookingRole);
+        }
+ }
 }
