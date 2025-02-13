@@ -158,14 +158,10 @@
 									<div class="pro-head">
 									<img src="{{ Auth::user()->avatar ? Storage::url(Auth::user()->avatar) : asset('assets/images/avatar-2.jpg') }}" class="img-radius" alt="User-Profile-Image">
 										<span>{{ Auth::user()->name }}</span>
-										<a href="auth-signin.html" class="dud-logout" title="Logout">
-											<i class="feather icon-power"></i>
-										</a>
 									</div>
 									<ul class="pro-body">
 										<li><a href="{{ route('profile') }}" class="dropdown-item"><i class="feather icon-user"></i> Profile</a></li>
-										<li><a href="email_inbox.html" class="dropdown-item"><i class="feather icon-mail"></i> My Messages</a></li>
-										<li><a href="auth-signin.html" class="dropdown-item"><i class="feather icon-lock"></i> Lock Screen</a></li>
+										<li><a href="{{ route('logout') }}" class="dropdown-item"><i class="feather icon-power"></i> Logout</a></li>
 									</ul>
 								</div>
 							</div>
