@@ -72,6 +72,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/todo', [UserController::class, 'todo'])->name('todo');
     Route::get('/welcome', [UserController::class, 'welcome']);
     Route::get('/userrole', [UserController::class, 'userrole']);
-    
 });
 
