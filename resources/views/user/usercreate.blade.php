@@ -62,6 +62,21 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        <label class="form-label">Password</label>
+                                        <input type="password" class="form-control" name="password" placeholder="Password">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Confirm Password</label>
+                                        <input type="password" class="form-control" name="password_confirmation" placeholder="Confirm Password">
+                                        @error('password')
+                                        <div class="error">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                         <label class="form-label">Role</label>
                                         <select class="form-control" name="role">
                                             
@@ -78,22 +93,6 @@
                                         @enderror
                                     </div>
                                 </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Password</label>
-                                        <input type="password" class="form-control" name="password" placeholder="Password">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Confirm Password</label>
-                                        <input type="password" class="form-control" name="password_confirmation" placeholder="Confirm Password">
-                                        @error('password')
-                                        <div class="error">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Avatar</label>
                                     <div class="input-group mb-3">
@@ -104,7 +103,7 @@
                                             <input type="file" class="custom-file-input" name="avatar" id="inputGroupFile01">
                                             <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                                         </div>
-                                        @error('avatar')
+                                        @error('avatar') 
                                         <div class="error">{{ $message }}</div>
                                         @enderror
                                     </div>
