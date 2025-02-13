@@ -25,7 +25,6 @@ class UserController extends Controller
     public function index(){
         $alluser=User::all();
         $currentUserId = Auth::id();
-        // dd($currentUserId);
         return view('user.userlist', ['alluser' => $alluser]);
 
     }

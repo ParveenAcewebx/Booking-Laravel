@@ -32081,6 +32081,13 @@ new-task label input[type=checkbox] {
 .profile-avatar img {
     width: 20%;
 }
+
+table#user-list-table tbody tr:hover .badge-light-success {
+    border-color: #c4f1d7;
+    position: relative;
+    z-index: 999999;
+    background: #212529;
+}
 .form-wrap.form-builder .cb-wrap.sticky-controls {
     margin-right: 13px !important;
 }
