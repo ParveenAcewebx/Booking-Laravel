@@ -71,22 +71,12 @@
 											<td>
 												<span class="badge badge-light-success">Active</span>
 												<div class="overlay-edit">
-												@if(Auth::id() == $user->id)		   
-													<a href="{{ route('profile') }}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit Profile">
-														<i class="fas fa-pencil-alt"></i>
-													</a>
-												@else
-													<a href="{{ route('user.edit', [$user->id]) }}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit User">
-														<i class="fas fa-pencil-alt"></i>
-													</a>
-												@endif
-												@can('manage')
-												<form action="{{route('user.delete', [$user->id])}}" method="POST" id="deleteUser-{{$user->id}}">
-													<input type="hidden" name="_method" value="DELETE">
-													@csrf
-													<button onclick="return deleteUser({{$user->id}})" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete User"><i class="feather icon-trash-2"></i></button>
-                           						</form>
-												@endcan
+												  <a href="{{route('user.edit', [$user->id])}}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit User"><i class="fas fa-pencil-alt"></i></a>
+													<form action="{{route('user.delete', [$user->id])}}" method="POST" id="deleteUser-{{$user->id}}">
+														<input type="hidden" name="_method" value="DELETE">
+														@csrf
+												       <button onclick="return deleteUser({{$user->id}})" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete User"><i class="feather icon-trash-2"></i></button>
+                           </form>
 												</div>
 											</td>
 										</tr>
@@ -101,11 +91,6 @@
 									</tr>
 								</tfoot>
 							</table>
-							<script>
-								// DataTable start
-								$('#user-list-table').DataTable();
-								// DataTable end
-							</script>
 						</div>
 					</div>
 				</div>
