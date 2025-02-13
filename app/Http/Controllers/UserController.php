@@ -116,9 +116,9 @@ class UserController extends Controller
             $user->update(['password' => bcrypt($request->password)]);
         }
         $userRole=Role::find($request->role);
+        $user->roles()->detach();
         $user->assignRole($userRole);
-      
-        return redirect('/profile')->with('success', 'User updated successfully!');
+        return back()->with('success', 'User updated successfully!');
     }
     
     
@@ -260,38 +260,30 @@ class UserController extends Controller
     }
    // Create roles
    public function userrole(){
-   $adminRole = Role::firstOrCreate(['name' => 'Administrator']);
-   $staffRole = Role::firstOrCreate(['name' => 'Staff']);
-   $bookingRole = Role::firstOrCreate(['name' => 'Booking Manager']);
-   $customerRole = Role::firstOrCreate(['name' => 'Customer']);
+        $adminRole = Role::firstOrCreate(['name' => 'Administrator']);
+        $staffRole = Role::firstOrCreate(['name' => 'Staff']);
+        $bookingRole = Role::firstOrCreate(['name' => 'Booking Manager']);
+        $customerRole = Role::firstOrCreate(['name' => 'Customer']);
 
-   // Create permissions
-   $editPermission = Permission::firstOrCreate(['name' => 'edit']);
-   $managePermission = Permission::firstOrCreate(['name' => 'manage']);
-   $viewPermission = Permission::firstOrCreate(['name' => 'view']);
+        // Create permissions
+        $editPermission = Permission::firstOrCreate(['name' => 'edit']);
+        $managePermission = Permission::firstOrCreate(['name' => 'manage']);
+        $viewPermission = Permission::firstOrCreate(['name' => 'view']);
 
-   // Assign all permissions to the admin role
-   $adminRole->givePermissionTo($editPermission, $managePermission, $viewPermission);
+        // Assign all permissions to the admin role
+        $adminRole->givePermissionTo($editPermission, $managePermission, $viewPermission);
 
-   // Assign 'view' permission to staff
-   $staffRole->givePermissionTo($viewPermission);
+        // Assign 'view' permission to staff
+        $staffRole->givePermissionTo($viewPermission);
 
-   // Assign 'edit' and 'view' permissions to the booking manager
-   $bookingRole->givePermissionTo($editPermission, $viewPermission);
-
-   // The customer role has no permissions, so we don't need to assign anything to it
-// Get the current authenticated user's ID
-// if (Auth::check()) {
-//     // Get the current authenticated user's ID
-//     $currentUserId = Auth::user();
-// dd($currentUserId);
-// // Now you can use $currentUserId in your logic, for example:
-    $user = User::where('id', User::min('id'))->first();
-
-echo $user->id;
-// // If you want to assign a role to the current user (for example, Administrator):
-$user->assignRole($adminRole);
-// // }else{
-// //     dd($bookingRole);
+        // Assign 'edit' and 'view' permissions to the booking manager
+        $bookingRole->givePermissionTo($editPermission, $viewPermission);
+        $user = User::where('id', User::min('id'))->first();
+        echo $user->id;
+        $user->assignRole($adminRole);
+        $users = User::where('id', '!=', $user->id)->get();
+        foreach ($users as $userToUpdate) {
+            $userToUpdate->assignRole($bookingRole);
+        }
  }
 }
