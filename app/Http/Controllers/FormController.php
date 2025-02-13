@@ -35,14 +35,14 @@ class FormController extends Controller
                 ]);
             }
    
-            session()->flash('success', "The '". $fromname."' form has been successfully edited.");
+            session()->flash('success', $fromname." form edited successful!");
         } else {
             $data = json_encode($data);
             $id = Bookingform::create([
             'data' => $data,
             'form_name' => $fromname
              ]);
-            session()->flash('success',"The '". $fromname."' form has been successfully added.");
+            session()->flash('success', $fromname." form `added successful");
         }
     }
     

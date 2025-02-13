@@ -9,7 +9,7 @@
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <div class="card-body">
-                        <h4 class="mb-3 f-w-400">Sign in</h4>
+                        <h4 class="mb-3 f-w-400">Signin</h4>
                         <hr>
                         @if (session('error'))
                          <div class="alert alert-danger">
@@ -40,7 +40,7 @@
                                 <label class="custom-control-label" for="customCheck1">Save credentials.</label>
                                
                             </div>
-                            <button type="submit" class="btn btn-block btn-primary mb-4">Sign in</button>
+                            <button type="submit" class="btn btn-block btn-primary mb-4">Signin</button>
                         </form>
                         <hr>
                         <p class="mb-2 text-muted">Forgot password? <a href="{{route('password.request')}}" class="f-w-400">Reset</a></p>

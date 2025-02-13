@@ -62,25 +62,6 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label">Role</label>
-                                        <select class="form-control" name="role">
-                                            
-                                            @foreach($allRoles as $role)
-                                                <option value="{{ $role->id }}" 
-                                                    @if($role->name == 'Customer') selected @endif>
-                                                    {{ $role->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-
-                                        @error('role')
-                                            <div class="error">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
                                         <label class="form-label">Password</label>
                                         <input type="password" class="form-control" name="password" placeholder="Password">
                                     </div>
