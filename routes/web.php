@@ -53,6 +53,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/booking/add', [BookingController::class, 'bookingAdd'])->name('booking.add');
     Route::post('/booking/save', [BookingController::class, 'bookingSave'])->name('booking.save');
     Route::get('/booking/edit/{id}', [BookingController::class, 'bookingEdit'])->name('booking.edit');
-    Route::post('/booking/update/{id}', [BookingController::class, 'bookingUpdate'])->name('booking.update');
+    Route::put('/booking/update/{id}', [BookingController::class, 'bookingUpdate'])->name('booking.update');
     Route::delete('/booking/delete/{id}', [BookingController::class, 'bookingDelete'])->name('booking.delete');
 });

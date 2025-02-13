@@ -30,16 +30,7 @@ class BookingController extends Controller
     }
 
     public function bookingSave(Request $request)
-    {
-        // dd($request->all());
-        // $request->validate([
-        //     'service' => 'required|string|max:255',
-        //     'form_name' => 'required',
-        //     'selected_staff' => 'required',
-        // ]);
-        // echo '<pre>';
-        // print_r($request);die;
-    
+    {    
         // Process booking_data from the hidden field
         $bookingData = json_decode($request->booking_data, true);
     
@@ -61,31 +52,43 @@ class BookingController extends Controller
         }
     }
     
-    
-    
-    public function bookingEdit($id=null)
+    public function bookingEdit($id)
     {
-        if($id==null){
-            $id= Auth::id();
+        $booking = Booking::findOrFail($id);
+        $dynamicFields = [];
+        if (!empty($booking->booking_data)) {
+            $dynamicFields = json_decode($booking->booking_data, true);
+    
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                dd('JSON decode failed', json_last_error_msg(), $booking->booking_data);
+            }
         }
-        $booking = Booking::findOrFail($id);
-        return view('booking.edit', ['booking' => $booking]);
+    
+        $staffList = User::all();
+        $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
+    
+        return view('booking.edit', compact('booking', 'dynamicFields', 'staffList'));
     }
-
-    public function bookingUpdate(Request $request, $id=null)
+    
+    public function bookingUpdate(Request $request, $id)
     {
-        $request->validate([
-            'service' => 'required|string|max:255'        
-        ]);
-    
         $booking = Booking::findOrFail($id);
     
-        // Update booking details
-        $booking->update([
-            'service' => $request->service
-        ]);
-        return redirect('/bookings')->with('success', 'Booking updated successfully!');
+        // Extract dynamic fields
+        $dynamicFields = $request->input('dynamic', []);
+    
+        // Save updated form data as JSON
+        $booking->booking_data = json_encode($dynamicFields);
+    
+        // Save other fields
+        $booking->selected_staff = $request->input('staff');
+        $booking->booking_datetime = $request->input('booking_datetime');
+        
+        $booking->save();
+    
+        return redirect()->route('booking.list')->with('success', 'Booking updated successfully.');
     }
+    
 
     public function bookingDelete($id) {
         $booking = Booking::find($id);

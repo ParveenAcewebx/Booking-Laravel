@@ -103,6 +103,58 @@ function deleteUser(id) {
     }
   });
 }
+
+// Booking delete alert
+function deleteBooking(id) {
+  event.preventDefault();
+  swal({
+    title: "Are you sure?",
+    text: "Once deleted, you will not be able to recover this imaginary file!",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+  })
+  .then((willDelete) => {
+    if (willDelete) {
+      var booking = document.getElementById('deleteBooking-' + id);
+      var bookingData = new FormData(booking);
+
+      fetch(booking.action, {
+        method: 'DELETE',
+        body: bookingData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          swal("Poof! That booking has been deleted!", {
+            icon: "success",
+          }).then(() => {
+            window.location.reload();
+          });
+        } else {
+          swal("There was an errors!", {
+            icon: "error",
+          });
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        swal("There was an errors!", {
+          icon: "error",
+        });
+      });
+
+    } else {
+      swal("That booking is safe!", {
+        icon: "info",
+      });
+    }
+  });
+}
 //  Form builder 
 jQuery(function($) {
   const templateSelect = document.getElementById("formTemplates");
