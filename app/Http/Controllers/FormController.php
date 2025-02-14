@@ -18,7 +18,8 @@ class FormController extends Controller
         return view('form.formlist', ['allform' => $allform]);
     }
 
-    public function formSave(Request $request){
+    public function formSave(Request $request)
+    {
         $data = $request->input('data');
         $fromname = $request->input('formname');
         $fromid = $request->input('formid');
@@ -34,7 +35,6 @@ class FormController extends Controller
                     'form_name' => $fromname
                 ]);
             }
-   
             session()->flash('success', "The '". $fromname."' form has been successfully edited.");
         } else {
             $data = json_encode($data);
@@ -46,7 +46,6 @@ class FormController extends Controller
         }
     }
     
-
     public function formDelete($id) {
         $form = Bookingform::find($id);
         $formname=$form->form_name;
@@ -60,7 +59,6 @@ class FormController extends Controller
         return view('form.formedit', ['forms' =>$form]);
     }
     public function formAdd() {
-        // $form = form::find($id);
         return view('form.form');
     }
 }

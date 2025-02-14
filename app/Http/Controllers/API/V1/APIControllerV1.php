@@ -7,6 +7,7 @@ namespace App\Http\Controllers\API\V1;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\form;
+use App\Models\Booking;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
@@ -20,7 +21,7 @@ class APIControllerV1 extends Controller
             try {
                 $validatedData = $request->validate([
                     'email' => 'required|email|exists:users,email',  
-                    'password' => 'required|min:8',                   
+                    'password' => 'required|min:6',                   
                 ]);
                 $user = User::where('email', $request->email)->first();
                 if (!$user || !Hash::check($request->password, $user->password)) {
@@ -88,4 +89,30 @@ class APIControllerV1 extends Controller
         return response()->json($output_array );  
            
     }  
+
+    // Fetch all bookings
+    public function index()
+    {
+        $bookings = Booking::all();
+        return response()->json([
+            'success' => true,
+            'data' => $bookings,
+        ], 200);
+    }
+    
+    // Fetch a specific booking by ID
+    public function show($id)
+    {
+        $booking = Booking::find($id);
+        if (!$booking) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Booking not found!',
+            ], 404);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => $booking,
+        ], 200);
+    }
 }

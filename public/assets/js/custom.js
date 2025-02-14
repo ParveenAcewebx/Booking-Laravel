@@ -284,36 +284,60 @@ jQuery(function($) {
   });
 
   jQuery(window).on('load', function() {
-    if(jQuery(".save-template").length >0){
+    if (jQuery(".save-template").length > 0) {
       const saveform = document.querySelector(".save-template");
-      saveform.addEventListener("click", function(e) {
+      saveform.addEventListener("click", function (e) {
+        e.preventDefault(); // Prevent the default form submission behavior
+    
+        // Get the input value and clear any existing error messages
+        var inputElement = document.getElementById("formTemplatesname");
+        var inputValue = inputElement.value.trim();
+        var errorMessageElement = document.getElementById("formTemplatesname-error");
+    
+        if (errorMessageElement) {
+          errorMessageElement.remove(); // Remove previous error message
+        }
+    
+        // Check if the input value is empty
+        if (!inputValue) {
+          var errorMessage = document.createElement("span");
+          errorMessage.id = "formTemplatesname-error";
+          errorMessage.textContent = "The form name cannot be empty.";
+          inputElement.parentNode.appendChild(errorMessage); // Append the message below the input
+          inputElement.focus();
+          return; // Stop execution if the field is empty
+        }
+    
         var data = formBuilder.actions.getData();
-        var inputValue = document.getElementById('formTemplatesname').value;
-        var formid = document.getElementById('formid') ? document.getElementById('formid').value : '';
-        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        var formid = document.getElementById("formid") ? document.getElementById("formid").value : "";
+        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+    
         var formData = {
           data: data,
           formname: inputValue,
           formid: formid,
-          _token: csrfToken
+          _token: csrfToken,
         };
+    
+        // Perform the AJAX request
         $.ajax({
           url: "/form/save",
-          method: 'POST',
+          method: "POST",
           data: formData,
-          success: function(response) {
-            if (jQuery('#formid').length > 0) {
-              window.location.href = window.location.origin +'/form';
+          success: function (response) {
+            if (jQuery("#formid").length > 0) {
+              window.location.href = window.location.origin + "/form";
             } else {
-              window.location.href = window.location.origin +'/form';
+              window.location.href = window.location.origin + "/form";
             }
           },
-          error: function(xhr, status, error) {
+          error: function (xhr, status, error) {
             console.error(xhr.responseText);
-          }
+          },
         });
       });
     }
+    
   });
 
   jQuery(window).on('load', function() {
@@ -427,7 +451,8 @@ document.getElementById('loadTemplateBtn').addEventListener('click', function ()
                       <label>${field.label || ''}</label>
                       <input 
                       type="${field.subtype || 'text'}" 
-                      class="${field.className || 'form-control'}" 
+                      class="${field.className || 'form-control'}"
+                      placeholder="${field.placeholder || ''}" 
                       name="${field.name || ''}" 
                       ${field.required === "true" ? 'required' : ''}>
                   </div>`;
@@ -437,7 +462,8 @@ document.getElementById('loadTemplateBtn').addEventListener('click', function ()
                   <div class="form-group">
                       <label>${field.label || ''}</label>
                       <textarea 
-                      class="${field.className || 'form-control'}" 
+                      class="${field.className || 'form-control'}"
+                      placeholder="${field.placeholder || ''}" 
                       name="${field.name || ''}" 
                       ${field.required === "true" ? 'required' : ''}></textarea>
                   </div>`;

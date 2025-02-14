@@ -13,8 +13,8 @@
                                 </div>
                                 <ul class="breadcrumb">
                                     <li class="breadcrumb-item"><i class="feather icon-home"></i></li>
-                                    <li class="breadcrumb-item"><a href="#!">Bookings</a></li>
-                                    <li class="breadcrumb-item"><a href="#!">Add Booking</a></li>
+                                    <li class="breadcrumb-item"><a href="{{ route('booking.list') }}">Bookings</a></li>
+                                    <li class="breadcrumb-item"><a href="">Add Booking</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -73,6 +73,9 @@
                                                 <option value="{{ $user->name }}" data-customer_id="{{ $user->id }}">{{ $user->name }}</option>
                                             @endforeach
                                         </select>
+                                        @error('selected_staff')
+                                        <div class="error">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-4"> 

@@ -642,6 +642,18 @@ mark,
     background-color: #fcf8e3;
 }
 
+.error {
+    color: red;
+}
+
+#formTemplatesname-error {
+    color: red;
+    font-size: 14px;
+    margin-top: 4px;
+    display: block;
+  }
+  
+
 .list-unstyled {
     padding-left: 0;
     list-style: none;
@@ -32082,7 +32094,7 @@ new-task label input[type=checkbox] {
     width: 20%;
 }
 
-table#user-list-table tbody tr:hover .badge-light-success {
+table tbody tr:hover .badge-light-success {
     border-color: #c4f1d7;
     position: relative;
     z-index: 999999;

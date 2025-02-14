@@ -82,13 +82,6 @@
 										</tr>
 									@endforeach
 								</tbody>
-								<tfoot>
-									<tr>
-										<th>Name</th>
-										<th>Start date</th>
-										<th>Status</th>
-									</tr>
-								</tfoot>
 							</table>
 						</div>
 					</div>
