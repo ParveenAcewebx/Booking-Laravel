@@ -41,7 +41,7 @@ class UserController extends Controller
             'username' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'avatar' => 'required|nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
     
         // Initialize avatar path

@@ -21,7 +21,7 @@
         </div>
         <form action="{{ route('booking.update', $booking->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
-            @method('PUT')
+            <!-- @method('PUT') -->
             <div class="row">
                 <div class="col-md-12 order-md-2">
                     <div class="card">

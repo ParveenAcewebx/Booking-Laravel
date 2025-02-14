@@ -39,8 +39,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/user', [UserController::class, 'index'])->name('user.list');
         Route::get('/user/add', [UserController::class, 'userAdd'])->name('user.add');
         Route::post('/user/save', [UserController::class, 'userSave'])->name('user.save');
-        Route::get('/user/edit/{id}', [UserController::class, 'userEdit'])->name('user.edit');
-       
+        Route::get('/user/edit/{id}', [UserController::class, 'userEdit'])->name('user.edit');       
         Route::get('/profile/{id}', [UserController::class, 'userEdit'])->name('profile.edit');
         Route::get('/form', [FormController::class, 'index'])->name('form.list');
         Route::get('/form/add', [FormController::class, 'formAdd'])->name('form.add');

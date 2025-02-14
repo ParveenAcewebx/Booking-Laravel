@@ -64,6 +64,9 @@
                                     <div class="form-group">
                                         <label class="form-label">Password</label>
                                         <input type="password" class="form-control" name="password" placeholder="Password">
+                                        @error('password')
+                                        <div class="error">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -95,7 +98,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Avatar</label>
-                                    <div class="input-group mb-3">
+                                    <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Upload</span>
                                         </div>
@@ -103,10 +106,10 @@
                                             <input type="file" class="custom-file-input" name="avatar" id="inputGroupFile01">
                                             <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                                         </div>
-                                        @error('avatar') 
-                                        <div class="error">{{ $message }}</div>
-                                        @enderror
                                     </div>
+                                    @error('avatar') 
+                                        <div class="error">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary">Submit</button>

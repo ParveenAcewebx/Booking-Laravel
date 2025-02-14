@@ -30,7 +30,13 @@ class BookingController extends Controller
     }
 
     public function bookingSave(Request $request)
-    {    
+    {  
+        // Validate input data
+        $request->validate([
+            'selected_staff' => 'required', 
+            'service' => 'required',        
+            'booking_datetime' => 'required'
+        ]);  
         // Process booking_data from the hidden field
         $bookingData = json_decode($request->booking_data, true);
     
