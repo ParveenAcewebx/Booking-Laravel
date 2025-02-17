@@ -11,7 +11,7 @@
                             <h5 class="m-b-10">Add User</h5>
                         </div>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{route('home') }}"><i class="feather icon-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="{{route('dashboard') }}"><i class="feather icon-home"></i></a></li>
                             <li class="breadcrumb-item"><a href="#!">User</a></li>
                             <li class="breadcrumb-item"><a href="#!">Add User</a></li>
                         </ul>
