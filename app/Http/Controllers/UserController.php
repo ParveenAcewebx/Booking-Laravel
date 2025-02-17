@@ -185,11 +185,6 @@ class UserController extends Controller
         echo "permission has given";
     }
 
-    public function home()
-    {
-        return view('layouts.home');
-    }
-
     public function logout(){
         Auth::logout();
         return redirect('/login');

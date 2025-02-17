@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
@@ -18,7 +19,7 @@ use Illuminate\Http\Request;
 */
 
 Route::get('/', function () {
-    return redirect()->route('home');
+    return redirect()->route('dashboard');
 });
 
 Route::middleware('guest')->group(function () {
@@ -66,7 +67,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Other general routes (no specific permissions required)
-    Route::get('/home', [UserController::class, 'home'])->middleware('permission:edit|manage|view')->name('home');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('permission:edit|manage|view')->name('dashboard');
     Route::get('/logout', [UserController::class, 'logout'])->name('logout');
     Route::get('/todo', [UserController::class, 'todo'])->name('todo');
     Route::get('/welcome', [UserController::class, 'welcome']);
