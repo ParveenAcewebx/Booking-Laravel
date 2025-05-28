@@ -49,7 +49,7 @@
 				<div class="card user-profile-list">
 					<div class="card-body">
 						<div class="dt-responsive table-responsive">
-							<table id="form-list-table" class="table nowrap">
+							<table id="user-list-table" class="table nowrap">
 								<thead>
 									<tr>
 										<th>Name</th>
@@ -72,13 +72,11 @@
 											<span class="badge badge-light-success">Active</span>
 											<div class="overlay-edit">
                       						<a href="{{route('form.edit', [$form->id])}}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit Form" ><i class="fas fa-pencil-alt"></i></a>
-											@can('manage')
 											<form action="{{ route('form.delete', [$form->id]) }}" method="POST" id="deleteForm-{{$form->id}}">
 												<input type="hidden" name="_method" value="DELETE">
 												@csrf
 												<button onclick="return deleteForm({{$form->id}})" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Form"><i class="feather icon-trash-2"></i></button>
                                            </form>
-										   @endcan
 											</div>
 										</td>
 									</tr>
