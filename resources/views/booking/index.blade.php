@@ -11,6 +11,9 @@
 							<h5>All Bookings</h5>
 						</div>
 						<ul class="breadcrumb">
+							<li class="breadcrumb-item"><a href="{{route('home') }}"><i class="feather icon-home"></i></a></li>
+							<li class="breadcrumb-item"><a href="#!">Booking</a></li>
+							<li class="breadcrumb-item"><a href="#!">All Bookings</a></li>
 							<li class="breadcrumb-item"><a href="{{route('dashboard') }}"><i class="feather icon-home"></i></a></li>
 							<li class="breadcrumb-item"><a href="{{route('booking.list') }}">Booking</a></li>
 							<li class="breadcrumb-item"><a href="{{route('booking.list') }}">All Bookings</a></li>
@@ -76,12 +79,20 @@
                                                         @csrf
                                                         <button onclick="return deleteBooking({{$booking->id}})" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Booking"><i class="feather icon-trash-2"></i></button>
                                                     </form>
+
 													@endcan
 												</div>
 											</td>
 										</tr>
 									@endforeach
 								</tbody>
+								<tfoot>
+									<tr>
+										<th>Name</th>
+										<th>Start date</th>
+										<th>Status</th>
+									</tr>
+								</tfoot>
 							</table>
 						</div>
 					</div>

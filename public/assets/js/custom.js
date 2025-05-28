@@ -380,6 +380,23 @@ jQuery(function($) {
       ticks = 1;
       setCookie("modelopen", ticks, 1);
     }
+    $('#exampleModal').on('show.bs.modal', function(event) {
+      var button = $(event.relatedTarget)
+      var recipient = button.data('whatever')
+      var modal = $(this)
+      modal.find('.modal-title').text('New message to ' + recipient)
+      modal.find('.modal-body input').val(recipient)
+    });
+  
+    jQuery(window).on('load', function() {
+      jQuery('#mymodelsformessage').click();
+    });
+    // DataTable For Users Lists
+    $('#user-list-table').DataTable();
+    // DataTable For Forms Lists
+    $('#form-list-table').DataTable();
+    // DataTable For Booking Lists
+    $('#booking-list-table').DataTable();
   }
 
   $('#exampleModal').on('show.bs.modal', function(event) {

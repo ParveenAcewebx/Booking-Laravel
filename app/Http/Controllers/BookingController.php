@@ -24,6 +24,16 @@ class BookingController extends Controller
     }
 
     public function bookingAdd(){
+
+        return view('booking.add');
+    }
+
+    public function bookingSave(Request $request)
+    {
+        // Validate input data
+        $request->validate([
+            'service' => 'required|string|max:255'        
+        ]);
         $allforms = Bookingform::all();
         $alluser  = User::all();
         return view('booking.add', ['allforms' => $allforms,'alluser'=>$alluser]);
@@ -43,6 +53,14 @@ class BookingController extends Controller
         // Save booking data to the database
         $booking = Booking::create([
             'service' => $request->service,
+            'booking_form_id' => '1',
+            'customer_id' => '1',
+            'booking_datetime' => '2025-02-11 16:42:00',
+            'booking_data' => 'No Data',
+            'selected_staff' => 'No Staff',
+            'customer_id' => '1',
+        ]);
+    
             'booking_form_id' => $request->booking_form_id,
             'customer_id' => $request->customer_id,
             'booking_datetime' => $request->booking_datetime,
@@ -56,6 +74,31 @@ class BookingController extends Controller
         } else {
             return redirect()->back()->with('error', 'It failed. Please try again.');
         }
+    } 
+    
+    public function bookingEdit($id=null)
+    {
+        if($id==null){
+            $id= Auth::id();
+        }
+        $booking = Booking::findOrFail($id);
+        return view('booking.edit', ['booking' => $booking]);
+    }
+
+    public function bookingUpdate(Request $request, $id=null)
+    {
+        $request->validate([
+            'service' => 'required|string|max:255'        
+        ]);
+    
+        $booking = Booking::findOrFail($id);
+    
+        // Update booking details
+        $booking->update([
+            'service' => $request->service
+        ]);
+        return redirect('/bookings')->with('success', 'Booking updated successfully!');
+    }
     }
     
     public function bookingEdit($id)
@@ -94,8 +137,6 @@ class BookingController extends Controller
     
         return redirect()->route('booking.list')->with('success', 'Booking updated successfully.');
     }
-    
-
     public function bookingDelete($id) {
         $booking = Booking::find($id);
         $booking->delete();
