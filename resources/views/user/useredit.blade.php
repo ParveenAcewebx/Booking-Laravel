@@ -12,7 +12,7 @@
                             <h5 class="m-b-10">User Edit</h5>
                         </div>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{route('home') }}"><i class="feather icon-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="{{route('dashboard') }}"><i class="feather icon-home"></i></a></li>
                             <li class="breadcrumb-item"><a href="/user">Users</a></li>
                             <li class="breadcrumb-item"><a href="#!">User Edit</a></li>
                         </ul>
@@ -97,6 +97,30 @@
                                             <input type="password" class="form-control" name="password_confirmation" placeholder="Confirm Password">
                                             @error('password')
                                             <div class="error">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Role</label>
+                                            <select class="form-control" name="role">
+                                                @foreach($allRoles as $role)
+                                                    @if(Auth::id() == $user->id)
+                                                        @if($role->id == $currentRole)
+                                                                <option value="{{ $role->id }}">
+                                                                    {{ $role->name }}
+                                                                </option>
+                                                        @endif
+                                                    @else
+                                                        <option value="{{ $role->id }}" 
+                                                                @if($role->id == $currentRole) selected @endif>
+                                                                {{ $role->name }}
+                                                        </option>
+                                                    @endif    
+                                                @endforeach 
+                                            </select>
+                                            @error('role')
+                                                <div class="error">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>

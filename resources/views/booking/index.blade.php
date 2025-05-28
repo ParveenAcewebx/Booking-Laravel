@@ -14,6 +14,9 @@
 							<li class="breadcrumb-item"><a href="{{route('home') }}"><i class="feather icon-home"></i></a></li>
 							<li class="breadcrumb-item"><a href="#!">Booking</a></li>
 							<li class="breadcrumb-item"><a href="#!">All Bookings</a></li>
+							<li class="breadcrumb-item"><a href="{{route('dashboard') }}"><i class="feather icon-home"></i></a></li>
+							<li class="breadcrumb-item"><a href="{{route('booking.list') }}">Booking</a></li>
+							<li class="breadcrumb-item"><a href="{{route('booking.list') }}">All Bookings</a></li>
 						</ul>
 						@if(session('success'))
                         <div id="exampleModalCenter" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -70,11 +73,14 @@
                                                         <a href="{{ route('booking.edit', [$booking->id]) }}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit Booking">
                                                             <i class="fas fa-pencil-alt"></i>
                                                         </a>
+														@can('manage')
                                                     <form action="{{route('booking.delete', [$booking->id])}}" method="POST" id="deleteBooking-{{$booking->id}}">
                                                         <input type="hidden" name="_method" value="DELETE">
                                                         @csrf
                                                         <button onclick="return deleteBooking({{$booking->id}})" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Booking"><i class="feather icon-trash-2"></i></button>
                                                     </form>
+
+													@endcan
 												</div>
 											</td>
 										</tr>

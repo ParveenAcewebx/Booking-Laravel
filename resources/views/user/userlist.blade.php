@@ -13,7 +13,7 @@
 							<h5>All Users</h5>
 						</div>
 						<ul class="breadcrumb">
-							<li class="breadcrumb-item"><a href="{{route('home') }}"><i class="feather icon-home"></i></a></li>
+							<li class="breadcrumb-item"><a href="{{route('dashboard') }}"><i class="feather icon-home"></i></a></li>
 							<li class="breadcrumb-item"><a href="#!">User</a></li>
 							<li class="breadcrumb-item"><a href="#!">All Users</a></li>
 						</ul>
@@ -80,25 +80,32 @@
 														<i class="fas fa-pencil-alt"></i>
 													</a>
 												@endif
+												@can('manage')
 												<form action="{{route('user.delete', [$user->id])}}" method="POST" id="deleteUser-{{$user->id}}">
 													<input type="hidden" name="_method" value="DELETE">
 													@csrf
 													<button onclick="return deleteUser({{$user->id}})" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete User"><i class="feather icon-trash-2"></i></button>
                            						</form>
+												@endcan
 												</div>
 											</td>
 										</tr>
 									@endforeach
 
 								</tbody>
-								<tfoot>
+								<!-- <tfoot>
 									<tr>
 										<th>Name</th>
 										<th>Start date</th>
 										<th>Status</th>
 									</tr>
-								</tfoot>
+								</tfoot> -->
 							</table>
+							<script>
+								// DataTable start
+								$('#user-list-table').DataTable();
+								// DataTable end
+							</script>
 						</div>
 					</div>
 				</div>
