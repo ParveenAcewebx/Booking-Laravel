@@ -96,7 +96,11 @@ class UserController extends Controller
         if ($request->password) {
             $user->update(['password' => bcrypt($request->password)]);
         }
-    
+
+        $userRole=Role::find($request->role);
+        $user->roles()->detach();
+        $user->assignRole($userRole);
+        return back()->with('success', 'User updated successfully!');
         return redirect('/user')->with('success', 'User updated successfully!');
     }
     
@@ -222,5 +226,31 @@ class UserController extends Controller
             ? redirect()->route('login')->with('status', 'Your password has been reset!')
             : back()->withErrors(['email' => 'There was an error resetting your password.']);
     }
-   
+   public function userrole(){
+        $adminRole = Role::firstOrCreate(['name' => 'Administrator']);
+        $staffRole = Role::firstOrCreate(['name' => 'Staff']);
+        $bookingRole = Role::firstOrCreate(['name' => 'Booking Manager']);
+        $customerRole = Role::firstOrCreate(['name' => 'Customer']);
+
+        // Create permissions
+        $editPermission = Permission::firstOrCreate(['name' => 'edit']);
+        $managePermission = Permission::firstOrCreate(['name' => 'manage']);
+        $viewPermission = Permission::firstOrCreate(['name' => 'view']);
+
+        // Assign all permissions to the admin role
+        $adminRole->givePermissionTo($editPermission, $managePermission, $viewPermission);
+
+        // Assign 'view' permission to staff
+        $staffRole->givePermissionTo($viewPermission);
+
+        // Assign 'edit' and 'view' permissions to the booking manager
+        $bookingRole->givePermissionTo($editPermission, $viewPermission);
+        $user = User::where('id', User::min('id'))->first();
+        echo $user->id;
+        $user->assignRole($adminRole);
+        $users = User::where('id', '!=', $user->id)->get();
+        foreach ($users as $userToUpdate) {
+            $userToUpdate->assignRole($bookingRole);
+        }
+ }
 }
