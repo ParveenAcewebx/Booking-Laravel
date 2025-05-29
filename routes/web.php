@@ -67,7 +67,8 @@ Route::middleware('auth')->group(function () {
     });
 
     // Other general routes (no specific permissions required)
-    Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('permission:edit|manage|view')->name('dashboard');
+    // Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('permission:edit|manage|view')->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/logout', [UserController::class, 'logout'])->name('logout');
     Route::get('/todo', [UserController::class, 'todo'])->name('todo');
     Route::get('/form', [FormController::class, 'index'])->name('form.list');
