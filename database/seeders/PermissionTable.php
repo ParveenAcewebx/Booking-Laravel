@@ -16,12 +16,10 @@ class PermissionTable extends Seeder
     {
         $permissions = ['view', 'edit', 'manage'];
 
-        foreach ($permissions as $index => $permission) {
-            Permission::create([
-                'id' => $index + 1,
-                'name' => $permission,
-                'guard_name' => 'web',
-            ]);
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(
+                ['name' => $permission, 'guard_name' => 'web']
+            );
         }
     }
 }
