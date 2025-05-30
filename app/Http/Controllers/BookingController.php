@@ -39,42 +39,42 @@ class BookingController extends Controller
         return view('booking.add', ['allforms' => $allforms,'alluser'=>$alluser]);
     }
 
-    public function bookingSave(Request $request)
-    {  
-        // Validate input data
-        $request->validate([
-            'selected_staff' => 'required', 
-            'service' => 'required',        
-            'booking_datetime' => 'required'
-        ]);  
-        // Process booking_data from the hidden field
-        $bookingData = json_decode($request->booking_data, true);
+    // public function bookingSave(Request $request)
+    // {  
+    //     // Validate input data
+    //     $request->validate([
+    //         'selected_staff' => 'required', 
+    //         'service' => 'required',        
+    //         'booking_datetime' => 'required'
+    //     ]);  
+    //     // Process booking_data from the hidden field
+    //     $bookingData = json_decode($request->booking_data, true);
     
-        // Save booking data to the database
-        $booking = Booking::create([
-            'service' => $request->service,
-            'booking_form_id' => '1',
-            'customer_id' => '1',
-            'booking_datetime' => '2025-02-11 16:42:00',
-            'booking_data' => 'No Data',
-            'selected_staff' => 'No Staff',
-            'customer_id' => '1',
-        ]);
+    //     // Save booking data to the database
+    //     $booking = Booking::create([
+    //         'service' => $request->service,
+    //         'booking_form_id' => '1',
+    //         'customer_id' => '1',
+    //         'booking_datetime' => '2025-02-11 16:42:00',
+    //         'booking_data' => 'No Data',
+    //         'selected_staff' => 'No Staff',
+    //         'customer_id' => '1',
+    //     ]);
     
-            'booking_form_id' => $request->booking_form_id,
-            'customer_id' => $request->customer_id,
-            'booking_datetime' => $request->booking_datetime,
-            'booking_data' => json_encode($bookingData), // Store JSON data
-            'selected_staff' => $request->selected_staff,
-        ]);
+    //         // 'booking_form_id' = $request->booking_form_id,
+    //         // 'customer_id' = $request->customer_id,
+    //         // 'booking_datetime' = $request->booking_datetime,
+    //         // 'booking_data' = json_encode($bookingData), // Store JSON data
+    //         // 'selected_staff' = $request->selected_staff,
+    //     // ]);
     
-        // Handle success or failure
-        if ($booking) {
-            return redirect('/bookings')->with('success', 'Booking Added successfully!');
-        } else {
-            return redirect()->back()->with('error', 'It failed. Please try again.');
-        }
-    } 
+    //     // Handle success or failure
+    //     if ($booking) {
+    //         return redirect('/bookings')->with('success', 'Booking Added successfully!');
+    //     } else {
+    //         return redirect()->back()->with('error', 'It failed. Please try again.');
+    //     }
+    // } 
     
     public function bookingEdit($id=null)
     {
@@ -101,45 +101,45 @@ class BookingController extends Controller
     }
     }
     
-    public function bookingEdit($id)
-    {
-        $booking = Booking::findOrFail($id);
-        $dynamicFields = [];
-        if (!empty($booking->booking_data)) {
-            $dynamicFields = json_decode($booking->booking_data, true);
+    // public function bookingEdit($id)
+    // {
+    //     $booking = Booking::findOrFail($id);
+    //     $dynamicFields = [];
+    //     if (!empty($booking->booking_data)) {
+    //         $dynamicFields = json_decode($booking->booking_data, true);
     
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                dd('JSON decode failed', json_last_error_msg(), $booking->booking_data);
-            }
-        }
+    //         if (json_last_error() !== JSON_ERROR_NONE) {
+    //             dd('JSON decode failed', json_last_error_msg(), $booking->booking_data);
+    //         }
+    //     }
     
-        $staffList = User::all();
-        $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
+    //     $staffList = User::all();
+    //     $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
     
-        return view('booking.edit', compact('booking', 'dynamicFields', 'staffList'));
-    }
+    //     return view('booking.edit', compact('booking', 'dynamicFields', 'staffList'));
+    // }
     
-    public function bookingUpdate(Request $request, $id)
-    {
-        $booking = Booking::findOrFail($id);
+    // public function bookingUpdate(Request $request, $id)
+    // {
+    //     $booking = Booking::findOrFail($id);
     
-        // Extract dynamic fields
-        $dynamicFields = $request->input('dynamic', []);
+    //     // Extract dynamic fields
+    //     $dynamicFields = $request->input('dynamic', []);
     
-        // Save updated form data as JSON
-        $booking->booking_data = json_encode($dynamicFields);
+    //     // Save updated form data as JSON
+    //     $booking->booking_data = json_encode($dynamicFields);
     
-        // Save other fields
-        $booking->selected_staff = $request->input('staff');
-        $booking->booking_datetime = $request->input('booking_datetime');
+    //     // Save other fields
+    //     $booking->selected_staff = $request->input('staff');
+    //     $booking->booking_datetime = $request->input('booking_datetime');
         
-        $booking->save();
+    //     $booking->save();
     
-        return redirect()->route('booking.list')->with('success', 'Booking updated successfully.');
-    }
-    public function bookingDelete($id) {
-        $booking = Booking::find($id);
-        $booking->delete();
-        return redirect('/bookings')->with('success', 'Booking Delete successfully!');
-    }
-}
+    //     return redirect()->route('booking.list')->with('success', 'Booking updated successfully.');
+    // }
+    // public function bookingDelete($id) {
+    //     $booking = Booking::find($id);
+    //     $booking->delete();
+    //     return redirect('/bookings')->with('success', 'Booking Delete successfully!');
+    // }
+
