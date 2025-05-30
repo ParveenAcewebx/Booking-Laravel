@@ -11,7 +11,7 @@
                             <h5 class="m-b-10">Add Booking</h5>
                         </div>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{route('home') }}"><i class="feather icon-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="{{route('booking.list') }}"><i class="feather icon-home"></i></a></li>
                             <li class="breadcrumb-item"><a href="{{ route('booking.list')}}">Booking</a></li>
                             <li class="breadcrumb-item"><a href="">Add Booking</a></li>
                         </ul>
