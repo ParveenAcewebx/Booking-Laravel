@@ -11,9 +11,6 @@
 							<h5>All Bookings</h5>
 						</div>
 						<ul class="breadcrumb">
-							<li class="breadcrumb-item"><a href="{{route('home') }}"><i class="feather icon-home"></i></a></li>
-							<li class="breadcrumb-item"><a href="#!">Booking</a></li>
-							<li class="breadcrumb-item"><a href="#!">All Bookings</a></li>
 							<li class="breadcrumb-item"><a href="{{route('dashboard') }}"><i class="feather icon-home"></i></a></li>
 							<li class="breadcrumb-item"><a href="{{route('booking.list') }}">Booking</a></li>
 							<li class="breadcrumb-item"><a href="{{route('booking.list') }}">All Bookings</a></li>
