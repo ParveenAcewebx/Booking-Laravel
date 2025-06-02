@@ -11,24 +11,16 @@
                             <h5 class="m-b-10">Booking Edit</h5>
                         </div>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{route('home') }}"><i class="feather icon-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="feather icon-home"></i></a></li>
                             <li class="breadcrumb-item"><a href="/user">Bookings</a></li>
-                            <li class="breadcrumb-item"><a href="#!">Booking Edit</a></li>
-                            <h5 class="m-b-10">Edit Booking</h5>
-                        </div>
-                        <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{route('dashboard') }}"><i class="feather icon-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="/user">Bookings</a></li>
-                            <li class="breadcrumb-item"><a href="#!">Edit Booking</a></li>
+                            <li class="breadcrumb-item">Edit Booking</li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- [ breadcrumb ] end -->
+
         <!-- [ Main Content ] start -->
-        <form action="{{ route('booking.update', $booking->id) }}" method="POST" enctype="multipart/form-data">
-            @csrf
         <form action="{{ route('booking.update', $booking->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             <!-- @method('PUT') -->
@@ -38,49 +30,34 @@
                         <div class="card-header">
                             <h5>User Information</h5>
                             @if(session('success'))
-                                <div class="alert alert-success" role="alert">
-                                    {{ session('success') }}   
-                                </div>
+                                <div class="alert alert-success">{{ session('success') }}</div>
                             @endif
                             @if(session('error'))
-                                <div class="alert alert-danger" role="alert">
-                                    {{ session('error') }}
-                                </div>
+                                <div class="alert alert-danger">{{ session('error') }}</div>
                             @endif
                         </div>
                         <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Name</label>
-                                            <input type="text" class="form-control" name="service" value="{{ old('service', $booking->service) }}" placeholder="service">
-                                            @error('service')
-                                            <div class="error">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Service</label>
+                                        <input type="text" class="form-control" name="service" value="{{ old('service', $booking->service) }}" placeholder="Service">
+                                        @error('service')
+                                            <div class="error text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Update</button>
-                        </div>
-                    </div>	
-                </div>
-                <!-- [ Form Validation ] end -->
-            </div>
-        </form>
-        <!-- [ Main Content ] end -->
-    </div>
-</section>
-@endsection
+                            </div>
+
                             <h5>Booking Information</h5>
-                        </div>
-                        <div class="card-body">
+
                             <!-- Dynamic Fields -->
                             <div id="dynamic-form-fields">
                                 @if(!empty($dynamicFields) && is_array($dynamicFields))
                                     @foreach($dynamicFields as $key => $value)
                                         <div class="form-group">
                                             <label class="form-label">{{ ucfirst($key) }}</label>
-                                            @if(is_array($value)) <!-- Handle checkbox/radio options -->
+                                            @if(is_array($value))
                                                 @foreach($value as $subKey => $subValue)
                                                     <div class="form-check">
                                                         <input 
@@ -92,11 +69,11 @@
                                                         <label class="form-check-label">{{ ucfirst($subValue) }}</label>
                                                     </div>
                                                 @endforeach
-                                            @elseif(is_string($value)) <!-- Handle text input -->
+                                            @elseif(is_string($value))
                                                 <input type="text" class="form-control" name="dynamic[{{ $key }}]" value="{{ old('dynamic.' . $key, $value) }}">
                                             @endif
                                             @error("dynamic.{$key}")
-                                                <div class="error">{{ $message }}</div>
+                                                <div class="error text-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     @endforeach
@@ -105,7 +82,7 @@
                                 @endif
                             </div>
 
-                            <!-- Additional Fields -->
+                            <!-- Staff Field -->
                             <div class="form-group">
                                 <label class="form-label">Staff</label>
                                 <select class="form-control" name="staff">
@@ -116,18 +93,20 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            <!-- Booking Date -->
                             <div class="form-group">
                                 <label class="form-label">Booking Date and Time</label>
                                 <input type="datetime-local" class="form-control" name="booking_datetime" value="{{ old('booking_datetime', $booking->booking_datetime) }}">
                             </div>
 
-                            <!-- Submit Button -->
                             <button type="submit" class="btn btn-primary">Update</button>
                         </div>
                     </div>    
                 </div>
             </div>
         </form>
+        <!-- [ Main Content ] end -->
     </div>
 </section>
 
