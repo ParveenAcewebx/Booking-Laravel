@@ -20150,6 +20150,9 @@ strong {
     margin-bottom: 30px;
     margin-top: 60px;
 }
+.form-builder-dialog{
+    z-index: 99999 !important;
+}
 
 .page-header h5 {
     margin-bottom: 8px;
