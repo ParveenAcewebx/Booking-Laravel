@@ -2,24 +2,6 @@
 @section('content')
 <section class="pcoded-main-container">
     <div class="pcoded-content">
-        <!-- [ breadcrumb ] start -->
-        <div class="page-header">
-            <div class="page-block">
-                <div class="row align-items-center">
-                    <div class="col-md-12">
-                        <div class="page-header-title">
-                            <h5 class="m-b-10">Add Booking</h5>
-                        </div>
-                        <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{route('booking.list') }}"><i class="feather icon-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('booking.list')}}">Booking</a></li>
-                            <li class="breadcrumb-item"><a href="">Add Booking</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- [ breadcrumb ] end -->
         <!-- [ Main Content ] start -->
         <div class="row">
             <!-- [ Form Validation ] start -->
@@ -146,10 +128,6 @@
             <!-- [ Form Validation ] end -->
         </div>
         <!-- [ Main Content ] end -->
-    </div>
-</section>
-@endsection
-        </div>
     </div>
 </section>
 @endsection

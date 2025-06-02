@@ -25,7 +25,9 @@ class BookingController extends Controller
 
     public function bookingAdd(){
 
-        return view('booking.add');
+        $allforms = Bookingform::all();
+        $alluser  = User::all();
+        return view('booking.add', ['allforms' => $allforms,'alluser'=>$alluser]);
     }
 
     public function bookingSave(Request $request)
