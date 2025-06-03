@@ -35,7 +35,6 @@ class BookingController extends Controller
         // Validate input data
         $request->validate([
             'selected_staff' => 'required', 
-            'service' => 'required',        
             'booking_datetime' => 'required'
         ]);  
         // Process booking_data from the hidden field
@@ -43,7 +42,6 @@ class BookingController extends Controller
     
         // Save booking data to the database
         $booking = Booking::create([
-            'service' => $request->service,
             'booking_form_id' => $request->booking_form_id,
             'customer_id' => $request->customer_id,
             'booking_datetime' => $request->booking_datetime,
@@ -59,22 +57,27 @@ class BookingController extends Controller
         }
     } 
 
-    public function bookingEdit($id)
-    {
-        $booking = Booking::findOrFail($id);
-        $dynamicFields = [];
-        if (!empty($booking->booking_data)) {
-            $dynamicFields = json_decode($booking->booking_data, true);
-    
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                dd('JSON decode failed', json_last_error_msg(), $booking->booking_data);
-            }
-        }
-        $staffList = User::all();
-        $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
-    
-        return view('booking.edit', compact('booking', 'dynamicFields', 'staffList'));
+public function bookingEdit($id)
+{
+    $booking = Booking::with('form')->findOrFail($id);
+
+    $dynamicValues = json_decode($booking->booking_data, true);
+    $formStructure = json_decode($booking->form->data, true);
+
+    $fieldsWithValues = [];
+
+    foreach ($formStructure as $field) {
+        $name = $field['name'] ?? null;
+        $field['value'] = $dynamicValues[$name] ?? null;
+        $fieldsWithValues[] = $field;
     }
+
+    $staffList = User::all();
+    $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
+
+    return view('booking.edit', compact('booking', 'fieldsWithValues', 'staffList'));
+}
+
     
     public function bookingUpdate(Request $request, $id)
     {

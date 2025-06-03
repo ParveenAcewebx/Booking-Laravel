@@ -37,42 +37,44 @@
                             @endif
                         </div>
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Service</label>
-                                        <input type="text" class="form-control" name="service" value="{{ old('service', $booking->service) }}" placeholder="Service">
-                                        @error('service')
-                                            <div class="error text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-
                             <h5>Booking Information</h5>
-
                             <!-- Dynamic Fields -->
                             <div id="dynamic-form-fields">
-                                @if(!empty($dynamicFields) && is_array($dynamicFields))
-                                    @foreach($dynamicFields as $key => $value)
+                                @if(!empty($fieldsWithValues) && is_array($fieldsWithValues))
+                                    @foreach($fieldsWithValues as $field)
                                         <div class="form-group">
-                                            <label class="form-label">{{ ucfirst($key) }}</label>
-                                            @if(is_array($value))
-                                                @foreach($value as $subKey => $subValue)
+                                            <label class="form-label">{{ $field['label'] ?? ucfirst($field['name']) }}</label>
+
+                                            @if($field['type'] === 'text')
+                                                <input type="text" class="form-control" name="dynamic[{{ $field['name'] }}]" value="{{ old('dynamic.' . $field['name'], $field['value']) }}">
+
+                                            @elseif($field['type'] === 'textarea')
+                                                <textarea class="form-control" name="dynamic[{{ $field['name'] }}]">{{ old('dynamic.' . $field['name'], $field['value']) }}</textarea>
+
+                                            @elseif($field['type'] === 'select')
+                                                <select class="form-control" name="dynamic[{{ $field['name'] }}]">
+                                                    @foreach($field['values'] as $option)
+                                                        <option value="{{ $option['value'] }}" {{ $option['value'] == $field['value'] ? 'selected' : '' }}>
+                                                            {{ $option['label'] }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+
+                                            @elseif($field['type'] === 'radio-group')
+                                                @foreach($field['values'] as $option)
                                                     <div class="form-check">
                                                         <input 
-                                                            type="{{ is_bool($subValue) ? 'checkbox' : 'radio' }}" 
+                                                            type="radio" 
                                                             class="form-check-input" 
-                                                            name="dynamic[{{ $key }}][{{ $subKey }}]" 
-                                                            value="{{ $subValue }}" 
-                                                            @if(in_array($subValue, old('dynamic.' . $key, []))) checked @endif>
-                                                        <label class="form-check-label">{{ ucfirst($subValue) }}</label>
+                                                            name="dynamic[{{ $field['name'] }}]" 
+                                                            value="{{ $option['value'] }}" 
+                                                            {{ $option['value'] == $field['value'] ? 'checked' : '' }}>
+                                                        <label class="form-check-label">{{ $option['label'] }}</label>
                                                     </div>
                                                 @endforeach
-                                            @elseif(is_string($value))
-                                                <input type="text" class="form-control" name="dynamic[{{ $key }}]" value="{{ old('dynamic.' . $key, $value) }}">
                                             @endif
-                                            @error("dynamic.{$key}")
+
+                                            @error("dynamic.{$field['name']}")
                                                 <div class="error text-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -81,6 +83,7 @@
                                     <p>No dynamic fields available.</p>
                                 @endif
                             </div>
+
 
                             <!-- Staff Field -->
                             <div class="form-group">
