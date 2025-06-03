@@ -42,17 +42,6 @@
                         <form action="{{ route('booking.save') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Service</label>
-                                        <input type="text" class="form-control" name="service" placeholder="Service">
-                                        @error('service')
-                            <div class="alert alert-success">{{ session('success') }}</div>
-                        @endif
-                        @if(session('error'))
-                            <div class="alert alert-danger">{{ session('error') }}</div>
-                        @endif
-                    </div>
                     <div class="card-body">
                         <!-- Modal -->
                         <div class="modal fade" id="formTemplateModal" tabindex="-1" aria-labelledby="formTemplateModalLabel" aria-hidden="true">
@@ -60,9 +49,6 @@
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="formTemplateModalLabel">Select Form Template</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
                                     </div>
                                     <div class="modal-body">
                                         <select class="form-control" id="formTemplateSelect">
@@ -73,7 +59,6 @@
                                         </select>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                         <button type="button" id="loadTemplateBtn" class="btn btn-primary">Load Template</button>
                                     </div>
                                 </div>
@@ -98,15 +83,6 @@
                                         </select>
                                         @error('selected_staff')
                                         <div class="error">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4"> 
-                                    <div class="form-group mt-3">
-                                        <label>Service</label>
-                                        <input type="text" class="form-control" name="service" placeholder="Enter Service">
-                                        @error('service')
-                                            <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>

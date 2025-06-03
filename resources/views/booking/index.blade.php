@@ -48,7 +48,6 @@
 							<table id="booking-list-table" class="table nowrap">
 								<thead>
 									<tr>
-										<th>Service</th>
 										<th>Start date</th>
 										<th>Status</th>
 									</tr>
@@ -56,13 +55,6 @@
 								<tbody>
                                 	@foreach($allbooking as $booking)
 										<tr>
-											<td>
-												<div class="d-inline-block align-middle">
-													<div class="d-inline-block">
-														<h6 class="m-b-0">{{ $booking->service }}</h6>
-													</div>
-												</div>
-											</td>
 											<td>{{ $booking->created_at }}</td>
 											<td>
 												<span class="badge badge-light-success">{{ $booking->status }}</span>
@@ -85,7 +77,6 @@
 								</tbody>
 								<tfoot>
 									<tr>
-										<th>Name</th>
 										<th>Start date</th>
 										<th>Status</th>
 									</tr>

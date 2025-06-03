@@ -18,4 +18,10 @@ class Booking extends Model
         'selected_staff',
         'status'
     ];
+
+    public function form()
+    {
+        return $this->belongsTo(\App\Models\Bookingform::class, 'booking_form_id');
+    }
+
 }
