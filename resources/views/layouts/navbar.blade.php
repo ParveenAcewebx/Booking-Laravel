@@ -90,20 +90,21 @@
                     </li>
                     @endcanany
 
-                    {{-- Role & Permission Management --}}
+                    {{-- Role Management --}}
                     @canany(['view roles', 'create roles', 'edit roles', 'delete roles'])
                     <li class="nav-item pcoded-hasmenu">
                         <a href="#!" class="nav-link">
                             <span class="pcoded-micon"><i class="fas fa-shield-alt"></i></span>
-                            <span class="pcoded-mtext">Manage Role & Permission</span>
+                            <span class="pcoded-mtext">Manage Role</span>
                         </a>
                         <ul class="pcoded-submenu">
-                            @can('view roles')
-                            <li><a href="{{ route('roles.list') }}">Roles List</a></li>
-                            @endcan
-                            @can('create roles')
+                             @can('create roles')
                             <li><a href="{{ route('roles.add') }}">Add Role</a></li>
                             @endcan
+                            @can('view roles')
+                            <li><a href="{{ route('roles.list') }}">All Roles</a></li>
+                            @endcan
+                           
                         </ul>
                     </li>
                     @endcanany

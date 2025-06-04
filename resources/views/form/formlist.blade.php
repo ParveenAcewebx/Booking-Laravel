@@ -8,7 +8,7 @@
 		<div class="page-header">
 			<div class="page-block">
 				<div class="row align-items-center">
-					<div class="col-md-12">
+					<div class="col-md-10">
 						<div class="page-header-title">
 							<h5>All Forms</h5>
 						</div>
@@ -39,6 +39,13 @@
 						<button  style="display:none;" id="mymodelsformessage" type="button" class="btn  btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Launch demo modal</button>
                         @endif
 					</div>
+					<div class="col-md-2">
+                        <div class="page-header-titles float-right">
+							@can('create forms')
+                            <a href="{{ route('form.add')}}" class="btn btn-primary float-right p-2">Add Form</a>
+							@endcan
+                        </div>
+                    </div>
 				</div>
 			</div>
 		</div>

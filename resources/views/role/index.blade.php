@@ -21,7 +21,7 @@
                     <div class="col-md-2">
                         <div class="page-header-titles float-right">
                             @can('create roles')
-                            <a href="{{ route('roles.add') }}" class="btn btn-primary float-right">Add Role</a>
+                            <a href="{{ route('roles.add') }}" class="btn btn-primary float-right p-2">Add Role</a>
                             @endcan
                         </div>
                     </div>
