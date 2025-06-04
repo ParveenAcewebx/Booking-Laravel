@@ -59,16 +59,17 @@
 											<td>
 												<span class="badge badge-light-success">{{ $booking->status }}</span>
 												<div class="overlay-edit">
+													@can('edit bookings')
                                                         <a href="{{ route('booking.edit', [$booking->id]) }}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit Booking">
                                                             <i class="fas fa-pencil-alt"></i>
                                                         </a>
-														@can('manage')
+														@endcan
+														@can('delete bookings')
                                                     <form action="{{route('booking.delete', [$booking->id])}}" method="POST" id="deleteBooking-{{$booking->id}}">
                                                         <input type="hidden" name="_method" value="DELETE">
                                                         @csrf
                                                         <button onclick="return deleteBooking({{$booking->id}})" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Booking"><i class="feather icon-trash-2"></i></button>
                                                     </form>
-
 													@endcan
 												</div>
 											</td>

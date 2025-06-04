@@ -20,12 +20,12 @@ class RoleHasPermissionsTable extends Seeder
         $admin->givePermissionTo(Permission::all());
 
         $staff = Role::findByName('Staff');
-        $staff->givePermissionTo(['view', 'edit']);
+        $staff->givePermissionTo(['view bookings', 'create bookings', 'delete bookings','edit bookings','view forms','create forms', 'delete forms','edit forms']);
 
         $manager = Role::findByName('Booking Manager');
-        $manager->givePermissionTo(['view', 'manage']);
+        $manager->givePermissionTo(['view bookings', 'create bookings', 'delete bookings','edit bookings']);
 
         $customer = Role::findByName('Customer');
-        $customer->givePermissionTo(['view']);
+        $customer->givePermissionTo(['view bookings','view forms','view roles','view users']);
     }
 }
