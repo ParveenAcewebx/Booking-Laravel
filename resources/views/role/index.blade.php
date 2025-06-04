@@ -107,6 +107,7 @@
                                             <span class="badge badge-danger">Inactive</span>
                                             @endif
                                         </td>
+                                          @canany(['delete roles', 'edit roles']) 
                                         <td>
                                             <div class="overlay-edit">
                                                 @can('edit roles')
@@ -125,6 +126,7 @@
                                                 @endcan
                                             </div>
                                         </td>
+                                        @endcanany
                                     </tr>
                                     @endforeach
                                 </tbody>
