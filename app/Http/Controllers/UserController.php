@@ -31,7 +31,7 @@ class UserController extends Controller
 
     public function userAdd()
     {
-        $allRole = Role::all();
+        $allRole = Role::where('status', 1)->get();
         return view('user.usercreate', ['allRoles' => $allRole]);
     }
 
@@ -76,12 +76,26 @@ class UserController extends Controller
         if ($id == null) {
             $id = Auth::id();
         }
+
         $user = User::findOrFail($id);
 
         $user->unsetRelation('roles')->unsetRelation('permissions');
         $roles = $user->roles;
-        return view('user.useredit', ['user' => $user, 'allRoles' => Role::all(), 'currentRole' => $roles[0]->id]);
+
+        // Check if user has any roles assigned
+        $currentRole = null;
+        if ($roles->count() > 0) {
+            $currentRole = $roles[0]->id;
+        }
+
+        // Pass $currentRole (could be null) to view
+        return view('user.useredit', [
+            'user' => $user,
+            'allRoles' => Role::where('status', 1)->get(),
+            'currentRole' => $currentRole
+        ]);
     }
+
 
     public function userUpdate(Request $request, $id = null)
     {
