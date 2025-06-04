@@ -26,7 +26,7 @@
                 <div class="col-md-12 order-md-2">
                     <div class="card">
                         <div class="card-header">
-                            <h5>User Information</h5>
+                            <h5>Booking Edit</h5>
                             @if(session('success'))
                                 <div class="alert alert-success">{{ session('success') }}</div>
                             @endif
