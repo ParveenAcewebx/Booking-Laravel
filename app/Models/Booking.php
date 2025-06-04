@@ -23,5 +23,9 @@ class Booking extends Model
     {
         return $this->belongsTo(\App\Models\Bookingform::class, 'booking_form_id');
     }
-
+    
+    public function staff()
+    {
+        return $this->belongsTo(User::class, 'selected_staff');
+    }
 }
