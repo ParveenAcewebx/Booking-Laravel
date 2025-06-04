@@ -57,46 +57,44 @@ class BookingController extends Controller
         }
     } 
 
-public function bookingEdit($id)
-{
-    $booking = Booking::with('form')->findOrFail($id);
+    public function bookingEdit($id)
+    {
+        $booking = Booking::with(['form', 'staff'])->findOrFail($id);
 
-    $dynamicValues = json_decode($booking->booking_data, true);
-    $formStructure = json_decode($booking->form->data, true);
+        $dynamicValues = json_decode($booking->booking_data, true);
+        $formStructure = json_decode($booking->form->data, true);
 
-    $fieldsWithValues = [];
+        $fieldsWithValues = [];
 
-    foreach ($formStructure as $field) {
-        $name = $field['name'] ?? null;
-        $field['value'] = $dynamicValues[$name] ?? null;
-        $fieldsWithValues[] = $field;
+        foreach ($formStructure as $field) {
+            $name = $field['name'] ?? null;
+            $field['value'] = $dynamicValues[$name] ?? null;
+            $fieldsWithValues[] = $field;
+        }
+
+        $staffList = User::all();
+        $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
+
+        return view('booking.edit', compact('booking', 'fieldsWithValues', 'staffList'));
     }
 
-    $staffList = User::all();
-    $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
-
-    return view('booking.edit', compact('booking', 'fieldsWithValues', 'staffList'));
-}
-
-    
     public function bookingUpdate(Request $request, $id)
     {
         $booking = Booking::findOrFail($id);
-    
-        // Extract dynamic fields
+
+        // Save dynamic fields
         $dynamicFields = $request->input('dynamic', []);
-    
-        // Save updated form data as JSON
         $booking->booking_data = json_encode($dynamicFields);
-    
-        // Save other fields
+
+        // Save staff and datetime
         $booking->selected_staff = $request->input('staff');
         $booking->booking_datetime = $request->input('booking_datetime');
-        
+
         $booking->save();
-    
+
         return redirect()->route('booking.list')->with('success', 'Booking updated successfully.');
     }
+    
 
     public function bookingDelete($id) {
         $booking = Booking::find($id);
