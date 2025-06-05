@@ -104,7 +104,7 @@
 					<!-- Show Switch Back only for the impersonated user -->
 					<form method="POST" action="{{ route('user.switch.back') }}">
 						@csrf
-						<button type="submit" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Switch Back to {{ $currentUser->name }}">
+						<button type="submit" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Switch Back to {{ $loginUser->name }}">
 							<i class="feather icon-log-out"></i>
 						</button>
 					</form>
@@ -132,6 +132,4 @@
 			</li>
 		</ul>
 	</div>
-
-
 </header>

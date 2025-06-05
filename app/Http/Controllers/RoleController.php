@@ -1,23 +1,38 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
+
 class RoleController extends Controller
 {
     public function index()
     {
         $allroles = Role::with('permissions')->get();
         $allusers  = User::all();
-        return view('role.index', ['allroles' => $allroles,'allusers'=>$allusers]);
+        $loginId = session('previous_login_id');
+        $loginUser = null;
+
+        if ($loginId) {
+            $loginUser = User::find($loginId);
+        }
+        return view('role.index', ['allroles' => $allroles, 'allusers' => $allusers, 'loginUser' => $loginUser]);
     }
 
     public function roleAdd()
     {
         $roleGroups = config('constants.role_groups');
         $allusers  = User::all();
-        return view('role.add', compact('roleGroups','allusers'));
+        $loginId = session('previous_login_id');
+        $loginUser = null;
+
+        if ($loginId) {
+            $loginUser = User::find($loginId);
+        }
+        return view('role.add', compact('roleGroups', 'allusers', 'loginUser'));
     }
 
     public function store(Request $request)
@@ -55,9 +70,15 @@ class RoleController extends Controller
     {
         $allusers  = User::all();
         $role = Role::findOrFail($id);
+        $loginId = session('previous_login_id');
+        $loginUser = null;
+
+        if ($loginId) {
+            $loginUser = User::find($loginId);
+        }
         $rolePermissions = $role->permissions->pluck('name')->toArray();
         $roleGroups = config('constants.role_groups');
-        return view('role.edit', compact('role', 'roleGroups', 'rolePermissions','allusers'));
+        return view('role.edit', compact('role', 'roleGroups', 'rolePermissions', 'allusers','loginUser'));
     }
 
     public function roleUpdate(Request $request, $id)
@@ -75,8 +96,8 @@ class RoleController extends Controller
             ->exists();
         if ($exists) {
             return back()
-            ->withErrors(['name' => 'The name has already been taken.'])
-            ->withInput();
+                ->withErrors(['name' => 'The name has already been taken.'])
+                ->withInput();
         }
         $role->name = $request->name;
         $role->status = $request->has('status') ? 1 : 0;

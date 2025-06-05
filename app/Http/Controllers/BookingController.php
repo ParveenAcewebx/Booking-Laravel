@@ -21,14 +21,26 @@ class BookingController extends Controller
     public function index(){
         $allbooking = Booking::all();
         $allusers  = User::all();
-        return view('booking.index', ['allbooking' => $allbooking,'allusers'=>$allusers]);
+        $loginId = session('previous_login_id');
+        $loginUser = null;
+
+        if ($loginId) {
+            $loginUser = User::find($loginId);  
+        }
+        return view('booking.index', ['allbooking' => $allbooking,'allusers'=>$allusers,'loginUser'=>$loginUser]);
     }
 
     public function bookingAdd(){
 
         $alltemplates = BookingTemplate::all();
         $allusers  = User::all();
-        return view('booking.add', ['alltemplates' => $alltemplates,'allusers'=>$allusers,'alluser'=>$allusers]);
+        $loginId = session('previous_login_id');
+        $loginUser = null;
+
+        if ($loginId) {
+            $loginUser = User::find($loginId);  
+        }
+        return view('booking.add', ['alltemplates' => $alltemplates,'allusers'=>$allusers,'alluser'=>$allusers,'loginUser'=>$loginUser]);
     }
 
     public function bookingSave(Request $request)
@@ -65,8 +77,14 @@ class BookingController extends Controller
         }
         $staffList = User::all();
         $allusers = User::all();
+        $loginId = session('previous_login_id');
+        $loginUser = null;
+
+        if ($loginId) {
+            $loginUser = User::find($loginId);  
+        }
         $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
-        return view('booking.edit', compact('booking', 'fieldsWithValues', 'staffList','allusers'));
+        return view('booking.edit', compact('booking', 'fieldsWithValues', 'staffList','allusers','loginUser'));
     }
 
     public function bookingUpdate(Request $request, $id)
