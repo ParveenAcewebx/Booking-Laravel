@@ -1,5 +1,8 @@
 <?php
+
 namespace App\Http\Controllers;
+
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\form;
@@ -20,8 +23,16 @@ class UserController extends Controller
     public function index()
     {
         $alluser = User::all();
-        $currentUserId = Auth::id();
-        return view('user.index', ['alluser' => $alluser]);
+        $currentUser = Auth::user();
+
+        $originalUserId = session('impersonate_original_user') ?? Cookie::get('impersonate_original_user');
+        $loginId = session('previous_login_id');
+        $loginUser = null;
+
+        if ($loginId) {
+            $loginUser = User::find($loginId);  // Get user model for that ID
+        }
+        return view('user.index', compact('alluser', 'currentUser', 'originalUserId', 'loginUser'));
     }
 
     public function userAdd()
@@ -139,6 +150,9 @@ class UserController extends Controller
             if (Auth::user()->hasRole('Customer')) {
                 return redirect()->intended('/welcome');
             } else {
+                $currentId = Auth::user()->id;
+                session(['previous_login_id' => $currentId]);
+
                 return redirect()->intended('/');
             }
         }
@@ -176,6 +190,10 @@ class UserController extends Controller
     public function logout()
     {
         Auth::logout();
+        session()->forget(['impersonate_original_user', 'previous_login_id']);
+        Cookie::queue(Cookie::forget('impersonate_original_user'));
+        session()->flush();
+
         return redirect('/login');
     }
 
@@ -205,8 +223,8 @@ class UserController extends Controller
         $resetLink = route('password.reset', ['token' => $token]);
         Mail::send([], [], function ($message) use ($request, $resetLink) {
             $message->to($request->email)
-            ->subject('Reset Password')
-            ->setBody('Here is your reset password link: <a href="' . $resetLink . '">Click here to reset your password</a>', 'text/html');
+                ->subject('Reset Password')
+                ->setBody('Here is your reset password link: <a href="' . $resetLink . '">Click here to reset your password</a>', 'text/html');
         });
         return back()->with('message', 'We have e-mailed your password reset link!');
     }
@@ -262,5 +280,46 @@ class UserController extends Controller
         foreach ($users as $userToUpdate) {
             $userToUpdate->assignRole($bookingRole);
         }
+    }
+    public function switchUser($id)
+    {
+        $currentUser = Auth::user();
+
+        if (!$currentUser->hasRole('Administrator')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if ($currentUser->id == $id) {
+            return redirect()->back()->with('error', 'You are already logged in as this user.');
+        }
+
+        if (!session()->has('impersonate_original_user') && !Cookie::get('impersonate_original_user')) {
+            session(['impersonate_original_user' => $currentUser->id]);
+            Cookie::queue('impersonate_original_user', $currentUser->id, 60 * 24 * 7); // 7 days
+        }
+
+        $userToSwitch = User::findOrFail($id);
+        Auth::login($userToSwitch);
+
+        return redirect('/user')->with('success', 'Switch new user: ' . $userToSwitch->name);
+    }
+
+    public function switchBack()
+    {
+        $originalUserId = session('impersonate_original_user') ?? Cookie::get('impersonate_original_user');
+
+        if ($originalUserId) {
+            $originalUser = User::find($originalUserId);
+
+            if ($originalUser) {
+                Auth::login($originalUser);
+
+                session()->forget('impersonate_original_user');
+                Cookie::queue(Cookie::forget('impersonate_original_user'));
+
+                return redirect('/user')->with('success', 'Switched back to original user: ' . $originalUser->name);
+            }
+        }
+        return redirect('/user')->with('error', 'Unable to switch back to original user.');
     }
 }

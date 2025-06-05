@@ -1,9 +1,10 @@
+// Form delete alert
+
 setTimeout(function () {
     $(".alert").alert("close");
-}, 5000); 
+}, 5000); // hide after 5 seconds
 
-// Template delete alert
-function deleteTemplate(id) {
+function deleteForm(id) {
     event.preventDefault();
     swal({
         title: "Are you sure?",
@@ -12,42 +13,42 @@ function deleteTemplate(id) {
         buttons: true,
         dangerMode: true,
     }).then((willDelete) => {
-        if (willDelete) 
-        {
-            var template = document.getElementById("deleteTemplate-" + id);
-            var templateData = new FormData(template);
-            fetch(template.action, {
+        if (willDelete) {
+            var form = document.getElementById("deleteForm-" + id);
+            var formData = new FormData(form);
+
+            fetch(form.action, {
                 method: "DELETE",
-                body: templateData,
+                body: formData,
                 headers: {
                     "X-Requested-With": "XMLHttpRequest",
                     "X-CSRF-TOKEN": document
-                    .querySelector('meta[name="csrf-token"]')
-                    .getAttribute("content"),
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
                 },
             })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    swal("Poof! That Template has been deleted!", {
-                        icon: "success",
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                } else {
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        swal("Poof! That form has been deleted!", {
+                            icon: "success",
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        swal("There was an errors!", {
+                            icon: "error",
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
                     swal("There was an errors!", {
                         icon: "error",
                     });
-                }
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-                swal("There was an errors!", {
-                    icon: "error",
                 });
-            });
         } else {
-            swal("That Template is safe!", {
+            swal("That form is safe!", {
                 icon: "info",
             });
         }
@@ -63,44 +64,43 @@ function deleteUser(id) {
         buttons: true,
         dangerMode: true,
     }).then((willDelete) => {
-        if (willDelete) 
-        {
-            var user = document.getElementById("deleteUser-" + id);
-            var userData = new FormData(user);
-            fetch(user.action, {
+        if (willDelete) {
+            var form = document.getElementById("deleteUser-" + id);
+            var formData = new FormData(form);
+            fetch(form.action, {
                 method: "DELETE",
-                body: userData,
+                body: formData,
                 headers: {
                     "X-Requested-With": "XMLHttpRequest",
                     "X-CSRF-TOKEN": document
-                    .querySelector('meta[name="csrf-token"]')
-                    .getAttribute("content"),
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
                 },
             })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success === true) {
-                    swal("Poof! That User has been deleted!", {
-                        icon: "success",
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                } else if (data.success === "login") {
-                    swal("That user is currently logged in.", {
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success === true) {
+                        swal("Poof! That User has been deleted!", {
+                            icon: "success",
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else if (data.success === "login") {
+                        swal("That user is currently logged in.", {
+                            icon: "error",
+                        });
+                    } else {
+                        swal("There was an error!", {
+                            icon: "error",
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    swal("There was an error processing your request.", {
                         icon: "error",
                     });
-                } else {
-                    swal("There was an error!", {
-                        icon: "error",
-                    });
-                }
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-                swal("There was an error processing your request.", {
-                    icon: "error",
                 });
-            });
         } else {
             swal("That user is safe!", {
                 icon: "info",
@@ -108,31 +108,61 @@ function deleteUser(id) {
         }
     });
 }
+
 // Booking delete alert
 function deleteBooking(id) {
     event.preventDefault();
     swal({
         title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this booking!",
+        text: "Once deleted, you will not be able to recover this imaginary file!",
         icon: "warning",
         buttons: true,
         dangerMode: true,
     }).then((willDelete) => {
         if (willDelete) {
-            // Submit the form directly
-            document.getElementById("deleteBooking-" + id).submit();
+            var booking = document.getElementById("deleteBooking-" + id);
+            var bookingData = new FormData(booking);
+
+            fetch(booking.action, {
+                method: "DELETE",
+                body: bookingData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        swal("Poof! That booking has been deleted!", {
+                            icon: "success",
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        swal("There was an errors!", {
+                            icon: "error",
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    swal("There was an errors!", {
+                        icon: "error",
+                    });
+                });
         } else {
             swal("That booking is safe!", {
                 icon: "info",
             });
         }
     });
-    return false;
 }
-
-//Booking Template Builder
+//  Form builder
 jQuery(function ($) {
-    const templateSelect = document.getElementById("bookingTemplates");
+    const templateSelect = document.getElementById("formTemplates");
     const fbEditor = document.getElementById("build-wrap");
     var newfield = [
         {
@@ -148,15 +178,15 @@ jQuery(function ($) {
         newsection: function (fieldData) {
             return {
                 field: `
-                <div id="${fieldData.name}" class="section">
-                    <div class="section-content">
-                    <!-- Add your content here, e.g., form fields, text, etc. -->
-                    </div>
-                    <div class="section-navigation">
-                    <button class="prev-btn" style="display:none;">Previous</button>
-                    <button class="next-btn">Next</button>
-                    </div>
-                </div>`,
+          <div id="${fieldData.name}" class="section">
+            <div class="section-content">
+              <!-- Add your content here, e.g., form fields, text, etc. -->
+            </div>
+            <div class="section-navigation">
+              <button class="prev-btn" style="display:none;">Previous</button>
+              <button class="next-btn">Next</button>
+            </div>
+          </div>`,
                 onRender: function () {
                     var currentStep = 0;
                     $(document).on(
@@ -242,11 +272,14 @@ jQuery(function ($) {
 
     jQuery(window).on("load", function () {
         if (
-            jQuery("#bookingaddpage").length === 0 &&
-            jQuery("#bookingTemplates").length > 0
+            jQuery("#formsaddpage").length === 0 &&
+            jQuery("#formTemplates").length > 0
         ) {
+            // console.log("fsdfsdfsdfsd testing");
             const selectedValue =
-            document.getElementById("bookingTemplates").value;
+                document.getElementById("formTemplates").value;
+            console.log("Selected Value:", selectedValue);
+
             const parsedValue = JSON.parse(selectedValue);
             parsedValue.forEach((item) => {
                 if (
@@ -265,6 +298,8 @@ jQuery(function ($) {
                     item.inline = false;
                 }
             });
+            console.log(parsedValue);
+
             formBuilder.actions.setData(parsedValue);
         }
     });
@@ -272,39 +307,53 @@ jQuery(function ($) {
         .off("click", ".save-template")
         .on("click", ".save-template", function (e) {
             e.preventDefault();
-            var inputElement = document.getElementById("bookingTemplatesname");
+
+            var inputElement = document.getElementById("formTemplatesname");
             var inputValue = inputElement.value.trim();
-            var errorMessageElement = document.getElementById("bookingTemplatesname-error");
+            var errorMessageElement = document.getElementById(
+                "formTemplatesname-error"
+            );
+
             if (errorMessageElement) {
                 errorMessageElement.remove();
             }
+
             if (!inputValue) {
                 var errorMessage = document.createElement("span");
-                errorMessage.id = "bookingTemplatesname-error";
-                errorMessage.textContent = "The Template name cannot be empty.";
+                errorMessage.id = "formTemplatesname-error";
+                errorMessage.textContent = "The form name cannot be empty.";
                 inputElement.parentNode.appendChild(errorMessage);
                 inputElement.focus();
                 return;
             }
+
             var data = formBuilder.actions.getData();
-            var templateid = document.getElementById("templateid")
-                ? document.getElementById("templateid").value
+
+            //   if (data.length === 0) {
+            //     alert("Please add at least one form field before saving.");
+            //     return;
+            //   }
+
+            var formid = document.getElementById("formid")
+                ? document.getElementById("formid").value
                 : "";
             var csrfToken = document
                 .querySelector('meta[name="csrf-token"]')
                 .getAttribute("content");
-            var templateData = {
+
+            var formData = {
                 data: data,
-                templatename: inputValue,
-                templateid: templateid,
+                formname: inputValue,
+                formid: formid,
                 _token: csrfToken,
             };
+
             $.ajax({
-                url: "/template/save",
+                url: "/form/save",
                 method: "POST",
-                data: templateData,
+                data: formData,
                 success: function (response) {
-                    window.location.href = window.location.origin + "/template";
+                    window.location.href = window.location.origin + "/form";
                 },
                 error: function (xhr, status, error) {
                     console.error(xhr.responseText);
@@ -313,7 +362,7 @@ jQuery(function ($) {
         });
 
     jQuery(window).on("load", function () {
-        jQuery("#bookingTemplates").click();
+        jQuery("#formTemplates").click();
     });
 
     function setCookie(cname, cvalue, exdays) {
@@ -363,6 +412,12 @@ jQuery(function ($) {
         jQuery(window).on("load", function () {
             jQuery("#mymodelsformessage").click();
         });
+        // DataTable For Users Lists
+        $("#user-list-table").DataTable();
+        // DataTable For Forms Lists
+        $("#form-list-table").DataTable();
+        // DataTable For Booking Lists
+        $("#booking-list-table").DataTable();
     }
 
     $("#exampleModal").on("show.bs.modal", function (event) {
@@ -378,17 +433,17 @@ jQuery(function ($) {
     });
 });
 
-// Datatables for Bookings, Templates, and Users tables
+// Datatables for Bookings, Forms, and Users tables
 $("#booking-list-table").DataTable();
-$("#template-list-table").DataTable();
+$("#form-list-table").DataTable();
 $("#user-list-table").DataTable();
 
 // Add Booking
 document.addEventListener("DOMContentLoaded", function () {
     // Show the modal on page load if it exists
-    const bookingTemplateModal = document.getElementById("bookingTemplateModal");
-    if (bookingTemplateModal) {
-        $("#bookingTemplateModal")
+    const formTemplateModal = document.getElementById("formTemplateModal");
+    if (formTemplateModal) {
+        $("#formTemplateModal")
             .modal({ backdrop: "static", keyboard: false })
             .modal("show");
     }
@@ -396,27 +451,27 @@ document.addEventListener("DOMContentLoaded", function () {
     const selectTemplateBtn = document.getElementById("select-template-btn");
     if (selectTemplateBtn) {
         selectTemplateBtn.addEventListener("click", function () {
-            const bookingTemplateList =
-                document.getElementById("booking-template-list");
+            const formTemplateList =
+                document.getElementById("form-template-list");
             const templateError = document.getElementById(
-                "booking-template-error"
+                "form-template-error"
             );
-            const bookingtemplateid = document.getElementById("booking_template_id");
+            const bookingFormId = document.getElementById("booking_form_id");
             const bookingDataInput = document.getElementById("booking_data");
-            const bookingTemplate = document.getElementById("booking-template");
+            const bookingForm = document.getElementById("booking-form");
 
-            if (bookingTemplateList && bookingTemplateList.value === "") {
+            if (formTemplateList && formTemplateList.value === "") {
                 if (templateError) templateError.style.display = "block";
             } else {
                 const selectedOption =
-                    bookingTemplateList.options[bookingTemplateList.selectedIndex];
+                    formTemplateList.options[formTemplateList.selectedIndex];
                 if (templateError) templateError.style.display = "none";
-                if (bookingtemplateid) bookingtemplateid.value = selectedOption.value;
+                if (bookingFormId) bookingFormId.value = selectedOption.value;
                 if (bookingDataInput)
                     bookingDataInput.value =
                         selectedOption.getAttribute("data-booking_data");
-                if (bookingTemplateModal) $("#bookingTemplateModal").modal("hide");
-                if (bookingTemplate) bookingTemplate.style.display = "block";
+                if (formTemplateModal) $("#formTemplateModal").modal("hide");
+                if (bookingForm) bookingForm.style.display = "block";
             }
         });
     }
@@ -428,22 +483,25 @@ document.addEventListener("DOMContentLoaded", function () {
     if (loadTemplateBtn) {
         loadTemplateBtn.addEventListener("click", function () {
             const selectedOption = document.querySelector(
-                "#bookingTemplateselect option:checked"
+                "#formTemplateSelect option:checked"
             );
             if (!selectedOption) {
-                alert("Please select a Booking template.");
+                alert("Please select a form template.");
                 return;
             }
-            const bookingData = selectedOption.value;
-            const bookingtemplateid = selectedOption.dataset.id;
-            if (bookingData) {
-                const templateFields = JSON.parse(bookingData);
-                const dynamicTemplate =
-                    document.getElementById("dynamictemplateFields");
-                dynamicTemplate.innerHTML = "";
-                let templateData = {};
 
-                templateFields.forEach((field) => {
+            const bookingData = selectedOption.value;
+            const bookingFormId = selectedOption.dataset.id;
+
+            if (bookingData) {
+                const formFields = JSON.parse(bookingData);
+                const dynamicForm =
+                    document.getElementById("dynamicFormFields");
+                dynamicForm.innerHTML = "";
+
+                let formData = {};
+
+                formFields.forEach((field) => {
                     let inputHtml = "";
                     switch (field.type) {
                         case "text":
@@ -548,26 +606,26 @@ document.addEventListener("DOMContentLoaded", function () {
                     ${field.required === "true" ? "required" : ""}>
                 </div>`;
                     }
-                    dynamicTemplate.innerHTML += inputHtml;
+                    dynamicForm.innerHTML += inputHtml;
                 });
 
                 // Capture values on submit
                 document
                     .querySelector("form")
                     .addEventListener("submit", function (event) {
-                        templateData = {};
-                        templateFields.forEach((field) => {
+                        formData = {};
+                        formFields.forEach((field) => {
                             if (
                                 field.type === "checkbox-group" ||
                                 field.type === "radio-group"
                             ) {
-                                templateData[field.name] = [];
+                                formData[field.name] = [];
                                 document
                                     .querySelectorAll(
                                         `[name="${field.name}"]:checked`
                                     )
                                     .forEach((checkbox) => {
-                                        templateData[field.name].push(
+                                        formData[field.name].push(
                                             checkbox.value
                                         );
                                     });
@@ -576,153 +634,108 @@ document.addEventListener("DOMContentLoaded", function () {
                                     `[name="${field.name}"]`
                                 );
                                 if (fieldElement) {
-                                    templateData[field.name] = fieldElement.value;
+                                    formData[field.name] = fieldElement.value;
                                 }
                             }
                         });
 
-                        document.getElementById("bookingTemplateId").value = bookingtemplateid;
+                        document.getElementById("bookingFormId").value =
+                            bookingFormId;
                         document.getElementById("bookingData").value =
-                            JSON.stringify(templateData);
+                            JSON.stringify(formData);
                     });
 
-                $("#bookingTemplateModal").modal("hide");
+                $("#formTemplateModal").modal("hide");
             } else {
-                alert("Please select a Booking template.");
+                alert("Please select a form template.");
             }
         });
     }
-});
-document.getElementById("select-all-permissions")?.addEventListener("change", function () {
-        const checked = this.checked;
-        document
-            .querySelectorAll(".permission-checkbox, .group-checkbox")
-            .forEach((cb) => (cb.checked = checked));
-        document.querySelectorAll(".permission-row").forEach((row) => {
-            row.style.display = checked ? "table-row" : "none";
-        });
-    });
-
-// Toggle Permissions Based on Group
-document.querySelectorAll(".group-checkbox").forEach((groupCb) => {
-    groupCb.addEventListener("change", function () {
-        const group = this.dataset.group;
-        const isChecked = this.checked;
-        document
-            .querySelectorAll(`.group-${group}`)
-            .forEach((cb) => (cb.checked = isChecked));
-        document.querySelectorAll(`.group-perms-${group}`).forEach((row) => {
-            row.style.display = isChecked ? "table-row" : "none";
-        });
-    });
 });
 
 document.addEventListener("DOMContentLoaded", function () {
     const selectAllCheckbox = document.getElementById("select-all-permissions");
 
-    // Update select all checkbox checked state
     function updateSelectAllCheckbox() {
         const allPerms = document.querySelectorAll(".permission-checkbox");
-        const anyChecked = Array.from(allPerms).some((cb) => cb.checked);
-        const allChecked = Array.from(allPerms).every((cb) => cb.checked);
-        selectAllCheckbox.checked = allChecked;
-        selectAllCheckbox.indeterminate = !allChecked && anyChecked;
+        const anyChecked = Array.from(allPerms).some(cb => cb.checked);
+        const allChecked = Array.from(allPerms).every(cb => cb.checked);
+        if (selectAllCheckbox) {
+            selectAllCheckbox.checked = allChecked;
+            selectAllCheckbox.indeterminate = !allChecked && anyChecked;
+        }
     }
 
-    // Toggle group permissions visibility + checkboxes when group checkbox changes
-    document.querySelectorAll(".group-checkbox").forEach((groupCheckbox) => {
-        groupCheckbox.addEventListener("change", function () {
-            const groupKey = this.dataset.group;
-            const permRows = document.querySelectorAll(
-                ".group-perms-" + groupKey
-            );
-            permRows.forEach((row) => {
-                row.style.display = this.checked ? "" : "none";
+    // Select All checkbox behavior
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener("change", function () {
+            const checked = this.checked;
+
+            document.querySelectorAll(".group-checkbox, .permission-checkbox").forEach(cb => {
+                cb.checked = checked;
             });
 
-            // Check/uncheck all permissions in group
-            const permCheckboxes = document.querySelectorAll(
-                ".permission-checkbox.group-" + groupKey
-            );
-            permCheckboxes.forEach((cb) => (cb.checked = this.checked));
+            document.querySelectorAll(".permission-row").forEach(row => {
+                row.style.display = checked ? "table-row" : "none";
+            });
+        });
+    }
+
+    // Group checkbox behavior
+    document.querySelectorAll(".group-checkbox").forEach((groupCheckbox) => {
+        const groupKey = groupCheckbox.dataset.group;
+
+        groupCheckbox.addEventListener("change", function () {
+            const isChecked = this.checked;
+
+            // Check/uncheck all group permissions
+            document.querySelectorAll(".permission-checkbox.group-" + groupKey).forEach(cb => {
+                cb.checked = isChecked;
+            });
+
+            // Show/hide permission rows
+            document.querySelectorAll(".group-perms-" + groupKey).forEach(row => {
+                row.style.display = isChecked ? "table-row" : "none";
+            });
 
             updateSelectAllCheckbox();
         });
     });
 
-    // Toggle all groups and permissions on select all change
-    selectAllCheckbox.addEventListener("change", function () {
-        const checked = this.checked;
+    // Individual permission checkbox changes — update related group
+    document.querySelectorAll(".permission-checkbox").forEach((permCheckbox) => {
+        permCheckbox.addEventListener("change", function () {
+            const groupClass = Array.from(this.classList).find(cls => cls.startsWith("group-"));
+            if (!groupClass) return;
 
-        document
-            .querySelectorAll(".group-checkbox")
-            .forEach((groupCheckbox) => {
-                groupCheckbox.checked = checked;
+            const groupKey = groupClass.replace("group-", "");
+            const groupCheckbox = document.querySelector(`.group-checkbox[data-group="${groupKey}"]`);
+            const groupPerms = document.querySelectorAll(".permission-checkbox." + groupClass);
 
-                const groupKey = groupCheckbox.dataset.group;
-                const permRows = document.querySelectorAll(
-                    ".group-perms-" + groupKey
-                );
-                permRows.forEach(
-                    (row) => (row.style.display = checked ? "" : "none")
-                );
+            const anyChecked = Array.from(groupPerms).some(cb => cb.checked);
+            groupCheckbox.checked = anyChecked;
 
-                const permCheckboxes = document.querySelectorAll(
-                    ".permission-checkbox.group-" + groupKey
-                );
-                permCheckboxes.forEach((cb) => (cb.checked = checked));
+            document.querySelectorAll(".group-perms-" + groupKey).forEach(row => {
+                row.style.display = anyChecked ? "table-row" : "none";
             });
+
+            updateSelectAllCheckbox();
+        });
     });
 
-    // When individual permission checkbox changes, update group checkbox accordingly
-    document
-        .querySelectorAll(".permission-checkbox")
-        .forEach((permCheckbox) => {
-            permCheckbox.addEventListener("change", function () {
-                const classes = Array.from(this.classList);
-                const groupClass = classes.find((c) => c.startsWith("group-"));
-                if (!groupClass) return;
-
-                const groupKey = groupClass.replace("group-", "");
-                const groupCheckbox = document.querySelector(
-                    '.group-checkbox[data-group="' + groupKey + '"]'
-                );
-                const allPerms = document.querySelectorAll(
-                    ".permission-checkbox." + groupClass
-                );
-
-                const anyChecked = Array.from(allPerms).some(
-                    (cb) => cb.checked
-                );
-                groupCheckbox.checked = anyChecked;
-
-                // Show/hide permission rows based on group checkbox
-                const permRows = document.querySelectorAll(
-                    ".group-perms-" + groupKey
-                );
-                permRows.forEach((row) => {
-                    row.style.display = anyChecked ? "" : "none";
-                });
-
-                updateSelectAllCheckbox();
-            });
-        });
-
-    // On page load, initialize group checkboxes and permissions visibility
+    // Initial state setup on page load
     document.querySelectorAll(".group-checkbox").forEach((groupCheckbox) => {
         const groupKey = groupCheckbox.dataset.group;
-        const permCheckboxes = document.querySelectorAll(
-            ".permission-checkbox.group-" + groupKey
-        );
+        const groupPerms = document.querySelectorAll(".permission-checkbox.group-" + groupKey);
+        const anyChecked = Array.from(groupPerms).some(cb => cb.checked);
 
-        const anyChecked = Array.from(permCheckboxes).some((cb) => cb.checked);
         groupCheckbox.checked = anyChecked;
 
-        const permRows = document.querySelectorAll(".group-perms-" + groupKey);
-        permRows.forEach((row) => {
-            row.style.display = anyChecked ? "" : "none";
+        document.querySelectorAll(".group-perms-" + groupKey).forEach(row => {
+            row.style.display = anyChecked ? "table-row" : "none";
         });
     });
 
     updateSelectAllCheckbox();
 });
+
