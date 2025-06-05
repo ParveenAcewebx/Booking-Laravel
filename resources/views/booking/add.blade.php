@@ -4,7 +4,7 @@
     <div class="pcoded-content">
         <!-- [ Main Content ] start -->
         <div class="row">
-            <!-- [ Form Validation ] start -->
+            <!-- [ Booking Validation ] start -->
             <div class="col-sm-12">
         <div class="row">
             <div class="col-sm-12">
@@ -44,17 +44,17 @@
                             <div class="row">
                     <div class="card-body">
                         <!-- Modal -->
-                        <div class="modal fade" id="formTemplateModal" tabindex="-1" aria-labelledby="formTemplateModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="bookingTemplateModal" tabindex="-1" aria-labelledby="bookingTemplateModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="formTemplateModalLabel">Select Form Template</h5>
+                                        <h5 class="modal-title" id="bookingTemplateModalLabel">Select Booking Template</h5>
                                     </div>
                                     <div class="modal-body">
-                                        <select class="form-control" id="formTemplateSelect">
+                                        <select class="form-control" id="bookingTemplateselect">
                                             <option value="">Select a template</option>
-                                            @foreach($allforms as $form)
-                                                <option value="{{ $form->data }}" data-id="{{ $form->id }}">{{ $form->form_name }}</option>
+                                            @foreach($alltemplates as $template)
+                                                <option value="{{ $template->data }}" data-id="{{ $template->id }}">{{ $template->template_name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -67,8 +67,8 @@
                         <!-- Booking Form -->
                         <form action="{{ route('booking.save') }}" method="POST">
                             @csrf
-                            <div id="dynamicFormFields"></div>
-                            <input type="hidden" name="booking_form_id" id="bookingFormId">
+                            <div id="dynamictemplateFields"></div>
+                            <input type="hidden" name="booking_template_id" id="bookingTemplateId">
                             <input type="hidden" name="booking_data" id="bookingData">
                             <input type="hidden" name="customer_id" id="customer_id" value="{{ Auth::id() }}">  
                             <div class="row">
@@ -101,7 +101,7 @@
                     </div>
                 </div>
             </div>
-            <!-- [ Form Validation ] end -->
+            <!-- [ Booking Validation ] end -->
         </div>
         <!-- [ Main Content ] end -->
     </div>

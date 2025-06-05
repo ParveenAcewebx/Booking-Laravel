@@ -47,7 +47,7 @@
                 <div class="card flat-card">
                     <div class="row-table">
                         <div class="col-sm-6 card-body bg-white">
-                            <h6 class="text-dark m-b-5">Total Forms</h6>
+                            <h6 class="text-dark m-b-5">Total Booking Templates</h6>
                             <h4 class="text-dark mb-0">{{count($bookingForms);}}</h4>
                         </div>
                     </div>

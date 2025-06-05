@@ -1,8 +1,7 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\FormController;
+use App\Http\Controllers\BookingTemplateController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
@@ -17,11 +16,9 @@ use App\Http\Controllers\RoleController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
-
 // Guest routes (not logged in)
 Route::middleware('guest')->group(function () {
     Route::get('/register', [UserController::class, 'showRegistrationForm'])->name('registration.form');
@@ -33,10 +30,8 @@ Route::middleware('guest')->group(function () {
     Route::get('password/reset/{token}', [UserController::class, 'showResetForm'])->name('password.reset');
     Route::post('password/reset', [UserController::class, 'reset'])->name('password.update');
 });
-
 // Authenticated routes
 Route::middleware('auth')->group(function () {
-
     // Routes for editing (edit users, edit forms, etc.)
     Route::middleware('permission:view users')->group(function () {
         Route::get('/user', [UserController::class, 'index'])->name('user.list');
@@ -45,65 +40,48 @@ Route::middleware('auth')->group(function () {
         Route::get('/user/add', [UserController::class, 'userAdd'])->name('user.add');
         Route::post('/user/save', [UserController::class, 'userSave'])->name('user.save');
     });
-
     Route::middleware('permission:edit users')->group(function () {
         Route::get('/user/edit/{id}', [UserController::class, 'userEdit'])->name('user.edit');
         Route::post('/user/update/{id}', [UserController::class, 'userUpdate'])->middleware('permission:view')->name('user.update');
     });
-
     Route::middleware('permission:delete users')->group(function () {
         Route::delete('/user/delete/{userid}', [UserController::class, 'userDelete'])->name('user.delete');
     });
-  
-
-
     Route::middleware('permission:view forms')->group(function () {
-        Route::get('/form', [FormController::class, 'index'])->name('form.list');
+        Route::get('/template', [BookingTemplateController::class, 'index'])->name('template.list');
     });
-
     Route::middleware('permission:create forms')->group(function () {
-        Route::get('/form/add', [FormController::class, 'formAdd'])->name('form.add');
-        Route::post('/form/save', [FormController::class, 'formSave'])->name('form.save');
+        Route::get('/template/add', [BookingTemplateController::class, 'templateAdd'])->name('template.add');
+        Route::post('/template/save', [BookingTemplateController::class, 'templateSave'])->name('template.save');
     });
-
     Route::middleware('permission:edit forms')->group(function () {
-        Route::get('/form/{formid}/edit', [FormController::class, 'formEdit'])->name('form.edit');
+        Route::get('/template/{formid}/edit', [BookingTemplateController::class, 'templateEdit'])->name('template.edit');
     });
     Route::middleware('permission:delete forms')->group(function () {
-        Route::delete('/form/{formid}/delete', [FormController::class, 'formDelete'])->name('form.delete');
+        Route::delete('/template/{formid}/delete', [BookingTemplateController::class, 'templateDelete'])->name('template.delete');
     });
-
     // Routes for viewing data (view users, view forms, etc.)
     Route::middleware('permission:view bookings')->group(function () {
         Route::get('/bookings', [BookingController::class, 'index'])->name('booking.list');
     });
-
     Route::middleware('permission:create bookings')->group(function () {
         Route::get('/booking/add', [BookingController::class, 'bookingAdd'])->name('booking.add');
         Route::post('/booking/save', [BookingController::class, 'bookingSave'])->name('booking.save');
     });
-
-
     Route::middleware('permission:edit bookings')->group(function () {
         Route::get('/booking/edit/{id}', [BookingController::class, 'bookingEdit'])->name('booking.edit');
         Route::post('/booking/update/{id}', [BookingController::class, 'bookingUpdate'])->name('booking.update');
     });
-
-
     Route::middleware('permission:delete bookings')->group(function () {
         Route::delete('/booking/delete/{id}', [BookingController::class, 'bookingDelete'])->name('booking.delete');
     });
-
-
     Route::middleware('permission:view roles')->group(function () {
         Route::get('/roles', [RoleController::class, 'index'])->name('roles.list');
     });
-
     Route::middleware('permission:create roles')->group(function () {
         Route::get('/roles/add', [RoleController::class, 'roleAdd'])->name('roles.add');
         Route::post('/roles/store', [RoleController::class, 'store'])->name('roles.store');
     });
-
     Route::middleware('permission:edit roles')->group(function () {
         Route::get('/roles/edit/{id}', [RoleController::class, 'roleEdit'])->name('roles.edit');
         Route::put('/roles/update/{id}', [RoleController::class, 'roleUpdate'])->name('roles.update');
@@ -111,10 +89,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('permission:delete roles')->group(function () {
         Route::delete('/roles/delete/{id}', [RoleController::class, 'roleDelete'])->name('roles.delete');
     });
-
     Route::get('/profile', [UserController::class, 'userEdit'])->name('profile');
     Route::post('/user/update/{id}', [UserController::class, 'userUpdate'])->name('user.update');
-
     // General routes (dashboard, logout, etc.)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/logout', [UserController::class, 'logout'])->name('logout');
