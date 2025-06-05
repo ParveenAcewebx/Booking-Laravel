@@ -22,6 +22,12 @@ class DashboardController extends Controller
         $allusers = User::all();
         $bookingForms = BookingTemplate::all();
         $bookings = Booking::all();
-        return view('layouts.dashboard', ['allusers' => $allusers,'bookingForms'=>$bookingForms,'bookings'=>$bookings]);
+        $loginId = session('previous_login_id');
+        $loginUser = null;
+
+        if ($loginId) {
+            $loginUser = User::find($loginId);  
+        }
+        return view('layouts.dashboard', ['allusers' => $allusers,'bookingForms'=>$bookingForms,'bookings'=>$bookings,'loginUser'=>$loginUser]);
     }
 }

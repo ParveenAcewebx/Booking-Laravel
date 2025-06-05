@@ -30,12 +30,12 @@
 										</div>
 										<div class="modal-footer">
 											<button type="button" class="btn  btn-secondary" data-dismiss="modal">Okay</button>
-											
+
 										</div>
 									</div>
 								</div>
 							</div>
-							<button  style="display:none;" id="mymodelsformessage" type="button" class="btn  btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Launch demo modal</button>
+							<button style="display:none;" id="mymodelsformessage" type="button" class="btn  btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Launch demo modal</button>
 							@endif
 						</div>
 						<div class="col-md-2">
@@ -61,35 +61,34 @@
 											<th>Name</th>
 											<th>Start date</th>
 											<th>Status</th>
-											<th>Switch User</th>
 										</tr>
 									</thead>
 									<tbody>
 										@foreach($allusers as $user)
-											<tr>
-												<td>
-													<div class="d-inline-block align-middle">
-														<div class="d-inline-block">
-															<h6 class="m-b-0">{{ $user->name }}</h6>
-															<p class="m-b-0">{{ $user->email }}</p>
-														</div>
+										<tr>
+											<td>
+												<div class="d-inline-block align-middle">
+													<div class="d-inline-block">
+														<h6 class="m-b-0">{{ $user->name }}</h6>
+														<p class="m-b-0">{{ $user->email }}</p>
 													</div>
-												</td>
-												<td>{{ $user->created_at }}</td>
-												<td>
-													<span class="badge badge-light-success">Active</span>
-													<div class="overlay-edit">
-													@if(Auth::id() == $user->id)		   
-														<a href="{{ route('user.edit', [$user->id]) }}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit User">
-															<i class="fas fa-pencil-alt"></i>
-														</a>
+												</div>
+											</td>
+											<td>{{ $user->created_at }}</td>
+											<td>
+												<span class="badge badge-light-success">Active</span>
+												<div class="overlay-edit">
+													@if(Auth::id() == $user->id)
+													<a href="{{ route('user.edit', [$user->id]) }}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit User">
+														<i class="fas fa-pencil-alt"></i>
+													</a>
 													@else
-														@can('edit users')
+													@can('edit users')
 
-														<a href="{{ route('user.edit', [$user->id]) }}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit User">
-															<i class="fas fa-pencil-alt"></i>
-														</a>
-														@endcan
+													<a href="{{ route('user.edit', [$user->id]) }}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit User">
+														<i class="fas fa-pencil-alt"></i>
+													</a>
+													@endcan
 													@endif
 													@can('delete users')
 													@if(Auth::id() != $user->id)
@@ -100,38 +99,37 @@
 													</form>
 													@endif
 													@endcan
-													</div>
-												</td>
-												<td>
-												@php
+													@php
 													$isImpersonating = session()->has('impersonate_original_user') || Cookie::get('impersonate_original_user');
 													$currentUser = Auth::user();
-												@endphp
+													@endphp
 
-												@if($isImpersonating && Auth::id() === $user->id)
+													@if($isImpersonating && Auth::id() === $user->id)
 													<!-- Show Switch Back only for the impersonated user -->
 													<form method="POST" action="{{ route('user.switch.back') }}">
 														@csrf
-														<button type="submit" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Switch Back to {{ $loginUser->name }}">
+														<button type="submit" class="btn btn-sm btn-dark" data-toggle="tooltip" data-placement="top" title="Switch Back to {{ $loginUser->name }}">
 															<i class="feather icon-log-out"></i>
 														</button>
 													</form>
 
-												@elseif(!$isImpersonating && $currentUser->hasRole('Administrator') && $currentUser->id !== $user->id)
+													@elseif(!$isImpersonating && $currentUser->hasRole('Administrator') && $currentUser->id !== $user->id)
 													<form method="POST" action="{{ route('user.switch', $user->id) }}">
 														@csrf
-														<button type="submit" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Switch User">
+														<button type="submit" class="btn btn-sm btn-dark" data-toggle="tooltip" data-placement="top" title="Switch User">
 															<i class="fas fa-random"></i>
 														</button>
 													</form>
-													
-												@elseif($currentUser->id === $user->id)
-													<span class="badge bg-info" data-bs-toggle="tooltip" title="You are logged in as this user">
+
+													@elseif($currentUser->id === $user->id)
+													<span class="badge bg-info" data-toggle="tooltip" data-placement="top" title="You are logged in as this user">
 														<i class="feather icon-user-check"></i>
 													</span>
-												@endif
+													@endif
+												</div>
 											</td>
-											</tr>
+
+										</tr>
 										@endforeach
 
 									</tbody>
@@ -155,6 +153,6 @@
 			</div>
 			<!-- [ Main Content ] end -->
 		</div>
-				
+
 	</div>
 	@endsection

@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\BookingTemplate;
@@ -11,10 +13,17 @@ use Illuminate\Validation\ValidationException;
 
 class BookingTemplateController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $alltemplate = BookingTemplate::all();
         $allusers  = User::all();
-        return view('booking-template.index', ['alltemplate' => $alltemplate,'allusers'=>$allusers]);
+        $loginId = session('previous_login_id');
+        $loginUser = null;
+
+        if ($loginId) {
+            $loginUser = User::find($loginId);
+        }
+        return view('booking-template.index', ['alltemplate' => $alltemplate, 'allusers' => $allusers, 'loginUser' => $loginUser]);
     }
 
     public function templateSave(Request $request)
@@ -24,42 +33,57 @@ class BookingTemplateController extends Controller
         $templateid = $request->input('templateid');
         if (!empty($templateid)) {
             $template = BookingTemplate::find($templateid);
-            if($template) {
-               $template->data = $data;
-               $template->template_name = $templatename;
-               $template->save();  
-            }else{
+            if ($template) {
+                $template->data = $data;
+                $template->template_name = $templatename;
+                $template->save();
+            } else {
                 $template = BookingTemplate::create([
                     'data' => $data,
                     'template_name' => $templatename
                 ]);
             }
-            session()->flash('success', "The '". $templatename."' template has been successfully edited.");
+            session()->flash('success', "The '" . $templatename . "' template has been successfully edited.");
         } else {
             $data = json_encode($data);
             $id = BookingTemplate::create([
                 'data' => $data,
                 'template_name' => $templatename
             ]);
-            session()->flash('success',"The '". $templatename."' template has been successfully added.");
+            session()->flash('success', "The '" . $templatename . "' template has been successfully added.");
         }
     }
-    
-    public function templateDelete($id) {
+
+    public function templateDelete($id)
+    {
         $template = BookingTemplate::find($id);
-        $templatename =$template->template_name;
+        $templatename = $template->template_name;
         $template->delete();
         return response()->json(['success' => true]);
     }
 
-    public function templateEdit($id) {
+    public function templateEdit($id)
+    {
         $allusers  = User::all();
         $template = BookingTemplate::find($id);
-        return view('booking-template.edit', ['templates' =>$template,'allusers'=>$allusers]);
+        $loginId = session('previous_login_id');
+        $loginUser = null;
+
+        if ($loginId) {
+            $loginUser = User::find($loginId);
+        }
+        return view('booking-template.edit', ['templates' => $template, 'allusers' => $allusers, 'loginUser' => $loginUser]);
     }
-    
-    public function templateAdd() {
+
+    public function templateAdd()
+    {
         $allusers  = User::all();
-        return view('booking-template.add',compact('allusers'));
+        $loginId = session('previous_login_id');
+        $loginUser = null;
+
+        if ($loginId) {
+            $loginUser = User::find($loginId);
+        }
+        return view('booking-template.add', compact('allusers','loginUser'));
     }
 }

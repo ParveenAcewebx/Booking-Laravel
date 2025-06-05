@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
+
     public function index()
     {
         $allusers = User::all();
@@ -30,7 +31,7 @@ class UserController extends Controller
         $loginUser = null;
 
         if ($loginId) {
-            $loginUser = User::find($loginId);  
+            $loginUser = User::find($loginId);
         }
         return view('user.index', compact('allusers', 'currentUser', 'originalUserId', 'loginUser'));
     }
@@ -39,7 +40,13 @@ class UserController extends Controller
     {
         $allusers = User::all();
         $allRole = Role::where('status', 1)->get();
-        return view('user.add', ['allRoles' => $allRole,'allusers'=>$allusers]);
+        $loginId = session('previous_login_id');
+        $loginUser = null;
+
+        if ($loginId) {
+            $loginUser = User::find($loginId);
+        }
+        return view('user.add', ['allRoles' => $allRole, 'allusers' => $allusers, 'loginUser' => $loginUser]);
     }
 
     public function userSave(Request $request)
@@ -79,6 +86,12 @@ class UserController extends Controller
         $user->unsetRelation('roles')->unsetRelation('permissions');
         $roles = $user->roles;
         $currentRole = null;
+        $loginId = session('previous_login_id');
+        $loginUser = null;
+
+        if ($loginId) {
+            $loginUser = User::find($loginId);
+        }
         if ($roles->count() > 0) {
             $currentRole = $roles[0]->id;
         }
@@ -86,7 +99,8 @@ class UserController extends Controller
             'user' => $user,
             'allRoles' => Role::where('status', 1)->get(),
             'currentRole' => $currentRole,
-            'allusers'=>$allusers
+            'allusers' => $allusers,
+            'loginUser'=>$loginUser
         ]);
     }
 
@@ -288,9 +302,9 @@ class UserController extends Controller
     {
         $currentUser = Auth::user();
 
-        if (!$currentUser->hasRole('Administrator')) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (!$currentUser->hasRole('Administrator')) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         if ($currentUser->id == $id) {
             return redirect()->back()->with('error', 'You are already logged in as this user.');
@@ -304,13 +318,13 @@ class UserController extends Controller
         $userToSwitch = User::findOrFail($id);
         Auth::login($userToSwitch);
 
-        return redirect('/user')->with('success', 'Switch new user: ' . $userToSwitch->name);
+        return redirect('/')->with('success', 'Switch new user: ' . $userToSwitch->name);
     }
 
     public function switchBack()
     {
         $originalUserId = session('impersonate_original_user') ?? Cookie::get('impersonate_original_user');
-
+        // dd($originalUserId);
         if ($originalUserId) {
             $originalUser = User::find($originalUserId);
 
@@ -323,6 +337,6 @@ class UserController extends Controller
                 return redirect('/user')->with('success', 'Switched back to original user: ' . $originalUser->name);
             }
         }
-        return redirect('/user')->with('error', 'Unable to switch back to original user.');
+        return redirect('/')->with('error', 'Unable to switch back to original user.');
     }
 }

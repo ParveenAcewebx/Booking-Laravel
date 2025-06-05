@@ -34,11 +34,11 @@ Route::middleware('guest')->group(function () {
 });
 // Authenticated routes
 Route::middleware('auth')->group(function () {
+        Route::post('/{id}/switch', [UserController::class, 'switchUser'])->name('user.switch');
+        Route::post('/switch-back', [UserController::class, 'switchBack'])->name('user.switch.back');
+
     // Routes for editing (edit users, edit forms, etc.)
     Route::middleware('permission:view users')->group(function () {
-        Route::get('/user/switch', [UserController::class, 'showSwitchLinks'])->name('user.switch.list');
-        Route::post('/user/{id}/switch', [UserController::class, 'switchUser'])->name('user.switch');
-        Route::post('/user/switch-back', [UserController::class, 'switchBack'])->name('user.switch.back');
 
         Route::get('/user', [UserController::class, 'index'])->name('user.list');
     });
