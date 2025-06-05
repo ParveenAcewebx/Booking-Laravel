@@ -1,16 +1,13 @@
 <?php
-
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
     use HasFactory;
-
     protected $fillable = [
-        'booking_form_id',
+        'booking_template_id',
         'customer_id',
         'booking_datetime',       
         'booking_data',
@@ -21,7 +18,7 @@ class Booking extends Model
 
     public function form()
     {
-        return $this->belongsTo(\App\Models\Bookingform::class, 'booking_form_id');
+        return $this->belongsTo(\App\Models\BookingTemplate::class, 'booking_template_id');
     }
     
     public function staff()

@@ -2,7 +2,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Booking;
-use App\Models\Bookingform;
+use App\Models\BookingTemplate;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -20,9 +20,8 @@ class DashboardController extends Controller
 {
     public function index(){
         $allusers = User::all();
-        $bookingForms = Bookingform::all();
+        $bookingForms = BookingTemplate::all();
         $bookings = Booking::all();
         return view('layouts.dashboard', ['allusers' => $allusers,'bookingForms'=>$bookingForms,'bookings'=>$bookings]);
     }
-
 }

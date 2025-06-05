@@ -59,14 +59,14 @@
                     <li class="nav-item pcoded-hasmenu">
                         <a href="#!" class="nav-link">
                             <span class="pcoded-micon"><i class="feather icon-file-text"></i></span>
-                            <span class="pcoded-mtext">Form</span>
+                            <span class="pcoded-mtext">Booking Template</span>
                         </a>
                         <ul class="pcoded-submenu">
                             @can('create forms')
-                            <li><a href="{{ route('form.add') }}">Add Form</a></li>
+                            <li><a href="{{ route('template.add') }}">Add Booking Template</a></li>
                             @endcan
                             @can('view forms')
-                            <li><a href="{{ route('form.list') }}">All Forms</a></li>
+                            <li><a href="{{ route('template.list') }}">All Booking Template</a></li>
                             @endcan
                         </ul>
                     </li>

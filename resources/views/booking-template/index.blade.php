@@ -10,12 +10,12 @@
 				<div class="row align-items-center">
 					<div class="col-md-10">
 						<div class="page-header-title">
-							<h5>All Forms</h5>
+							<h5>All Booking Templates</h5>
 						</div>
 						<ul class="breadcrumb">
 							<li class="breadcrumb-item"><a href="{{route('dashboard') }}"><i class="feather icon-home"></i></a></li>
-							<li class="breadcrumb-item"><a href="#!">Form</a></li>
-							<li class="breadcrumb-item"><a href="#!">All Forms</a></li>
+							<li class="breadcrumb-item"><a href="#!">Booking Template</a></li>
+							<li class="breadcrumb-item"><a href="#!">All Booking Templates</a></li>
 						</ul>
 
                         @if(session('success'))
@@ -42,7 +42,7 @@
 					<div class="col-md-2">
                         <div class="page-header-titles float-right">
 							@can('create forms')
-                            <a href="{{ route('form.add')}}" class="btn btn-primary float-right p-2">Add Form</a>
+                            <a href="{{ route('template.add')}}" class="btn btn-primary float-right p-2">Add Form</a>
 							@endcan
                         </div>
                     </div>
@@ -65,27 +65,27 @@
 									</tr>
 								</thead>
 								<tbody>
-                                @foreach($allform as $form)
+                                @foreach($alltemplate as $template)
 									<tr>
 										<td>
 											<div class="d-inline-block align-middle">
 												<div class="d-inline-block">
-													<h6 class="m-b-0">{{ $form->form_name }}</h6>
+													<h6 class="m-b-0">{{ $template->template_name }}</h6>
 												</div>
 											</div>
 										</td>
-										<td>{{ $form->created_at }}</td>
+										<td>{{ $template->created_at }}</td>
 										<td>
 											<span class="badge badge-light-success">Active</span>
 											<div class="overlay-edit">
 											@can('edit forms')
-                      						<a href="{{route('form.edit', [$form->id])}}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit Form" ><i class="fas fa-pencil-alt"></i></a>
+                      						<a href="{{route('template.edit', [$template->id])}}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit Form" ><i class="fas fa-pencil-alt"></i></a>
 											@endcan
 											@can('delete forms')
-											<form action="{{ route('form.delete', [$form->id]) }}" method="POST" id="deleteForm-{{$form->id}}">
+											<form action="{{ route('template.delete', [$template->id]) }}" method="POST" id="deleteTemplate-{{$template->id}}">
 												<input type="hidden" name="_method" value="DELETE">
 												@csrf
-												<button onclick="return deleteForm({{$form->id}})" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Form"><i class="feather icon-trash-2"></i></button>
+												<button onclick="return deleteTemplate({{$template->id}})" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Form"><i class="feather icon-trash-2"></i></button>
                                            </form>
 										   @endcan
 											</div>

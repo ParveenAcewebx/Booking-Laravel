@@ -2,7 +2,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Booking;
-use App\Models\Bookingform;
+use App\Models\BookingTemplate;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -25,31 +25,25 @@ class BookingController extends Controller
 
     public function bookingAdd(){
 
-        $allforms = Bookingform::all();
+        $alltemplates = BookingTemplate::all();
         $alluser  = User::all();
-        return view('booking.add', ['allforms' => $allforms,'alluser'=>$alluser]);
+        return view('booking.add', ['alltemplates' => $alltemplates,'alluser'=>$alluser]);
     }
 
     public function bookingSave(Request $request)
     {  
-        // Validate input data
         $request->validate([
             'selected_staff' => 'required', 
             'booking_datetime' => 'required'
         ]);  
-        // Process booking_data from the hidden field
         $bookingData = json_decode($request->booking_data, true);
-    
-        // Save booking data to the database
         $booking = Booking::create([
-            'booking_form_id' => $request->booking_form_id,
+            'booking_template_id' => $request->booking_template_id,
             'customer_id' => $request->customer_id,
             'booking_datetime' => $request->booking_datetime,
             'booking_data' => json_encode($bookingData),
             'selected_staff' => $request->selected_staff,
         ]);
-    
-        // Handle success or failure
         if ($booking) {
             return redirect('/bookings')->with('success', 'Booking Added successfully!');
         } else {
@@ -60,47 +54,34 @@ class BookingController extends Controller
     public function bookingEdit($id)
     {
         $booking = Booking::with(['form', 'staff'])->findOrFail($id);
-
         $dynamicValues = json_decode($booking->booking_data, true);
         $formStructure = json_decode($booking->form->data, true);
-
         $fieldsWithValues = [];
-
         foreach ($formStructure as $field) {
             $name = $field['name'] ?? null;
             $field['value'] = $dynamicValues[$name] ?? null;
             $fieldsWithValues[] = $field;
         }
-
         $staffList = User::all();
         $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
-
         return view('booking.edit', compact('booking', 'fieldsWithValues', 'staffList'));
     }
 
     public function bookingUpdate(Request $request, $id)
     {
         $booking = Booking::findOrFail($id);
-
-        // Save dynamic fields
         $dynamicFields = $request->input('dynamic', []);
         $booking->booking_data = json_encode($dynamicFields);
-
-        // Save staff and datetime
         $booking->selected_staff = $request->input('staff');
         $booking->booking_datetime = $request->input('booking_datetime');
-
         $booking->save();
-
         return redirect()->route('booking.list')->with('success', 'Booking updated successfully.');
     }
     
-
     public function bookingDelete($id) {
         $booking = Booking::find($id);
         $booking->delete();
         return redirect('/bookings')->with('success', 'Booking Delete successfully!');
     }
-
 }
 
