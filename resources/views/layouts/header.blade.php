@@ -92,6 +92,7 @@
 			</li>
 		</ul>
 		<ul class="navbar-nav ml-auto">
+			@foreach($allusers as $user)
 			<li>
 				<div class="dropdown">
 					@php
@@ -99,17 +100,19 @@
 					$currentUser = Auth::user();
 					@endphp
 
-					@if($isImpersonating && Auth::id() === $user->id)
+					@if($isImpersonating && $currentUser->id === $user->id)
 					<!-- Show Switch Back only for the impersonated user -->
 					<form method="POST" action="{{ route('user.switch.back') }}">
 						@csrf
-						<button type="submit" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Switch Back to {{ $loginUser->name }}">
+						<button type="submit" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Switch Back to {{ $currentUser->name }}">
 							<i class="feather icon-log-out"></i>
 						</button>
-</form>
+					</form>
 					@endif
 				</div>
 			</li>
+			@endforeach
+
 			<li>
 				<div class="dropdown drp-user">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown">

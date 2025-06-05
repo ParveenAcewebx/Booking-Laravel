@@ -65,7 +65,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										@foreach($alluser as $user)
+										@foreach($allusers as $user)
 											<tr>
 												<td>
 													<div class="d-inline-block align-middle">
