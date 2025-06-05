@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
-            $table->string('booking_form_id');
+            $table->string('booking_template_id');
             $table->string('customer_id');
             $table->timestamp('booking_datetime');
             $table->longText('booking_data');
