@@ -22,7 +22,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $alluser = User::all();
+        $allusers = User::all();
         $currentUser = Auth::user();
 
         $originalUserId = session('impersonate_original_user') ?? Cookie::get('impersonate_original_user');
@@ -30,15 +30,16 @@ class UserController extends Controller
         $loginUser = null;
 
         if ($loginId) {
-            $loginUser = User::find($loginId);  // Get user model for that ID
+            $loginUser = User::find($loginId);  
         }
-        return view('user.index', compact('alluser', 'currentUser', 'originalUserId', 'loginUser'));
+        return view('user.index', compact('allusers', 'currentUser', 'originalUserId', 'loginUser'));
     }
 
     public function userAdd()
     {
+        $allusers = User::all();
         $allRole = Role::where('status', 1)->get();
-        return view('user.add', ['allRoles' => $allRole]);
+        return view('user.add', ['allRoles' => $allRole,'allusers'=>$allusers]);
     }
 
     public function userSave(Request $request)
@@ -74,6 +75,7 @@ class UserController extends Controller
             $id = Auth::id();
         }
         $user = User::findOrFail($id);
+        $allusers  = User::all();
         $user->unsetRelation('roles')->unsetRelation('permissions');
         $roles = $user->roles;
         $currentRole = null;
@@ -83,7 +85,8 @@ class UserController extends Controller
         return view('user.edit', [
             'user' => $user,
             'allRoles' => Role::where('status', 1)->get(),
-            'currentRole' => $currentRole
+            'currentRole' => $currentRole,
+            'allusers'=>$allusers
         ]);
     }
 

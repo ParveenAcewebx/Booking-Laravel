@@ -13,7 +13,8 @@ class BookingTemplateController extends Controller
 {
     public function index(){
         $alltemplate = BookingTemplate::all();
-        return view('booking-template.index', ['alltemplate' => $alltemplate]);
+        $allusers  = User::all();
+        return view('booking-template.index', ['alltemplate' => $alltemplate,'allusers'=>$allusers]);
     }
 
     public function templateSave(Request $request)
@@ -52,11 +53,13 @@ class BookingTemplateController extends Controller
     }
 
     public function templateEdit($id) {
+        $allusers  = User::all();
         $template = BookingTemplate::find($id);
-        return view('booking-template.edit', ['templates' =>$template]);
+        return view('booking-template.edit', ['templates' =>$template,'allusers'=>$allusers]);
     }
     
     public function templateAdd() {
-        return view('booking-template.add');
+        $allusers  = User::all();
+        return view('booking-template.add',compact('allusers'));
     }
 }

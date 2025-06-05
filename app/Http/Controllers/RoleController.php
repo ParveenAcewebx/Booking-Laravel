@@ -3,19 +3,21 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
-
+use App\Models\User;
 class RoleController extends Controller
 {
     public function index()
     {
         $allroles = Role::with('permissions')->get();
-        return view('role.index', ['allroles' => $allroles]);
+        $allusers  = User::all();
+        return view('role.index', ['allroles' => $allroles,'allusers'=>$allusers]);
     }
 
     public function roleAdd()
     {
         $roleGroups = config('constants.role_groups');
-        return view('role.add', compact('roleGroups'));
+        $allusers  = User::all();
+        return view('role.add', compact('roleGroups','allusers'));
     }
 
     public function store(Request $request)
@@ -51,10 +53,11 @@ class RoleController extends Controller
 
     public function roleEdit($id)
     {
+        $allusers  = User::all();
         $role = Role::findOrFail($id);
         $rolePermissions = $role->permissions->pluck('name')->toArray();
         $roleGroups = config('constants.role_groups');
-        return view('role.edit', compact('role', 'roleGroups', 'rolePermissions'));
+        return view('role.edit', compact('role', 'roleGroups', 'rolePermissions','allusers'));
     }
 
     public function roleUpdate(Request $request, $id)

@@ -20,14 +20,15 @@ class BookingController extends Controller
 {
     public function index(){
         $allbooking = Booking::all();
-        return view('booking.index', ['allbooking' => $allbooking]);
+        $allusers  = User::all();
+        return view('booking.index', ['allbooking' => $allbooking,'allusers'=>$allusers]);
     }
 
     public function bookingAdd(){
 
         $alltemplates = BookingTemplate::all();
-        $alluser  = User::all();
-        return view('booking.add', ['alltemplates' => $alltemplates,'alluser'=>$alluser]);
+        $allusers  = User::all();
+        return view('booking.add', ['alltemplates' => $alltemplates,'allusers'=>$allusers,'alluser'=>$allusers]);
     }
 
     public function bookingSave(Request $request)
@@ -63,8 +64,9 @@ class BookingController extends Controller
             $fieldsWithValues[] = $field;
         }
         $staffList = User::all();
+        $allusers = User::all();
         $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
-        return view('booking.edit', compact('booking', 'fieldsWithValues', 'staffList'));
+        return view('booking.edit', compact('booking', 'fieldsWithValues', 'staffList','allusers'));
     }
 
     public function bookingUpdate(Request $request, $id)
