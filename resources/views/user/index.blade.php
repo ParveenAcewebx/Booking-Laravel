@@ -113,22 +113,18 @@
 													<form method="POST" action="{{ route('user.switch.back') }}">
 														@csrf
 														<button type="submit" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Switch Back to {{ $loginUser->name }}">
-															<i class="feather icon-log-out"></i> Switch Back to {{ $loginUser->name }}
+															<i class="feather icon-log-out"></i>
 														</button>
 													</form>
 
 												@elseif(!$isImpersonating && $currentUser->hasRole('Administrator') && $currentUser->id !== $user->id)
-												@if($user->can('view roles'))
 													<form method="POST" action="{{ route('user.switch', $user->id) }}">
 														@csrf
-														
-
 														<button type="submit" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Switch User">
 															<i class="fas fa-random"></i>
 														</button>
-														
 													</form>
-													@endif
+													
 												@elseif($currentUser->id === $user->id)
 													<span class="badge bg-info" data-bs-toggle="tooltip" title="You are logged in as this user">
 														<i class="feather icon-user-check"></i>
