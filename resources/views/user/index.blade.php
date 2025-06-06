@@ -59,8 +59,9 @@
 									<thead>
 										<tr>
 											<th>Name</th>
-											<th>Start date</th>
+											<th>Created date</th>
 											<th>Status</th>
+											<th>Actions</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -77,6 +78,9 @@
 											<td>{{ $user->created_at }}</td>
 											<td>
 												<span class="badge badge-light-success">Active</span>
+
+											</td>
+											<td>
 												<div class="overlay-edit">
 													@if(Auth::id() == $user->id)
 													<a href="{{ route('user.edit', [$user->id]) }}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit User">
@@ -128,7 +132,6 @@
 													@endif
 												</div>
 											</td>
-
 										</tr>
 										@endforeach
 

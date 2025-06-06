@@ -20,33 +20,42 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
+    protected $originalUserId;
+    protected $allUsers;
+
+    public function __construct()
+    {
+        $this->allUsers = User::all();
+        $this->originalUserId = session('impersonate_original_user') ?? Cookie::get('impersonate_original_user');
+    }
 
     public function index()
     {
-        $allusers = User::all();
         $currentUser = Auth::user();
-
-        $originalUserId = session('impersonate_original_user') ?? Cookie::get('impersonate_original_user');
+        $allusers =  $this->allUsers;
+        $originalUserId = $this->originalUserId;
         $loginId = session('previous_login_id');
         $loginUser = null;
 
         if ($loginId) {
             $loginUser = User::find($loginId);
         }
-        return view('user.index', compact('allusers', 'currentUser', 'originalUserId', 'loginUser'));
+        return view('user.index', compact('allusers', 'currentUser', 'originalUserId', 'loginUser', 'allusers', 'originalUserId'));
     }
 
     public function userAdd()
     {
-        $allusers = User::all();
-        $allRole = Role::where('status', 1)->get();
+        $allRoles = Role::where('status', 1)->get();
+        $allusers =  $this->allUsers;
+        $originalUserId = $this->originalUserId;
         $loginId = session('previous_login_id');
         $loginUser = null;
 
         if ($loginId) {
             $loginUser = User::find($loginId);
         }
-        return view('user.add', ['allRoles' => $allRole, 'allusers' => $allusers, 'loginUser' => $loginUser]);
+
+        return view('user.add', compact('allRoles', 'allusers', 'originalUserId', 'loginUser'));
     }
 
     public function userSave(Request $request)
@@ -82,25 +91,30 @@ class UserController extends Controller
             $id = Auth::id();
         }
         $user = User::findOrFail($id);
-        $allusers  = User::all();
         $user->unsetRelation('roles')->unsetRelation('permissions');
         $roles = $user->roles;
         $currentRole = null;
+
+        $allusers =  $this->allUsers;
+        $originalUserId = $this->originalUserId;
         $loginId = session('previous_login_id');
         $loginUser = null;
 
         if ($loginId) {
             $loginUser = User::find($loginId);
         }
+
         if ($roles->count() > 0) {
             $currentRole = $roles[0]->id;
         }
+
         return view('user.edit', [
             'user' => $user,
             'allRoles' => Role::where('status', 1)->get(),
-            'currentRole' => $currentRole,
             'allusers' => $allusers,
-            'loginUser'=>$loginUser
+            'currentRole' => $currentRole,
+            'originalUserId' => $originalUserId,
+            'loginUser' => $loginUser
         ]);
     }
 
@@ -302,9 +316,9 @@ class UserController extends Controller
     {
         $currentUser = Auth::user();
 
-        // if (!$currentUser->hasRole('Administrator')) {
-        //     abort(403, 'Unauthorized action.');
-        // }
+        if (!$currentUser->hasRole('Administrator')) {
+            abort(403, 'Unauthorized action.');
+        }
 
         if ($currentUser->id == $id) {
             return redirect()->back()->with('error', 'You are already logged in as this user.');
@@ -318,7 +332,7 @@ class UserController extends Controller
         $userToSwitch = User::findOrFail($id);
         Auth::login($userToSwitch);
 
-        return redirect('/')->with('success', 'Switch new user: ' . $userToSwitch->name);
+        return redirect('/');
     }
 
     public function switchBack()
@@ -334,9 +348,9 @@ class UserController extends Controller
                 session()->forget('impersonate_original_user');
                 Cookie::queue(Cookie::forget('impersonate_original_user'));
 
-                return redirect('/user')->with('success', 'Switched back to original user: ' . $originalUser->name);
+                return redirect('/');
             }
         }
-        return redirect('/')->with('error', 'Unable to switch back to original user.');
+        return redirect('/');
     }
 }

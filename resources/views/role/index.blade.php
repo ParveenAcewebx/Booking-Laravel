@@ -131,14 +131,7 @@
                                     @endforeach
                                 </tbody>
                                 <tfoot>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Permissions</th>
-                                        <th>Status</th>
-                                       @canany(['delete roles', 'edit roles']) 
-                                        <th>Actions</th>
-                                        @endcanany
-                                    </tr>
+                                   
                                 </tfoot>
                             </table>
                         </div>

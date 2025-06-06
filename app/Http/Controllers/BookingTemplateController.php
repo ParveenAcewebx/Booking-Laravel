@@ -10,13 +10,19 @@ use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Validation\ValidationException;
-
+use Illuminate\Support\Facades\Cookie;
 class BookingTemplateController extends Controller
 {
+    protected $allUsers;
+
+    public function __construct()
+    {
+        $this->allUsers = User::all();
+    }
     public function index()
     {
         $alltemplate = BookingTemplate::all();
-        $allusers  = User::all();
+        $allusers  = $this->allUsers;
         $loginId = session('previous_login_id');
         $loginUser = null;
 
@@ -64,7 +70,7 @@ class BookingTemplateController extends Controller
 
     public function templateEdit($id)
     {
-        $allusers  = User::all();
+        $allusers  = $this->allUsers;
         $template = BookingTemplate::find($id);
         $loginId = session('previous_login_id');
         $loginUser = null;
@@ -77,7 +83,7 @@ class BookingTemplateController extends Controller
 
     public function templateAdd()
     {
-        $allusers  = User::all();
+        $allusers  = $this->allUsers;
         $loginId = session('previous_login_id');
         $loginUser = null;
 

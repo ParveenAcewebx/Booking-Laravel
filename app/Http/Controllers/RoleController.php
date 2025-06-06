@@ -6,13 +6,20 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
-
+use Illuminate\Support\Facades\Cookie;
 class RoleController extends Controller
 {
+    protected $allUsers;
+
+    public function __construct()
+    {
+        $this->allUsers = User::all();
+    }
+
     public function index()
     {
         $allroles = Role::with('permissions')->get();
-        $allusers  = User::all();
+        $allusers  = $this->allUsers;
         $loginId = session('previous_login_id');
         $loginUser = null;
 
@@ -25,7 +32,7 @@ class RoleController extends Controller
     public function roleAdd()
     {
         $roleGroups = config('constants.role_groups');
-        $allusers  = User::all();
+        $allusers  = $this->allUsers;
         $loginId = session('previous_login_id');
         $loginUser = null;
 
@@ -68,7 +75,7 @@ class RoleController extends Controller
 
     public function roleEdit($id)
     {
-        $allusers  = User::all();
+        $allusers  = $this->allUsers;
         $role = Role::findOrFail($id);
         $loginId = session('previous_login_id');
         $loginUser = null;

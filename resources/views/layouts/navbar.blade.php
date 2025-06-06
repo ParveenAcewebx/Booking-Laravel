@@ -1,6 +1,7 @@
-<nav class="pcoded-navbar menupos-fixed">
-    <div class="navbar-wrapper">
-        <div class="navbar-content scroll-div">
+<nav class="pcoded-navbar menupos-fixed @if($isNavCollapsed ?? false) navbar-collapsed @endif">
+    <div class="navbar-wrapper d-flex flex-column" style="height: 92vh;">
+        <div class="navbar-content scroll-div flex-grow-1 d-flex flex-column">
+
             <div>
                 <!-- User Profile Header -->
                 <div class="main-menu-header">
@@ -35,7 +36,6 @@
 
                 <!-- Navigation Menu -->
                 <ul class="nav pcoded-inner-navbar">
-
                     {{-- User Management --}}
                     @canany(['view users', 'create users', 'edit users', 'delete users'])
                     <li class="nav-item pcoded-hasmenu">
@@ -98,19 +98,36 @@
                             <span class="pcoded-mtext">Manage Role</span>
                         </a>
                         <ul class="pcoded-submenu">
-                             @can('create roles')
+                            @can('create roles')
                             <li><a href="{{ route('roles.add') }}">Add Role</a></li>
                             @endcan
                             @can('view roles')
                             <li><a href="{{ route('roles.list') }}">All Roles</a></li>
                             @endcan
-                           
                         </ul>
                     </li>
                     @endcanany
-
                 </ul>
             </div>
+
+            <!-- Switch Back Button pushed to bottom -->
+            @php
+            $isImpersonating = session()->has('impersonate_original_user') || Cookie::get('impersonate_original_user');
+            $currentUser = Auth::user();
+            @endphp
+
+            @if ($isImpersonating && $currentUser && isset($loginUser))
+            <div class="mt-auto">
+                <form method="POST" action="{{ route('user.switch.back') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger btn-block d-flex align-items-center justify-content-center">
+                        <i class="feather icon-log-out"></i>
+                        <span id="switchBackText" class="ml-2">Switch Back</span>
+                    </button>
+                </form>
+            </div>
+            @endif
+
         </div>
     </div>
 </nav>

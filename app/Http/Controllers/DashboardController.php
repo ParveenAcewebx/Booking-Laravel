@@ -15,11 +15,18 @@ use DB;
 use Carbon\Carbon; 
 use Mail; 
 use Illuminate\Support\Str;
-
+use Illuminate\Support\Facades\Cookie;
 class DashboardController extends Controller
 {
+    protected $allUsers;
+
+    public function __construct()
+    {
+        $this->allUsers = User::all();
+    }
+    
     public function index(){
-        $allusers = User::all();
+        $allusers = $this->allUsers;
         $bookingForms = BookingTemplate::all();
         $bookings = Booking::all();
         $loginId = session('previous_login_id');
