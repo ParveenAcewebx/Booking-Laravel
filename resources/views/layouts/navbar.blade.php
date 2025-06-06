@@ -6,7 +6,7 @@
                 <!-- User Profile Header -->
                 <div class="main-menu-header">
                     <img class="img-radius"
-                        src="{{ Auth::user()->avatar ? Storage::url(Auth::user()->avatar) : asset('storage/avatars/no-image-available.png') }}"
+                        src="{{ Auth::user()->avatar ? Storage::url(Auth::user()->avatar) : asset('assets/images/no-image-available.png') }}"
                         alt="User-Profile-Image">
 
                     <div class="user-details">
