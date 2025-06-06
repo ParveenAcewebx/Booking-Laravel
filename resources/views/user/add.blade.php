@@ -20,9 +20,9 @@
             </div>
         </div>
         <!-- [ breadcrumb ] end -->
+
         <!-- [ Main Content ] start -->
         <div class="row">
-            <!-- [ Form Validation ] start -->
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
@@ -45,7 +45,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label">Name</label>
-                                        <input type="text" class="form-control" name="username" placeholder="Name">
+                                        <input type="text" class="form-control" name="username" placeholder="Name" required>
                                         @error('username')
                                         <div class="error">{{ $message }}</div>
                                         @enderror
@@ -54,7 +54,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label">Email</label>
-                                        <input type="email" class="form-control" name="email" placeholder="Email">
+                                        <input type="email" class="form-control" name="email" placeholder="Email" required>
                                         @error('email')
                                         <div class="error">{{ $message }}</div>
                                         @enderror
@@ -63,7 +63,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label">Password</label>
-                                        <input type="password" class="form-control" name="password" placeholder="Password">
+                                        <input type="password" class="form-control" name="password" placeholder="Password" required>
                                         @error('password')
                                         <div class="error">{{ $message }}</div>
                                         @enderror
@@ -72,7 +72,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label">Confirm Password</label>
-                                        <input type="password" class="form-control" name="password_confirmation" placeholder="Confirm Password">
+                                        <input type="password" class="form-control" name="password_confirmation" placeholder="Confirm Password" required>
                                         @error('password')
                                         <div class="error">{{ $message }}</div>
                                         @enderror
@@ -81,8 +81,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label">Role</label>
-                                        <select class="form-control" name="role">
-                                            
+                                        <select class="form-control" name="role" required>
                                             @foreach($allRoles as $role)
                                                 <option value="{{ $role->id }}" 
                                                     @if($role->name == 'Customer') selected @endif>
@@ -90,7 +89,6 @@
                                                 </option>
                                             @endforeach
                                         </select>
-
                                         @error('role')
                                             <div class="error">{{ $message }}</div>
                                         @enderror
@@ -111,13 +109,25 @@
                                         <div class="error">{{ $message }}</div>
                                     @enderror
                                 </div>
+                                <!-- Status Checkbox -->
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-group">
+                                        <label class="form-label d-block">Status</label>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" name="status" id="status" value="{{ config('constants.status.active') }}" checked>
+                                            <label class="form-check-label" for="status">Active</label>
+                                        </div>
+                                        @error('status')
+                                            <div class="error">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </form>
                     </div>
                 </div>
             </div>
-            <!-- [ Form Validation ] end -->
         </div>
         <!-- [ Main Content ] end -->
     </div>

@@ -46,7 +46,7 @@ class UserController extends Controller
     public function userAdd()
     {
         $allRoles = Role::where('status', 1)->get();
-        $allusers =  $this->allUsers;
+        $allusers = $this->allUsers;
         $originalUserId = $this->originalUserId;
         $loginId = session('previous_login_id');
         $loginUser = null;
@@ -64,20 +64,27 @@ class UserController extends Controller
             'username' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
-            'avatar' => 'required|nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'avatar' => 'required|nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'role' => 'required',
+            'status' => 'nullable|boolean',
         ]);
+
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
         }
+
         $user = User::create([
             'name' => $request->username,
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'avatar' => $avatarPath,
+            'status' => $request->has('status') ? config('constants.status.active') : config('constants.status.inactive'),
         ]);
+
         $userRole = Role::find($request->role);
         $user->assignRole($userRole);
+
         if ($user) {
             return redirect('/user')->with('success', 'User Added successfully!');
         } else {
@@ -120,33 +127,51 @@ class UserController extends Controller
 
     public function userUpdate(Request $request, $id = null)
     {
+
         if ($id == null) {
             $id = Auth::id();
         }
+
         $request->validate([
             'username' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'nullable|min:6|confirmed',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
+
         $user = User::findOrFail($id);
+
+        // Handle avatar upload
         $avatarPath = $user->avatar;
         if ($request->hasFile('avatar')) {
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
         }
+
+        
+        $status = $request->has('status') ? config('constants.status.active') : config('constants.status.inactive');
+        // Update user basic fields
         $user->update([
             'name' => $request->username,
             'email' => $request->email,
             'avatar' => $avatarPath,
+            'status' => $status, // <== important fix here
         ]);
+
+        // Update password if provided
         if ($request->password) {
-            $user->update(['password' => bcrypt($request->password)]);
+            $user->update([
+                'password' => bcrypt($request->password)
+            ]);
         }
+
+        // Update role
         $userRole = Role::find($request->role);
         $user->roles()->detach();
         $user->assignRole($userRole);
+
         return back()->with('success', 'User updated successfully!');
     }
+
 
     public function userDelete($id)
     {
@@ -177,7 +202,13 @@ class UserController extends Controller
     {
         $credentials = $request->only('email', 'password');
         $remember = $request->has('rememberme');
+
         if (Auth::attempt($credentials, $remember)) {
+            if (Auth::user()->status != 1) {
+                Auth::logout();
+                return redirect('/login')->with('error', 'Your account is inactive. Please contact support.');
+            }
+
             if (Auth::user()->hasRole('Customer')) {
                 return redirect()->intended('/welcome');
             } else {
@@ -187,8 +218,10 @@ class UserController extends Controller
                 return redirect()->intended('/');
             }
         }
+
         return redirect('/login')->with('error', 'Invalid credentials. Please try again.');
     }
+
 
     public function showRegistrationForm()
     {
