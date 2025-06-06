@@ -41,7 +41,12 @@
                             <div class="card-body">
                                 <ul class="list-inline">
                                     <li class="list-inline-item">
-                                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="user image" class="img-radius mb-2 wid-50" data-toggle="tooltip" title="{{ old('username', $user->name) }}">
+                                        <img
+                                            src="{{ !empty($user->avatar) ? asset('storage/' . $user->avatar) : asset('assets/images/no-image-available.png') }}"
+                                            alt="user image"
+                                            class="img-radius mb-2 wid-80 hei-80"
+                                            data-toggle="tooltip"
+                                            title="{{ old('username', $user->name) }}">
                                     </li>
                                 </ul>
                                 <div class="input-group mb-3">
@@ -53,7 +58,7 @@
                                         <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                                     </div>
                                     @error('avatar')
-                                        <div class="error text-danger mt-1">{{ $message }}</div>
+                                    <div class="error text-danger mt-1">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
@@ -68,15 +73,15 @@
 
                                 <!-- Flash Messages -->
                                 @if(session('success'))
-                                    <div class="alert alert-success mt-2" role="alert">
-                                        {{ session('success') }}
-                                    </div>
+                                <div class="alert alert-success mt-2" role="alert">
+                                    {{ session('success') }}
+                                </div>
                                 @endif
 
                                 @if(session('error'))
-                                    <div class="alert alert-danger mt-2" role="alert">
-                                        {{ session('error') }}
-                                    </div>
+                                <div class="alert alert-danger mt-2" role="alert">
+                                    {{ session('error') }}
+                                </div>
                                 @endif
                             </div>
 
@@ -89,7 +94,7 @@
                                             <label class="form-label">Name</label>
                                             <input type="text" class="form-control" name="username" value="{{ old('username', $user->name) }}" placeholder="Name">
                                             @error('username')
-                                                <div class="error text-danger mt-1">{{ $message }}</div>
+                                            <div class="error text-danger mt-1">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -100,7 +105,7 @@
                                             <label class="form-label">Email</label>
                                             <input type="email" class="form-control" name="email" value="{{ old('email', $user->email) }}" placeholder="Email" readonly>
                                             @error('email')
-                                                <div class="error text-danger mt-1">{{ $message }}</div>
+                                            <div class="error text-danger mt-1">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -119,7 +124,7 @@
                                             <label class="form-label">Confirm Password</label>
                                             <input type="password" class="form-control" name="password_confirmation" placeholder="Confirm Password">
                                             @error('password')
-                                                <div class="error text-danger mt-1">{{ $message }}</div>
+                                            <div class="error text-danger mt-1">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -130,19 +135,19 @@
                                             <label class="form-label">Role</label>
                                             <select class="form-control" name="role">
                                                 @foreach($allRoles as $role)
-                                                    @if(Auth::id() == $user->id)
-                                                        @if($role->id == $currentRole)
-                                                            <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                                        @endif
-                                                    @else
-                                                        <option value="{{ $role->id }}" {{ $role->id == $currentRole ? 'selected' : '' }}>
-                                                            {{ $role->name }}
-                                                        </option>
-                                                    @endif
+                                                @if(Auth::id() == $user->id)
+                                                @if($role->id == $currentRole)
+                                                <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                                @endif
+                                                @else
+                                                <option value="{{ $role->id }}" {{ $role->id == $currentRole ? 'selected' : '' }}>
+                                                    {{ $role->name }}
+                                                </option>
+                                                @endif
                                                 @endforeach
                                             </select>
                                             @error('role')
-                                                <div class="error text-danger mt-1">{{ $message }}</div>
+                                            <div class="error text-danger mt-1">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -160,7 +165,7 @@
                                 </div>
 
                                 <!-- Submit button -->
-                                <button type="submit" class="btn btn-primary mt-3">Update</button>
+                                <button type="submit" class="btn btn-primary">Update</button>
 
                             </div>
                         </div>
