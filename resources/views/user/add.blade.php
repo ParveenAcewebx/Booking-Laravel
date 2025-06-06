@@ -110,7 +110,7 @@
                                     @enderror
                                 </div>
                                 <!-- Status Checkbox -->
-                                <div class="col-md-12 mt-3" @if($hideFields) style="display:none;" @endif>
+                                <div class="col-md-12 mt-3">
                                     <div class="form-group">
                                         <label class="form-label d-block">Status</label>
                                         <div class="form-check">
