@@ -6,7 +6,7 @@
 		<a href="#!" class="b-brand">
 			<!-- ========   change your logo hear   ============ -->
 			<!-- ========   change your logo hear   ============ -->
-
+			<img src="assets/images/logo.png" alt="" class="logo">	
 		</a>
 		<a href="#!" class="mob-toggler">
 			<i class="feather icon-more-vertical"></i>

@@ -71,10 +71,11 @@
                                                 </div>
                                             @endforeach
                                         @endif
-
-                                        @error("dynamic.{$field['name']}")
-                                            <div class="error text-danger">{{ $message }}</div>
-                                        @enderror
+                                        @if(isset($field['name']))
+                                            @error("dynamic.{$field['name']}")
+                                                <div class="error text-danger">{{ $message }}</div>
+                                            @enderror
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>

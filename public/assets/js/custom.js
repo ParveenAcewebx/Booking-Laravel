@@ -134,6 +134,7 @@ function deleteBooking(id) {
 jQuery(function ($) {
     const templateSelect = document.getElementById("bookingTemplates");
     const fbEditor = document.getElementById("build-wrap");
+
     var newfield = [
         {
             label: "New Section",
@@ -202,6 +203,7 @@ jQuery(function ($) {
         fields: newfield,
         templates: temp,
         controlPosition: "left",
+        disableFields: ['autocomplete', 'button']
     });
     const templates = [
         {
