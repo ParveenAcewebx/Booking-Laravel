@@ -22,3 +22,8 @@
     background-color: #0073aa;
     color: white;
 }
+button.delete-User,button.logout-User,button.delete-User:focus,button.logout-User:focus,button.logout-User:active,button.delete-User:active {
+    border: none;
+    background: none;
+    outline:none;
+}

@@ -37,6 +37,14 @@
 
                 <!-- Navigation Menu -->
                 <ul class="nav pcoded-inner-navbar">
+
+
+                    <li class="nav-item">
+                        <a href="{{ route('dashboard') }}" class="nav-link">
+                            <span class="pcoded-micon"><i class="feather icon-home"></i></span>
+                            <span class="pcoded-mtext">Dashboard</span>
+                        </a>
+                    </li>
                     {{-- User Management --}}
                     @canany(['view users', 'create users', 'edit users', 'delete users'])
                     <li class="nav-item pcoded-hasmenu">
