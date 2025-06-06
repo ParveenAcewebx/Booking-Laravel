@@ -98,7 +98,7 @@
                                         <td>
                                             <div class="overlay-edit">
                                                 @if(Auth::id() == $user->id)
-                                                <a href="{{ route('user.edit', [$user->id]) }}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit User">
+                                                <a href="{{ route('profile') }}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit User">
                                                     <i class="fas fa-pencil-alt"></i>
                                                 </a>
                                                 @else
@@ -139,11 +139,6 @@
                                                         <i class="fas fa-random"></i>
                                                     </button>
                                                 </form>
-
-                                                @elseif($currentUser->id === $user->id)
-                                                <button class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="You are logged in as user">
-                                                    <i class="feather icon-user-check"></i>
-                                                </button>
                                                 @endif
                                             </div>
                                         </td>
