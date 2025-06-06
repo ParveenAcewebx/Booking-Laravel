@@ -21,6 +21,7 @@ class UsersTable extends Seeder
                 'email' => 'admin@example.com',
                 'password' => Hash::make('password'),
                 'avatar' => '',
+                'status' => '1',
             ],
             [
                 'id' => 2,
@@ -28,6 +29,7 @@ class UsersTable extends Seeder
                 'email' => 'staff@example.com',
                 'password' => Hash::make('password'),
                 'avatar' => '',
+                'status' => '1'
             ],
             [
                 'id' => 3,
@@ -35,6 +37,7 @@ class UsersTable extends Seeder
                 'email' => 'manager@example.com',
                 'password' => Hash::make('password'),
                 'avatar' => '',
+                'status' => '1'
             ],
             [
                 'id' => 4,
@@ -42,6 +45,7 @@ class UsersTable extends Seeder
                 'email' => 'customer@example.com',
                 'password' => Hash::make('password'),
                 'avatar' => '',
+                'status' => '1'
             ],
         ];
 
