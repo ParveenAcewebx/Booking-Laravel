@@ -41,12 +41,17 @@
                             <div class="card-body">
                                 <ul class="list-inline">
                                     <li class="list-inline-item">
-                                        <img
-                                            src="{{ !empty($user->avatar) ? asset('storage/' . $user->avatar) : asset('assets/images/no-image-available.png') }}"
-                                            alt="user image"
-                                            class="img-radius mb-2 wid-80 hei-80"
-                                            data-toggle="tooltip"
-                                            title="{{ old('username', $user->name) }}">
+                                        <ul class="list-inline">
+                                            <li class="list-inline-item">
+                                                <img
+                                                    src="{{ asset('storage/' . (!empty($user->avatar) ? $user->avatar : 'avatars/no-image-available.png')) }}"
+                                                    alt="user image"
+                                                    class="img-radius mb-2 wid-80 hei-80"
+                                                    data-toggle="tooltip"
+                                                    title="{{ old('username', $user->name) }}">
+                                            </li>
+                                        </ul>
+
                                     </li>
                                 </ul>
                                 <div class="input-group mb-3">
