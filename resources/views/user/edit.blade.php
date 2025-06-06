@@ -129,21 +129,21 @@
                                         </div>
                                     </div>
 
+
                                     <!-- Role -->
-                                    <div class="col-md-6">
+                                    @php
+                                    $hideFields = Str::contains(request()->path(), 'profile') && Auth::check() && Auth::id() == $user->id;
+                                    @endphp
+
+                                    <!-- Role -->
+                                    <div class="col-md-6" @if($hideFields) style="display:none;" @endif>
                                         <div class="form-group">
                                             <label class="form-label">Role</label>
                                             <select class="form-control" name="role">
                                                 @foreach($allRoles as $role)
-                                                @if(Auth::id() == $user->id)
-                                                @if($role->id == $currentRole)
-                                                <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                                @endif
-                                                @else
                                                 <option value="{{ $role->id }}" {{ $role->id == $currentRole ? 'selected' : '' }}>
                                                     {{ $role->name }}
                                                 </option>
-                                                @endif
                                                 @endforeach
                                             </select>
                                             @error('role')
@@ -153,26 +153,27 @@
                                     </div>
 
                                     <!-- Status Checkbox -->
-                                    <div class="col-md-12">
+                                    <div class="col-md-12" @if($hideFields) style="display:none;" @endif>
                                         <div class="form-group">
                                             <label class="form-label">Status</label><br>
-                                            <input type="checkbox" name="status" value="{{ config('constants.status.active') }}"
-                                                {{ $user->status == config('constants.status.active') ? 'checked' : '' }}>
-                                            Active
+                                            <label style="cursor: pointer;">
+                                                <input type="checkbox" name="status" value="{{ config('constants.status.active') }}"
+                                                    {{ $user->status == config('constants.status.active') ? 'checked' : '' }}>
+                                                Active
+                                            </label>
                                         </div>
                                     </div>
-
                                 </div>
 
-                                <!-- Submit button -->
-                                <button type="submit" class="btn btn-primary">Update</button>
+                                    <!-- Submit button -->
+                                    <button type="submit" class="btn btn-primary">Update</button>
 
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- [ Form Validation ] end -->
-                </div>
+                        <!-- [ Form Validation ] end -->
+                    </div>
             </form>
 
             <!-- [ Main Content ] end -->

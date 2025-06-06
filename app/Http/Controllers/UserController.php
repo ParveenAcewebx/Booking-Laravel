@@ -210,7 +210,7 @@ class UserController extends Controller
             }
 
             if (Auth::user()->hasRole('Customer')) {
-                return redirect()->intended('/welcome');
+                return redirect('/profile');
             } else {
                 $currentId = Auth::user()->id;
                 session(['previous_login_id' => $currentId]);

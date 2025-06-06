@@ -112,7 +112,7 @@
                 <div class="user-card-body card">
                     <div class="card-body">
                         <div class="top-card text-center">
-                            <img src="{{ Auth::user()->avatar ? Storage::url(Auth::user()->avatar) : asset('assets/images/avatar-2.jpg') }}" class="img-fluid img-radius" alt="">
+                            <img src="{{ Auth::user()->avatar ? Storage::url(Auth::user()->avatar) : asset('assets/images/no-image-available.png') }}" class="img-fluid img-radius" alt="">
                         </div>
                         <div class="card-contain text-center p-t-20">
                             <h5 class="text-capitalize p-b-10">{{ Auth::user()->name }}</h5>

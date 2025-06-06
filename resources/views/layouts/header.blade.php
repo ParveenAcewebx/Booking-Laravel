@@ -107,7 +107,7 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right profile-notification">
                         <div class="pro-head">
-                            <img src="{{ Auth::user()->avatar ? Storage::url(Auth::user()->avatar) : asset('assets/images/no-image-available.png') }}" class="img-radius" alt="User-Profile-Image">
+                            <img src="{{ Auth::user()->avatar ? Storage::url(Auth::user()->avatar) : asset('assets/images/no-image-available.png') }}" class="img-radius hei-40" alt="User-Profile-Image">
                             <span>{{ Auth::user()->name }}</span>
                         </div>
                         <ul class="pro-body">
