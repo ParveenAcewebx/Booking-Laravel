@@ -26,33 +26,46 @@
             <div class="col-xl-4 col-md-6">
                 <div class="card flat-card">
                     <div class="row-table">
-                        <div class="col-sm-6 card-body bg-white">
-                            <h6 class="text-dark m-b-5">Total Users</h6>
-                            <h4 class="text-dark mb-0">{{count($allusers);}}</h4>
-                        </div>
+                        <a href="{{ route('user.list') }}" class="dashboard-card-link">
+                            <div class="bg-white dash-card dashboard-card-hover">
+                                <div class="card-body">
+                                    <h6 class="text-dark m-b-5">Total Users</h6>
+                                    <h4 class="text-dark mb-0">{{ count($allusers) }}</h4>
+                                </div>
+                            </div>
+                        </a>
+
                     </div>
                 </div>
             </div>
             <div class="col-xl-4 col-md-6">
                 <div class="card flat-card">
                     <div class="row-table">
-                        <div class="col-sm-6 card-body bg-white">
-                            <h6 class="text-dark m-b-5">Total Bookings</h6>
-                            <h4 class="text-dark mb-0">{{count($bookings);}}</h4>
-                        </div>
+                        <a href="{{ route('booking.list') }}" class="dashboard-card-link">
+                            <div class="bg-white dash-card dashboard-card-hover">
+                                <div class="card-body">
+                                    <h6 class="text-dark m-b-5">Total Bookings</h6>
+                                    <h4 class="text-dark mb-0">{{count($bookings);}}</h4>
+                                </div>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
             <div class="col-xl-4 col-md-12">
                 <div class="card flat-card">
                     <div class="row-table">
-                        <div class="col-sm-6 card-body bg-white">
-                            <h6 class="text-dark m-b-5">Total Booking Templates</h6>
-                            <h4 class="text-dark mb-0">{{count($bookingForms);}}</h4>
-                        </div>
+                        <a href="{{ route('template.list') }}" class="dashboard-card-link">
+                            <div class="bg-white dash-card dashboard-card-hover">
+                                <div class="card-body">
+                                    <h6 class="text-dark m-b-5">Total Booking Templates</h6>
+                                    <h4 class="text-dark mb-0">{{count($bookingForms);}}</h4>
+                                </div>
+                            </div>
+                        </a>
                     </div>
                 </div>
-            </div>            
+            </div>
             <div class="col-xl-8">
                 <div class="card table-card">
                     <div class="card-header">
@@ -81,23 +94,82 @@
                                             <th>Name</th>
                                             <th>Status</th>
                                             <th>Email</th>
-                                            <th>user ID</th>
+                                            <th>Role</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($allusers as $users)
                                         <tr>
-                                            <td><img src="{{ asset('storage/' . $users->avatar) }}" alt="" style="width:35px;" class="img-20"></td>
-                                            <td>{{$users->name}}</td>
                                             <td>
-                                                <div><span class="badge badge-light-success">Active</span></div>
+                                                <img src="{{ $users->avatar ? Storage::url($users->avatar) : asset('assets/images/no-image-available.png') }}"
+                                                    alt="" style="width:35px;" class="img-20">
                                             </td>
-                                            <td>{{$users->email}}</td>
-                                            <td>{{$users->id}}</td>
+                                            <td>{{ $users->name }}</td>
                                             <td>
-                                                <a href="{{ route('user.edit', [$users->id]) }}"><i class="icon feather icon-edit f-16  text-c-green"></i></a>
-                                                <a href="{{route('user.delete', [$users->id])}}"><i class="feather icon-trash-2 ml-3 f-16 text-c-red"></i></a>
+                                                <span class="badge {{ $users->status == config('constants.status.active') ? 'badge-light-success' : 'badge-light-danger' }}">
+                                                    {{ $users->status == config('constants.status.active') ? 'Active' : 'Inactive' }}
+                                                </span>
+                                            </td>
+                                            <td>{{ $users->email }}</td>
+                                            <td>
+                                                @php
+                                                $roleName = $users->getRoleNames()->first();
+                                                @endphp
+                                                <span class="badge badge-primary">
+                                                    {{ $roleName ? $roleName : 'No Role' }}
+                                                </span>
+                                            </td>
+                                            <td class="d-flex align-items-center">
+                                                <!-- Edit button -->
+                                                @if(Auth::id() == $users->id)
+                                                <a href="{{ route('profile') }}" data-toggle="tooltip" data-placement="top" title="Edit User">
+                                                    <i class="icon feather icon-edit f-16 text-c-green"></i>
+                                                </a>
+                                                @else
+                                                @can('edit users')
+                                                <a href="{{ route('user.edit', [$users->id]) }}" data-toggle="tooltip" data-placement="top" title="Edit User">
+                                                    <i class="icon feather icon-edit f-16 text-c-green"></i>
+                                                </a>
+                                                @endcan
+                                                @endif
+
+                                                <!-- Delete button -->
+                                                @can('delete users')
+                                                @if(Auth::id() != $users->id)
+                                                <form action="{{ route('user.delete', [$users->id]) }}" method="POST" id="deleteUser-{{ $users->id }}">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" onclick="return deleteUser({{ $users->id }})" data-toggle="tooltip" data-placement="top" title="Delete User" class="delete-User">
+                                                        <i class="feather icon-trash-2 ml-2 f-16 text-c-red"></i>
+                                                    </button>
+                                                </form>
+                                                @endif
+                                                @endcan
+
+                                                <!-- Impersonation buttons -->
+                                                @php
+                                                $isImpersonating = session()->has('impersonate_original_user') || Cookie::get('impersonate_original_user');
+                                                $currentUser = Auth::user();
+                                                @endphp
+
+                                                @if($isImpersonating && Auth::id() === $users->id)
+                                                <!-- Switch Back button -->
+                                                <form method="POST" action="{{ route('user.switch.back') }}" style="display:inline;">
+                                                    @csrf
+                                                    <button type="submit" class="logout-User" data-toggle="tooltip" data-placement="top" title="Switch Back to {{ $loginUser->name }}">
+                                                        <i class="feather icon-log-out ml-2 f-16 text-c-black"></i>
+                                                    </button>
+                                                </form>
+                                                @elseif(!$isImpersonating && $currentUser->hasRole('Administrator') && $currentUser->id !== $users->id)
+                                                <!-- Switch User button -->
+                                                <form method="POST" action="{{ route('user.switch', $users->id) }}" style="display:inline;">
+                                                    @csrf
+                                                    <button type="submit" class="logout-User" data-toggle="tooltip" data-placement="top" title="Switch User">
+                                                        <i class="fas fa-random ml-2 f-16 text-c-black"></i>
+                                                    </button>
+                                                </form>
+                                                @endif
                                             </td>
                                         </tr>
                                         @endforeach
