@@ -11,7 +11,9 @@
 .submit-user .icon-log-out {
     margin-right: 0.75rem;
 }
-
+.submit-user:focus{
+    outline: none;
+}
 .submit-user i {
     margin-right: 0.75rem;
 }

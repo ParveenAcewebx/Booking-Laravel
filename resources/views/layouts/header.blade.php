@@ -135,7 +135,7 @@
                             <li>
                                 <form method="POST" action="{{ route('user.switch.back') }}" style="margin: 0;">
                                     @csrf
-                                    <button type="submit" class="dropdown-item d-flex align-items-center">
+                                    <button type="submit" class="dropdown-item d-flex align-items-center submit-user">
                                         <i class="feather icon-log-out"></i>
                                         Switch Back to {{ $loginUser->name }}
                                     </button>
