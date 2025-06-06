@@ -24,6 +24,7 @@
     <!-- vendor css -->
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
     <!-- data tables css -->
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap4.min.css') }}">
     <style>
@@ -62,6 +63,7 @@
 <script src="{{asset('assets/js/plugins/bootstrap.min.js')}}"></script>
 <script src="https://formbuilder.online/assets/js/form-builder.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-rateyo@2.3.0/jquery.rateyo.min.js"></script>
+
 <!-- sweet alert Js -->
 <script src="{{asset('assets/js/plugins/sweetalert.min.js')}}"></script>
 <script src="{{asset('assets/js/pages/ac-alert.js')}}"></script>

@@ -16,7 +16,7 @@
 							<li class="breadcrumb-item"><a href="{{route('booking.list') }}">All Bookings</a></li>
 						</ul>
 						@if(session('success'))
-                        <div id="exampleModalCenter" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+						<div id="exampleModalCenter" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 							<div class="modal-dialog modal-dialog-centered" role="document">
 								<div class="modal-content">
 									<div class="modal-header">
@@ -27,21 +27,21 @@
 										<p class="mb-0">{{ session('success') }}</p>
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn  btn-secondary" data-dismiss="modal">Okay</button>										
+										<button type="button" class="btn  btn-secondary" data-dismiss="modal">Okay</button>
 									</div>
 								</div>
 							</div>
 						</div>
 						<button style="display:none;" id="mymodelsformessage" type="button" class="btn  btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Launch demo modal</button>
-                        @endif
+						@endif
 					</div>
 					<div class="col-md-2">
-                        <div class="page-header-titles float-right">
+						<div class="page-header-titles float-right">
 							@can('create bookings')
-                            <a href="{{ route('booking.add')}}" class="btn btn-primary float-right p-2">Add Booking</a>
+							<a href="{{ route('booking.add')}}" class="btn btn-primary float-right p-2">Add Booking</a>
 							@endcan
-                        </div>
-                    </div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -55,39 +55,39 @@
 							<table id="booking-list-table" class="table nowrap">
 								<thead>
 									<tr>
-										<th>Start date</th>
+										<th>Created date</th>
 										<th>Status</th>
+										<th>Actions</th>
 									</tr>
 								</thead>
 								<tbody>
-                                	@foreach($allbooking as $booking)
-										<tr>
-											<td>{{ $booking->created_at }}</td>
-											<td>
-												<span class="badge badge-light-success">{{ $booking->status }}</span>
-												<div class="overlay-edit">
-													@can('edit bookings')
-                                                        <a href="{{ route('booking.edit', [$booking->id]) }}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit Booking">
-                                                            <i class="fas fa-pencil-alt"></i>
-                                                        </a>
-														@endcan
-														@can('delete bookings')
-                                                    <form action="{{route('booking.delete', [$booking->id])}}" method="POST" id="deleteBooking-{{$booking->id}}">
-                                                        <input type="hidden" name="_method" value="DELETE">
-                                                        @csrf
-                                                        <button onclick="return deleteBooking({{$booking->id}})" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Booking"><i class="feather icon-trash-2"></i></button>
-                                                    </form>
-													@endcan
-												</div>
-											</td>
-										</tr>
+									@foreach($allbooking as $booking)
+									<tr>
+										<td>{{ $booking->created_at }}</td>
+										<td>
+											<span class="badge badge-light-success">{{ $booking->status }}</span>
+
+										</td>
+										<td>
+											<div class="overlay-edit">
+												@can('edit bookings')
+												<a href="{{ route('booking.edit', [$booking->id]) }}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit Booking">
+													<i class="fas fa-pencil-alt"></i>
+												</a>
+												@endcan
+												@can('delete bookings')
+												<form action="{{route('booking.delete', [$booking->id])}}" method="POST" id="deleteBooking-{{$booking->id}}">
+													<input type="hidden" name="_method" value="DELETE">
+													@csrf
+													<button onclick="return deleteBooking({{$booking->id}})" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Booking"><i class="feather icon-trash-2"></i></button>
+												</form>
+												@endcan
+											</div>
+										</td>
+									</tr>
 									@endforeach
 								</tbody>
 								<tfoot>
-									<tr>
-										<th>Start date</th>
-										<th>Status</th>
-									</tr>
 								</tfoot>
 							</table>
 						</div>
@@ -96,6 +96,6 @@
 			</div>
 		</div>
 		<!-- [ Main Content ] end -->
-	</div>		
+	</div>
 </div>
 @endsection

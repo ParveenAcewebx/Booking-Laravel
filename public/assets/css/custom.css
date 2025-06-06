@@ -1,0 +1,22 @@
+.submit-user {
+    background: none;
+    border: none;
+    padding: 0.5rem 1.4rem;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    align-items: center;
+}
+
+.submit-user .icon-log-out {
+    margin-right: 0.75rem;
+}
+
+.submit-user i {
+    margin-right: 0.75rem;
+}
+
+.submit-user:hover {
+    background-color: #0073aa;
+    color: white;
+}

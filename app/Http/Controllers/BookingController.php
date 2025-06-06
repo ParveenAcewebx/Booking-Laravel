@@ -15,12 +15,19 @@ use DB;
 use Carbon\Carbon; 
 use Mail; 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cookie;
 
 class BookingController extends Controller
 {
+    protected $allUsers;
+    public function __construct()
+    {
+        $this->allUsers = User::all();
+    }
+
     public function index(){
         $allbooking = Booking::all();
-        $allusers  = User::all();
+        $allusers  = $this->allUsers;
         $loginId = session('previous_login_id');
         $loginUser = null;
 
@@ -33,7 +40,7 @@ class BookingController extends Controller
     public function bookingAdd(){
 
         $alltemplates = BookingTemplate::all();
-        $allusers  = User::all();
+        $allusers  = $this->allUsers;
         $loginId = session('previous_login_id');
         $loginUser = null;
 
@@ -75,8 +82,8 @@ class BookingController extends Controller
             $field['value'] = $dynamicValues[$name] ?? null;
             $fieldsWithValues[] = $field;
         }
-        $staffList = User::all();
-        $allusers = User::all();
+        $staffList = $this->allUsers;
+        $allusers = $this->allUsers;
         $loginId = session('previous_login_id');
         $loginUser = null;
 

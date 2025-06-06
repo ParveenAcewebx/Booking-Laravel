@@ -18,8 +18,8 @@
 							<li class="breadcrumb-item"><a href="#!">All Booking Templates</a></li>
 						</ul>
 
-                        @if(session('success'))
-                        <div id="exampleModalCenter" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+						@if(session('success'))
+						<div id="exampleModalCenter" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 							<div class="modal-dialog modal-dialog-centered" role="document">
 								<div class="modal-content">
 									<div class="modal-header">
@@ -31,21 +31,21 @@
 									</div>
 									<div class="modal-footer">
 										<button type="button" class="btn  btn-secondary" data-dismiss="modal">Okay</button>
-										
+
 									</div>
 								</div>
 							</div>
 						</div>
-						<button  style="display:none;" id="mymodelsformessage" type="button" class="btn  btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Launch demo modal</button>
-                        @endif
+						<button style="display:none;" id="mymodelsformessage" type="button" class="btn  btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Launch demo modal</button>
+						@endif
 					</div>
 					<div class="col-md-2">
-                        <div class="page-header-titles float-right">
+						<div class="page-header-titles float-right">
 							@can('create forms')
-                            <a href="{{ route('template.add')}}" class="btn btn-primary float-right p-2">Add Form</a>
+							<a href="{{ route('template.add')}}" class="btn btn-primary float-right p-2">Add Form</a>
 							@endcan
-                        </div>
-                    </div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -60,12 +60,13 @@
 								<thead>
 									<tr>
 										<th>Name</th>
-										<th>Start date</th>
+										<th>Created date</th>
 										<th>Status</th>
+										<th>Actions</th>
 									</tr>
 								</thead>
 								<tbody>
-                                @foreach($alltemplate as $template)
+									@foreach($alltemplate as $template)
 									<tr>
 										<td>
 											<div class="d-inline-block align-middle">
@@ -77,17 +78,19 @@
 										<td>{{ $template->created_at }}</td>
 										<td>
 											<span class="badge badge-light-success">Active</span>
+										</td>
+										<td>
 											<div class="overlay-edit">
-											@can('edit forms')
-                      						<a href="{{route('template.edit', [$template->id])}}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit Form" ><i class="fas fa-pencil-alt"></i></a>
-											@endcan
-											@can('delete forms')
-											<form action="{{ route('template.delete', [$template->id]) }}" method="POST" id="deleteTemplate-{{$template->id}}">
-												<input type="hidden" name="_method" value="DELETE">
-												@csrf
-												<button onclick="return deleteTemplate({{$template->id}})" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Form"><i class="feather icon-trash-2"></i></button>
-                                           </form>
-										   @endcan
+												@can('edit forms')
+												<a href="{{route('template.edit', [$template->id])}}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit Form"><i class="fas fa-pencil-alt"></i></a>
+												@endcan
+												@can('delete forms')
+												<form action="{{ route('template.delete', [$template->id]) }}" method="POST" id="deleteTemplate-{{$template->id}}">
+													<input type="hidden" name="_method" value="DELETE">
+													@csrf
+													<button onclick="return deleteTemplate({{$template->id}})" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Form"><i class="feather icon-trash-2"></i></button>
+												</form>
+												@endcan
 											</div>
 										</td>
 									</tr>
@@ -101,8 +104,8 @@
 		</div>
 		<!-- [ Main Content ] end -->
 	</div>
-	
+
 </div>
 
-  
- @endsection
+
+@endsection
