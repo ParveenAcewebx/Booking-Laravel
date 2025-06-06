@@ -134,6 +134,7 @@ function deleteBooking(id) {
 jQuery(function ($) {
     const templateSelect = document.getElementById("bookingTemplates");
     const fbEditor = document.getElementById("build-wrap");
+    let formBuilderInstance; // store the formBuilder object after initialization
 
     var newfield = [
         {
@@ -145,6 +146,7 @@ jQuery(function ($) {
             icon: '<i class="fa-solid fa-section"></i>',
         },
     ];
+
     var temp = {
         newsection: function (fieldData) {
             return {
@@ -160,22 +162,15 @@ jQuery(function ($) {
                 </div>`,
                 onRender: function () {
                     var currentStep = 0;
-                    $(document).on(
-                        "click",
-                        `#${fieldData.name} .next-btn`,
-                        function () {
-                            currentStep++;
-                            showSection(currentStep);
-                        }
-                    );
-                    $(document).on(
-                        "click",
-                        `#${fieldData.name} .prev-btn`,
-                        function () {
-                            currentStep--;
-                            showSection(currentStep);
-                        }
-                    );
+                    $(document).on("click", `#${fieldData.name} .next-btn`, function () {
+                        currentStep++;
+                        showSection(currentStep);
+                    });
+                    $(document).on("click", `#${fieldData.name} .prev-btn`, function () {
+                        currentStep--;
+                        showSection(currentStep);
+                    });
+
                     function showSection(step) {
                         var allSections = $(".section");
                         var totalSections = allSections.length;
@@ -194,92 +189,54 @@ jQuery(function ($) {
                             $(`#${fieldData.name} .next-btn`).show();
                         }
                     }
+
                     showSection(currentStep);
                 },
             };
         },
     };
+
     const formBuilder = $(fbEditor).formBuilder({
         fields: newfield,
         templates: temp,
         controlPosition: "left",
-        disableFields: ['autocomplete', 'button']
+        disableFields: ['autocomplete', 'button'],
     });
-    const templates = [
-        {
-            type: "text",
-            label: "Name:",
-            subtype: "text",
-            className: "form-control",
-            name: "text-1475765723950",
-        },
-        {
-            type: "text",
-            subtype: "email",
-            label: "Email:",
-            className: "form-control",
-            name: "text-1475765724095",
-        },
-        {
-            type: "text",
-            subtype: "tel",
-            label: "Phone:",
-            className: "form-control",
-            name: "text-1475765724231",
-        },
-        {
-            type: "textarea",
-            label: "Short Bio:",
-            className: "form-control",
-            name: "textarea-1475765724583",
-        },
-        {
-            type: "newsection",
-            required: false,
-            label: "New Section",
-            name: "newsection-1736235906446-0",
-            access: false,
-        },
-    ];
 
-    jQuery(window).on("load", function () {
+    formBuilder.promise.then(function (fb) {
+        formBuilderInstance = fb;
+
         if (
-            jQuery("#bookingaddpage").length === 0 &&
-            jQuery("#bookingTemplates").length > 0
+            $("#bookingaddpage").length === 0 &&
+            $("#bookingTemplates").length > 0
         ) {
-            const selectedValue =
-            document.getElementById("bookingTemplates").value;
+            const selectedValue = document.getElementById("bookingTemplates").value;
             const parsedValue = JSON.parse(selectedValue);
+
             parsedValue.forEach((item) => {
-                if (
-                    item.hasOwnProperty("required") &&
-                    item.required === "false"
-                ) {
-                    item.required = false;
-                }
-                if (item.hasOwnProperty("toggle") && item.toggle === "false") {
-                    item.toggle = false;
-                }
-                if (item.hasOwnProperty("access") && item.access === "false") {
-                    item.access = false;
-                }
-                if (item.hasOwnProperty("inline") && item.inline === "false") {
-                    item.inline = false;
-                }
+                if (item.required === "false") item.required = false;
+                if (item.toggle === "false") item.toggle = false;
+                if (item.access === "false") item.access = false;
+                if (item.inline === "false") item.inline = false;
             });
-            formBuilder.actions.setData(parsedValue);
+
+            fb.actions.setData(parsedValue);
         }
     });
-    jQuery(document)
+
+    $(document)
         .off("click", ".save-template")
         .on("click", ".save-template", function (e) {
             e.preventDefault();
+
             var inputElement = document.getElementById("bookingTemplatesname");
             var inputValue = inputElement.value.trim();
             var errorMessageElement = document.getElementById("bookingTemplatesname-error");
+
             if (errorMessageElement) {
                 errorMessageElement.remove();
             }
+
             if (!inputValue) {
                 var errorMessage = document.createElement("span");
                 errorMessage.id = "bookingTemplatesname-error";
@@ -288,19 +245,27 @@ jQuery(function ($) {
                 inputElement.focus();
                 return;
             }
-            var data = formBuilder.actions.getData();
+
+            if (!formBuilderInstance) {
+                console.error("Form Builder is not initialized yet.");
+                return;
+            }
+
+            var data = formBuilderInstance.actions.getData();
             var templateid = document.getElementById("templateid")
                 ? document.getElementById("templateid").value
                 : "";
             var csrfToken = document
                 .querySelector('meta[name="csrf-token"]')
                 .getAttribute("content");
+
             var templateData = {
                 data: data,
                 templatename: inputValue,
                 templateid: templateid,
                 _token: csrfToken,
             };
+
             $.ajax({
                 url: "/template/save",
                 method: "POST",
@@ -314,8 +279,9 @@ jQuery(function ($) {
             });
         });
 
-    jQuery(window).on("load", function () {
-        jQuery("#bookingTemplates").click();
+    // Triggers bookingTemplates click
+    $(window).on("load", function () {
+        $("#bookingTemplates").click();
     });
 
     function setCookie(cname, cvalue, exdays) {
@@ -347,13 +313,14 @@ jQuery(function ($) {
             ticks++;
             setCookie("modelopen", ticks, 1);
             if (ticks == "2" || ticks == "1" || ticks == "0") {
-                jQuery("#exampleModalCenter").modal();
+                $("#exampleModalCenter").modal();
             }
         } else {
-            jQuery("#exampleModalCenter").modal();
+            $("#exampleModalCenter").modal();
             ticks = 1;
             setCookie("modelopen", ticks, 1);
         }
+
         $("#exampleModal").on("show.bs.modal", function (event) {
             var button = $(event.relatedTarget);
             var recipient = button.data("whatever");
@@ -362,8 +329,8 @@ jQuery(function ($) {
             modal.find(".modal-body input").val(recipient);
         });
 
-        jQuery(window).on("load", function () {
-            jQuery("#mymodelsformessage").click();
+        $(window).on("load", function () {
+            $("#mymodelsformessage").click();
         });
     }
 
@@ -375,10 +342,11 @@ jQuery(function ($) {
         modal.find(".modal-body input").val(recipient);
     });
 
-    jQuery(window).on("load", function () {
-        jQuery("#mymodelsformessage").click();
+    $(window).on("load", function () {
+        $("#mymodelsformessage").click();
     });
 });
+
 
 // Datatables for Bookings, Templates, and Users tables
 $("#booking-list-table").DataTable();
