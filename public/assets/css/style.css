@@ -20151,6 +20151,9 @@ strong {
     margin-bottom: 30px;
     /* margin-top: 60px; */
 }
+img.logo {
+    width: 100px;
+}
 div#dynamicFormFields {
     background: #ededed;
     padding: 20px;
