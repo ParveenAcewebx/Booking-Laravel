@@ -114,10 +114,11 @@
                                     <div class="form-group">
                                         <label class="form-label d-block">Status</label>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="status" id="status" value="{{ config('constants.status.active') }}"
-                                                {{ $user->status == config('constants.status.active') ? 'checked' : '' }}>
+                                            <input class="form-check-input" type="checkbox" name="status" id="status"
+                                                value="{{ config('constants.status.active') }}" checked>
                                             <label class="form-check-label" for="status">Active</label>
                                         </div>
+
                                         @error('status')
                                         <div class="error">{{ $message }}</div>
                                         @enderror
