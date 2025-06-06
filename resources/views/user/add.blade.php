@@ -28,14 +28,14 @@
                     <div class="card-header">
                         <h5>Add User</h5>
                         @if(session('success'))
-                            <div class="alert alert-success" role="alert">
-                                {{ session('success') }}   
-                            </div>
+                        <div class="alert alert-success" role="alert">
+                            {{ session('success') }}
+                        </div>
                         @endif
                         @if(session('error'))
-                            <div class="alert alert-danger" role="alert">
-                                {{ session('error') }}
-                            </div>
+                        <div class="alert alert-danger" role="alert">
+                            {{ session('error') }}
+                        </div>
                         @endif
                     </div>
                     <div class="card-body">
@@ -83,14 +83,14 @@
                                         <label class="form-label">Role</label>
                                         <select class="form-control" name="role" required>
                                             @foreach($allRoles as $role)
-                                                <option value="{{ $role->id }}" 
-                                                    @if($role->name == 'Customer') selected @endif>
-                                                    {{ $role->name }}
-                                                </option>
+                                            <option value="{{ $role->id }}"
+                                                @if($role->name == 'Customer') selected @endif>
+                                                {{ $role->name }}
+                                            </option>
                                             @endforeach
                                         </select>
                                         @error('role')
-                                            <div class="error">{{ $message }}</div>
+                                        <div class="error">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -105,23 +105,26 @@
                                             <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                                         </div>
                                     </div>
-                                    @error('avatar') 
-                                        <div class="error">{{ $message }}</div>
+                                    @error('avatar')
+                                    <div class="error">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <!-- Status Checkbox -->
-                                <div class="col-md-6 mt-3">
+                                <div class="col-md-12 mt-3" @if($hideFields) style="display:none;" @endif>
                                     <div class="form-group">
                                         <label class="form-label d-block">Status</label>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" name="status" id="status" value="{{ config('constants.status.active') }}" checked>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="status" id="status" value="{{ config('constants.status.active') }}"
+                                                {{ $user->status == config('constants.status.active') ? 'checked' : '' }}>
                                             <label class="form-check-label" for="status">Active</label>
                                         </div>
                                         @error('status')
-                                            <div class="error">{{ $message }}</div>
+                                        <div class="error">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
+
+
                             </div>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </form>
