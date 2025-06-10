@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- data tables css -->
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap4.min.css') }}">
     <style>
@@ -68,7 +69,6 @@
 <script src="{{asset('assets/js/plugins/sweetalert.min.js')}}"></script>
 <script src="{{asset('assets/js/pages/ac-alert.js')}}"></script>
 <script src="{{asset('assets/js/plugins/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('assets/js/plugins/dataTables.bootstrap4.min.js')}}"></script>
 <script src="{{asset('assets/js/custom.js')}}"></script>
 <!-- DataTable Js -->
 <script src="{{asset('assets/js/plugins/jquery.dataTables.min.js')}}"></script>

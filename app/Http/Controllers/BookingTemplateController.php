@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DataTables;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\BookingTemplate;
@@ -11,6 +12,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Cookie;
+
 class BookingTemplateController extends Controller
 {
     protected $allUsers;
@@ -19,18 +21,55 @@ class BookingTemplateController extends Controller
     {
         $this->allUsers = User::all();
     }
-    public function index()
+
+    public function index(Request $request)
     {
-        $alltemplate = BookingTemplate::all();
-        $allusers  = $this->allUsers;
         $loginId = session('previous_login_id');
         $loginUser = null;
 
         if ($loginId) {
             $loginUser = User::find($loginId);
         }
-        return view('booking-template.index', ['alltemplate' => $alltemplate, 'allusers' => $allusers, 'loginUser' => $loginUser]);
+
+        if ($request->ajax()) {
+            $query = BookingTemplate::select(['id', 'template_name', 'created_at']);
+
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($row) {
+                    return $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : '';
+                })
+                ->addColumn('status', function ($row) {
+                    return '<span class="badge badge-success">Active</span>';
+                })
+                ->addColumn('action', function ($row) {
+                    $btn = '';
+
+                    if (Auth::user()->can('edit forms')) {
+                        $btn .= '<a href="' . route('template.edit', [$row->id]) . '" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit Form">
+                                <i class="fas fa-pencil-alt"></i>
+                             </a> ';
+                    }
+
+                    if (Auth::user()->can('delete forms')) {
+                        $btn .= '<form action="' . route('template.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteTemplate-' . $row->id . '">
+                                ' . csrf_field() . '
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button onclick="return confirm(\'Are you sure?\')" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Form">
+                                    <i class="feather icon-trash-2"></i>
+                                </button>
+                             </form> ';
+                    }
+
+                    return $btn;
+                })
+                ->rawColumns(['status', 'action']) // no template_name here!
+                ->make(true);
+        }
+
+        return view('booking-template.index', compact('loginUser'));
     }
+
 
     public function templateSave(Request $request)
     {
@@ -63,9 +102,15 @@ class BookingTemplateController extends Controller
     public function templateDelete($id)
     {
         $template = BookingTemplate::find($id);
+
+        if (!$template) {
+            return redirect()->route('template.list')->with('error', 'Template not found.');
+        }
+
         $templatename = $template->template_name;
         $template->delete();
-        return response()->json(['success' => true]);
+
+        return redirect()->route('template.list')->with('success', "Template '{$templatename}' deleted successfully!");
     }
 
     public function templateEdit($id)
@@ -90,6 +135,6 @@ class BookingTemplateController extends Controller
         if ($loginId) {
             $loginUser = User::find($loginId);
         }
-        return view('booking-template.add', compact('allusers','loginUser'));
+        return view('booking-template.add', compact('allusers', 'loginUser'));
     }
 }
