@@ -349,7 +349,7 @@ jQuery(function ($) {
 
 
 // Datatables for Bookings, Templates, and Users tables
-$("#booking-list-table").DataTable();
+// $("#booking-list-table").DataTable();
 $("#template-list-table").DataTable();
 $("#user-list-table").DataTable();
 

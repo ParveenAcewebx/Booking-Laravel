@@ -27,12 +27,12 @@
 										<p class="mb-0">{{ session('success') }}</p>
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn  btn-secondary" data-dismiss="modal">Okay</button>
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">Okay</button>
 									</div>
 								</div>
 							</div>
 						</div>
-						<button style="display:none;" id="mymodelsformessage" type="button" class="btn  btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Launch demo modal</button>
+						<button style="display:none;" id="mymodelsformessage" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Launch demo modal</button>
 						@endif
 					</div>
 					<div class="col-md-2">
@@ -46,6 +46,7 @@
 			</div>
 		</div>
 		<!-- [ breadcrumb ] end -->
+
 		<!-- [ Main Content ] start -->
 		<div class="row">
 			<div class="col-lg-12">
@@ -61,34 +62,8 @@
 									</tr>
 								</thead>
 								<tbody>
-									@foreach($allbooking as $booking)
-									<tr>
-										<td>{{ $booking->created_at }}</td>
-										<td>
-											<span class="badge badge-light-success">{{ $booking->status }}</span>
-
-										</td>
-										<td>
-											<div class="overlay-edit">
-												@can('edit bookings')
-												<a href="{{ route('booking.edit', [$booking->id]) }}" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit Booking">
-													<i class="fas fa-pencil-alt"></i>
-												</a>
-												@endcan
-												@can('delete bookings')
-												<form action="{{route('booking.delete', [$booking->id])}}" method="POST" id="deleteBooking-{{$booking->id}}">
-													<input type="hidden" name="_method" value="DELETE">
-													@csrf
-													<button onclick="return deleteBooking({{$booking->id}})" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Booking"><i class="feather icon-trash-2"></i></button>
-												</form>
-												@endcan
-											</div>
-										</td>
-									</tr>
-									@endforeach
+									<!-- Data will load via Ajax -->
 								</tbody>
-								<tfoot>
-								</tfoot>
 							</table>
 						</div>
 					</div>
@@ -98,4 +73,42 @@
 		<!-- [ Main Content ] end -->
 	</div>
 </div>
+
+<!-- DataTable Script -->
+<script>
+	$(function() {
+		$('#booking-list-table').DataTable({
+			destroy: true, // <--- important line!
+			processing: true,
+			serverSide: true,
+			ajax: "{{ route('booking.list') }}",
+			columns: [{
+					data: 'created_at',
+					name: 'created_at',
+					orderable: false,
+					searchable: false
+				},
+				{
+					data: 'status',
+					name: 'status',
+					orderable: false,
+					searchable: false
+				},
+				{
+					data: 'action',
+					name: 'action',
+					orderable: false,
+					searchable: false
+				},
+			],
+			order: [
+				[0, 'desc']
+			],
+			lengthMenu: [
+				[10, 25, 50, 100],
+				[10, 25, 50, 100]
+			],
+		});
+	});
+</script>
 @endsection
