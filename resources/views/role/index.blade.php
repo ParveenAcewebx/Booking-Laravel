@@ -102,11 +102,5 @@
             lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         });
     });
-
-    @if(session('success'))
-    $(document).ready(function() {
-        $('#mymodelsformessage').click();
-    });
-    @endif
 </script>
 @endsection
