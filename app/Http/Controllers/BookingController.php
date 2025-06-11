@@ -46,7 +46,7 @@ class BookingController extends Controller
                     return $booking->created_at->format('Y-m-d H:i:s');
                 })
                 ->editColumn('status', function ($booking) {
-                    return '<span class="badge badge-light-success">Active</span>';
+                    return '<span class="badge badge-light-success"> Active </span>';
                 })
                 ->addColumn('action', function ($booking) {
                     $btn = '';
@@ -59,11 +59,12 @@ class BookingController extends Controller
 
                     if (auth()->user()->can('delete bookings')) {
                         $btn .= '<form action="' . route('booking.delete', [$booking->id]) . '" method="POST" id="deleteBooking-' . $booking->id . '" style="display:inline-block;">
-                                ' . csrf_field() . method_field('DELETE') . '
-                                <button onclick="return confirm(\'Are you sure to delete this booking?\');" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Booking">
-                                    <i class="feather icon-trash-2"></i>
-                                </button>
-                            </form>';
+                <input type="hidden" name="_method" value="DELETE">
+                ' . csrf_field() . '
+                <button type="button" onclick="return deleteBooking(' . $booking->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Booking">
+                    <i class="feather icon-trash-2"></i>
+                </button>
+            </form>';
                     }
 
                     return $btn ?: '-';
@@ -143,10 +144,11 @@ class BookingController extends Controller
         return redirect()->route('booking.list')->with('success', 'Booking updated successfully.');
     }
 
+
     public function bookingDelete($id)
     {
         $booking = Booking::find($id);
         $booking->delete();
-        return redirect('/bookings')->with('success', 'Booking Delete successfully!');
+        return response()->json(['success' => true]);
     }
 }

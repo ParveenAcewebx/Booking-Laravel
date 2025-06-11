@@ -29,7 +29,7 @@ function deleteTemplate(id) {
             .then((response) => response.json())
             .then((data) => {
                 if (data.success) {
-                    swal("Poof! That Template has been deleted!", {
+                    swal("Booking Template has been deleted!", {
                         icon: "success",
                     }).then(() => {
                         window.location.reload();
@@ -47,7 +47,7 @@ function deleteTemplate(id) {
                 });
             });
         } else {
-            swal("That Template is safe!", {
+            swal("Booking Template is safe!", {
                 icon: "info",
             });
         }
@@ -80,7 +80,7 @@ function deleteUser(id) {
             .then((response) => response.json())
             .then((data) => {
                 if (data.success === true) {
-                    swal("Poof! That User has been deleted!", {
+                    swal("User has been deleted!", {
                         icon: "success",
                     }).then(() => {
                         window.location.reload();
@@ -119,15 +119,95 @@ function deleteBooking(id) {
         dangerMode: true,
     }).then((willDelete) => {
         if (willDelete) {
-            // Submit the form directly
-            document.getElementById("deleteBooking-" + id).submit();
+            const form = document.getElementById("deleteBooking-" + id);
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: "DELETE",
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    swal("Booking has been deleted!", {
+                        icon: "success",
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    swal("Something went wrong!", {
+                        icon: "error",
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                swal("There was an error!", {
+                    icon: "error",
+                });
+            });
         } else {
             swal("That booking is safe!", {
                 icon: "info",
             });
         }
     });
-    return false;
+}
+
+function deleteRole(id) {
+    event.preventDefault();
+
+    swal({
+        title: "Are you sure?",
+        text: "Once deleted, this role and its permissions will be gone forever!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            const form = document.getElementById("delete-role-" + id);
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: "POST", // Laravel still expects POST with _method=DELETE
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    swal("Role deleted successfully!", {
+                        icon: "success",
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    swal("Oops! Something went wrong while deleting the role.", {
+                        icon: "error",
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                swal("Error occurred while processing the request!", {
+                    icon: "error",
+                });
+            });
+        } else {
+            swal("This role is safe and sound ✨", {
+                icon: "info",
+            });
+        }
+    });
 }
 
 //Booking Template Builder
