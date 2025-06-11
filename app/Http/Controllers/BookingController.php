@@ -46,7 +46,7 @@ class BookingController extends Controller
                     return $booking->created_at->format('Y-m-d H:i:s');
                 })
                 ->editColumn('status', function ($booking) {
-                    return '<span class="badge badge-light-success">' . e($booking->status) . '</span>';
+                    return '<span class="badge badge-light-success">Active</span>';
                 })
                 ->addColumn('action', function ($booking) {
                     $btn = '';
