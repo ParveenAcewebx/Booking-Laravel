@@ -46,11 +46,7 @@ function deleteTemplate(id) {
                     icon: "error",
                 });
             });
-        } else {
-            swal("Booking Template is safe!", {
-                icon: "info",
-            });
-        }
+        } 
     });
 }
 // User delete Alert
@@ -101,11 +97,7 @@ function deleteUser(id) {
                     icon: "error",
                 });
             });
-        } else {
-            swal("That user is safe!", {
-                icon: "info",
-            });
-        }
+        } 
     });
 }
 // Booking delete alert
@@ -152,11 +144,7 @@ function deleteBooking(id) {
                     icon: "error",
                 });
             });
-        } else {
-            swal("That booking is safe!", {
-                icon: "info",
-            });
-        }
+        } 
     });
 }
 
@@ -202,11 +190,7 @@ function deleteRole(id) {
                     icon: "error",
                 });
             });
-        } else {
-            swal("This role is safe and sound ✨", {
-                icon: "info",
-            });
-        }
+        } 
     });
 }
 
