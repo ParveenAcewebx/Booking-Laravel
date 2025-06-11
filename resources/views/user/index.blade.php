@@ -97,12 +97,4 @@
     });
 </script>
 
-@if(session('success'))
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#mymodelsformessage').click();
-    });
-</script>
-@endif
-
 @endsection
