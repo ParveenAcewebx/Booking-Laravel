@@ -72,17 +72,6 @@
                                 <h5>User Information</h5>
 
                                 <!-- Flash Messages -->
-                                @if(session('success'))
-                                <div class="alert alert-success mt-2" role="alert">
-                                    {{ session('success') }}
-                                </div>
-                                @endif
-
-                                @if(session('error'))
-                                <div class="alert alert-danger mt-2" role="alert">
-                                    {{ session('error') }}
-                                </div>
-                                @endif
                             </div>
 
                             <div class="card-body">
@@ -179,5 +168,27 @@
             <!-- [ Main Content ] end -->
         </div>
     </section>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+		@if(session('success'))
+		swal({
+			title: "Success!",
+			text: "{{ session('success') }}",
+			icon: "success",
+			timer: 2000,
+			buttons: false
+		});
+		@endif
 
+		@if(session('error'))
+		swal({
+			title: "Error!",
+			text: "{{ session('error') }}",
+			icon: "error",
+			timer: 2000,
+			buttons: false
+		});
+		@endif
+	});
+    </script>
     @endsection
