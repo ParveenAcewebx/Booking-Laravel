@@ -15,35 +15,6 @@
                             <li class="breadcrumb-item"><a href="{{ route('roles.list') }}">Roles</a></li>
                             <li class="breadcrumb-item"><a href="{{ route('roles.list') }}">All Roles</a></li>
                         </ul>
-
-                        @if(session('success'))
-                        <div id="exampleModalCenter" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalCenterTitle">Message</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p class="mb-0">{{ session('success') }}</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Okay</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <button style="display:none;" id="mymodelsformessage" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Launch modal</button>
-                        @endif
-
-                        @if(session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {{ session('error') }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        @endif
                     </div>
 
                     <div class="col-md-2">
@@ -102,5 +73,27 @@
             lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         });
     });
+    document.addEventListener("DOMContentLoaded", function() {
+		@if(session('success'))
+		swal({
+			title: "Success!",
+			text: "{{ session('success') }}",
+			icon: "success",
+			timer: 2000,
+			buttons: false
+		});
+		@endif
+
+		@if(session('error'))
+		swal({
+			title: "Error!",
+			text: "{{ session('error') }}",
+			icon: "error", // changed from 'danger' to 'error'
+			timer: 2000,
+			buttons: false
+		});
+		@endif
+	});
 </script>
+
 @endsection
