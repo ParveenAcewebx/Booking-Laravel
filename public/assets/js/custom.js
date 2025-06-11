@@ -563,135 +563,77 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
-document.getElementById("select-all-permissions")?.addEventListener("change", function () {
-        const checked = this.checked;
-        document
-            .querySelectorAll(".permission-checkbox, .group-checkbox")
-            .forEach((cb) => (cb.checked = checked));
-        document.querySelectorAll(".permission-row").forEach((row) => {
-            row.style.display = checked ? "table-row" : "none";
-        });
-    });
-
-// Toggle Permissions Based on Group
-document.querySelectorAll(".group-checkbox").forEach((groupCb) => {
-    groupCb.addEventListener("change", function () {
-        const group = this.dataset.group;
-        const isChecked = this.checked;
-        document
-            .querySelectorAll(`.group-${group}`)
-            .forEach((cb) => (cb.checked = isChecked));
-        document.querySelectorAll(`.group-perms-${group}`).forEach((row) => {
-            row.style.display = isChecked ? "table-row" : "none";
-        });
-    });
-});
-
 document.addEventListener("DOMContentLoaded", function () {
-    const selectAllCheckbox = document.getElementById("select-all-permissions");
+    const selectAll = document.getElementById("select-all-permissions");
 
-    // Update select all checkbox checked state
     function updateSelectAllCheckbox() {
-        const allPerms = document.querySelectorAll(".permission-checkbox");
-        const anyChecked = Array.from(allPerms).some((cb) => cb.checked);
-        const allChecked = Array.from(allPerms).every((cb) => cb.checked);
-        selectAllCheckbox.checked = allChecked;
-        selectAllCheckbox.indeterminate = !allChecked && anyChecked;
+        const all = document.querySelectorAll(".permission-checkbox");
+        const checked = Array.from(all).filter(cb => cb.checked);
+        selectAll.checked = checked.length === all.length;
+        selectAll.indeterminate = checked.length > 0 && checked.length < all.length;
     }
 
-    // Toggle group permissions visibility + checkboxes when group checkbox changes
-    document.querySelectorAll(".group-checkbox").forEach((groupCheckbox) => {
+    // Handle group checkbox -> select all in that group
+    document.querySelectorAll(".group-checkbox").forEach(groupCheckbox => {
         groupCheckbox.addEventListener("change", function () {
             const groupKey = this.dataset.group;
-            const permRows = document.querySelectorAll(
-                ".group-perms-" + groupKey
-            );
-            permRows.forEach((row) => {
-                row.style.display = this.checked ? "" : "none";
-            });
-
-            // Check/uncheck all permissions in group
-            const permCheckboxes = document.querySelectorAll(
-                ".permission-checkbox.group-" + groupKey
-            );
-            permCheckboxes.forEach((cb) => (cb.checked = this.checked));
-
+            const checkboxes = document.querySelectorAll(`.permission-checkbox.group-${groupKey}`);
+            checkboxes.forEach(cb => cb.checked = this.checked);
             updateSelectAllCheckbox();
         });
     });
 
-    // Toggle all groups and permissions on select all change
-    selectAllCheckbox.addEventListener("change", function () {
+    // Handle global select all
+    selectAll.addEventListener("change", function () {
         const checked = this.checked;
-
-        document
-            .querySelectorAll(".group-checkbox")
-            .forEach((groupCheckbox) => {
-                groupCheckbox.checked = checked;
-
-                const groupKey = groupCheckbox.dataset.group;
-                const permRows = document.querySelectorAll(
-                    ".group-perms-" + groupKey
-                );
-                permRows.forEach(
-                    (row) => (row.style.display = checked ? "" : "none")
-                );
-
-                const permCheckboxes = document.querySelectorAll(
-                    ".permission-checkbox.group-" + groupKey
-                );
-                permCheckboxes.forEach((cb) => (cb.checked = checked));
-            });
+        document.querySelectorAll(".permission-checkbox").forEach(cb => cb.checked = checked);
+        document.querySelectorAll(".group-checkbox").forEach(cb => cb.checked = checked);
+        updateSelectAllCheckbox();
     });
 
-    // When individual permission checkbox changes, update group checkbox accordingly
-    document
-        .querySelectorAll(".permission-checkbox")
-        .forEach((permCheckbox) => {
-            permCheckbox.addEventListener("change", function () {
-                const classes = Array.from(this.classList);
-                const groupClass = classes.find((c) => c.startsWith("group-"));
-                if (!groupClass) return;
-
-                const groupKey = groupClass.replace("group-", "");
-                const groupCheckbox = document.querySelector(
-                    '.group-checkbox[data-group="' + groupKey + '"]'
-                );
-                const allPerms = document.querySelectorAll(
-                    ".permission-checkbox." + groupClass
-                );
-
-                const anyChecked = Array.from(allPerms).some(
-                    (cb) => cb.checked
-                );
-                groupCheckbox.checked = anyChecked;
-
-                // Show/hide permission rows based on group checkbox
-                const permRows = document.querySelectorAll(
-                    ".group-perms-" + groupKey
-                );
-                permRows.forEach((row) => {
-                    row.style.display = anyChecked ? "" : "none";
-                });
-
-                updateSelectAllCheckbox();
-            });
+    // Update group checkbox when a permission is toggled
+    document.querySelectorAll(".permission-checkbox").forEach(cb => {
+        cb.addEventListener("change", function () {
+            const groupClass = Array.from(cb.classList).find(cls => cls.startsWith("group-"));
+            if (!groupClass) return;
+            const groupKey = groupClass.replace("group-", "");
+            const groupCB = document.querySelector(`.group-checkbox[data-group="${groupKey}"]`);
+            const perms = document.querySelectorAll(`.permission-checkbox.group-${groupKey}`);
+            const anyChecked = Array.from(perms).some(p => p.checked);
+            groupCB.checked = anyChecked;
+            updateSelectAllCheckbox();
         });
+    });
 
-    // On page load, initialize group checkboxes and permissions visibility
-    document.querySelectorAll(".group-checkbox").forEach((groupCheckbox) => {
+    // Toggle expand/collapse on icon click
+    document.querySelectorAll(".toggle-icon").forEach(icon => {
+        icon.addEventListener("click", function () {
+            const groupKey = this.dataset.group;
+            const rows = document.querySelectorAll(`.group-perms-${groupKey}`);
+            const isVisible = Array.from(rows).some(r => r.style.display !== "none");
+
+            rows.forEach(r => r.style.display = isVisible ? "none" : "table-row");
+
+            this.classList.toggle("icon-chevron-right", isVisible);
+            this.classList.toggle("icon-chevron-down", !isVisible);
+        });
+    });
+
+    // ✅ On page load: ALWAYS start collapsed, even if some permissions are checked
+    document.querySelectorAll(".group-checkbox").forEach(groupCheckbox => {
         const groupKey = groupCheckbox.dataset.group;
-        const permCheckboxes = document.querySelectorAll(
-            ".permission-checkbox.group-" + groupKey
-        );
-
-        const anyChecked = Array.from(permCheckboxes).some((cb) => cb.checked);
+        const perms = document.querySelectorAll(`.permission-checkbox.group-${groupKey}`);
+        const anyChecked = Array.from(perms).some(p => p.checked);
         groupCheckbox.checked = anyChecked;
 
-        const permRows = document.querySelectorAll(".group-perms-" + groupKey);
-        permRows.forEach((row) => {
-            row.style.display = anyChecked ? "" : "none";
-        });
+        const icon = document.querySelector(`.toggle-icon[data-group="${groupKey}"]`);
+        if (icon) {
+            icon.classList.remove("icon-chevron-down");
+            icon.classList.add("icon-chevron-right"); // Always default collapsed
+        }
+
+        // Keep rows hidden always on load
+        document.querySelectorAll(`.group-perms-${groupKey}`).forEach(r => r.style.display = "none");
     });
 
     updateSelectAllCheckbox();
