@@ -82,14 +82,15 @@ class UserController extends Controller
                         $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">
                             ' . csrf_field() . '
                             <input type="hidden" name="_method" value="DELETE">
-                            <button onclick="return confirm(\'Are you sure?\')" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete User">
+                            <button type="button" onclick="return deleteUser(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete User">
                                 <i class="feather icon-trash-2"></i>
                             </button>
-                        </form> ';
+                        </form>';
                     }
 
                     if ($isImpersonating && Auth::id() === $row->id) {
                         $btn .= '<form method="POST" action="' . route('user.switch.back') . '" style="display:inline;">
+                        
                             ' . csrf_field() . '
                             <button type="submit" class="btn btn-icon btn-dark" data-toggle="tooltip" data-placement="top" title="Switch Back">
                                 <i class="feather icon-log-out"></i>
@@ -243,23 +244,18 @@ class UserController extends Controller
     }
 
 
-    public function userDelete($id)
-    {
-        $user = User::find($id);
-        $authuser_id = Auth::user()->id;
-
-        if (!$user) {
-            return redirect('/user')->with('error', 'User not found.');
+        public function userDelete($id)
+        {
+            $user = User::find($id);
+            $authuser_id = Auth::user()->id;
+            $username = $user->name;
+            if ($authuser_id != $id) {
+                $user->delete();
+                return response()->json(['success' => true]);
+            } else {
+                return response()->json(['success' => 'login', 'message' => 'Item not found']);
+            }
         }
-
-        if ($authuser_id != $id) {
-            $user->delete();
-            return redirect('/user')->with('success', 'User deleted successfully!');
-        } else {
-            return redirect('/user')->with('error', 'You cannot delete your own user.');
-        }
-    }
-
 
     public function createUser()
     {

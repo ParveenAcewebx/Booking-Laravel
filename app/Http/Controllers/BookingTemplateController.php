@@ -52,13 +52,13 @@ class BookingTemplateController extends Controller
                     }
 
                     if (Auth::user()->can('delete forms')) {
-                        $btn .= '<form action="' . route('template.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteTemplate-' . $row->id . '">
-                                ' . csrf_field() . '
-                                <input type="hidden" name="_method" value="DELETE">
-                                <button onclick="return confirm(\'Are you sure?\')" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Form">
-                                    <i class="feather icon-trash-2"></i>
-                                </button>
-                             </form> ';
+                        $btn .= '<form action="' . route('template.delete', [$row->id]) . '" method="POST" id="deleteTemplate-' . $row->id . '" style="display:inline;">
+                <input type="hidden" name="_method" value="DELETE">
+                ' . csrf_field() . '
+                <button type="button" onclick="return deleteTemplate(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Form">
+                    <i class="feather icon-trash-2"></i>
+                </button>
+            </form>';
                     }
 
                     return $btn;
@@ -88,29 +88,23 @@ class BookingTemplateController extends Controller
                     'template_name' => $templatename
                 ]);
             }
-            session()->flash('success', "The '" . $templatename . "' template has been successfully edited.");
+            session()->flash('success', " Booking   template has been successfully edited.");
         } else {
             $data = json_encode($data);
             $id = BookingTemplate::create([
                 'data' => $data,
                 'template_name' => $templatename
             ]);
-            session()->flash('success', "The '" . $templatename . "' template has been successfully added.");
+            session()->flash('success', "Booking Template has been successfully added.");
         }
     }
 
-    public function templateDelete($id)
+      public function templateDelete($id)
     {
         $template = BookingTemplate::find($id);
-
-        if (!$template) {
-            return redirect()->route('template.list')->with('error', 'Template not found.');
-        }
-
         $templatename = $template->template_name;
         $template->delete();
-
-        return redirect()->route('template.list')->with('success', "Template '{$templatename}' deleted successfully!");
+        return response()->json(['success' => true]);
     }
 
     public function templateEdit($id)

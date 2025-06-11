@@ -7,7 +7,6 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
 use DataTables;
-use Illuminate\Support\Str;
 
 class RoleController extends Controller
 {
@@ -21,63 +20,51 @@ class RoleController extends Controller
     public function index(Request $request)
     {
         $loginId = session('previous_login_id');
-        $loginUser = null;
+        $loginUser = $loginId ? User::find($loginId) : null;
 
-        if ($loginId) {
-            $loginUser = User::find($loginId);
-        }
-
-        // Handle Ajax call for DataTable
         if ($request->ajax()) {
-            $roles = Role::with('permissions')->select('id', 'name', 'status'); // Explicit select!
+            $roles = Role::with('permissions')->select('id', 'name', 'status');
 
             return DataTables::of($roles)
                 ->addColumn('permissions', function ($role) {
                     $groupedPermissions = [];
-
                     foreach ($role->permissions as $permission) {
                         $parts = preg_split('/[\s_]+/', $permission->name);
                         $entity = strtolower(end($parts));
-
-                        if (!isset($groupedPermissions[$entity])) {
-                            $groupedPermissions[$entity] = [];
-                        }
-
                         $groupedPermissions[$entity][] = $permission->name;
                     }
 
                     $html = '';
                     foreach ($groupedPermissions as $entity => $permissions) {
                         $permissionList = implode(', ', $permissions);
-                        $html .= '<span class="badge badge-light-success" data-toggle="tooltip" data-placement="right" title="' . e($permissionList) . '" style="cursor: pointer;">'
-                            . ucfirst($entity) . ' (' . count($permissions) . ')</span><br>';
+                        $html .= '<span class="badge badge-light-success" data-toggle="tooltip" title="' . e($permissionList) . '">' .
+                            ucfirst($entity) . ' (' . count($permissions) . ')</span><br>';
                     }
 
                     return $html ?: '-';
                 })
                 ->editColumn('status', function ($role) {
-                    if ($role->status == config('constants.status.active')) {
-                        return '<span class="badge badge-success">Active</span>';
-                    } else {
-                        return '<span class="badge badge-danger">Inactive</span>';
-                    }
+                    return $role->status == config('constants.status.active')
+                        ? '<span class="badge badge-success">Active</span>'
+                        : '<span class="badge badge-danger">Inactive</span>';
                 })
                 ->addColumn('action', function ($role) {
                     $btn = '';
 
                     if (auth()->user()->can('edit roles')) {
-                        $btn .= '<a href="' . route('roles.edit', $role->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit Role">
+                        $btn .= '<a href="' . route('roles.edit', $role->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit Role">
                                     <i class="fas fa-pencil-alt"></i>
-                                 </a> ';
+                                </a> ';
                     }
 
                     if (auth()->user()->can('delete roles')) {
-                        $btn .= '<form action="' . route('roles.delete', $role->id) . '" method="POST" id="delete-role-' . $role->id . '" style="display:inline-block;">
-                                    ' . csrf_field() . method_field('DELETE') . '
-                                    <button class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Role" onclick="return confirm(\'Are you sure to delete this role?\');">
+                        $btn .= '<form action="' . route('roles.delete', $role->id) . '" method="POST" id="delete-role-' . $role->id . '" style="display:inline;">
+                                    ' . csrf_field() . '
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="button" onclick="deleteRole(' . $role->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Role">
                                         <i class="feather icon-trash-2"></i>
                                     </button>
-                                 </form> ';
+                                </form>';
                     }
 
                     return $btn ?: '-';
@@ -92,14 +79,10 @@ class RoleController extends Controller
     public function roleAdd()
     {
         $roleGroups = config('constants.role_groups');
-        $allusers  = $this->allUsers;
+        $permissions = Permission::all();
         $loginId = session('previous_login_id');
-        $loginUser = null;
-
-        if ($loginId) {
-            $loginUser = User::find($loginId);
-        }
-        return view('role.add', compact('roleGroups', 'allusers', 'loginUser'));
+        $loginUser = $loginId ? User::find($loginId) : null;
+        return view('role.add', compact('roleGroups', 'permissions', 'loginUser'));
     }
 
     public function store(Request $request)
@@ -118,7 +101,7 @@ class RoleController extends Controller
         if (!empty($validated['permissions'])) {
             $role->syncPermissions($validated['permissions']);
         }
-        return redirect()->route('roles.list')->with('success', 'Role created successfully.');
+        return redirect()->route('roles.list')->with('success', 'Role added successfully!');
     }
 
     public function roleDelete($id)
@@ -127,25 +110,20 @@ class RoleController extends Controller
         if ($role) {
             $role->permissions()->detach();
             $role->delete();
-            return redirect()->route('roles.list')->with('success', 'Role and associated permissions deleted successfully!');
-        } else {
-            return redirect()->route('roles.list')->with('error', 'Role not found.');
+            return response()->json(['success' => true]);
         }
+        return response()->json(['success' => false, 'message' => 'Role not found.']);
     }
 
     public function roleEdit($id)
     {
-        $allusers  = $this->allUsers;
         $role = Role::findOrFail($id);
         $loginId = session('previous_login_id');
-        $loginUser = null;
-
-        if ($loginId) {
-            $loginUser = User::find($loginId);
-        }
+        $loginUser = $loginId ? User::find($loginId) : null;
         $rolePermissions = $role->permissions->pluck('name')->toArray();
         $roleGroups = config('constants.role_groups');
-        return view('role.edit', compact('role', 'roleGroups', 'rolePermissions', 'allusers', 'loginUser'));
+        $permissions = Permission::all();
+        return view('role.edit', compact('role', 'roleGroups', 'rolePermissions', 'permissions', 'loginUser'));
     }
 
     public function roleUpdate(Request $request, $id)
@@ -154,23 +132,23 @@ class RoleController extends Controller
             'name' => 'required|string|max:255',
             'permissions' => 'nullable|array',
             'permissions.*' => 'string|exists:permissions,name',
-            'status' => 'nullable|boolean',
         ]);
+
         $role = Role::findOrFail($id);
         $exists = Role::where('name', $request->name)
             ->where('guard_name', 'web')
             ->where('id', '!=', $id)
             ->exists();
+
         if ($exists) {
-            return back()
-                ->withErrors(['name' => 'The name has already been taken.'])
-                ->withInput();
+            return back()->withErrors(['name' => 'The name has already been taken.'])->withInput();
         }
+
         $role->name = $request->name;
         $role->status = $request->has('status') ? 1 : 0;
         $role->save();
-        $permissionNames = $request->permissions ?? [];
-        $role->syncPermissions($permissionNames);
+        $role->syncPermissions($request->permissions ?? []);
+
         return redirect()->route('roles.list')->with('success', 'Role updated successfully!');
     }
 }
