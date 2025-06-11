@@ -92,17 +92,22 @@ class RoleController extends Controller
             'permissions' => 'nullable|array',
             'permissions.*' => 'string',
         ]);
+
         $status = $request->has('status') ? 1 : 0;
+
         $role = Role::create([
             'name' => $validated['name'],
             'guard_name' => 'web',
             'status' => $status,
         ]);
+
         if (!empty($validated['permissions'])) {
             $role->syncPermissions($validated['permissions']);
         }
+
         return redirect()->route('roles.list')->with('success', 'Role added successfully!');
     }
+
 
     public function roleDelete($id)
     {
