@@ -29,7 +29,7 @@ function deleteTemplate(id) {
             .then((response) => response.json())
             .then((data) => {
                 if (data.success) {
-                    swal("Booking Template has been deleted!", {
+                    swal("Booking Template Deleted Successfully.", {
                         icon: "success",
                     }).then(() => {
                         window.location.reload();
@@ -76,7 +76,7 @@ function deleteUser(id) {
             .then((response) => response.json())
             .then((data) => {
                 if (data.success === true) {
-                    swal("User has been deleted!", {
+                    swal("User Deleted Successfully.", {
                         icon: "success",
                     }).then(() => {
                         window.location.reload();
@@ -127,7 +127,7 @@ function deleteBooking(id) {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    swal("Booking has been deleted!", {
+                    swal("Booking Deleted Successfully.", {
                         icon: "success",
                     }).then(() => {
                         window.location.reload();
@@ -173,7 +173,7 @@ function deleteRole(id) {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    swal("Role deleted successfully!", {
+                    swal("Role Deleted Successfully.", {
                         icon: "success",
                     }).then(() => {
                         window.location.reload();
@@ -305,6 +305,7 @@ jQuery(function ($) {
                 var errorMessage = document.createElement("span");
                 errorMessage.id = "bookingTemplatesname-error";
                 errorMessage.textContent = "The Template name cannot be empty.";
+                errorMessage.style.color = "red"; 
                 inputElement.parentNode.appendChild(errorMessage);
                 inputElement.focus();
                 return;
@@ -411,11 +412,6 @@ jQuery(function ($) {
     });
 });
 
-
-// Datatables for Bookings, Templates, and Users tables
-// $("#booking-list-table").DataTable();
-$("#template-list-table").DataTable();
-$("#user-list-table").DataTable();
 
 // Add Booking
 document.addEventListener("DOMContentLoaded", function () {

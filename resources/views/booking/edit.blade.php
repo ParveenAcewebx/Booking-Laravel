@@ -27,16 +27,9 @@
                     <div class="card">
                         <div class="card-header">
                             <h5>Booking Edit</h5>
-                            @if(session('success'))
-                                <div class="alert alert-success">{{ session('success') }}</div>
-                            @endif
-                            @if(session('error'))
-                                <div class="alert alert-danger">{{ session('error') }}</div>
-                            @endif
                         </div>
                         <div class="card-body">
                             <h5>Booking Information</h5>
-
                             <!-- Dynamic Fields -->
                             <div id="dynamic-form-fields">
                                 @foreach($fieldsWithValues as $field)

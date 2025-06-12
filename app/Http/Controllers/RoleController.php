@@ -105,7 +105,7 @@ class RoleController extends Controller
             $role->syncPermissions($validated['permissions']);
         }
 
-        return redirect()->route('roles.list')->with('success', 'Role added successfully!');
+        return redirect()->route('roles.list')->with('success', 'Role Added Successfully.');
     }
 
 
@@ -154,6 +154,6 @@ class RoleController extends Controller
         $role->save();
         $role->syncPermissions($request->permissions ?? []);
 
-        return redirect()->route('roles.list')->with('success', 'Role updated successfully!');
+        return redirect()->route('roles.list')->with('success', 'Role Updated Successfully.');
     }
 }

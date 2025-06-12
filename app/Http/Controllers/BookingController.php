@@ -104,7 +104,7 @@ class BookingController extends Controller
             'selected_staff' => $request->selected_staff,
         ]);
         if ($booking) {
-            return redirect('/bookings')->with('success', 'Booking Added successfully!');
+            return redirect('/bookings')->with('success', 'Booking Added Successfully.');
         } else {
             return redirect()->back()->with('error', 'It failed. Please try again.');
         }
@@ -141,7 +141,7 @@ class BookingController extends Controller
         $booking->selected_staff = $request->input('staff');
         $booking->booking_datetime = $request->input('booking_datetime');
         $booking->save();
-        return redirect()->route('booking.list')->with('success', 'Booking updated successfully.');
+        return redirect()->route('booking.list')->with('success', 'Booking Updated Successfully.');
     }
 
 

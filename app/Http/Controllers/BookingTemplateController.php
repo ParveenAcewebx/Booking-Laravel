@@ -88,14 +88,14 @@ class BookingTemplateController extends Controller
                     'template_name' => $templatename
                 ]);
             }
-            session()->flash('success', " Booking template Updated successfully.");
+            session()->flash('success', " Booking Template Updated Successfully.");
         } else {
             $data = json_encode($data);
             $id = BookingTemplate::create([
                 'data' => $data,
                 'template_name' => $templatename
             ]);
-            session()->flash('success', "Booking Template added successfully.");
+            session()->flash('success', "Booking Template Added Successfully.");
         }
     }
 
