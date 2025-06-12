@@ -19,8 +19,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- data tables css -->
-    <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap4.min.css') }}">
+        
     <style>
         li.input-control.input-control-14.ui-sortable-handle::before {
             /* content: 'sd'; */

@@ -157,7 +157,7 @@ class UserController extends Controller
         $user->assignRole($userRole);
 
         if ($user) {
-            return redirect('/user')->with('success', 'User Added successfully!');
+            return redirect('/user')->with('success', 'User Added Successfully.');
         } else {
             return redirect()->back()->with('error', 'It failed. Please try again.');
         }
@@ -240,7 +240,7 @@ class UserController extends Controller
         $user->roles()->detach();
         $user->assignRole($userRole);
 
-        return back()->with('success', 'User updated successfully!');
+        return back()->with('success', 'User Updated Successfully.');
     }
 
 
@@ -261,7 +261,7 @@ class UserController extends Controller
     {
         $user = User::find(1);
         $user->assignRole('writer');
-        return response()->json(['message' => 'User created successfully']);
+        return response()->json(['message' => 'User Created Successfully.']);
     }
 
     public function showLoginForm()
