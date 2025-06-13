@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\FormHelper;
 use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\BookingTemplate;
@@ -112,43 +113,82 @@ class BookingController extends Controller
 
     public function bookingEdit($id)
     {
-        $booking = Booking::with(['form', 'staff'])->findOrFail($id);
-        $dynamicValues = json_decode($booking->booking_data, true);
-        $formStructure = json_decode($booking->form->data, true);
-        $fieldsWithValues = [];
-        foreach ($formStructure as $field) {
-            $name = $field['name'] ?? null;
-            $field['value'] = $dynamicValues[$name] ?? null;
-            $fieldsWithValues[] = $field;
-        }
-        $staffList = $this->allUsers;
-        $allusers = $this->allUsers;
-        $loginId = session('previous_login_id');
-        $loginUser = null;
+        $booking = Booking::with('form')->findOrFail($id);
 
-        if ($loginId) {
-            $loginUser = User::find($loginId);
-        }
+        // Decode stored dynamic booking values (if any)
+        $dynamicValues = json_decode($booking->booking_data, true) ?? [];
+
+        // Parse JSON form structure from associated form
+        $formStructureJson = $booking->form->data ?? '[]';
+        $formStructureArray = json_decode($formStructureJson, true);
+
+        // Generate the dynamic form fields HTML from helper
+        $dynamicFieldHtml = \App\Helpers\FormHelper::renderDynamicFieldHTML($formStructureArray, $dynamicValues);
+
+        // Format datetime for HTML5 input
         $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
-        return view('booking.edit', compact('booking', 'fieldsWithValues', 'staffList', 'allusers', 'loginUser'));
+
+        // Convert staff name to ID for selected dropdown
+        $selectedStaffUser = User::where('name', $booking->selected_staff)->first();
+        $booking->selected_staff = $selectedStaffUser?->id;
+
+        // Fetch impersonator user info if available
+        $loginId = session('previous_login_id');
+        $loginUser = $loginId ? User::find($loginId) : null;
+
+        return view('booking.edit', [
+            'booking' => $booking,
+            'dynamicFieldHtml' => $dynamicFieldHtml,
+            'staffList' => $this->allUsers,
+            'loginUser' => $loginUser,
+        ]);
     }
+
 
     public function bookingUpdate(Request $request, $id)
     {
         $booking = Booking::findOrFail($id);
-        $dynamicFields = $request->input('dynamic', []);
-        $booking->booking_data = json_encode($dynamicFields);
-        $booking->selected_staff = $request->input('staff');
+
+        $booking->booking_data = json_encode($request->input('dynamic', []));
         $booking->booking_datetime = $request->input('booking_datetime');
+
+        $selectedStaff = User::find($request->input('staff'));
+        $booking->selected_staff = $selectedStaff?->name ?? '';
+
         $booking->save();
+
         return redirect()->route('booking.list')->with('success', 'Booking Updated Successfully.');
     }
-
 
     public function bookingDelete($id)
     {
         $booking = Booking::find($id);
         $booking->delete();
         return response()->json(['success' => true]);
+    }
+
+    public function loadTemplateHTML($id)
+    {
+        $template = BookingTemplate::find($id);
+
+        if (!$template) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Template not found.'
+            ], 404);
+        }
+
+        try {
+            $html = FormHelper::renderDynamicFieldHTML($template->data);
+            return response()->json([
+                'success' => true,
+                'html' => $html
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Render error: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

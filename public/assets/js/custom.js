@@ -415,7 +415,6 @@ jQuery(function ($) {
 
 // Add Booking
 document.addEventListener("DOMContentLoaded", function () {
-    // Show the modal on page load if it exists
     const bookingTemplateModal = document.getElementById("bookingTemplateModal");
     if (bookingTemplateModal) {
         $("#bookingTemplateModal")
@@ -457,172 +456,75 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (loadTemplateBtn) {
         loadTemplateBtn.addEventListener("click", function () {
-            const selectedOption = document.querySelector(
-                "#bookingTemplateselect option:checked"
-            );
-            if (!selectedOption) {
+            const templateSelect = document.getElementById("bookingTemplateselect");
+            const selectedOption = templateSelect?.options[templateSelect.selectedIndex];
+
+            if (!selectedOption || !selectedOption.dataset.id) {
                 alert("Please select a Booking template.");
                 return;
             }
-            const bookingData = selectedOption.value;
+
             const bookingtemplateid = selectedOption.dataset.id;
-            if (bookingData) {
-                const templateFields = JSON.parse(bookingData);
-                const dynamicTemplate =
-                    document.getElementById("dynamictemplateFields");
-                dynamicTemplate.innerHTML = "";
-                let templateData = {};
 
-                templateFields.forEach((field) => {
-                    let inputHtml = "";
-                    switch (field.type) {
-                        case "text":
-                        case "email":
-                        case "number":
-                        case "password":
-                        case "tel":
-                        case "date":
-                        case "url":
-                            inputHtml = `
-                <div class="form-group">
-                  <label>${field.label || ""}</label>
-                  <input 
-                    type="${field.subtype || "text"}" 
-                    class="${field.className || "form-control"}"
-                    placeholder="${field.placeholder || ""}" 
-                    name="${field.name || ""}" 
-                    ${field.required === "true" ? "required" : ""}>
-                </div>`;
-                            break;
-                        case "textarea":
-                            inputHtml = `
-                <div class="form-group">
-                  <label>${field.label || ""}</label>
-                  <textarea 
-                    class="${field.className || "form-control"}"
-                    placeholder="${field.placeholder || ""}" 
-                    name="${field.name || ""}" 
-                    ${field.required === "true" ? "required" : ""}></textarea>
-                </div>`;
-                            break;
-                        case "select":
-                            const options = field.values
-                                .map(
-                                    (option) =>
-                                        `<option value="${option.value}">${option.label}</option>`
-                                )
-                                .join("");
-                            inputHtml = `
-                <div class="form-group">
-                  <label>${field.label || ""}</label>
-                  <select 
-                    class="${field.className || "form-control"}" 
-                    name="${field.name || ""}" 
-                    ${field.required === "true" ? "required" : ""}>
-                    ${options}
-                  </select>
-                </div>`;
-                            break;
-                        case "radio-group":
-                            inputHtml = `
-                <div class="form-group">
-                  <label>${field.label || ""}</label>
-                  <div>
-                    ${field.values
-                        .map(
-                            (option) => `
-                      <label class="${field.className || "form-check-label"}">
-                        <input 
-                          type="radio" 
-                          name="${field.name || ""}" 
-                          value="${option.value}" 
-                          ${field.required === "true" ? "required" : ""}>
-                        ${option.label}
-                      </label>
-                    `
-                        )
-                        .join("")}
-                  </div>
-                </div>`;
-                            break;
-                        case "checkbox-group":
-                            inputHtml = `
-                <div class="form-group">
-                  <label>${field.label || ""}</label>
-                  <div>
-                    ${field.values
-                        .map(
-                            (option) => `
-                      <label class="${field.className || "form-check-label"}">
-                        <input 
-                          type="checkbox" 
-                          name="${field.name || ""}[]" 
-                          value="${option.value}" 
-                          ${field.required === "true" ? "required" : ""}>
-                        ${option.label}
-                      </label>
-                    `
-                        )
-                        .join("")}
-                  </div>
-                </div>`;
-                            break;
-                        default:
-                            inputHtml = `
-                <div class="form-group">
-                  <label>${field.label || ""}</label>
-                  <input 
-                    type="${field.type || "text"}" 
-                    class="${field.className || "form-control"}" 
-                    name="${field.name || ""}" 
-                    ${field.required === "true" ? "required" : ""}>
-                </div>`;
+            fetch(`/booking/load-template-html/${bookingtemplateid}`)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Template fetch failed.");
                     }
-                    dynamicTemplate.innerHTML += inputHtml;
-                });
-
-                // Capture values on submit
-                document
-                    .querySelector("form")
-                    .addEventListener("submit", function (event) {
-                        templateData = {};
-                        templateFields.forEach((field) => {
-                            if (
-                                field.type === "checkbox-group" ||
-                                field.type === "radio-group"
-                            ) {
-                                templateData[field.name] = [];
-                                document
-                                    .querySelectorAll(
-                                        `[name="${field.name}"]:checked`
-                                    )
-                                    .forEach((checkbox) => {
-                                        templateData[field.name].push(
-                                            checkbox.value
-                                        );
-                                    });
-                            } else {
-                                const fieldElement = document.querySelector(
-                                    `[name="${field.name}"]`
-                                );
-                                if (fieldElement) {
-                                    templateData[field.name] = fieldElement.value;
-                                }
-                            }
-                        });
+                    return response.json();
+                })
+                .then((data) => {
+                    if (data.success) {
+                        const dynamicTemplate = document.getElementById("dynamictemplateFields");
+                        dynamicTemplate.innerHTML = data.html;
 
                         document.getElementById("bookingTemplateId").value = bookingtemplateid;
-                        document.getElementById("bookingData").value =
-                            JSON.stringify(templateData);
-                    });
 
-                $("#bookingTemplateModal").modal("hide");
-            } else {
-                alert("Please select a Booking template.");
-            }
+                        const form = document.querySelector("form");
+                        if (form) {
+                            form.addEventListener("submit", function (event) {
+                                let templateData = {};
+                                const inputs = form.querySelectorAll("[name^='dynamic']");
+
+                                inputs.forEach((input) => {
+                                    const nameMatch = input.name.match(/dynamic\[(.+?)\]/);
+                                    if (nameMatch) {
+                                        const fieldName = nameMatch[1];
+
+                                        if (input.type === "checkbox") {
+                                            if (!templateData[fieldName]) {
+                                                templateData[fieldName] = [];
+                                            }
+                                            if (input.checked) {
+                                                templateData[fieldName].push(input.value);
+                                            }
+                                        } else if (input.type === "radio") {
+                                            if (input.checked) {
+                                                templateData[fieldName] = input.value;
+                                            }
+                                        } else {
+                                            templateData[fieldName] = input.value;
+                                        }
+                                    }
+                                });
+
+                                document.getElementById("bookingData").value = JSON.stringify(templateData);
+                            });
+                        }
+
+                        $("#bookingTemplateModal").modal("hide");
+                    } else {
+                        alert(data.message || "Failed to load template.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error loading template:", error);
+                    alert("An error occurred while loading the template.");
+                });
         });
     }
 });
+
 document.addEventListener("DOMContentLoaded", function () {
     const selectAll = document.getElementById("select-all-permissions");
 
@@ -633,7 +535,6 @@ document.addEventListener("DOMContentLoaded", function () {
         selectAll.indeterminate = checked.length > 0 && checked.length < all.length;
     }
 
-    // Handle group checkbox -> select all in that group
     document.querySelectorAll(".group-checkbox").forEach(groupCheckbox => {
         groupCheckbox.addEventListener("change", function () {
             const groupKey = this.dataset.group;
@@ -643,7 +544,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Handle global select all
     selectAll.addEventListener("change", function () {
         const checked = this.checked;
         document.querySelectorAll(".permission-checkbox").forEach(cb => cb.checked = checked);
@@ -651,7 +551,6 @@ document.addEventListener("DOMContentLoaded", function () {
         updateSelectAllCheckbox();
     });
 
-    // Update group checkbox when a permission is toggled
     document.querySelectorAll(".permission-checkbox").forEach(cb => {
         cb.addEventListener("change", function () {
             const groupClass = Array.from(cb.classList).find(cls => cls.startsWith("group-"));
@@ -665,7 +564,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Toggle expand/collapse on icon click
     document.querySelectorAll(".toggle-icon").forEach(icon => {
         icon.addEventListener("click", function () {
             const groupKey = this.dataset.group;
@@ -679,7 +577,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // ✅ On page load: ALWAYS start collapsed, even if some permissions are checked
     document.querySelectorAll(".group-checkbox").forEach(groupCheckbox => {
         const groupKey = groupCheckbox.dataset.group;
         const perms = document.querySelectorAll(`.permission-checkbox.group-${groupKey}`);
@@ -689,10 +586,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const icon = document.querySelector(`.toggle-icon[data-group="${groupKey}"]`);
         if (icon) {
             icon.classList.remove("icon-chevron-down");
-            icon.classList.add("icon-chevron-right"); // Always default collapsed
+            icon.classList.add("icon-chevron-right"); 
         }
-
-        // Keep rows hidden always on load
         document.querySelectorAll(`.group-perms-${groupKey}`).forEach(r => r.style.display = "none");
     });
 

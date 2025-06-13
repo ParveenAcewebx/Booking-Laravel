@@ -12,29 +12,22 @@ class PermissionTable extends Seeder
      */
     public function run()
     {
-        $permissions = [
-            'view users',
-            'create users',
-            'edit users',
-            'delete users',
-            'view roles',
-            'create roles',
-            'edit roles',
-            'delete roles',
-            'view forms',
-            'create forms',
-            'edit forms',
-            'delete forms',
-            'view bookings',
-            'create bookings',
-            'edit bookings',
-            'delete bookings',
-        ];
+        $roleGroups = config('constants.role_groups');
 
-        foreach ($permissions as $permission) {
+        $allPermissions = [];
+
+        foreach ($roleGroups as $group) {
+            foreach ($group['roles'] as $permission) {
+                $allPermissions[] = $permission;
+            }
+        }
+
+        $uniquePermissions = array_unique($allPermissions);
+
+        foreach ($uniquePermissions as $permission) {
             Permission::firstOrCreate([
                 'name' => $permission,
-                'guard_name' => 'web'
+                'guard_name' => 'web',
             ]);
         }
     }
