@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Storage;
+
 use App\Helpers\FormHelper;
 use Illuminate\Http\Request;
 use App\Models\Booking;
@@ -97,6 +99,12 @@ class BookingController extends Controller
             'booking_datetime' => 'required'
         ]);
         $bookingData = json_decode($request->booking_data, true);
+        foreach ($request->file('dynamic', []) as $key => $file) {
+            if ($file && $file->isValid()) {
+                $path = $file->store('bookings', 'public');
+                $bookingData[$key] = $path;
+            }
+        }
         $booking = Booking::create([
             'booking_template_id' => $request->booking_template_id,
             'customer_id' => $request->customer_id,
@@ -141,9 +149,29 @@ class BookingController extends Controller
 
     public function bookingUpdate(Request $request, $id)
     {
+        $request->validate([
+            'staff' => 'required',
+            'booking_datetime' => 'required',
+        ]);
+
         $booking = Booking::findOrFail($id);
 
-        $booking->booking_data = json_encode($request->input('dynamic', []));
+        $bookingData = $request->input('dynamic', []);
+        $existingData = json_decode($booking->booking_data, true) ?? [];
+
+        // Handle file fields in dynamic data
+        foreach ($request->file('dynamic', []) as $key => $file) {
+            if ($file && $file->isValid()) {
+                $path = $file->store('bookings', 'public');
+                $bookingData[$key] = $path;
+            } elseif (isset($existingData[$key])) {
+                // Retain previous file path if no new file is uploaded
+                $bookingData[$key] = $existingData[$key];
+            }
+        }
+
+        // Update booking
+        $booking->booking_data = json_encode($bookingData);
         $booking->booking_datetime = $request->input('booking_datetime');
 
         $selectedStaff = User::find($request->input('staff'));
@@ -153,6 +181,7 @@ class BookingController extends Controller
 
         return redirect()->route('booking.list')->with('success', 'Booking Updated Successfully.');
     }
+
 
     public function bookingDelete($id)
     {

@@ -26,9 +26,12 @@ class FormHelper
                 continue;
             }
 
+            // Skip form-group wrapper for content types
+            // Handle header, paragraph, newsection
             if (in_array($type, ['header', 'paragraph', 'section', 'newsection'])) {
+                // Ensure name is present
                 if (empty($name)) {
-                    $name = $type . '-' . uniqid(); 
+                    $name = $type . '-' . uniqid(); // generate a unique name
                 }
 
                 switch ($type) {
@@ -55,13 +58,21 @@ class FormHelper
                 continue;
             }
 
-
+            // Input field types inside .form-group
             $html .= "<div class='form-group'>";
 
             switch ($type) {
                 case 'file':
                     $html .= "<label>" . htmlspecialchars($label, ENT_QUOTES) . "</label>";
                     $html .= "<input type='file' name='dynamic[$name]' class='$class' $required>";
+
+                    // Show existing file preview if available
+                    if (!empty($value)) {
+                        $fileUrl = asset('storage/' . $value);
+                        $html .= "<br><small class='form-text text-muted'>Previously uploaded: 
+                                    <a href='$fileUrl' target='_blank'>View File</a>
+                                  </small>";
+                    }
                     break;
 
                 case 'number':
