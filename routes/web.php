@@ -36,6 +36,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
         Route::post('/{id}/switch', [UserController::class, 'switchUser'])->name('user.switch');
         Route::post('/switch-back', [UserController::class, 'switchBack'])->name('user.switch.back');
+Route::get('/booking/load-template-html/{id}', [BookingController::class, 'loadTemplateHTML']);
 
     // Routes for editing (edit users, edit forms, etc.)
     Route::middleware('permission:view users')->group(function () {
@@ -76,7 +77,7 @@ Route::middleware('auth')->group(function () {
     });
     Route::middleware('permission:edit bookings')->group(function () {
         Route::get('/booking/{id}/edit', [BookingController::class, 'bookingEdit'])->name('booking.edit');
-        Route::post('/booking/{id}/update', [BookingController::class, 'bookingUpdate'])->name('booking.update');
+        Route::put('/booking/{id}/update', [BookingController::class, 'bookingUpdate'])->name('booking.update');
     });
     Route::middleware('permission:delete bookings')->group(function () {
         Route::delete('/booking/{id}/delete', [BookingController::class, 'bookingDelete'])->name('booking.delete');
