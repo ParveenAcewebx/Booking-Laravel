@@ -115,24 +115,18 @@ class BookingController extends Controller
     {
         $booking = Booking::with('form')->findOrFail($id);
 
-        // Decode stored dynamic booking values (if any)
         $dynamicValues = json_decode($booking->booking_data, true) ?? [];
 
-        // Parse JSON form structure from associated form
         $formStructureJson = $booking->form->data ?? '[]';
         $formStructureArray = json_decode($formStructureJson, true);
 
-        // Generate the dynamic form fields HTML from helper
-        $dynamicFieldHtml = \App\Helpers\FormHelper::renderDynamicFieldHTML($formStructureArray, $dynamicValues);
+        $dynamicFieldHtml = FormHelper::renderDynamicFieldHTML($formStructureArray, $dynamicValues);
 
-        // Format datetime for HTML5 input
         $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
 
-        // Convert staff name to ID for selected dropdown
         $selectedStaffUser = User::where('name', $booking->selected_staff)->first();
         $booking->selected_staff = $selectedStaffUser?->id;
 
-        // Fetch impersonator user info if available
         $loginId = session('previous_login_id');
         $loginUser = $loginId ? User::find($loginId) : null;
 
