@@ -19,7 +19,8 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
     <style>
         li.input-control.input-control-14.ui-sortable-handle::before {
             /* content: 'sd'; */
@@ -28,7 +29,6 @@
             margin-right: -16px !important;
         }
     </style>
-
 </head>
 
 <body class="">
@@ -43,8 +43,8 @@
         <!-- all contents -->
         @yield('content')
     </div>
-    <script src="{{ asset('assets/js/vendor-all.min.js') }}"></script>
 
+    <script src="{{ asset('assets/js/vendor-all.min.js') }}"></script>
     <script src="{{ asset('assets/js/pcoded.min.js') }}"></script>
 
     <!-- Apex Chart -->
@@ -52,12 +52,10 @@
 
     <!-- custom-chart js -->
     <script src="{{asset('assets/js/pages/dashboard-main.js')}}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
     <script src="{{asset('assets/js/plugins/bootstrap.min.js')}}"></script>
     <script src="https://formbuilder.online/assets/js/form-builder.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-rateyo@2.3.0/jquery.rateyo.min.js"></script>
-
     <!-- sweet alert Js -->
     <script src="{{asset('assets/js/plugins/sweetalert.min.js')}}"></script>
     <script src="{{asset('assets/js/pages/ac-alert.js')}}"></script>

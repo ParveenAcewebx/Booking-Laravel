@@ -78,18 +78,20 @@ class BookingController extends Controller
 
         return view('booking.index', compact('loginUser'));
     }
+
     public function bookingAdd()
     {
-
         $alltemplates = BookingTemplate::all();
-        $allusers  = $this->allUsers;
+        $allusers = $this->allUsers;
         $loginId = session('previous_login_id');
-        $loginUser = null;
+        $loginUser = $loginId ? User::find($loginId) : null;
 
-        if ($loginId) {
-            $loginUser = User::find($loginId);
-        }
-        return view('booking.add', ['alltemplates' => $alltemplates, 'allusers' => $allusers, 'alluser' => $allusers, 'loginUser' => $loginUser]);
+        return view('booking.add', [
+            'alltemplates' => $alltemplates,
+            'allusers' => $allusers,
+            'alluser' => $allusers,
+            'loginUser' => $loginUser,
+        ]);
     }
 
     public function bookingSave(Request $request)
@@ -98,13 +100,29 @@ class BookingController extends Controller
             'selected_staff' => 'required',
             'booking_datetime' => 'required'
         ]);
-        $bookingData = json_decode($request->booking_data, true);
-        foreach ($request->file('dynamic', []) as $key => $file) {
-            if ($file && $file->isValid()) {
-                $path = $file->store('bookings', 'public');
-                $bookingData[$key] = $path;
+
+        $bookingData = json_decode($request->booking_data, true) ?? [];
+        $inputData = $request->input('dynamic', []);
+        $files = $request->file('dynamic', []);
+
+        foreach ($inputData as $key => $val) {
+            $bookingData[$key] = $val;
+        }
+
+        foreach ($files as $key => $fileInput) {
+            if (is_array($fileInput)) {
+                $paths = [];
+                foreach ($fileInput as $file) {
+                    if ($file && $file->isValid()) {
+                        $paths[] = $file->store('bookings', 'public');
+                    }
+                }
+                $bookingData[$key] = $paths;
+            } elseif ($fileInput && $fileInput->isValid()) {
+                $bookingData[$key] = $fileInput->store('bookings', 'public');
             }
         }
+
         $booking = Booking::create([
             'booking_template_id' => $request->booking_template_id,
             'customer_id' => $request->customer_id,
@@ -112,17 +130,15 @@ class BookingController extends Controller
             'booking_data' => json_encode($bookingData),
             'selected_staff' => $request->selected_staff,
         ]);
-        if ($booking) {
-            return redirect('/bookings')->with('success', 'Booking Added Successfully.');
-        } else {
-            return redirect()->back()->with('error', 'It failed. Please try again.');
-        }
+
+        return $booking
+            ? redirect('/bookings')->with('success', 'Booking Added Successfully.')
+            : redirect()->back()->with('error', 'It failed. Please try again.');
     }
 
     public function bookingEdit($id)
     {
         $booking = Booking::with('form')->findOrFail($id);
-
         $dynamicValues = json_decode($booking->booking_data, true) ?? [];
 
         $formStructureJson = $booking->form->data ?? '[]';
@@ -146,7 +162,6 @@ class BookingController extends Controller
         ]);
     }
 
-
     public function bookingUpdate(Request $request, $id)
     {
         $request->validate([
@@ -156,22 +171,29 @@ class BookingController extends Controller
 
         $booking = Booking::findOrFail($id);
 
-        $bookingData = $request->input('dynamic', []);
         $existingData = json_decode($booking->booking_data, true) ?? [];
+        $newInputData = $request->input('dynamic', []);
+        $files = $request->file('dynamic', []);
 
-        // Handle file fields in dynamic data
-        foreach ($request->file('dynamic', []) as $key => $file) {
-            if ($file && $file->isValid()) {
-                $path = $file->store('bookings', 'public');
-                $bookingData[$key] = $path;
-            } elseif (isset($existingData[$key])) {
-                // Retain previous file path if no new file is uploaded
-                $bookingData[$key] = $existingData[$key];
+        foreach ($newInputData as $key => $val) {
+            $existingData[$key] = $val;
+        }
+
+        foreach ($files as $key => $fileInput) {
+            if (is_array($fileInput)) {
+                $paths = [];
+                foreach ($fileInput as $file) {
+                    if ($file && $file->isValid()) {
+                        $paths[] = $file->store('bookings', 'public');
+                    }
+                }
+                $existingData[$key] = $paths;
+            } elseif ($fileInput && $fileInput->isValid()) {
+                $existingData[$key] = $fileInput->store('bookings', 'public');
             }
         }
 
-        // Update booking
-        $booking->booking_data = json_encode($bookingData);
+        $booking->booking_data = json_encode($existingData);
         $booking->booking_datetime = $request->input('booking_datetime');
 
         $selectedStaff = User::find($request->input('staff'));
@@ -182,12 +204,29 @@ class BookingController extends Controller
         return redirect()->route('booking.list')->with('success', 'Booking Updated Successfully.');
     }
 
-
     public function bookingDelete($id)
     {
         $booking = Booking::find($id);
+
+        if (!$booking) {
+            return response()->json(['success' => false, 'message' => 'Booking not found.']);
+        }
+
+        $bookingData = json_decode($booking->booking_data, true) ?? [];
+
+        foreach ($bookingData as $value) {
+            if (is_string($value) && Storage::disk('public')->exists($value)) {
+                Storage::disk('public')->delete($value);
+            } elseif (is_array($value)) {
+                foreach ($value as $filePath) {
+                    if (is_string($filePath) && Storage::disk('public')->exists($filePath)) {
+                        Storage::disk('public')->delete($filePath);
+                    }
+                }
+            }
+        }
         $booking->delete();
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true, 'message' => 'Booking Deleted Successfully.']);
     }
 
     public function loadTemplateHTML($id)

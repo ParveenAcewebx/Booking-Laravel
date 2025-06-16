@@ -40,10 +40,10 @@
                         <div class="card-body">
                             {{-- Success or Error Messages --}}
                             @if(session('success'))
-                                <div class="alert alert-success">{{ session('success') }}</div>
+                            <div class="alert alert-success">{{ session('success') }}</div>
                             @endif
                             @if(session('error'))
-                                <div class="alert alert-danger">{{ session('error') }}</div>
+                            <div class="alert alert-danger">{{ session('error') }}</div>
                             @endif
 
                             <h5 class="mb-4">Booking Information</h5>
@@ -53,30 +53,30 @@
 
                             <div class="row">
                                 {{-- Staff Dropdown --}}
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="form-label">Staff</label>
                                         <select class="form-control" name="staff" required>
                                             <option value="">Select Staff</option>
                                             @foreach($staffList as $staff)
-                                                <option value="{{ $staff->id }}"
-                                                    {{ old('staff', $booking->selected_staff) == $staff->id ? 'selected' : '' }}>
-                                                    {{ $staff->name }}
-                                                </option>
+                                            <option value="{{ $staff->id }}"
+                                                {{ old('staff', $booking->selected_staff) == $staff->id ? 'selected' : '' }}>
+                                                {{ $staff->name }}
+                                            </option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
 
                                 {{-- Booking Date and Time --}}
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="form-label">Booking Date and Time</label>
-                                        <input 
-                                            type="datetime-local" 
-                                            class="form-control" 
-                                            name="booking_datetime" 
-                                            value="{{ old('booking_datetime', $booking->booking_datetime) }}" 
+                                        <input
+                                            type="datetime-local"
+                                            class="form-control"
+                                            name="booking_datetime"
+                                            value="{{ old('booking_datetime', $booking->booking_datetime) }}"
                                             required>
                                     </div>
                                 </div>
@@ -85,7 +85,7 @@
                             {{-- Submit Button --}}
                             <button type="submit" class="btn btn-primary">Update</button>
                         </div>
-                    </div>    
+                    </div>
                 </div>
             </div>
         </form>
