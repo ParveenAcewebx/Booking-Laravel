@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BookingTemplateController;
@@ -7,6 +6,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\FormController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,6 +22,10 @@ use App\Http\Controllers\RoleController;
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
+
+Route::get('/form/{id}', [FormController::class, 'show'])->name('form.show');
+Route::post('/form/{id}', [FormController::class, 'store'])->name('form.store');
+
 // Guest routes (not logged in)
 Route::middleware('guest')->group(function () {
     Route::get('/register', [UserController::class, 'showRegistrationForm'])->name('registration.form');
