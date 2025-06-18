@@ -1,6 +1,14 @@
 setTimeout(function () {
     $(".alert").alert("close");
-}, 5000); 
+}, 5000);
+
+setTimeout(() => {
+    const alert = document.getElementById("success-alert");
+    if (alert) {
+        alert.classList.add("fade");
+        setTimeout(() => alert.remove(), 500); 
+    }
+}, 5000);
 
 // Template delete alert
 function deleteTemplate(id) {
@@ -12,8 +20,7 @@ function deleteTemplate(id) {
         buttons: true,
         dangerMode: true,
     }).then((willDelete) => {
-        if (willDelete) 
-        {
+        if (willDelete) {
             var template = document.getElementById("deleteTemplate-" + id);
             var templateData = new FormData(template);
             fetch(template.action, {
@@ -22,31 +29,31 @@ function deleteTemplate(id) {
                 headers: {
                     "X-Requested-With": "XMLHttpRequest",
                     "X-CSRF-TOKEN": document
-                    .querySelector('meta[name="csrf-token"]')
-                    .getAttribute("content"),
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
                 },
             })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
-                    swal("Booking Template Deleted Successfully.", {
-                        icon: "success",
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                } else {
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        swal("Booking Template Deleted Successfully.", {
+                            icon: "success",
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        swal("There was an errors!", {
+                            icon: "error",
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
                     swal("There was an errors!", {
                         icon: "error",
                     });
-                }
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-                swal("There was an errors!", {
-                    icon: "error",
                 });
-            });
-        } 
+        }
     });
 }
 // User delete Alert
@@ -59,8 +66,7 @@ function deleteUser(id) {
         buttons: true,
         dangerMode: true,
     }).then((willDelete) => {
-        if (willDelete) 
-        {
+        if (willDelete) {
             var user = document.getElementById("deleteUser-" + id);
             var userData = new FormData(user);
             fetch(user.action, {
@@ -69,35 +75,35 @@ function deleteUser(id) {
                 headers: {
                     "X-Requested-With": "XMLHttpRequest",
                     "X-CSRF-TOKEN": document
-                    .querySelector('meta[name="csrf-token"]')
-                    .getAttribute("content"),
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
                 },
             })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success === true) {
-                    swal("User Deleted Successfully.", {
-                        icon: "success",
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                } else if (data.success === "login") {
-                    swal("That user is currently logged in.", {
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success === true) {
+                        swal("User Deleted Successfully.", {
+                            icon: "success",
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else if (data.success === "login") {
+                        swal("That user is currently logged in.", {
+                            icon: "error",
+                        });
+                    } else {
+                        swal("There was an error!", {
+                            icon: "error",
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    swal("There was an error processing your request.", {
                         icon: "error",
                     });
-                } else {
-                    swal("There was an error!", {
-                        icon: "error",
-                    });
-                }
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-                swal("There was an error processing your request.", {
-                    icon: "error",
                 });
-            });
-        } 
+        }
     });
 }
 // Booking delete alert
@@ -124,27 +130,27 @@ function deleteBooking(id) {
                         .getAttribute("content"),
                 },
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    swal("Booking Deleted Successfully.", {
-                        icon: "success",
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                } else {
-                    swal("Something went wrong!", {
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        swal("Booking Deleted Successfully.", {
+                            icon: "success",
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        swal("Something went wrong!", {
+                            icon: "error",
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    swal("There was an error!", {
                         icon: "error",
                     });
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                swal("There was an error!", {
-                    icon: "error",
                 });
-            });
-        } 
+        }
     });
 }
 
@@ -167,30 +173,35 @@ function deleteRole(id) {
                 body: formData,
                 headers: {
                     "X-Requested-With": "XMLHttpRequest",
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
                 },
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    swal("Role Deleted Successfully.", {
-                        icon: "success",
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                } else {
-                    swal("Oops! Something went wrong while deleting the role.", {
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        swal("Role Deleted Successfully.", {
+                            icon: "success",
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        swal(
+                            "Oops! Something went wrong while deleting the role.",
+                            {
+                                icon: "error",
+                            }
+                        );
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    swal("Error occurred while processing the request!", {
                         icon: "error",
                     });
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                swal("Error occurred while processing the request!", {
-                    icon: "error",
                 });
-            });
-        } 
+        }
     });
 }
 
@@ -226,14 +237,22 @@ jQuery(function ($) {
                 </div>`,
                 onRender: function () {
                     var currentStep = 0;
-                    $(document).on("click", `#${fieldData.name} .next-btn`, function () {
-                        currentStep++;
-                        showSection(currentStep);
-                    });
-                    $(document).on("click", `#${fieldData.name} .prev-btn`, function () {
-                        currentStep--;
-                        showSection(currentStep);
-                    });
+                    $(document).on(
+                        "click",
+                        `#${fieldData.name} .next-btn`,
+                        function () {
+                            currentStep++;
+                            showSection(currentStep);
+                        }
+                    );
+                    $(document).on(
+                        "click",
+                        `#${fieldData.name} .prev-btn`,
+                        function () {
+                            currentStep--;
+                            showSection(currentStep);
+                        }
+                    );
 
                     function showSection(step) {
                         var allSections = $(".section");
@@ -264,7 +283,7 @@ jQuery(function ($) {
         fields: newfield,
         templates: temp,
         controlPosition: "left",
-        disableFields: ['autocomplete', 'button'],
+        disableFields: ["autocomplete", "button"],
     });
 
     formBuilder.promise.then(function (fb) {
@@ -274,7 +293,8 @@ jQuery(function ($) {
             $("#bookingaddpage").length === 0 &&
             $("#bookingTemplates").length > 0
         ) {
-            const selectedValue = document.getElementById("bookingTemplates").value;
+            const selectedValue =
+                document.getElementById("bookingTemplates").value;
             const parsedValue = JSON.parse(selectedValue);
 
             parsedValue.forEach((item) => {
@@ -295,7 +315,9 @@ jQuery(function ($) {
 
             var inputElement = document.getElementById("bookingTemplatesname");
             var inputValue = inputElement.value.trim();
-            var errorMessageElement = document.getElementById("bookingTemplatesname-error");
+            var errorMessageElement = document.getElementById(
+                "bookingTemplatesname-error"
+            );
 
             if (errorMessageElement) {
                 errorMessageElement.remove();
@@ -305,7 +327,7 @@ jQuery(function ($) {
                 var errorMessage = document.createElement("span");
                 errorMessage.id = "bookingTemplatesname-error";
                 errorMessage.textContent = "The Template name cannot be empty.";
-                errorMessage.style.color = "red"; 
+                errorMessage.style.color = "red";
                 inputElement.parentNode.appendChild(errorMessage);
                 inputElement.focus();
                 return;
@@ -412,10 +434,11 @@ jQuery(function ($) {
     });
 });
 
-
 // Add Booking
 document.addEventListener("DOMContentLoaded", function () {
-    const bookingTemplateModal = document.getElementById("bookingTemplateModal");
+    const bookingTemplateModal = document.getElementById(
+        "bookingTemplateModal"
+    );
     if (bookingTemplateModal) {
         $("#bookingTemplateModal")
             .modal({ backdrop: "static", keyboard: false })
@@ -425,12 +448,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const selectTemplateBtn = document.getElementById("select-template-btn");
     if (selectTemplateBtn) {
         selectTemplateBtn.addEventListener("click", function () {
-            const bookingTemplateList =
-                document.getElementById("booking-template-list");
+            const bookingTemplateList = document.getElementById(
+                "booking-template-list"
+            );
             const templateError = document.getElementById(
                 "booking-template-error"
             );
-            const bookingtemplateid = document.getElementById("booking_template_id");
+            const bookingtemplateid = document.getElementById(
+                "booking_template_id"
+            );
             const bookingDataInput = document.getElementById("booking_data");
             const bookingTemplate = document.getElementById("booking-template");
 
@@ -438,13 +464,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (templateError) templateError.style.display = "block";
             } else {
                 const selectedOption =
-                    bookingTemplateList.options[bookingTemplateList.selectedIndex];
+                    bookingTemplateList.options[
+                        bookingTemplateList.selectedIndex
+                    ];
                 if (templateError) templateError.style.display = "none";
-                if (bookingtemplateid) bookingtemplateid.value = selectedOption.value;
+                if (bookingtemplateid)
+                    bookingtemplateid.value = selectedOption.value;
                 if (bookingDataInput)
                     bookingDataInput.value =
                         selectedOption.getAttribute("data-booking_data");
-                if (bookingTemplateModal) $("#bookingTemplateModal").modal("hide");
+                if (bookingTemplateModal)
+                    $("#bookingTemplateModal").modal("hide");
                 if (bookingTemplate) bookingTemplate.style.display = "block";
             }
         });
@@ -456,8 +486,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (loadTemplateBtn) {
         loadTemplateBtn.addEventListener("click", function () {
-            const templateSelect = document.getElementById("bookingTemplateselect");
-            const selectedOption = templateSelect?.options[templateSelect.selectedIndex];
+            const templateSelect = document.getElementById(
+                "bookingTemplateselect"
+            );
+            const selectedOption =
+                templateSelect?.options[templateSelect.selectedIndex];
 
             if (!selectedOption || !selectedOption.dataset.id) {
                 alert("Please select a Booking template.");
@@ -475,19 +508,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 })
                 .then((data) => {
                     if (data.success) {
-                        const dynamicTemplate = document.getElementById("dynamictemplateFields");
+                        const dynamicTemplate = document.getElementById(
+                            "dynamictemplateFields"
+                        );
                         dynamicTemplate.innerHTML = data.html;
 
-                        document.getElementById("bookingTemplateId").value = bookingtemplateid;
+                        document.getElementById("bookingTemplateId").value =
+                            bookingtemplateid;
 
                         const form = document.querySelector("form");
                         if (form) {
                             form.addEventListener("submit", function (event) {
                                 let templateData = {};
-                                const inputs = form.querySelectorAll("[name^='dynamic']");
+                                const inputs =
+                                    form.querySelectorAll("[name^='dynamic']");
 
                                 inputs.forEach((input) => {
-                                    const nameMatch = input.name.match(/dynamic\[(.+?)\]/);
+                                    const nameMatch =
+                                        input.name.match(/dynamic\[(.+?)\]/);
                                     if (nameMatch) {
                                         const fieldName = nameMatch[1];
 
@@ -496,19 +534,24 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 templateData[fieldName] = [];
                                             }
                                             if (input.checked) {
-                                                templateData[fieldName].push(input.value);
+                                                templateData[fieldName].push(
+                                                    input.value
+                                                );
                                             }
                                         } else if (input.type === "radio") {
                                             if (input.checked) {
-                                                templateData[fieldName] = input.value;
+                                                templateData[fieldName] =
+                                                    input.value;
                                             }
                                         } else {
-                                            templateData[fieldName] = input.value;
+                                            templateData[fieldName] =
+                                                input.value;
                                         }
                                     }
                                 });
 
-                                document.getElementById("bookingData").value = JSON.stringify(templateData);
+                                document.getElementById("bookingData").value =
+                                    JSON.stringify(templateData);
                             });
                         }
 
@@ -530,66 +573,168 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateSelectAllCheckbox() {
         const all = document.querySelectorAll(".permission-checkbox");
-        const checked = Array.from(all).filter(cb => cb.checked);
+        const checked = Array.from(all).filter((cb) => cb.checked);
         selectAll.checked = checked.length === all.length;
-        selectAll.indeterminate = checked.length > 0 && checked.length < all.length;
+        selectAll.indeterminate =
+            checked.length > 0 && checked.length < all.length;
     }
 
-    document.querySelectorAll(".group-checkbox").forEach(groupCheckbox => {
+    document.querySelectorAll(".group-checkbox").forEach((groupCheckbox) => {
         groupCheckbox.addEventListener("change", function () {
             const groupKey = this.dataset.group;
-            const checkboxes = document.querySelectorAll(`.permission-checkbox.group-${groupKey}`);
-            checkboxes.forEach(cb => cb.checked = this.checked);
+            const checkboxes = document.querySelectorAll(
+                `.permission-checkbox.group-${groupKey}`
+            );
+            checkboxes.forEach((cb) => (cb.checked = this.checked));
             updateSelectAllCheckbox();
         });
     });
 
     selectAll.addEventListener("change", function () {
         const checked = this.checked;
-        document.querySelectorAll(".permission-checkbox").forEach(cb => cb.checked = checked);
-        document.querySelectorAll(".group-checkbox").forEach(cb => cb.checked = checked);
+        document
+            .querySelectorAll(".permission-checkbox")
+            .forEach((cb) => (cb.checked = checked));
+        document
+            .querySelectorAll(".group-checkbox")
+            .forEach((cb) => (cb.checked = checked));
         updateSelectAllCheckbox();
     });
 
-    document.querySelectorAll(".permission-checkbox").forEach(cb => {
+    document.querySelectorAll(".permission-checkbox").forEach((cb) => {
         cb.addEventListener("change", function () {
-            const groupClass = Array.from(cb.classList).find(cls => cls.startsWith("group-"));
+            const groupClass = Array.from(cb.classList).find((cls) =>
+                cls.startsWith("group-")
+            );
             if (!groupClass) return;
             const groupKey = groupClass.replace("group-", "");
-            const groupCB = document.querySelector(`.group-checkbox[data-group="${groupKey}"]`);
-            const perms = document.querySelectorAll(`.permission-checkbox.group-${groupKey}`);
-            const anyChecked = Array.from(perms).some(p => p.checked);
+            const groupCB = document.querySelector(
+                `.group-checkbox[data-group="${groupKey}"]`
+            );
+            const perms = document.querySelectorAll(
+                `.permission-checkbox.group-${groupKey}`
+            );
+            const anyChecked = Array.from(perms).some((p) => p.checked);
             groupCB.checked = anyChecked;
             updateSelectAllCheckbox();
         });
     });
 
-    document.querySelectorAll(".toggle-icon").forEach(icon => {
+    document.querySelectorAll(".toggle-icon").forEach((icon) => {
         icon.addEventListener("click", function () {
             const groupKey = this.dataset.group;
             const rows = document.querySelectorAll(`.group-perms-${groupKey}`);
-            const isVisible = Array.from(rows).some(r => r.style.display !== "none");
+            const isVisible = Array.from(rows).some(
+                (r) => r.style.display !== "none"
+            );
 
-            rows.forEach(r => r.style.display = isVisible ? "none" : "table-row");
+            rows.forEach(
+                (r) => (r.style.display = isVisible ? "none" : "table-row")
+            );
 
             this.classList.toggle("icon-chevron-right", isVisible);
             this.classList.toggle("icon-chevron-down", !isVisible);
         });
     });
 
-    document.querySelectorAll(".group-checkbox").forEach(groupCheckbox => {
+    document.querySelectorAll(".group-checkbox").forEach((groupCheckbox) => {
         const groupKey = groupCheckbox.dataset.group;
-        const perms = document.querySelectorAll(`.permission-checkbox.group-${groupKey}`);
-        const anyChecked = Array.from(perms).some(p => p.checked);
+        const perms = document.querySelectorAll(
+            `.permission-checkbox.group-${groupKey}`
+        );
+        const anyChecked = Array.from(perms).some((p) => p.checked);
         groupCheckbox.checked = anyChecked;
 
-        const icon = document.querySelector(`.toggle-icon[data-group="${groupKey}"]`);
+        const icon = document.querySelector(
+            `.toggle-icon[data-group="${groupKey}"]`
+        );
         if (icon) {
             icon.classList.remove("icon-chevron-down");
-            icon.classList.add("icon-chevron-right"); 
+            icon.classList.add("icon-chevron-right");
         }
-        document.querySelectorAll(`.group-perms-${groupKey}`).forEach(r => r.style.display = "none");
+        document
+            .querySelectorAll(`.group-perms-${groupKey}`)
+            .forEach((r) => (r.style.display = "none"));
     });
 
     updateSelectAllCheckbox();
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Toggle input visibility
+    function toggleOtherInput(inputField, isVisible) {
+        if (inputField) {
+            inputField.style.display = isVisible ? 'block' : 'none';
+        }
+    }
+
+    // Initialize inputs on load
+    function initializeOtherInputs() {
+        document.querySelectorAll('input[name^="dynamic["][type="text"]').forEach(function (input) {
+            const nameMatch = input.name.match(/^dynamic\[(.+?)_other\](\[\])?$/);
+            if (!nameMatch) return;
+
+            const baseName = nameMatch[1];
+            const isCheckbox = !!nameMatch[2];
+
+            if (isCheckbox) {
+                const checkboxOther = document.querySelector(`input[type="checkbox"][name="dynamic[${baseName}][]"][value="__other__"]`);
+                if (checkboxOther && checkboxOther.value === '__other__' && !checkboxOther.checked) {
+                    toggleOtherInput(input, false);
+                }
+            } else {
+                const radioOther = document.querySelector(`input[type="radio"][name="dynamic[${baseName}]"][value="__other__"]`);
+                if (radioOther && radioOther.value === '__other__' && !radioOther.checked) {
+                    toggleOtherInput(input, false);
+                }
+            }
+        });
+    }
+
+    // Radio change event
+    function handleRadioChange(radio) {
+        const nameMatch = radio.name.match(/^dynamic\[(.+?)\]$/);
+        if (!nameMatch) return;
+
+        const baseName = nameMatch[1];
+        const input = document.querySelector(`input[name="dynamic[${baseName}_other]"]`);
+
+        if (radio.value === '__other__') {
+            toggleOtherInput(input, radio.checked);
+        } else {
+            toggleOtherInput(input, false);
+        }
+    }
+
+    // Checkbox change event
+    function handleCheckboxChange(checkbox) {
+        const nameMatch = checkbox.name.match(/^dynamic\[(.+?)\]\[\]$/);
+        if (!nameMatch) return;
+
+        const baseName = nameMatch[1];
+        const input = document.querySelector(`input[name="dynamic[${baseName}_other][]"]`);
+        toggleOtherInput(input, checkbox.checked);
+    }
+
+    // Set listeners
+    function setEventListeners() {
+        document.querySelectorAll('input[type="radio"]').forEach(function (radio) {
+            radio.addEventListener('change', function () {
+                handleRadioChange(radio);
+            });
+        });
+
+        document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
+            if (checkbox.value === '__other__') {
+                checkbox.addEventListener('change', function () {
+                    handleCheckboxChange(checkbox);
+                });
+            }
+        });
+    }
+
+    // Run on load
+    initializeOtherInputs();
+    setEventListeners();
 });

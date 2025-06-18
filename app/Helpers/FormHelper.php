@@ -10,6 +10,8 @@ class FormHelper
         $html = '';
         $htmlHidden = '';
 
+        if (!is_array($fields)) return '<div class="alert alert-danger">Invalid form template JSON.</div>';
+
         foreach ($fields as $field) {
             $label = $field['label'] ?? '';
             $name = $field['name'] ?? '';
@@ -17,11 +19,12 @@ class FormHelper
             $subtype = $field['subtype'] ?? 'text';
             $class = $field['className'] ?? 'form-control';
             $placeholder = $field['placeholder'] ?? '';
-            $required = (isset($field['required']) && $field['required'] === 'true') ? 'required' : '';
+            $required = (!empty($field['required']) && $field['required'] === 'true') ? 'required' : '';
             $value = $values[$name] ?? '';
             $options = $field['values'] ?? [];
             $other = $field['other'] ?? false;
-            $multiple = ($field['multiple'] ?? 'false') === 'true';
+
+            $multiple = !empty($field['multiple']) && ($field['multiple'] === true || $field['multiple'] === 'true');
 
             $min = $field['min'] ?? '';
             $max = $field['max'] ?? '';
@@ -43,7 +46,6 @@ class FormHelper
                 continue;
             }
 
-            // Heading/section/paragraph render
             if (in_array($type, ['header', 'paragraph', 'section', 'newsection'])) {
                 if (empty($name)) $name = $type . '-' . uniqid();
                 switch ($type) {
@@ -94,10 +96,12 @@ class FormHelper
                 case 'select':
                     $html .= "<label>$label</label>";
                     $multipleAttr = $multiple ? 'multiple' : '';
-                    $selectedValues = $multiple ? (array)($value ?? []) : [$value];
-                    $html .= "<select name='$inputNameAttr' class='$class' $multipleAttr $required>";
+                    $value = is_array($value) ? $value : (is_string($value) && json_decode($value) ? json_decode($value, true) : (array) $value);
+                    $selectedValues = $multiple ? $value : [$value];
 
+                    $html .= "<select name='$inputNameAttr' class='$class' $multipleAttr $required>";
                     $optionValues = array_column($options, 'value');
+
                     foreach ($options as $opt) {
                         $optValue = $opt['value'] ?? '';
                         $optLabel = $opt['label'] ?? $optValue;
@@ -108,7 +112,7 @@ class FormHelper
                     if ($other) {
                         $otherVals = array_diff($selectedValues, $optionValues);
                         $isOtherSelected = in_array('__other__', $selectedValues) || !empty($otherVals);
-                        $otherVal = $otherVals[0] ?? $values["{$name}_other"] ?? '';
+                        $otherVal = $otherVals[0] ?? ($values["{$name}_other"] ?? '');
                         $html .= "<option value='__other__' " . ($isOtherSelected ? 'selected' : '') . ">Other</option>";
                         $html .= "<input type='text' name='dynamic[{$name}_other]' class='$class mt-1' placeholder='Please specify' value='" . htmlspecialchars($otherVal) . "'>";
                     }
@@ -116,31 +120,11 @@ class FormHelper
                     $html .= "</select>";
                     break;
 
-                case 'radio-group':
-                    $html .= "<label>$label</label><br>";
-                    $matched = false;
-                    $optionValues = array_column($options, 'value');
-                    foreach ($options as $opt) {
-                        $optValue = $opt['value'] ?? '';
-                        $optLabel = $opt['label'] ?? $optValue;
-                        $checked = ($optValue == $value) ? 'checked' : '';
-                        if ($checked) $matched = true;
-                        $html .= "<label><input type='radio' name='$inputName' value='" . htmlspecialchars($optValue) . "' $checked $required> " . htmlspecialchars($optLabel) . "</label><br>";
-                    }
-
-                    if ($other) {
-                        $isOtherSelected = $value && !in_array($value, $optionValues);
-                        $checked = $isOtherSelected ? 'checked' : '';
-                        $otherVal = $isOtherSelected ? htmlspecialchars($value) : htmlspecialchars($values["{$name}_other"] ?? '');
-                        $html .= "<label><input type='radio' name='$inputName' value='__other__' $checked $required> Other</label>";
-                        $html .= "<input type='text' name='dynamic[{$name}_other]' class='$class mt-1' placeholder='Please specify' value='$otherVal'>";
-                    }
-                    break;
-
                 case 'checkbox-group':
                     $html .= "<label>$label</label><br>";
                     $valueArr = is_array($value) ? $value : (json_decode($value, true) ?? []);
                     $optionValues = array_column($options, 'value');
+
                     foreach ($options as $opt) {
                         $optValue = $opt['value'] ?? '';
                         $optLabel = $opt['label'] ?? $optValue;
@@ -149,11 +133,44 @@ class FormHelper
                     }
 
                     if ($other) {
-                        $otherVals = array_diff($valueArr, $optionValues);
-                        $checked = !empty($otherVals) ? 'checked' : '';
-                        $otherVal = implode(', ', $otherVals);
+                        $checked = in_array('__other__', $valueArr) ? 'checked' : '';
+                        $otherVal = htmlspecialchars($values["{$name}_other"][0] ?? '');
                         $html .= "<label><input type='checkbox' name='{$inputName}[]' value='__other__' $checked> Other</label>";
-                        $html .= "<input type='text' name='dynamic[{$name}_other][]' class='$class mt-1' placeholder='Please specify' value='" . htmlspecialchars($otherVal) . "'>";
+                        $html .= "<input type='text' name='dynamic[{$name}_other][]' class='$class mt-1' placeholder='Please specify' value='$otherVal'>";
+                    }
+                    break;
+
+                case 'radio-group':
+                    $html .= "<label>$label</label><br>";
+                    $matched = false;
+                    $optionValues = array_column($options, 'value');
+                    $radioIdBase = uniqid($name . '_');
+
+                    foreach ($options as $index => $opt) {
+                        $optValue = $opt['value'] ?? '';
+                        $optLabel = $opt['label'] ?? $optValue;
+                        $checked = ($optValue == $value) ? 'checked' : '';
+                        if ($checked) $matched = true;
+
+                        $id = $radioIdBase . '_' . $index;
+                        $html .= "<div class='form-check'>";
+                        $html .= "<input type='radio' id='$id' name='$inputName' value='" . htmlspecialchars($optValue) . "' class='form-check-input' $checked $required>";
+                        $html .= "<label for='$id' class='form-check-label'>" . htmlspecialchars($optLabel) . "</label>";
+                        $html .= "</div>";
+                    }
+
+                    if ($other) {
+                        $isOtherSelected = $value === '__other__' || (!in_array($value, $optionValues) && !empty($value));
+                        $checked = $isOtherSelected ? 'checked' : '';
+                        $otherVal = $isOtherSelected ? ($values["{$name}_other"] ?? $value) : '';
+                        $otherId = $radioIdBase . '_other';
+
+                        $html .= "<div class='form-check'>";
+                        $html .= "<input type='radio' id='$otherId' name='$inputName' value='__other__' class='form-check-input' $checked $required>";
+                        $html .= "<label for='$otherId' class='form-check-label'>Other</label>";
+                        $html .= "</div>";
+
+                        $html .= "<input type='text' name='dynamic[{$name}_other]' class='$class mt-1' placeholder='Please specify' value='" . htmlspecialchars($otherVal, ENT_QUOTES) . "'>";
                     }
                     break;
 
