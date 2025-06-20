@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BookingTemplateController;
@@ -39,9 +40,9 @@ Route::middleware('guest')->group(function () {
 });
 // Authenticated routes
 Route::middleware('auth')->group(function () {
-        Route::post('/{id}/switch', [UserController::class, 'switchUser'])->name('user.switch');
-        Route::post('/switch-back', [UserController::class, 'switchBack'])->name('user.switch.back');
-Route::get('/booking/load-template-html/{id}', [BookingController::class, 'loadTemplateHTML']);
+    Route::post('/{id}/switch', [UserController::class, 'switchUser'])->name('user.switch');
+    Route::post('/switch-back', [UserController::class, 'switchBack'])->name('user.switch.back');
+    Route::get('/booking/load-template-html/{id}', [BookingController::class, 'loadTemplateHTML']);
 
     // Routes for editing (edit users, edit forms, etc.)
     Route::middleware('permission:view users')->group(function () {

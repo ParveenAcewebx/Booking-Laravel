@@ -10,7 +10,9 @@ class FormHelper
         $html = '';
         $htmlHidden = '';
 
-        if (!is_array($fields)) return '<div class="alert alert-danger">Invalid form template JSON.</div>';
+        if (!is_array($fields)) {
+            return '<div class="alert alert-danger">Invalid form template JSON.</div>';
+        }
 
         foreach ($fields as $field) {
             $label = $field['label'] ?? '';
@@ -23,9 +25,7 @@ class FormHelper
             $value = $values[$name] ?? '';
             $options = $field['values'] ?? [];
             $other = $field['other'] ?? false;
-
             $multiple = !empty($field['multiple']) && ($field['multiple'] === true || $field['multiple'] === 'true');
-
             $min = $field['min'] ?? '';
             $max = $field['max'] ?? '';
             $step = $field['step'] ?? '1';
@@ -50,11 +50,11 @@ class FormHelper
                 if (empty($name)) $name = $type . '-' . uniqid();
                 switch ($type) {
                     case 'header':
-                        $tag = in_array($subtype, ['h1','h2','h3','h4','h5','h6']) ? $subtype : 'h4';
+                        $tag = in_array($subtype, ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']) ? $subtype : 'h4';
                         $html .= "<div class='form-group'><$tag>" . htmlspecialchars($label) . "</$tag></div>";
                         break;
                     case 'paragraph':
-                        $tag = in_array($subtype, ['address','p','blockquote']) ? $subtype : 'p';
+                        $tag = in_array($subtype, ['address', 'p', 'blockquote']) ? $subtype : 'p';
                         $html .= "<div class='form-group'><$tag>" . nl2br(htmlspecialchars($label)) . "</$tag></div>";
                         break;
                     case 'section':
@@ -96,12 +96,21 @@ class FormHelper
                 case 'select':
                     $html .= "<label>$label</label>";
                     $multipleAttr = $multiple ? 'multiple' : '';
-                    $value = is_array($value) ? $value : (is_string($value) && json_decode($value) ? json_decode($value, true) : (array) $value);
-                    $selectedValues = $multiple ? $value : [$value];
 
-                    $html .= "<select name='$inputNameAttr' class='$class' $multipleAttr $required>";
+                    // Normalize values
+                    if ($multiple) {
+                        if (!is_array($value)) {
+                            $decoded = json_decode($value, true);
+                            $value = is_array($decoded) ? $decoded : [$value];
+                        }
+                    } else {
+                        $value = (array) $value;
+                    }
+
+                    $selectedValues = $value;
                     $optionValues = array_column($options, 'value');
 
+                    $html .= "<select name='$inputNameAttr' class='$class' $multipleAttr $required>";
                     foreach ($options as $opt) {
                         $optValue = $opt['value'] ?? '';
                         $optLabel = $opt['label'] ?? $optValue;
@@ -122,7 +131,13 @@ class FormHelper
 
                 case 'checkbox-group':
                     $html .= "<label>$label</label><br>";
-                    $valueArr = is_array($value) ? $value : (json_decode($value, true) ?? []);
+                    if (!is_array($value)) {
+                        $decoded = json_decode($value, true);
+                        $valueArr = is_array($decoded) ? $decoded : [$value];
+                    } else {
+                        $valueArr = $value;
+                    }
+
                     $optionValues = array_column($options, 'value');
 
                     foreach ($options as $opt) {
@@ -142,7 +157,6 @@ class FormHelper
 
                 case 'radio-group':
                     $html .= "<label>$label</label><br>";
-                    $matched = false;
                     $optionValues = array_column($options, 'value');
                     $radioIdBase = uniqid($name . '_');
 
@@ -150,9 +164,8 @@ class FormHelper
                         $optValue = $opt['value'] ?? '';
                         $optLabel = $opt['label'] ?? $optValue;
                         $checked = ($optValue == $value) ? 'checked' : '';
-                        if ($checked) $matched = true;
-
                         $id = $radioIdBase . '_' . $index;
+
                         $html .= "<div class='form-check'>";
                         $html .= "<input type='radio' id='$id' name='$inputName' value='" . htmlspecialchars($optValue) . "' class='form-check-input' $checked $required>";
                         $html .= "<label for='$id' class='form-check-label'>" . htmlspecialchars($optLabel) . "</label>";
