@@ -82,8 +82,7 @@
 			title: "Success!",
 			text: "{{ session('success') }}",
 			icon: "success",
-			timer: 2000,
-			buttons: false
+			buttons: true
 		});
 		@endif
 
@@ -91,9 +90,8 @@
 		swal({
 			title: "Error!",
 			text: "{{ session('error') }}",
-			icon: "error", // changed from 'danger' to 'error'
-			timer: 2000,
-			buttons: false
+			icon: "error", 
+			buttons: true
 		});
 		@endif
 	});
