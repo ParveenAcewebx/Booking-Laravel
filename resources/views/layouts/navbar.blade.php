@@ -129,7 +129,7 @@
             <div class="mt-auto">
                 <form method="POST" action="{{ route('user.switch.back') }}">
                     @csrf
-                    <button type="submit" class="btn btn-danger btn-block d-flex align-items-center">
+                    <button type="submit" class="btn btn-danger btn-block d-flex align-items-center navbar-switch-button">
                         <i class="feather icon-log-out"></i>
                         <span id="switchBackText" class="ml-2">Switch Back</span>
                     </button>
