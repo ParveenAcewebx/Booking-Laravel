@@ -6,7 +6,7 @@ setTimeout(() => {
     const alert = document.getElementById("success-alert");
     if (alert) {
         alert.classList.add("fade");
-        setTimeout(() => alert.remove(), 500); 
+        setTimeout(() => alert.remove(), 500);
     }
 }, 5000);
 
@@ -660,36 +660,51 @@ document.addEventListener("DOMContentLoaded", function () {
     updateSelectAllCheckbox();
 });
 
-
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener("DOMContentLoaded", function () {
     // Toggle input visibility
     function toggleOtherInput(inputField, isVisible) {
         if (inputField) {
-            inputField.style.display = isVisible ? 'block' : 'none';
+            inputField.style.display = isVisible ? "block" : "none";
         }
     }
 
     // Initialize inputs on load
     function initializeOtherInputs() {
-        document.querySelectorAll('input[name^="dynamic["][type="text"]').forEach(function (input) {
-            const nameMatch = input.name.match(/^dynamic\[(.+?)_other\](\[\])?$/);
-            if (!nameMatch) return;
+        document
+            .querySelectorAll('input[name^="dynamic["][type="text"]')
+            .forEach(function (input) {
+                const nameMatch = input.name.match(
+                    /^dynamic\[(.+?)_other\](\[\])?$/
+                );
+                if (!nameMatch) return;
 
-            const baseName = nameMatch[1];
-            const isCheckbox = !!nameMatch[2];
+                const baseName = nameMatch[1];
+                const isCheckbox = !!nameMatch[2];
 
-            if (isCheckbox) {
-                const checkboxOther = document.querySelector(`input[type="checkbox"][name="dynamic[${baseName}][]"][value="__other__"]`);
-                if (checkboxOther && checkboxOther.value === '__other__' && !checkboxOther.checked) {
-                    toggleOtherInput(input, false);
+                if (isCheckbox) {
+                    const checkboxOther = document.querySelector(
+                        `input[type="checkbox"][name="dynamic[${baseName}][]"][value="__other__"]`
+                    );
+                    if (
+                        checkboxOther &&
+                        checkboxOther.value === "__other__" &&
+                        !checkboxOther.checked
+                    ) {
+                        toggleOtherInput(input, false);
+                    }
+                } else {
+                    const radioOther = document.querySelector(
+                        `input[type="radio"][name="dynamic[${baseName}]"][value="__other__"]`
+                    );
+                    if (
+                        radioOther &&
+                        radioOther.value === "__other__" &&
+                        !radioOther.checked
+                    ) {
+                        toggleOtherInput(input, false);
+                    }
                 }
-            } else {
-                const radioOther = document.querySelector(`input[type="radio"][name="dynamic[${baseName}]"][value="__other__"]`);
-                if (radioOther && radioOther.value === '__other__' && !radioOther.checked) {
-                    toggleOtherInput(input, false);
-                }
-            }
-        });
+            });
     }
 
     // Radio change event
@@ -698,9 +713,11 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!nameMatch) return;
 
         const baseName = nameMatch[1];
-        const input = document.querySelector(`input[name="dynamic[${baseName}_other]"]`);
+        const input = document.querySelector(
+            `input[name="dynamic[${baseName}_other]"]`
+        );
 
-        if (radio.value === '__other__') {
+        if (radio.value === "__other__") {
             toggleOtherInput(input, radio.checked);
         } else {
             toggleOtherInput(input, false);
@@ -713,28 +730,71 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!nameMatch) return;
 
         const baseName = nameMatch[1];
-        const input = document.querySelector(`input[name="dynamic[${baseName}_other][]"]`);
+        const input = document.querySelector(
+            `input[name="dynamic[${baseName}_other][]"]`
+        );
         toggleOtherInput(input, checkbox.checked);
     }
 
     // Set listeners
     function setEventListeners() {
-        document.querySelectorAll('input[type="radio"]').forEach(function (radio) {
-            radio.addEventListener('change', function () {
-                handleRadioChange(radio);
-            });
-        });
-
-        document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
-            if (checkbox.value === '__other__') {
-                checkbox.addEventListener('change', function () {
-                    handleCheckboxChange(checkbox);
+        document
+            .querySelectorAll('input[type="radio"]')
+            .forEach(function (radio) {
+                radio.addEventListener("change", function () {
+                    handleRadioChange(radio);
                 });
-            }
-        });
+            });
+
+        document
+            .querySelectorAll('input[type="checkbox"]')
+            .forEach(function (checkbox) {
+                if (checkbox.value === "__other__") {
+                    checkbox.addEventListener("change", function () {
+                        handleCheckboxChange(checkbox);
+                    });
+                }
+            });
     }
 
     // Run on load
     initializeOtherInputs();
     setEventListeners();
+});
+document.addEventListener("DOMContentLoaded", function () {
+    const mobileToggle = document.getElementById("mobile-collapse");
+    const switchBackText = document.getElementById("switchBackText");
+    const navbarSwitchButton = document.getElementsByClassName(
+        "navbar-switch-button"
+    )[0];
+    const navbar = document.querySelector(".pcoded-navbar");
+
+    function hideOrShowSwitchBackText() {
+        if (navbar.classList.contains("navbar-collapsed")) {
+            switchBackText.style.display = "none";
+            navbarSwitchButton.classList.add("justify-content-center");
+        } else {
+            switchBackText.style.display = "inline";
+            navbarSwitchButton.classList.remove("justify-content-center");
+        }
+    }
+
+    setTimeout(hideOrShowSwitchBackText, 100);
+    mobileToggle.addEventListener("click", function () {
+        setTimeout(hideOrShowSwitchBackText, 100);
+    });
+
+    navbar.addEventListener("mouseenter", function () {
+        if (navbar.classList.contains("navbar-collapsed")) {
+            switchBackText.style.display = "inline";
+            navbarSwitchButton.classList.remove("justify-content-center");
+        }
+    });
+
+    navbar.addEventListener("mouseleave", function () {
+        if (navbar.classList.contains("navbar-collapsed")) {
+            switchBackText.style.display = "none";
+            navbarSwitchButton.classList.add("justify-content-center");
+        }
+    });
 });
