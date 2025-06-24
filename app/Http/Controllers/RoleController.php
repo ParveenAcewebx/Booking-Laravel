@@ -67,7 +67,7 @@ class RoleController extends Controller
                                 </form>';
                     }
 
-                    return $btn ?: '-';
+                    return $btn ?: '';
                 })
                 ->rawColumns(['permissions', 'status', 'action'])
                 ->make(true);
