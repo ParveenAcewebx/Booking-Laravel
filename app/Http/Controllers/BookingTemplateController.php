@@ -71,7 +71,7 @@ class BookingTemplateController extends Controller
                     }
                     return $btn;
                 })
-                ->rawColumns(['status', 'action']) // no template_name here!
+                ->rawColumns(['status', 'action']) 
                 ->make(true);
         }
 
