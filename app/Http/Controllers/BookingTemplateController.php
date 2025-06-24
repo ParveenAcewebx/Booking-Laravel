@@ -32,7 +32,7 @@ class BookingTemplateController extends Controller
         }
 
         if ($request->ajax()) {
-            $query = BookingTemplate::select(['id', 'template_name', 'created_at']);
+            $query = BookingTemplate::select(['id', 'template_name', 'created_at','created_by']);
 
             return DataTables::of($query)
                 ->addIndexColumn()
@@ -42,6 +42,10 @@ class BookingTemplateController extends Controller
                 ->addColumn('status', function ($row) {
                     return '<span class="badge badge-success">Active</span>';
                 })
+                ->addColumn('created_by', function ($row) {
+                    return $row->created_by ?? '';
+                })
+
                 ->addColumn('action', function ($row) {
                     $btn = '';
 
@@ -60,7 +64,11 @@ class BookingTemplateController extends Controller
                 </button>
             </form>';
                     }
-
+                    if (auth()->user()->hasRole('Administrator')) {
+                        $btn .= '<a href="' . url('/form/' . $row->id) . '" class="btn btn-icon btn-info ml-1" data-toggle="tooltip" title="View Booking">
+                                <i class="feather icon-eye"></i>
+                            </a> ';
+                    }
                     return $btn;
                 })
                 ->rawColumns(['status', 'action']) // no template_name here!
@@ -76,30 +84,34 @@ class BookingTemplateController extends Controller
         $data = $request->input('data');
         $templatename = $request->input('templatename');
         $templateid = $request->input('templateid');
+
         if (!empty($templateid)) {
             $template = BookingTemplate::find($templateid);
             if ($template) {
                 $template->data = $data;
                 $template->template_name = $templatename;
                 $template->save();
+                session()->flash('success', "Booking Template Updated Successfully.");
             } else {
                 $template = BookingTemplate::create([
-                    'data' => $data,
-                    'template_name' => $templatename
+                    'data' => json_encode($data),
+                    'template_name' => $templatename,
+                    'created_by' => auth()->user()->name ?? 'NULL'
                 ]);
+                session()->flash('success', "Booking Template Added Successfully.");
             }
-            session()->flash('success', " Booking Template Updated Successfully.");
         } else {
-            $data = json_encode($data);
-            $id = BookingTemplate::create([
-                'data' => $data,
-                'template_name' => $templatename
+            $template = BookingTemplate::create([
+                'data' => json_encode($data),
+                'template_name' => $templatename,
+                'created_by' => auth()->user()->name ?? 'NULL'
             ]);
             session()->flash('success', "Booking Template Added Successfully.");
         }
     }
 
-      public function templateDelete($id)
+
+    public function templateDelete($id)
     {
         $template = BookingTemplate::find($id);
         $templatename = $template->template_name;

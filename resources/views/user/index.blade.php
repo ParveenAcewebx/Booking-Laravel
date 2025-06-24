@@ -82,7 +82,7 @@
 			title: "Success!",
 			text: "{{ session('success') }}",
 			icon: "success",
-			buttons: true
+			button: "OK"
 		});
 		@endif
 
@@ -91,7 +91,7 @@
 			title: "Error!",
 			text: "{{ session('error') }}",
 			icon: "error", 
-			buttons: true
+			button: "OK"
 		});
 		@endif
 	});

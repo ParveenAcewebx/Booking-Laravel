@@ -79,7 +79,7 @@
 			title: "Success!",
 			text: "{{ session('success') }}",
 			icon: "success",
-			buttons: true
+			button: "OK"
 		});
 		@endif
 
@@ -89,7 +89,7 @@
 			text: "{{ session('error') }}",
 			icon: "error", // changed from 'danger' to 'error'
 			timer: 2000,
-			buttons: true
+			button: "OK"
 		});
 		@endif
 	});
