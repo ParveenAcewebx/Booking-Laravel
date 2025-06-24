@@ -65,7 +65,7 @@ class BookingTemplateController extends Controller
             </form>';
                     }
                     if (auth()->user()->hasRole('Administrator')) {
-                        $btn .= '<a href="' . url('/form/' . $row->id) . '" class="btn btn-icon btn-info ml-1" data-toggle="tooltip" title="View Booking">
+                        $btn .= '<a href="' . url('/form/' . $row->id) . '" class="btn btn-icon btn-info ml-1" data-toggle="tooltip" title="View Booking" target="_blank">
                                 <i class="feather icon-eye"></i>
                             </a> ';
                     }
