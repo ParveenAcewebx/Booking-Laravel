@@ -70,7 +70,7 @@ class BookingController extends Controller
             </form>';
                     }
 
-                    return $btn ?: '-';
+                    return $btn ?: '';
                 })
                 ->rawColumns(['status', 'action'])
                 ->make(true);

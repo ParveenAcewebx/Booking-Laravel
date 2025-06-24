@@ -34,9 +34,15 @@ class FormHelper
                 $timestamp = strtotime($value);
                 if ($timestamp) {
                     switch ($subtype) {
-                        case 'date': $value = date('Y-m-d', $timestamp); break;
-                        case 'time': $value = date('H:i', $timestamp); break;
-                        case 'datetime-local': $value = date('Y-m-d\TH:i', $timestamp); break;
+                        case 'date':
+                            $value = date('Y-m-d', $timestamp);
+                            break;
+                        case 'time':
+                            $value = date('H:i', $timestamp);
+                            break;
+                        case 'datetime-local':
+                            $value = date('Y-m-d\TH:i', $timestamp);
+                            break;
                     }
                 }
             }
@@ -139,21 +145,26 @@ class FormHelper
                     }
 
                     $optionValues = array_column($options, 'value');
+                    $firstCheckbox = true;
 
                     foreach ($options as $opt) {
                         $optValue = $opt['value'] ?? '';
                         $optLabel = $opt['label'] ?? $optValue;
                         $checked = in_array($optValue, $valueArr) ? 'checked' : '';
-                        $html .= "<label><input type='checkbox' name='{$inputName}[]' value='" . htmlspecialchars($optValue) . "' $checked> " . htmlspecialchars($optLabel) . "</label><br>";
+                        $requiredAttr = ($firstCheckbox && $required) ? 'required' : '';
+                        $html .= "<label><input type='checkbox' name='{$inputName}[]' value='" . htmlspecialchars($optValue) . "' $checked $requiredAttr> " . htmlspecialchars($optLabel) . "</label><br>";
+                        $firstCheckbox = false;
                     }
 
                     if ($other) {
                         $checked = in_array('__other__', $valueArr) ? 'checked' : '';
                         $otherVal = htmlspecialchars($values["{$name}_other"][0] ?? '');
-                        $html .= "<label><input type='checkbox' name='{$inputName}[]' value='__other__' $checked> Other</label>";
+                        $requiredAttr = ($firstCheckbox && $required) ? 'required' : '';
+                        $html .= "<label><input type='checkbox' name='{$inputName}[]' value='__other__' $checked $requiredAttr> Other</label>";
                         $html .= "<input type='text' name='dynamic[{$name}_other][]' class='$class mt-1' placeholder='Please specify' value='$otherVal'>";
                     }
                     break;
+
 
                 case 'radio-group':
                     $html .= "<label>$label</label><br>";
