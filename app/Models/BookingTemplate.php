@@ -8,6 +8,7 @@ class BookingTemplate extends Model
     use HasFactory;
     protected $fillable = [
         'data',
-        'template_name'
+        'template_name',
+        'created_by'
     ];
 }
