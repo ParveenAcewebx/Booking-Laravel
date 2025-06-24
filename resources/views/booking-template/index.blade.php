@@ -78,7 +78,7 @@
 			title: "Success!",
 			text: "{{ session('success') }}",
 			icon: "success",
-			buttons: true
+			buttons: "OK"
 		});
 		@endif
 
