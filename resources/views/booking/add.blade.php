@@ -33,27 +33,31 @@
                                     @csrf
                                     <div class="row">
                                         <div class="card-body">
-                                            <!-- Modal -->
                                             <div class="modal fade" id="bookingTemplateModal" tabindex="-1" aria-labelledby="bookingTemplateModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="bookingTemplateModalLabel">Select Booking Template</h5>
                                                         </div>
+
                                                         <div class="modal-body">
                                                             <select class="form-control" id="bookingTemplateselect">
                                                                 <option value="">Select a template</option>
                                                                 @foreach($alltemplates as $template)
-                                                                <option value="{{ $template->data }}" data-id="{{ $template->id }}">{{ $template->template_name }}</option>
+                                                                <option value="{{ $template->data }}" data-id="{{ $template->id }}">
+                                                                    {{ $template->template_name }}
+                                                                </option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
                                                         <div class="modal-footer">
+                                                            <a href="{{ route('booking.list') }}" class="btn btn-secondary">Back</a>
                                                             <button type="button" id="loadTemplateBtn" class="btn btn-primary">Load Template</button>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <!-- Booking Form -->
                                             <form action="{{ route('booking.save') }}" method="POST">
                                                 @csrf
