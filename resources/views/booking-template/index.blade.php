@@ -63,7 +63,7 @@
             ajax: "{{ route('template.list') }}",
             columns: [
                 { data: 'template_name', name: 'template_name', orderable: true, searchable: true }, 
-                { data: 'created_by', name: 'created_by',orderable: true, searchable: true },
+                { data: 'created_by', name: 'created_by'     },
                 { data: 'created_at', name: 'created_at' },
                 { data: 'status', name: 'status', orderable: false, searchable: false },
                 { data: 'action', name: 'action', orderable: false, searchable: false },
