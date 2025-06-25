@@ -17,64 +17,65 @@ class RoleController extends Controller
         $this->allUsers = User::all();
     }
 
-    public function index(Request $request)
-    {
-        $loginId = session('previous_login_id');
-        $loginUser = $loginId ? User::find($loginId) : null;
+   public function index(Request $request)
+{
+    $loginId = session('previous_login_id');
+    $loginUser = $loginId ? User::find($loginId) : null;
 
-        if ($request->ajax()) {
-            $roles = Role::with('permissions')->select('id', 'name', 'status');
+    if ($request->ajax()) {
+        $roles = Role::with('permissions')->select('id', 'name', 'status');
 
-            return DataTables::of($roles)
-                ->addColumn('permissions', function ($role) {
-                    $groupedPermissions = [];
-                    foreach ($role->permissions as $permission) {
-                        $parts = preg_split('/[\s_]+/', $permission->name);
-                        $entity = strtolower(end($parts));
-                        $groupedPermissions[$entity][] = $permission->name;
-                    }
+        return DataTables::of($roles)
+            ->addIndexColumn()
+            ->addColumn('permissions', function ($role) {
+                $groupedPermissions = [];
 
-                    $html = '';
-                    foreach ($groupedPermissions as $entity => $permissions) {
-                        $permissionList = implode(', ', $permissions);
-                        $html .= '<span class="badge badge-light-success" data-toggle="tooltip" title="' . e($permissionList) . '">' .
-                            ucfirst($entity) . ' (' . count($permissions) . ')</span><br>';
-                    }
+                foreach ($role->permissions as $permission) {
+                    $parts = preg_split('/[\s_]+/', $permission->name);
+                    $entity = strtolower(end($parts));
+                    $groupedPermissions[$entity][] = $permission->name;
+                }
 
-                    return $html ?: '-';
-                })
-                ->editColumn('status', function ($role) {
-                    return $role->status == config('constants.status.active')
-                        ? '<span class="badge badge-success">Active</span>'
-                        : '<span class="badge badge-danger">Inactive</span>';
-                })
-                ->addColumn('action', function ($role) {
-                    $btn = '';
+                $html = '';
+                foreach ($groupedPermissions as $entity => $permissions) {
+                    $html .= '<span class="badge badge-light-success" data-toggle="tooltip" title="' . e(implode(', ', $permissions)) . '">' .
+                        ucfirst($entity) . ' (' . count($permissions) . ')</span><br>';
+                }
 
-                    if (auth()->user()->can('edit roles')) {
-                        $btn .= '<a href="' . route('roles.edit', $role->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit Role">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </a> ';
-                    }
+                return $html ?: '-';
+            })
+            ->editColumn('status', function ($role) {
+                return $role->status == config('constants.status.active')
+                    ? '<span class="badge badge-success">Active</span>'
+                    : '<span class="badge badge-danger">Inactive</span>';
+            })
+            ->addColumn('action', function ($role) {
+                $btn = '';
 
-                    if (auth()->user()->can('delete roles')) {
-                        $btn .= '<form action="' . route('roles.delete', $role->id) . '" method="POST" id="delete-role-' . $role->id . '" style="display:inline;">
-                                    ' . csrf_field() . '
-                                    <input type="hidden" name="_method" value="DELETE">
-                                    <button type="button" onclick="deleteRole(' . $role->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Role">
-                                        <i class="feather icon-trash-2"></i>
-                                    </button>
-                                </form>';
-                    }
+                if (auth()->user()->can('edit roles')) {
+                    $btn .= '<a href="' . route('roles.edit', $role->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit Role">
+                                <i class="fas fa-pencil-alt"></i>
+                            </a> ';
+                }
 
-                    return $btn ?: '';
-                })
-                ->rawColumns(['permissions', 'status', 'action'])
-                ->make(true);
-        }
+                if (auth()->user()->can('delete roles')) {
+                    $btn .= '<form action="' . route('roles.delete', $role->id) . '" method="POST" id="delete-role-' . $role->id . '" style="display:inline;">
+                                ' . csrf_field() . '
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="button" onclick="deleteRole(' . $role->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Role">
+                                    <i class="feather icon-trash-2"></i>
+                                </button>
+                            </form>';
+                }
 
-        return view('role.index', compact('loginUser'));
+                return $btn;
+            })
+            ->rawColumns(['permissions', 'status', 'action'])
+            ->make(true);
     }
+
+    return view('role.index', compact('loginUser'));
+}
 
     public function roleAdd()
     {

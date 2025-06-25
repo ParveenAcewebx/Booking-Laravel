@@ -26,6 +26,7 @@ Route::get('/', function () {
 
 Route::get('/form/{id}', [FormController::class, 'show'])->name('form.show');
 Route::post('/form/{id}', [FormController::class, 'store'])->name('form.store');
+Route::get('/checkShortcode', [FormController::class, 'checkShortcode'])->name('form.checkShortcode');
 
 // Guest routes (not logged in)
 Route::middleware('guest')->group(function () {
