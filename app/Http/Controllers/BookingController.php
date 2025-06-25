@@ -38,8 +38,7 @@ class BookingController extends Controller
 
         if ($request->ajax()) {
             $bookings = Booking::with(['template', 'customer'])
-                ->select('bookings.*')
-                ->orderBy('created_at', 'desc');
+                ->select('bookings.*');
 
             return DataTables::of($bookings)
                 ->addColumn('template_name', function ($booking) {

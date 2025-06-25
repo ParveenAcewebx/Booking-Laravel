@@ -17,11 +17,9 @@
 						</ul>
 					</div>
 					<div class="col-md-2">
-						<div class="page-header-titles float-right">
-							@can('create bookings')
+						@can('create bookings')
 							<a href="{{ route('booking.add') }}" class="btn btn-primary float-right p-2">Add Booking</a>
-							@endcan
-						</div>
+						@endcan
 					</div>
 				</div>
 			</div>
@@ -32,9 +30,10 @@
 				<div class="card user-profile-list">
 					<div class="card-body">
 						<div class="dt-responsive table-responsive">
-							<table id="booking-list-table" class="table nowrap">
+							<table id="booking-list-table" class="table nowrap" width="100%">
 								<thead>
 									<tr>
+										<th style="display:none;">ID</th> {{-- hidden but sortable --}}
 										<th>Template Name</th>
 										<th>Booked By</th>
 										<th>Created Date</th>
@@ -42,9 +41,7 @@
 										<th>Actions</th>
 									</tr>
 								</thead>
-								<tbody>
-									<!-- Data via Ajax -->
-								</tbody>
+								<tbody></tbody>
 							</table>
 						</div>
 					</div>
@@ -55,50 +52,25 @@
 </div>
 
 <script>
-	$(function() {
+	$(function () {
 		$('#booking-list-table').DataTable({
-			destroy: true,
 			processing: true,
 			serverSide: true,
 			ajax: "{{ route('booking.list') }}",
-			columns: [{
-					data: 'template_name',
-					name: 'template_name'
-				},
-				{
-					data: 'booked_by',
-					name: 'booked_by'
-				},
-				{
-					data: 'created_at',
-					name: 'created_at',
-					orderable: false,
-					searchable: false
-				},
-				{
-					data: 'status',
-					name: 'status',
-					orderable: false,
-					searchable: false
-				},
-				{
-					data: 'action',
-					name: 'action',
-					orderable: false,
-					searchable: false
-				}
+			columns: [
+				{ data: 'id', name: 'id', visible: false }, // for sorting
+				{ data: 'template_name', name: 'template_name' },
+				{ data: 'booked_by', name: 'booked_by' },
+				{ data: 'created_at', name: 'created_at' },
+				{ data: 'status', name: 'status', orderable: false, searchable: false },
+				{ data: 'action', name: 'action', orderable: false, searchable: false }
 			],
-			order: [
-				[2, 'desc']
-			],
-			lengthMenu: [
-				[10, 25, 50, 100],
-				[10, 25, 50, 100]
-			]
+			order: [[3, 'desc']], // 👈 sorted by 'created_at'
+			lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
 		});
 	});
 
-	document.addEventListener("DOMContentLoaded", function() {
+	document.addEventListener("DOMContentLoaded", function () {
 		@if(session('success'))
 		swal({
 			title: "Success!",

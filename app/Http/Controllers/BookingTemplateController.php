@@ -25,14 +25,10 @@ class BookingTemplateController extends Controller
     public function index(Request $request)
     {
         $loginId = session('previous_login_id');
-        $loginUser = null;
-
-        if ($loginId) {
-            $loginUser = User::find($loginId);
-        }
+        $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
-            $query = BookingTemplate::select(['id', 'template_name', 'created_at','created_by']);
+            $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by']);
 
             return DataTables::of($query)
                 ->addIndexColumn()
@@ -45,39 +41,39 @@ class BookingTemplateController extends Controller
                 ->addColumn('created_by', function ($row) {
                     return $row->created_by ?? '';
                 })
-
                 ->addColumn('action', function ($row) {
                     $btn = '';
 
                     if (Auth::user()->can('edit forms')) {
-                        $btn .= '<a href="' . route('template.edit', [$row->id]) . '" class="btn btn-icon btn-success" data-toggle="tooltip" data-placement="top" title="Edit Form">
-                                <i class="fas fa-pencil-alt"></i>
-                             </a> ';
+                        $btn .= '<a href="' . route('template.edit', [$row->id]) . '" class="btn btn-icon btn-success" title="Edit Form">
+                        <i class="fas fa-pencil-alt"></i>
+                    </a> ';
                     }
 
                     if (Auth::user()->can('delete forms')) {
                         $btn .= '<form action="' . route('template.delete', [$row->id]) . '" method="POST" id="deleteTemplate-' . $row->id . '" style="display:inline;">
-                <input type="hidden" name="_method" value="DELETE">
-                ' . csrf_field() . '
-                <button type="button" onclick="return deleteTemplate(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" data-placement="top" title="Delete Form">
-                    <i class="feather icon-trash-2"></i>
-                </button>
-            </form>';
+                        <input type="hidden" name="_method" value="DELETE">
+                        ' . csrf_field() . '
+                        <button type="button" onclick="return deleteTemplate(' . $row->id . ')" class="btn btn-icon btn-danger" title="Delete Form">
+                            <i class="feather icon-trash-2"></i>
+                        </button>
+                    </form>';
                     }
+
                     if (auth()->user()->hasRole('Administrator')) {
-                        $btn .= '<a href="' . url('/form/' . $row->id) . '" class="btn btn-icon btn-info ml-1" data-toggle="tooltip" title="View Booking" target="_blank">
-                                <i class="feather icon-eye"></i>
-                            </a> ';
+                        $btn .= '<a href="' . url('/form/' . $row->id) . '" class="btn btn-icon btn-info ml-1" title="View Booking" target="_blank">
+                        <i class="feather icon-eye"></i>
+                    </a>';
                     }
+
                     return $btn;
                 })
-                ->rawColumns(['status', 'action']) 
+                ->rawColumns(['status', 'action'])
                 ->make(true);
         }
 
         return view('booking-template.index', compact('loginUser'));
     }
-
 
     public function templateSave(Request $request)
     {

@@ -209,7 +209,7 @@ function deleteRole(id) {
 jQuery(function ($) {
     const templateSelect = document.getElementById("bookingTemplates");
     const fbEditor = document.getElementById("build-wrap");
-    let formBuilderInstance; // store the formBuilder object after initialization
+    let formBuilderInstance;
 
     var newfield = [
         {
@@ -220,21 +220,26 @@ jQuery(function ($) {
             required: false,
             icon: '<i class="fa-solid fa-section"></i>',
         },
+        {
+            label: "Code Block",
+            attrs: {
+                type: "shortcodeblock",
+            },
+            icon: '<i class="fa fa-code"></i>',
+        },
     ];
 
     var temp = {
         newsection: function (fieldData) {
             return {
                 field: `
-                <div id="${fieldData.name}" class="section">
-                    <div class="section-content">
-                    <!-- Add your content here, e.g., form fields, text, etc. -->
-                    </div>
-                    <div class="section-navigation">
-                    <button class="prev-btn" style="display:none;">Previous</button>
-                    <button class="next-btn">Next</button>
-                    </div>
-                </div>`,
+                    <div id="${fieldData.name}" class="section">
+                        <div class="section-content"></div>
+                        <div class="section-navigation">
+                            <button class="prev-btn" style="display:none;">Previous</button>
+                            <button class="next-btn">Next</button>
+                        </div>
+                    </div>`,
                 onRender: function () {
                     var currentStep = 0;
                     $(document).on(
@@ -274,6 +279,30 @@ jQuery(function ($) {
                     }
 
                     showSection(currentStep);
+                },
+            };
+        },
+
+        shortcodeblock: function (fieldData) {
+            return {
+                field: `
+                    <div class="shortcode-block"  >
+                        <label>Shortcode:</label>
+ <input type="text" 
+                    name="shortcode" 
+                    value="${fieldData.value || ''}" 
+                    placeholder="[your-shortcode]" 
+                    class="form-control"
+                    ${fieldData.required ? 'required' : ''} 
+                />
+                    </div>
+                `,
+                onRender: function () {
+                    // No-op
+                },
+                onSave: function (evt, field) {
+                    const input = $(field).find('input[name="shortcode"]');
+                    fieldData.shortcode = input.val();
                 },
             };
         },
@@ -357,16 +386,15 @@ jQuery(function ($) {
                 url: "/template/save",
                 method: "POST",
                 data: templateData,
-                success: function (response) {
+                success: function () {
                     window.location.href = window.location.origin + "/template";
                 },
-                error: function (xhr, status, error) {
+                error: function (xhr) {
                     console.error(xhr.responseText);
                 },
             });
         });
 
-    // Triggers bookingTemplates click
     $(window).on("load", function () {
         $("#bookingTemplates").click();
     });
@@ -384,10 +412,10 @@ jQuery(function ($) {
         var ca = decodedCookie.split(";");
         for (var i = 0; i < ca.length; i++) {
             var c = ca[i];
-            while (c.charAt(0) == " ") {
+            while (c.charAt(0) === " ") {
                 c = c.substring(1);
             }
-            if (c.indexOf(name) == 0) {
+            if (c.indexOf(name) === 0) {
                 return c.substring(name.length, c.length);
             }
         }
@@ -396,10 +424,10 @@ jQuery(function ($) {
 
     function checkCookie() {
         var ticks = getCookie("modelopen");
-        if (ticks != "") {
+        if (ticks !== "") {
             ticks++;
             setCookie("modelopen", ticks, 1);
-            if (ticks == "2" || ticks == "1" || ticks == "0") {
+            if (ticks === "2" || ticks === "1" || ticks === "0") {
                 $("#exampleModalCenter").modal();
             }
         } else {

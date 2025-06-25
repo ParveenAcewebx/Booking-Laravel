@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Shortcode;
+
 use Illuminate\Http\Request;
 use App\Models\BookingTemplate;
 use App\Models\Booking;
@@ -47,8 +49,8 @@ class FormController extends Controller
 
         Booking::create([
             'booking_template_id' => $template->id,
-            'customer_id' => auth()->id() ?? null, 
-            'booking_datetime' => $request->input('booking_datetime', now()), 
+            'customer_id' => auth()->id() ?? null,
+            'booking_datetime' => $request->input('booking_datetime', now()),
             'selected_staff' => $request->input('selected_staff', 'Customer User'),
             'booking_data' => json_encode($bookingData),
         ]);
@@ -56,5 +58,14 @@ class FormController extends Controller
         return redirect()
             ->route('form.show', $template->id)
             ->with('success', 'Form submitted successfully!');
+    }
+
+
+    public function checkShortcode()
+    {
+        $content = 'Welcome to our site! [hello junior="Avinash"] [user name="Amit"]';
+        $parsedContent = Shortcode::parse($content);
+        return view('form.showShortcode', compact('parsedContent'));
+
     }
 }

@@ -37,6 +37,7 @@
                             <table class="table table-striped nowrap" id="booking-templates-table" width="100%">
                                 <thead>
                                     <tr>
+                                        <th style="display:none;">ID</th> {{-- Hidden but sortable --}}
                                         <th>Name</th>
                                         <th>Created By</th>
                                         <th>Created Date</th>
@@ -62,35 +63,37 @@
             serverSide: true,
             ajax: "{{ route('template.list') }}",
             columns: [
+                { data: 'id', name: 'id', visible: false }, // 👈 required for sorting DESC
                 { data: 'template_name', name: 'template_name', orderable: true, searchable: true }, 
-                { data: 'created_by', name: 'created_by'     },
+                { data: 'created_by', name: 'created_by' },
                 { data: 'created_at', name: 'created_at' },
                 { data: 'status', name: 'status', orderable: false, searchable: false },
                 { data: 'action', name: 'action', orderable: false, searchable: false },
             ],
-            lengthMenu: [ [10, 25, 50, 100], [10, 25, 50, 100] ],
-            order: [[1, 'desc']],
+            order: [[0, 'desc']], // 👈 sort by id (hidden)
+            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         });
     });
-    document.addEventListener("DOMContentLoaded", function() {
-		@if(session('success'))
-		swal({
-			title: "Success!",
-			text: "{{ session('success') }}",
-			icon: "success",
-			buttons: "OK"
-		});
-		@endif
 
-		@if(session('error'))
-		swal({
-			title: "Error!",
-			text: "{{ session('error') }}",
-			icon: "error", // changed from 'danger' to 'error'
-			button: "OK"
-		});
-		@endif
-	});
+    document.addEventListener("DOMContentLoaded", function() {
+        @if(session('success'))
+        swal({
+            title: "Success!",
+            text: "{{ session('success') }}",
+            icon: "success",
+            buttons: "OK"
+        });
+        @endif
+
+        @if(session('error'))
+        swal({
+            title: "Error!",
+            text: "{{ session('error') }}",
+            icon: "error",
+            button: "OK"
+        });
+        @endif
+    });
 </script>
 
 @endsection

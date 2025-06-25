@@ -71,6 +71,15 @@ class FormHelper
                 continue;
             }
 
+            if ($type === 'shortcodeblock') {
+                $shortcodeValue = $field['value'] ?? $value ?? '';
+                $html .= "<div class='form-group'>";
+                $html .= "<label>Shortcode:</label>";
+                $html .= "<input type='text' name='dynamic[$name]' value='" . htmlspecialchars($shortcodeValue, ENT_QUOTES) . "' placeholder='[your_shortcode]' class='form-control'>";
+                $html .= "</div>";
+                continue;
+            }
+
             $html .= "<div class='form-group'>";
             $inputName = "dynamic[$name]";
             $inputNameAttr = $multiple ? $inputName . '[]' : $inputName;
@@ -103,7 +112,6 @@ class FormHelper
                     $html .= "<label>$label</label>";
                     $multipleAttr = $multiple ? 'multiple' : '';
 
-                    // Normalize values
                     if ($multiple) {
                         if (!is_array($value)) {
                             $decoded = json_decode($value, true);
@@ -164,7 +172,6 @@ class FormHelper
                         $html .= "<input type='text' name='dynamic[{$name}_other][]' class='$class mt-1' placeholder='Please specify' value='$otherVal'>";
                     }
                     break;
-
 
                 case 'radio-group':
                     $html .= "<label>$label</label><br>";
