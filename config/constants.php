@@ -29,7 +29,7 @@ return [
          'services' => [
             'name' => "Services",
             'slug' => 'services',
-            'roles' => ['view services', 'create services', 'edit services', 'delete servicesm'] 
+            'roles' => ['view services', 'create services', 'edit services', 'delete services'] 
         ],
     ]
 ];
