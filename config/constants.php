@@ -26,6 +26,11 @@ return [
             'slug' => 'bookings',
             'roles' => ['view bookings', 'create bookings', 'edit bookings', 'delete bookings'] 
         ],
+         'services' => [
+            'name' => "Services",
+            'slug' => 'services',
+            'roles' => ['view services', 'create services', 'edit services', 'delete servicesm'] 
+        ],
     ]
 ];
 

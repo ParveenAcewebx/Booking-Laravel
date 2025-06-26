@@ -23,7 +23,8 @@ class FormController extends Controller
     public function store(Request $request, $id)
     {
         $template = BookingTemplate::findOrFail($id);
-        $bookingData = json_decode($request->input('booking_data'), true) ?? [];        $inputData = $request->input('dynamic', []);
+        $bookingData = json_decode($request->input('booking_data'), true) ?? [];    
+        $inputData = $request->input('dynamic', []);
         $files = $request->file('dynamic', []);
         foreach ($inputData as $key => $val) {
             $bookingData[$key] = $val;
@@ -58,7 +59,7 @@ class FormController extends Controller
             'booking_template_id'       => $template->id,
             'customer_id'               => auth()->id() ?? $lastInsertedId,
             'booking_datetime'          => $request->input('booking_datetime', now()),
-            'selected_staff'            => $request->input('selected_staff', 'Customer User'),
+            'selected_staff'            => $request->input('selected_staff', 'NULL'),
             'first_name'                => $bookingData['first_name'],
             'last_name'                 => $bookingData['last_name'],
             'phone_number'              => $bookingData['phone'],
