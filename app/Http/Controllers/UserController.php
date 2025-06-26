@@ -25,83 +25,83 @@ class UserController extends Controller
         $this->allUsers = User::all();
         $this->originalUserId = session('impersonate_original_user') ?? Cookie::get('impersonate_original_user');
     }
-   public function index(Request $request)
-{
-    $loginId = session('previous_login_id');
-    $loginUser = $loginId ? User::find($loginId) : null;
+    public function index(Request $request)
+    {
+        $loginId = session('previous_login_id');
+        $loginUser = $loginId ? User::find($loginId) : null;
 
-    if ($request->ajax()) {
-        $currentUser = Auth::user();
-        $isImpersonating = session()->has('impersonate_original_user') || Cookie::get('impersonate_original_user');
-        $statusLabels = array_flip(config('constants.status'));
+        if ($request->ajax()) {
+            $currentUser = Auth::user();
+            $isImpersonating = session()->has('impersonate_original_user') || Cookie::get('impersonate_original_user');
+            $statusLabels = array_flip(config('constants.status'));
 
-        $query = User::with('roles')->select('users.*'); // select explicitly for joins
+            $query = User::with('roles')->select('users.*'); // select explicitly for joins
 
-        return DataTables::of($query)
-            ->addIndexColumn()
-            ->addColumn('name', function ($row) {
-                return '<h6 class="m-b-0">' . e($row->name) . '</h6><p class="m-b-0">' . e($row->email) . '</p>';
-            })
-            ->editColumn('created_at', function ($row) {
-                return $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : '';
-            })
-            ->addColumn('roles', function ($row) {
-                return $row->roles->pluck('name')->map(function ($role) {
-                    return '<span class="badge badge-primary">' . e($role) . '</span>';
-                })->implode(' ');
-            })
-            ->addColumn('status', function ($row) use ($statusLabels) {
-                return $row->status == config('constants.status.active')
-                    ? '<span class="badge badge-success">Active</span>'
-                    : '<span class="badge badge-danger">Inactive</span>';
-            })
-            ->addColumn('action', function ($row) use ($currentUser, $isImpersonating) {
-                $btn = '';
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->addColumn('name', function ($row) {
+                    return '<h6 class="m-b-0">' . e($row->name) . '</h6><p class="m-b-0">' . e($row->email) . '</p>';
+                })
+                ->editColumn('created_at', function ($row) {
+                    return $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : '';
+                })
+                ->addColumn('roles', function ($row) {
+                    return $row->roles->pluck('name')->map(function ($role) {
+                        return '<span class="badge badge-primary">' . e($role) . '</span>';
+                    })->implode(' ');
+                })
+                ->addColumn('status', function ($row) use ($statusLabels) {
+                    return $row->status == config('constants.status.active')
+                        ? '<span class="badge badge-success">Active</span>'
+                        : '<span class="badge badge-danger">Inactive</span>';
+                })
+                ->addColumn('action', function ($row) use ($currentUser, $isImpersonating) {
+                    $btn = '';
 
-                if (Auth::id() == $row->id) {
-                    $btn .= '<a href="' . route('profile') . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit User">
+                    if (Auth::id() == $row->id) {
+                        $btn .= '<a href="' . route('profile') . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit User">
                                 <i class="fas fa-pencil-alt"></i>
                              </a> ';
-                } elseif ($currentUser->can('edit users')) {
-                    $btn .= '<a href="' . route('user.edit', [$row->id]) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit User">
+                    } elseif ($currentUser->can('edit users')) {
+                        $btn .= '<a href="' . route('user.edit', [$row->id]) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit User">
                                 <i class="fas fa-pencil-alt"></i>
                              </a> ';
-                }
+                    }
 
-                if ($currentUser->can('delete users') && Auth::id() != $row->id) {
-                    $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">
+                    if ($currentUser->can('delete users') && Auth::id() != $row->id) {
+                        $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">
                                 ' . csrf_field() . '
                                 <input type="hidden" name="_method" value="DELETE">
                                 <button type="button" onclick="return deleteUser(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete User">
                                     <i class="feather icon-trash-2"></i>
                                 </button>
                             </form>';
-                }
+                    }
 
-                if ($isImpersonating && Auth::id() === $row->id) {
-                    $btn .= '<form method="POST" action="' . route('user.switch.back') . '" style="display:inline;">
+                    if ($isImpersonating && Auth::id() === $row->id) {
+                        $btn .= '<form method="POST" action="' . route('user.switch.back') . '" style="display:inline;">
                                 ' . csrf_field() . '
                                 <button type="submit" class="btn btn-icon btn-dark" data-toggle="tooltip" title="Switch Back">
                                     <i class="feather icon-log-out"></i>
                                 </button>
                             </form>';
-                } elseif (!$isImpersonating && $currentUser->hasRole('Administrator') && $currentUser->id !== $row->id) {
-                    $btn .= '<form method="POST" action="' . route('user.switch', $row->id) . '" style="display:inline;">
+                    } elseif (!$isImpersonating && $currentUser->hasRole('Administrator') && $currentUser->id !== $row->id) {
+                        $btn .= '<form method="POST" action="' . route('user.switch', $row->id) . '" style="display:inline;">
                                 ' . csrf_field() . '
                                 <button type="submit" class="btn btn-icon btn-dark" data-toggle="tooltip" title="Switch User">
                                     <i class="fas fa-random"></i>
                                 </button>
                             </form>';
-                }
+                    }
 
-                return $btn;
-            })
-            ->rawColumns(['name', 'roles', 'status', 'action'])
-            ->make(true);
+                    return $btn;
+                })
+                ->rawColumns(['name', 'roles', 'status', 'action'])
+                ->make(true);
+        }
+
+        return view('user.index', compact('loginUser'));
     }
-
-    return view('user.index', compact('loginUser'));
-}
 
 
     public function userAdd()
@@ -140,6 +140,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'avatar' => $avatarPath,
+            'phone_number' => $request->phone_number,
             'status' => $request->has('status') ? config('constants.status.active') : config('constants.status.inactive'),
         ]);
 
@@ -214,8 +215,9 @@ class UserController extends Controller
         $user->update([
             'name' => $request->username,
             'email' => $request->email,
+            'phone_number' => $request->phone_number,
             'avatar' => $avatarPath,
-            'status' => $status, // <== important fix here
+            'status' => $status, 
         ]);
 
         // Update password if provided
@@ -265,23 +267,26 @@ class UserController extends Controller
         $remember = $request->has('rememberme');
 
         if (Auth::attempt($credentials, $remember)) {
-            if (Auth::user()->status != 1) {
+            $user = Auth::user();
+
+            if ($user->status != 1 && $user->hasRole('Admin')) {
                 Auth::logout();
                 return redirect('/login')->with('error', 'Your account is inactive. Please contact support.');
             }
 
-            if (Auth::user()->hasRole('Customer')) {
-                return redirect('/profile');
-            } else {
-                $currentId = Auth::user()->id;
-                session(['previous_login_id' => $currentId]);
-
-                return redirect()->intended('/');
+            if ($user->hasRole('Customer') ) { 
+                Auth::logout();
+                return redirect('/login')->with('error', 'You do not have permissions to access this area.');
             }
+
+            session(['previous_login_id' => $user->id]);
+            return redirect()->intended('/');
         }
 
         return redirect('/login')->with('error', 'Invalid credentials. Please try again.');
     }
+
+
 
 
     public function showRegistrationForm()

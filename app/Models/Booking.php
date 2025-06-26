@@ -16,7 +16,12 @@ class Booking extends Model
         'booking_data',
         'service',
         'selected_staff',
-        'status'
+        'status',
+        'first_name',
+        'last_name',
+        'phone_number',
+        'email',
+        'service_id',
     ];
 
     public function template()
@@ -34,4 +39,3 @@ class Booking extends Model
         return $this->belongsTo(User::class, 'customer_id');
     }
 }
- 

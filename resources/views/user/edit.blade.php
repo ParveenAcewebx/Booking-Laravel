@@ -117,6 +117,23 @@
                                             @enderror
                                         </div>
                                     </div>
+                                    <!-- Phone Number -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Phone Number</label>
+                                            <input type="text"
+                                                class="form-control"
+                                                name="phone_number"
+                                                value="{{ old('phone_number', $user->phone_number) }}"
+                                                placeholder="Enter Phone Number"
+                                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                                maxlength="10"
+                                                required>
+                                            @error('phone_number')
+                                            <div class="error text-danger mt-1">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
 
 
                                     <!-- Role -->
@@ -154,15 +171,15 @@
                                     </div>
                                 </div>
 
-                                    <!-- Submit button -->
-                                    <button type="submit" class="btn btn-primary">Update</button>
+                                <!-- Submit button -->
+                                <button type="submit" class="btn btn-primary">Update</button>
 
-                                </div>
                             </div>
                         </div>
-
-                        <!-- [ Form Validation ] end -->
                     </div>
+
+                    <!-- [ Form Validation ] end -->
+                </div>
             </form>
 
             <!-- [ Main Content ] end -->
@@ -170,25 +187,25 @@
     </section>
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function() {
-		@if(session('success'))
-		swal({
-			title: "Success!",
-			text: "{{ session('success') }}",
-			icon: "success",
-			timer: 2000,
-			buttons: false
-		});
-		@endif
+            @if(session('success'))
+            swal({
+                title: "Success!",
+                text: "{{ session('success') }}",
+                icon: "success",
+                timer: 2000,
+                buttons: false
+            });
+            @endif
 
-		@if(session('error'))
-		swal({
-			title: "Error!",
-			text: "{{ session('error') }}",
-			icon: "error",
-			timer: 2000,
-			buttons: false
-		});
-		@endif
-	});
+            @if(session('error'))
+            swal({
+                title: "Error!",
+                text: "{{ session('error') }}",
+                icon: "error",
+                timer: 2000,
+                buttons: false
+            });
+            @endif
+        });
     </script>
     @endsection

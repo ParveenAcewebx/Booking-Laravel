@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Providers;
-use App\Helpers\Shortcode;
 
+use App\Helpers\Shortcode;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,12 +20,40 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Shortcode::register('hello', function ($attrs) {
-            return 'Hello, World!' .($attrs['junior']);
+        Shortcode::register('hello-world', function () {
+            return 'Hello, World!';
         });
 
-        Shortcode::register('user', function ($attrs) {
-            return 'Hello, ' . ($attrs['name'] ?? 'Guest');
+        Shortcode::register('user-information', function ($shortcodeAttrs) {
+
+            $firstName = $shortcodeAttrs['first_name'] ?? '';
+            $lastName  = $shortcodeAttrs['last_name'] ?? '';
+            $email     = $shortcodeAttrs['email'] ?? '';
+            $phone     = $shortcodeAttrs['phone'] ?? '';
+
+            $userForm  = '';
+
+            $userForm .= "<div class='form-group'>";
+            $userForm .= "<label for='first_name'>First Name</label>";
+            $userForm .= "<input type='text' name='dynamic[first_name]' id='first_name' class='form-control' value='" . e($firstName) . "' placeholder='First Name' required>";
+            $userForm .= "</div>";
+
+            $userForm .= "<div class='form-group'>";
+            $userForm .= "<label for='last_name'>Last Name</label>";
+            $userForm .= "<input type='text' name='dynamic[last_name]' id='last_name' class='form-control' value='" . e($lastName) . "' placeholder='Last Name' required>";
+            $userForm .= "</div>";
+
+            $userForm .= "<div class='form-group'>";
+            $userForm .= "<label for='email'>Email</label>";
+            $userForm .= "<input type='email' name='dynamic[email]' id='email' class='form-control' value='" . e($email) . "' placeholder='Email Address' required>";
+            $userForm .= "</div>";
+
+            $userForm .= "<div class='form-group'>";
+            $userForm .= "<label for='phone'>Phone</label>";
+            $userForm .= "<input type='tel' name='dynamic[phone]' id='phone' class='form-control' value='" . e($phone) . "' placeholder='Phone Number' maxlength='10' oninput=\"this.value = this.value.replace(/[^0-9]/g, '')\">";
+            $userForm .= "</div>";
+
+            return $userForm;
         });
     }
 }

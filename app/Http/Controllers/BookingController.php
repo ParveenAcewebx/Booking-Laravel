@@ -157,29 +157,29 @@ class BookingController extends Controller
             : redirect()->back()->with('error', 'It failed. Please try again.');
     }
 
-        public function bookingEdit($id)
-        {
-            $booking = Booking::with('template')->findOrFail($id);
-            $dynamicValues = json_decode($booking->booking_data, true) ?? [];
-            $formStructureJson = $booking->template->data ?? '[]';
-            $formStructureArray = json_decode($formStructureJson, true);
+    public function bookingEdit($id)
+    {
+        $booking = Booking::with('template')->findOrFail($id);
+        $dynamicValues = json_decode($booking->booking_data, true) ?? [];
+        $formStructureJson = $booking->template->data ?? '[]';
+        $formStructureArray = json_decode($formStructureJson, true);
 
-            $dynamicFieldHtml = FormHelper::renderDynamicFieldHTML($formStructureArray, $dynamicValues);
-            $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
+        $dynamicFieldHtml = FormHelper::renderDynamicFieldHTML($formStructureArray, $dynamicValues);
+        $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
 
-            $selectedStaffUser = User::where('name', $booking->selected_staff)->first();
-            $booking->selected_staff = $selectedStaffUser?->id;
+        $selectedStaffUser = User::where('name', $booking->selected_staff)->first();
+        $booking->selected_staff = $selectedStaffUser?->id;
 
-            $loginId = session('previous_login_id');
-            $loginUser = $loginId ? User::find($loginId) : null;
+        $loginId = session('previous_login_id');
+        $loginUser = $loginId ? User::find($loginId) : null;
 
-            return view('booking.edit', [
-                'booking' => $booking,
-                'dynamicFieldHtml' => $dynamicFieldHtml,
-                'staffList' => $this->allUsers,
-                'loginUser' => $loginUser,
-            ]);
-        }
+        return view('booking.edit', [
+            'booking' => $booking,
+            'dynamicFieldHtml' => $dynamicFieldHtml,
+            'staffList' => $this->allUsers,
+            'loginUser' => $loginUser,
+        ]);
+    }
 
     public function bookingUpdate(Request $request, $id)
     {
@@ -213,8 +213,10 @@ class BookingController extends Controller
         }
 
         $booking->booking_data = json_encode($existingData);
-        $booking->booking_datetime = $request->input('booking_datetime');
-
+        $booking->first_name = $existingData['first_name'];
+        $booking->last_name = $existingData['last_name'];
+        $booking->phone_number = $existingData['phone'];
+        $booking->email = $existingData['email'];
         $selectedStaff = User::find($request->input('staff'));
         $booking->selected_staff = $selectedStaff?->name ?? '';
 

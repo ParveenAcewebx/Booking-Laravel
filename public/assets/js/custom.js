@@ -221,7 +221,7 @@ jQuery(function ($) {
             icon: '<i class="fa-solid fa-section"></i>',
         },
         {
-            label: "Code Block",
+            label: "ShortCode",
             attrs: {
                 type: "shortcodeblock",
             },
@@ -287,13 +287,12 @@ jQuery(function ($) {
             return {
                 field: `
                     <div class="shortcode-block"  >
-                        <label>Shortcode:</label>
  <input type="text" 
                     name="shortcode" 
-                    value="${fieldData.value || ''}" 
+                    value="${fieldData.value || ""}" 
                     placeholder="[your-shortcode]" 
                     class="form-control"
-                    ${fieldData.required ? 'required' : ''} 
+                    ${fieldData.required ? "required" : ""} 
                 />
                     </div>
                 `,

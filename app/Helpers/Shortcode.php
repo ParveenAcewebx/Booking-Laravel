@@ -28,14 +28,23 @@ class Shortcode
     }
 
     // Parse attributes like key="value"
-        protected static function parseAttributes($text)
-        {
-            $attributes = [];
-            preg_match_all('/(\w+)\s*=\s*"([^"]*)"/', $text, $matches, PREG_SET_ORDER);
-            foreach ($matches as $match) {
-                $attributes[$match[1]] = $match[2];
-            }
-
-            return $attributes;
+    protected static function parseAttributes($text)
+    {
+        $attributes = [];
+        preg_match_all('/(\w+)\s*=\s*"([^"]*)"/', $text, $matches, PREG_SET_ORDER);
+        foreach ($matches as $match) {
+            $attributes[$match[1]] = $match[2];
         }
+
+        return $attributes;
+    }
+
+    public static function render(string $name, array $attrs = []): string
+    {
+        if (isset(static::$shortcodes[$name])) {
+            return call_user_func(static::$shortcodes[$name], $attrs);
+        }
+
+        return '';
+    }
 }
