@@ -70,6 +70,16 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        <label class="form-label">Phone Number</label>
+                                        <input type="text" class="form-control" name="phone_number" placeholder="Enter phone number"
+                                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="10" required>
+                                        @error('phone_number')
+                                        <div class="error">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                         <label class="form-label">Role</label>
                                         <select class="form-control" name="role" required>
                                             @foreach($allRoles as $role)

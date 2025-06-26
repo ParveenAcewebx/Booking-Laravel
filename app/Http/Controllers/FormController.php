@@ -7,6 +7,7 @@ use App\Helpers\Shortcode;
 use Illuminate\Http\Request;
 use App\Models\BookingTemplate;
 use App\Models\Booking;
+use App\Models\User;
 use App\Helpers\FormHelper;
 use Illuminate\Support\Facades\Storage;
 
@@ -22,11 +23,8 @@ class FormController extends Controller
     public function store(Request $request, $id)
     {
         $template = BookingTemplate::findOrFail($id);
-        $bookingData = json_decode($request->input('booking_data'), true) ?? [];
-
-        $inputData = $request->input('dynamic', []);
+        $bookingData = json_decode($request->input('booking_data'), true) ?? [];        $inputData = $request->input('dynamic', []);
         $files = $request->file('dynamic', []);
-
         foreach ($inputData as $key => $val) {
             $bookingData[$key] = $val;
         }
@@ -46,26 +44,31 @@ class FormController extends Controller
                 }
             }
         }
-
+        $user = User::create([
+            'name' => $bookingData['first_name'] . ' ' . $bookingData['last_name'],
+            'email' => $bookingData['email'],
+            'phone_number' => $bookingData['phone'],
+            'password' => bcrypt($request->password),
+            'avatar' => '',
+            'status' => $request->has('status') ? config('constants.status.active') : config('constants.status.inactive'),
+        ]);
+        $user->assignRole('customer');
+        $lastInsertedId = $user->id;
         Booking::create([
-            'booking_template_id' => $template->id,
-            'customer_id' => auth()->id() ?? null,
-            'booking_datetime' => $request->input('booking_datetime', now()),
-            'selected_staff' => $request->input('selected_staff', 'Customer User'),
-            'booking_data' => json_encode($bookingData),
+            'booking_template_id'       => $template->id,
+            'customer_id'               => auth()->id() ?? $lastInsertedId,
+            'booking_datetime'          => $request->input('booking_datetime', now()),
+            'selected_staff'            => $request->input('selected_staff', 'Customer User'),
+            'first_name'                => $bookingData['first_name'],
+            'last_name'                 => $bookingData['last_name'],
+            'phone_number'              => $bookingData['phone'],
+            'email'                     => $bookingData['email'],
+            'booking_data'              => json_encode($bookingData),
+
         ]);
 
         return redirect()
             ->route('form.show', $template->id)
             ->with('success', 'Form submitted successfully!');
-    }
-
-
-    public function checkShortcode()
-    {
-        $content = 'Welcome to our site! [hello junior="Avinash"] [user name="Amit"]';
-        $parsedContent = Shortcode::parse($content);
-        return view('form.showShortcode', compact('parsedContent'));
-
     }
 }
