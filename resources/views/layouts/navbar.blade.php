@@ -116,6 +116,23 @@
                         </ul>
                     </li>
                     @endcanany
+                    {{-- Service Management --}}
+                    @canany(['view services', 'create services', 'edit services', 'delete services'])
+                    <li class="nav-item pcoded-hasmenu">
+                        <a href="#!" class="nav-link">
+                            <span class="pcoded-micon"><i class="fas fa-tools"></i></span>
+                            <span class="pcoded-mtext">Manage Service</span>
+                        </a>
+                        <ul class="pcoded-submenu">
+                            @can('create services')
+                            <li><a href="{{ route('service.add') }}">Add Service</a></li>
+                            @endcan
+                            @can('view services')
+                            <li><a href="{{ route('service.list') }}">All Services</a></li>
+                            @endcan
+                        </ul>
+                    </li>
+                    @endcanany
                 </ul>
             </div>
 

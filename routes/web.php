@@ -8,7 +8,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\FormController;
-
+use App\Http\Controllers\ServiceController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -102,6 +102,21 @@ Route::middleware('auth')->group(function () {
     Route::middleware('permission:delete roles')->group(function () {
         Route::delete('/roles/{id}/delete', [RoleController::class, 'roleDelete'])->name('roles.delete');
     });
+    Route::middleware('permission:edit services')->group(function () {
+        Route::get('/service/{id}/edit', [ServiceController::class, 'serviceEdit'])->name('service.edit');
+        Route::put('/service/{id}/update', [ServiceController::class, 'serviceUpdate'])->name('service.update');
+    });
+    Route::middleware('permission:view services')->group(function () {
+    Route::get('/service', [ServiceController::class, 'index'])->name('service.list');
+    });
+    Route::middleware('permission:create services')->group(function () {
+    Route::get('/service/add', [ServiceController::class, 'serviceAdd'])->name('service.add');
+    Route::post('/service/store', [ServiceController::class, 'servicestore'])->name('service.store');
+    });
+    Route::middleware('permission:delete services')->group(function () {
+        Route::delete('/service/{id}/delete', [ServiceController::class, 'serviceDelete'])->name('service.delete');
+    });
+
     Route::get('/profile', [UserController::class, 'userEdit'])->name('profile');
     Route::post('/user/{id}/update', [UserController::class, 'userUpdate'])->name('user.update');
     // General routes (dashboard, logout, etc.)
