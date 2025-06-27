@@ -17,6 +17,20 @@ class RoleController extends Controller
         $this->allUsers = User::all();
     }
 
+    protected function syncPermissionsFromConfig()
+    {
+        $roleGroups = config('constants.role_groups');
+
+        foreach ($roleGroups as $group) {
+            foreach ($group['roles'] as $permissionName) {
+                Permission::firstOrCreate([
+                    'name' => $permissionName,
+                    'guard_name' => 'web',
+                ]);
+            }
+        }
+    }
+
     public function index(Request $request)
     {
         $loginId = session('previous_login_id');
@@ -54,18 +68,18 @@ class RoleController extends Controller
 
                     if (auth()->user()->can('edit roles')) {
                         $btn .= '<a href="' . route('roles.edit', $role->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit Role">
-                                <i class="fas fa-pencil-alt"></i>
-                            </a> ';
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a> ';
                     }
 
                     if (auth()->user()->can('delete roles')) {
                         $btn .= '<form action="' . route('roles.delete', $role->id) . '" method="POST" id="delete-role-' . $role->id . '" style="display:inline;">
-                                ' . csrf_field() . '
-                                <input type="hidden" name="_method" value="DELETE">
-                                <button type="button" onclick="deleteRole(' . $role->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Role">
-                                    <i class="feather icon-trash-2"></i>
-                                </button>
-                            </form>';
+                                    ' . csrf_field() . '
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="button" onclick="deleteRole(' . $role->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Role">
+                                        <i class="feather icon-trash-2"></i>
+                                    </button>
+                                </form>';
                     }
 
                     return $btn;
@@ -79,15 +93,19 @@ class RoleController extends Controller
 
     public function roleAdd()
     {
+        $this->syncPermissionsFromConfig(); 
         $roleGroups = config('constants.role_groups');
         $permissions = Permission::all();
         $loginId = session('previous_login_id');
         $loginUser = $loginId ? User::find($loginId) : null;
+
         return view('role.add', compact('roleGroups', 'permissions', 'loginUser'));
     }
 
     public function store(Request $request)
     {
+        $this->syncPermissionsFromConfig(); 
+
         $validated = $request->validate([
             'name' => 'required|string|unique:roles,name',
             'permissions' => 'nullable|array',
@@ -109,31 +127,24 @@ class RoleController extends Controller
         return redirect()->route('roles.list')->with('success', 'Role Added Successfully.');
     }
 
-
-    public function roleDelete($id)
-    {
-        $role = Role::find($id);
-        if ($role) {
-            $role->permissions()->detach();
-            $role->delete();
-            return response()->json(['success' => true]);
-        }
-        return response()->json(['success' => false, 'message' => 'Role not found.']);
-    }
-
     public function roleEdit($id)
     {
+        $this->syncPermissionsFromConfig();
+
         $role = Role::findOrFail($id);
         $loginId = session('previous_login_id');
         $loginUser = $loginId ? User::find($loginId) : null;
         $rolePermissions = $role->permissions->pluck('name')->toArray();
         $roleGroups = config('constants.role_groups');
         $permissions = Permission::all();
+
         return view('role.edit', compact('role', 'roleGroups', 'rolePermissions', 'permissions', 'loginUser'));
     }
 
     public function roleUpdate(Request $request, $id)
     {
+        $this->syncPermissionsFromConfig(); 
+
         $request->validate([
             'name' => 'required|string|max:255',
             'permissions' => 'nullable|array',
@@ -153,8 +164,20 @@ class RoleController extends Controller
         $role->name = $request->name;
         $role->status = $request->has('status') ? 1 : 0;
         $role->save();
+
         $role->syncPermissions($request->permissions ?? []);
 
         return redirect()->route('roles.list')->with('success', 'Role Updated Successfully.');
+    }
+
+    public function roleDelete($id)
+    {
+        $role = Role::find($id);
+        if ($role) {
+            $role->permissions()->detach();
+            $role->delete();
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success' => false, 'message' => 'Role not found.']);
     }
 }
