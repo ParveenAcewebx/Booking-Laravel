@@ -95,7 +95,7 @@
                             </div>
 
                             <div class="form-group mt-4">
-                                <button type="submit" class="btn btn-primary">Save Role</button>
+                                <button type="submit" class="btn btn-primary">Save</button>
                                 <a href="{{ route('roles.list') }}" class="btn btn-secondary">Back</a>
                             </div>
                         </form>

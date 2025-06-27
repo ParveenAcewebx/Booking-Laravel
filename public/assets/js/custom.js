@@ -204,6 +204,46 @@ function deleteRole(id) {
         }
     });
 }
+function deleteCategory(id) {
+    event.preventDefault();
+
+    swal({
+        title: "Are you sure?",
+        text: "Once deleted, this category data will be gone!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            const form = document.getElementById("delete-category-" + id);
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+                },
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.success) {
+                        swal("Category deleted successfully!", { icon: "success" }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        swal("Failed to delete the category.", { icon: "error" });
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                    swal("Something went wrong!", { icon: "error" });
+                });
+        }
+    });
+}
+
 
 //Booking Template Builder
 jQuery(function ($) {

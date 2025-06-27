@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\CategoryController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -107,14 +108,29 @@ Route::middleware('auth')->group(function () {
         Route::put('/service/{id}/update', [ServiceController::class, 'serviceUpdate'])->name('service.update');
     });
     Route::middleware('permission:view services')->group(function () {
-    Route::get('/service', [ServiceController::class, 'index'])->name('service.list');
+        Route::get('/service', [ServiceController::class, 'index'])->name('service.list');
     });
     Route::middleware('permission:create services')->group(function () {
-    Route::get('/service/add', [ServiceController::class, 'serviceAdd'])->name('service.add');
-    Route::post('/service/store', [ServiceController::class, 'servicestore'])->name('service.store');
+        Route::get('/service/add', [ServiceController::class, 'serviceAdd'])->name('service.add');
+        Route::post('/service/store', [ServiceController::class, 'servicestore'])->name('service.store');
     });
     Route::middleware('permission:delete services')->group(function () {
         Route::delete('/service/{id}/delete', [ServiceController::class, 'serviceDelete'])->name('service.delete');
+    });
+
+    Route::middleware('permission:view categories')->group(function () {
+        Route::get('/category', [CategoryController::class, 'index'])->name('category.list');
+    });
+    Route::middleware('permission:create categories')->group(function () {
+        Route::get('/category/create', [CategoryController::class, 'create'])->name('category.create');
+        Route::post('/category/store', [CategoryController::class, 'store'])->name('category.store');
+    });
+    Route::middleware('permission:edit categories')->group(function () {
+        Route::get('/category/{category}/edit', [CategoryController::class, 'edit'])->name('category.edit');
+        Route::put('/category/{category}', [CategoryController::class, 'update'])->name('category.update');
+    });
+    Route::middleware('permission:delete categories')->group(function () {
+        Route::delete('/category/{category}', [CategoryController::class, 'destroy'])->name('category.destroy');
     });
 
     Route::get('/profile', [UserController::class, 'userEdit'])->name('profile');
