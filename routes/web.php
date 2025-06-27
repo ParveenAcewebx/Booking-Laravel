@@ -22,11 +22,17 @@ use App\Http\Controllers\CategoryController;
 */
 
 Route::get('/', function () {
+    return 'echo';
+});
+
+Route::get('/admin', function () {
     return redirect()->route('dashboard');
 });
 
+
 Route::get('/form/{id}', [FormController::class, 'show'])->name('form.show');
 Route::post('/form/{id}', [FormController::class, 'store'])->name('form.store');
+Route::get('/category/{id}', [CategoryController::class, 'show'])->name('category.show');
 
 // Guest routes (not logged in)
 Route::middleware('guest')->group(function () {
