@@ -130,6 +130,7 @@
                             @can('view services')
                             <li><a href="{{ route('service.list') }}">All Services</a></li>
                             @endcan
+                            <li><a href="{{ route('service.list') }}">All Categories</a></li>
                         </ul>
                     </li>
                     @endcanany

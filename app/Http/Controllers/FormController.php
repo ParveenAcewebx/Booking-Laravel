@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\Storage;
 
 class FormController extends Controller
 {
-    public function show($id)
+    public function show($slug)
     {
-        $template = BookingTemplate::findOrFail($id);
+        $template = BookingTemplate::where('slug', $slug)->firstOrFail();
         $formHtml = FormHelper::renderDynamicFieldHTML($template->data);
         return view('form.show', compact('formHtml', 'template'));
     }
@@ -23,7 +23,7 @@ class FormController extends Controller
     public function store(Request $request, $id)
     {
         $template = BookingTemplate::findOrFail($id);
-        $bookingData = json_decode($request->input('booking_data'), true) ?? [];    
+        $bookingData = json_decode($request->input('booking_data'), true) ?? [];
         $inputData = $request->input('dynamic', []);
         $files = $request->file('dynamic', []);
         foreach ($inputData as $key => $val) {
