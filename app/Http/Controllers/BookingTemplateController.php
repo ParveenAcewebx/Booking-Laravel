@@ -12,6 +12,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Str;
 
 class BookingTemplateController extends Controller
 {
@@ -28,7 +29,7 @@ class BookingTemplateController extends Controller
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
-            $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by']);
+            $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by','slug']);
 
             return DataTables::of($query)
                 ->addIndexColumn()
@@ -61,7 +62,7 @@ class BookingTemplateController extends Controller
                     }
 
                     if (auth()->user()->hasRole('Administrator')) {
-                        $btn .= '<a href="' . url('/form/' . $row->id) . '" class="btn btn-icon btn-info ml-1" title="View Booking" target="_blank">
+                        $btn .= '<a href="' . url('/form/' . $row->slug) . '" class="btn btn-icon btn-info ml-1" title="View Booking" target="_blank">
                         <i class="feather icon-eye"></i>
                     </a>';
                     }
@@ -80,12 +81,14 @@ class BookingTemplateController extends Controller
         $data = $request->input('data');
         $templatename = $request->input('templatename');
         $templateid = $request->input('templateid');
-
         if (!empty($templateid)) {
             $template = BookingTemplate::find($templateid);
             if ($template) {
                 $template->data = $data;
                 $template->template_name = $templatename;
+                if (empty($template->slug)) {
+                    $template->slug = Str::uuid();
+                }
                 $template->save();
                 session()->flash('success', "Booking Template Updated Successfully.");
             } else {
@@ -100,7 +103,8 @@ class BookingTemplateController extends Controller
             $template = BookingTemplate::create([
                 'data' => json_encode($data),
                 'template_name' => $templatename,
-                'created_by' => auth()->user()->name ?? 'NULL'
+                'created_by' => auth()->user()->name ?? 'NULL',
+                'slug' => Str::uuid(),
             ]);
             session()->flash('success', "Booking Template Added Successfully.");
         }

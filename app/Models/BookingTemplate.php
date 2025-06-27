@@ -9,6 +9,7 @@ class BookingTemplate extends Model
     protected $fillable = [
         'data',
         'template_name',
-        'created_by'
+        'created_by',
+        'slug'
     ];
 }
