@@ -84,6 +84,7 @@
 
                                 {{-- Submit Button --}}
                                 <button type="submit" class="btn btn-primary">Update</button>
+                                <a href="{{ route('booking.list') }}" class="btn btn-secondary ml-2">Back</a>
                             </div>
                         </div>
                     </div>

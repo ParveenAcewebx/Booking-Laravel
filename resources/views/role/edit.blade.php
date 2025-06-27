@@ -116,7 +116,7 @@
 
                             <!-- Submit Buttons -->
                             <div class="form-group mt-4">
-                                <button type="submit" class="btn btn-primary">Update Role</button>
+                                <button type="submit" class="btn btn-primary">Update</button>
                                 <a href="{{ route('roles.list') }}" class="btn btn-secondary">Back</a>
                             </div>
                         </form>
