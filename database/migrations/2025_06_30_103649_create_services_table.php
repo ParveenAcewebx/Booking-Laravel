@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('services', function (Blueprint $table) {
+       Schema::create('services', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->longText('description')->nullable();
@@ -22,9 +22,17 @@ return new class extends Migration
             $table->string('price')->nullable();
             $table->string('currency')->nullable();
             $table->longText('gallery')->nullable(); // JSON or serialized image URLs
-            $table->integer('appointment_status')->default(0); // 1 = pending, 0 = approved
-            $table->string('cancelling_days')->nullable(); // e.g. "3"
-            $table->string('cancelling_numbers')->nullable(); // e.g. "2"
+            $table->integer('appointment_status')->default(0);
+            $table->string('cancelling_unit')->nullable(); // e.g. "3"
+            $table->string('cancelling_value')->nullable(); // e.g. "2"
+            $table->string('stripe_test_site_key')->nullable();
+            $table->string('stripe_test_secret_key')->nullable();
+            $table->string('stripe_live_site_key')->nullable();
+            $table->string('stripe_live_secret_key')->nullable();
+            $table->text('duration')->nullable();
+            $table->string('payment_mode')->nullable();
+            $table->string('redirect_url')->nullable();
+            $table->boolean('payment__is_live')->default(false);
             $table->timestamps();
         });
     }

@@ -223,17 +223,23 @@ function deleteCategory(id) {
                 body: formData,
                 headers: {
                     "X-Requested-With": "XMLHttpRequest",
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
                 },
             })
                 .then((res) => res.json())
                 .then((data) => {
                     if (data.success) {
-                        swal("Category deleted successfully!", { icon: "success" }).then(() => {
+                        swal("Category deleted successfully!", {
+                            icon: "success",
+                        }).then(() => {
                             window.location.reload();
                         });
                     } else {
-                        swal("Failed to delete the category.", { icon: "error" });
+                        swal("Failed to delete the category.", {
+                            icon: "error",
+                        });
                     }
                 })
                 .catch((err) => {
@@ -243,7 +249,60 @@ function deleteCategory(id) {
         }
     });
 }
+// Service Delete Confirmation Alert
+function deleteService(id, event) {
+    event.preventDefault(); // Stop default form behavior
 
+    swal({
+        title: "Are you sure?",
+        text: "Once deleted, this service data will be gone!.",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            const form = document.getElementById("delete-service-" + id); // Correct ID
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: "POST", // Laravel expects POST with _method=DELETE
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        swal(
+                            "Deleted!",
+                            "Service deleted successfully.",
+                            "success"
+                        ).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        swal(
+                            "Failed",
+                            "Something went wrong while deleting.",
+                            "error"
+                        );
+                    }
+                })
+                .catch((error) => {
+                    console.error("Delete error:", error);
+                    swal(
+                        "Error",
+                        "There was an error processing your request.",
+                        "error"
+                    );
+                });
+        }
+    });
+}
 
 //Booking Template Builder
 jQuery(function ($) {
@@ -865,3 +924,131 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+$(function () {
+    $("#payment_mode").on("change", function () {
+        const mode = $(this).val();
+        $(".stripe-options").toggleClass("d-none", mode !== "stripe");
+
+        if (mode !== "stripe") {
+            $(".stripe-credentials").addClass("d-none");
+        }
+    });
+
+    $('input[name="payment_account"]').on("change", function () {
+        $(".stripe-credentials").toggleClass(
+            "d-none",
+            $(this).val() !== "custom"
+        );
+    });
+
+    $("#payment__is_live").on("change", function () {
+        if (this.checked) {
+            $(".stripe-test").addClass("d-none");
+            $(".stripe-live").removeClass("d-none");
+        } else {
+            $(".stripe-live").addClass("d-none");
+            $(".stripe-test").removeClass("d-none");
+        }
+    });
+});
+
+function updateCancellingValueOptions(unit) {
+    let $select = $("#cancelling_value");
+    $select.empty();
+
+    if (unit === "hours") {
+        const hourOptions = [
+            { value: 1, text: "1" },
+            { value: 2, text: "2" },
+            { value: 3, text: "3" },
+            { value: 4, text: "4" },
+            { value: 5, text: "5" },
+            { value: 6, text: "6" },
+            { value: 7, text: "7" },
+            { value: 8, text: "8" },
+            { value: 9, text: "9" },
+            { value: 10, text: "10" },
+            { value: 11, text: "11" },
+            { value: 12, text: "12" },
+            { value: 13, text: "13" },
+            { value: 14, text: "14" },
+            { value: 15, text: "15" },
+            { value: 16, text: "16" },
+            { value: 17, text: "17" },
+            { value: 18, text: "16" },
+            { value: 19, text: "19" },
+            { value: 20, text: "20" },
+            { value: 21, text: "21" },
+            { value: 22, text: "22" },
+            { value: 23, text: "23" },
+            { value: 24, text: "24" },
+        ];
+
+        hourOptions.forEach((opt) => {
+            $select.append(`<option value="${opt.value}">${opt.text}</option>`);
+        });
+    } else if (unit === "days") {
+        for (let i = 1; i <= 365; i++) {
+            $select.append(`<option value="${i}">${i}</option>`);
+        }
+    }
+}
+
+$(document).ready(function () {
+    updateCancellingValueOptions($("#cancelling_unit").val());
+
+    $("#cancelling_unit").on("change", function () {
+        const selectedUnit = $(this).val();
+        updateCancellingValueOptions(selectedUnit);
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const quill = new Quill("#quill-editor", {
+        theme: "snow",
+    });
+
+    const form = document.querySelector("form");
+    form.addEventListener("submit", function () {
+        document.querySelector("#description").value = quill.root.innerHTML;
+    });
+});
+$(document).ready(function () {
+    function toggleStripeFields() {
+        const mode = $("#payment_mode").val();
+        if (mode === "stripe") {
+            $(".stripe-options").removeClass("d-none");
+        } else {
+            $(".stripe-options").addClass("d-none");
+        }
+    }
+
+    function toggleStripeCredentials() {
+        if ($('input[name="payment_account"]:checked').val() === "custom") {
+            $(".stripe-credentials").removeClass("d-none");
+        } else {
+            $(".stripe-credentials").addClass("d-none");
+        }
+    }
+
+    function toggleLiveMode() {
+        if ($("#payment__is_live").is(":checked")) {
+            $(".stripe-test").addClass("d-none");
+            $(".stripe-live").removeClass("d-none");
+        } else {
+            $(".stripe-test").removeClass("d-none");
+            $(".stripe-live").addClass("d-none");
+        }
+    }
+
+    $("#payment_mode").on("change", toggleStripeFields);
+    $('input[name="payment_account"]').on("change", toggleStripeCredentials);
+    $("#payment__is_live").on("change", toggleLiveMode);
+
+    toggleStripeFields();
+    toggleStripeCredentials();
+    toggleLiveMode();
+});
+
+
