@@ -72,8 +72,29 @@
 
                                     <div class="form-group">
                                         <label>Duration</label>
-                                        <input type="text" name="duration" class="form-control">
+                                        <select name="duration" class="form-control">
+                                            <option value="">-- Select Duration --</option>
+                                            @for ($minutes = 30; $minutes <= 1440; $minutes +=30)
+                                                @php
+                                                $hrs=floor($minutes / 60);
+                                                $mins=$minutes % 60;
+
+                                                $label='' ;
+                                                if ($hrs> 0) {
+                                                $label .= $hrs . ' hour' . ($hrs > 1 ? 's' : '');
+                                                }
+                                                if ($hrs > 0 && $mins > 0) {
+                                                $label .= ' ';
+                                                }
+                                                if ($mins > 0) {
+                                                $label .= $mins . ' minutes';
+                                                }
+                                                @endphp
+                                                <option value="{{ $minutes }}">{{ $label }}</option>
+                                                @endfor
+                                        </select>
                                     </div>
+
                                     <div class="form-group">
                                         <label>Thumbnail</label>
                                         <input type="file" name="thumbnail" class="form-control">
@@ -113,18 +134,52 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Price</label>
-                                        <input type="number" name="price" class="form-control" min="0" step="1" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                        <input
+                                            type="text"
+                                            name="price"
+                                            class="form-control"
+                                            value="{{ old('price', $service->price ?? '') }}"
+                                            inputmode="decimal"
+                                            pattern="^\d*\.?\d{0,3}$"
+                                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/^(\d+(\.\d{0,3})?).*$/, '$1');"
+                                            placeholder="e.g., 100 or 100.50">
                                     </div>
+
                                 </div>
 
                                 <div class="tab-pane" id="gallery" role="tabpanel">
                                     <div class="form-group">
-                                        <label>Gallery</label>
-                                        <input type="file" name="gallery[]" class="form-control" multiple>
-                                        <div class="gallery-preview mt-3"></div>
+                                        <label class="form-label">Gallery</label>
+
+                                        {{-- Add Image Tile --}}
+                                        <div class="col-md-3 mb-3">
+                                            <label for="galleryInput"
+                                                class="w-100 h-100 d-flex justify-content-center align-items-center border border-primary border-dashed rounded bg-light"
+                                                style="min-height: 150px; cursor: pointer;">
+                                                <div class="text-center text-primary">
+                                                    <div style="font-size: 2rem;">+</div>
+                                                    <div>Add Image</div>
+                                                </div>
+                                            </label>
+                                            <input type="file" name="gallery[]" id="galleryInput" class="d-none gallery-input" multiple accept="image/*">
+                                        </div>
+
+                                        {{-- Preview Existing + New --}}
+                                        <div class="row mb-3" id="galleryPreviewContainer">
+                                            @if(isset($service) && $service->gallery)
+                                            @foreach(json_decode($service->gallery) as $image)
+                                            <div class="col-md-3 mb-3 position-relative existing-image" data-image="{{ $image }}">
+                                                <div class="card shadow-sm">
+                                                    <img src="{{ asset('storage/' . $image) }}" class="card-img-top img-thumbnail" alt="Gallery Image">
+                                                    <input type="hidden" name="existing_gallery[]" value="{{ $image }}">
+                                                    <button type="button" class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image" title="Delete image">&times;</button>
+                                                </div>
+                                            </div>
+                                            @endforeach
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
-
                                 <div class="tab-pane" id="settings" role="tabpanel">
                                     <div class="form-group">
                                         <label>Default Appointment Status</label>

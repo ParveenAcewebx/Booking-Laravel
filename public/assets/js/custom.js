@@ -979,11 +979,7 @@ function updateCancellingValueOptions(unit, selectedValue = null) {
 $(document).ready(function () {
     const $unitSelect = $("#cancelling_unit");
     const selectedValue = $("#cancel_value").val();
-
-    // Populate on load
     updateCancellingValueOptions($unitSelect.val(), selectedValue);
-
-    // Populate on change
     $unitSelect.on("change", function () {
         updateCancellingValueOptions($(this).val());
     });
@@ -1040,4 +1036,54 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector("form").addEventListener("submit", function () {
         hiddenTextarea.value = quill.root.innerHTML;
     });
+});
+
+//Upload delete gallery
+let selectedFiles = new DataTransfer();
+
+const galleryInput = document.getElementById("galleryInput");
+const previewContainer = document.getElementById("galleryPreviewContainer");
+
+if (galleryInput) {
+    galleryInput.addEventListener("change", function (e) {
+        Array.from(e.target.files).forEach((file) => {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const col = document.createElement("div");
+                col.className = "col-md-3 mb-3 position-relative new-upload";
+                col.innerHTML = `
+                    <div class="card shadow-sm">
+                        <img src="${event.target.result}" class="card-img-top img-thumbnail" alt="Preview">
+                        <button type="button" class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-new-upload" title="Remove image">&times;</button>
+                    </div>
+                `;
+                previewContainer.appendChild(col);
+            };
+            reader.readAsDataURL(file);
+            selectedFiles.items.add(file);
+        });
+        galleryInput.files = selectedFiles.files;
+    });
+}
+
+// Handle deletes
+previewContainer.addEventListener("click", function (e) {
+    if (e.target.classList.contains("delete-existing-image")) {
+        const parent = e.target.closest(".existing-image");
+        const imagePath = parent.dataset.image;
+        parent.style.display = "none";
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "delete_gallery[]";
+        input.value = imagePath;
+        parent.appendChild(input);
+    }
+
+    if (e.target.classList.contains("delete-new-upload")) {
+        const upload = e.target.closest(".new-upload");
+        const index = Array.from(previewContainer.children).indexOf(upload);
+        selectedFiles.items.remove(index);
+        galleryInput.files = selectedFiles.files;
+        upload.remove();
+    }
 });

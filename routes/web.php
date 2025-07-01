@@ -1,15 +1,15 @@
 <?php
 
-    use Illuminate\Support\Facades\Route;
-    use App\Http\Controllers\admin\UserController;
-    use App\Http\Controllers\admin\BookingTemplateController;
-    use App\Http\Controllers\admin\ProfileController;
-    use App\Http\Controllers\admin\BookingController;
-    use App\Http\Controllers\admin\DashboardController;
-    use App\Http\Controllers\admin\RoleController;
-    use App\Http\Controllers\frontend\FormController;
-    use App\Http\Controllers\admin\ServiceController;
-    use App\Http\Controllers\admin\CategoryController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\admin\BookingTemplateController;
+use App\Http\Controllers\admin\ProfileController;
+use App\Http\Controllers\admin\BookingController;
+use App\Http\Controllers\admin\DashboardController;
+use App\Http\Controllers\admin\RoleController;
+use App\Http\Controllers\frontend\FormController;
+use App\Http\Controllers\admin\ServiceController;
+use App\Http\Controllers\admin\CategoryController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -110,8 +110,8 @@ Route::middleware('auth')->group(function () {
         Route::delete('/roles/{id}/delete', [RoleController::class, 'roleDelete'])->name('roles.delete');
     });
     Route::middleware('permission:edit services')->group(function () {
-        Route::get('/service/{id}/edit', [ServiceController::class, 'serviceEdit'])->name('service.edit');
-        Route::put('/service/{id}/update', [ServiceController::class, 'serviceUpdate'])->name('service.update');
+        Route::get('/service/{service}/edit', [ServiceController::class, 'serviceEdit'])->name('service.edit');
+        Route::put('/service/{service}', [ServiceController::class, 'serviceUpdate'])->name('service.update');
     });
     Route::middleware('permission:view services')->group(function () {
         Route::get('/service', [ServiceController::class, 'index'])->name('service.list');
@@ -121,7 +121,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/service/store', [ServiceController::class, 'servicestore'])->name('service.store');
     });
     Route::middleware('permission:delete services')->group(function () {
-        Route::delete('/service/{id}/delete', [ServiceController::class, 'serviceDelete'])->name('service.delete');
+        Route::delete('/service/{service}/delete', [ServiceController::class, 'destroy'])->name('service.delete');
     });
 
     Route::middleware('permission:view categories')->group(function () {

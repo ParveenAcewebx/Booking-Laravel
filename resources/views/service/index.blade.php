@@ -11,7 +11,11 @@
                             <h5 class="m-b-10">All Services</h5>
                         </div>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="feather icon-home"></i></a></li>
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('dashboard') }}">
+                                    <i class="feather icon-home"></i>
+                                </a>
+                            </li>
                             <li class="breadcrumb-item active">Services</li>
                         </ul>
                     </div>
@@ -31,6 +35,7 @@
                             <table id="service-list-table" class="table table-striped nowrap" width="100%">
                                 <thead>
                                     <tr>
+                                        <th >ID</th> {{-- Hidden for sorting --}}
                                         <th>Name</th>
                                         <th>Description</th>
                                         <th>Staff Member</th>
@@ -49,7 +54,7 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         @if(session('success'))
         swal({
             title: "Success!",
@@ -59,20 +64,45 @@
         });
         @endif
     });
+</script>
 
-    $(function () {
+<script>
+    $(function() {
         $('#service-list-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('service.list') }}", 
-            columns: [
-                { data: 'name', name: 'name' },
-                { data: 'description', name: 'description' },
-                { data: 'staff_member', name: 'staff_member' },
-                { data: 'status', name: 'status' },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
+            ajax: "{{ route('service.list') }}",
+            columns: [{
+                    data: 'id',
+                    name: 'id',
+                    visible: false
+                },
+                {
+                    data: 'name',
+                    name: 'name'
+                },
+                {
+                    data: 'description',
+                    name: 'description'
+                },
+                {
+                    data: 'staff_member',
+                    name: 'staff_member'
+                },
+                {
+                    data: 'status',
+                    name: 'status'
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                }
             ],
-            order: [[0, 'desc']]
+            order: [
+                [0, 'desc']
+            ],
         });
     });
 </script>

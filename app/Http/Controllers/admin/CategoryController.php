@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\admin;
+
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -40,14 +41,16 @@ class CategoryController extends Controller
 
                     if (auth()->user()->can('delete categories')) {
                         $btn .= '
-                        <form id="delete-category-' . $category->id . '" action="' . route('category.destroy', $category->id) . '" method="POST" style="display:inline;">
+                        <form id="delete-category-' . $category->id . '" action="' . route('category.destroy', $category) . '" method="POST" style="display:inline;">
                             ' . csrf_field() . '
-                            <input type="hidden" name="_method" value="DELETE">
+                            ' . method_field('DELETE') . '
                             <button type="button" class="btn btn-icon btn-danger" onclick="deleteCategory(' . $category->id . ')">
                                 <i class="feather icon-trash-2"></i>
                             </button>
-                        </form>';
+                        </form>
+                    ';
                     }
+
                     if (auth()->user()->hasRole('Administrator') &&  $category->status != 0) {
                         $btn .= '<a href="' . url('/category/' . $category->slug) . '" class="btn btn-icon btn-info ml-1" title="View Booking" target="_blank">
                         <i class="feather icon-eye"></i>
@@ -103,9 +106,8 @@ class CategoryController extends Controller
         return redirect()->route('category.list')->with('success', 'Category Updated Successfully.');
     }
 
-    public function destroy($id)
+    public function destroy(Category $category)
     {
-        $category = Category::find($id);
         $category->delete();
         return response()->json(['success' => true]);
     }
