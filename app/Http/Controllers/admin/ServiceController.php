@@ -127,6 +127,7 @@ class ServiceController extends Controller
         $data['gallery'] = json_encode($gallery);
         $data['staff_member'] = json_encode($request->input('staff_member', []));
         $data['payment__is_live'] = $request->has('payment__is_live') ? 1 : 0;
+        $data['staff_member'] = json_encode($request->input('staff_member', []));
 
         Service::create($data);
 
