@@ -11,7 +11,7 @@
 .submit-user .icon-log-out {
     margin-right: 0.75rem;
 }
-.submit-user:focus{
+.submit-user:focus {
     outline: none;
 }
 .submit-user i {
@@ -22,8 +22,38 @@
     background-color: #0073aa;
     color: white;
 }
-button.delete-User,button.logout-User,button.delete-User:focus,button.logout-User:focus,button.logout-User:active,button.delete-User:active {
+button.delete-User,
+button.logout-User,
+button.delete-User:focus,
+button.logout-User:focus,
+button.logout-User:active,
+button.delete-User:active {
     border: none;
     background: none;
-    outline:none;
+    outline: none;
+}
+.border-dashed {
+    border-style: dashed !important;
+} 
+.border-dashed {
+    border-style: dashed !important;
+}
+
+.delete-existing-image,
+.delete-new-upload {
+    position: absolute;
+    top: -16px;
+    right: -8px;
+    background-color: #0db1ff;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    font-size: 18px;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    cursor: pointer;
 }
