@@ -18,6 +18,15 @@
                     </div>
                 </div>
             </div>
+            @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
         </div>
 
         <div class="row">
@@ -29,7 +38,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#pricing" role="tab">
                                     <i class="feather icon-tag"></i>
-                                        Pricing
+                                    Pricing
                                 </a>
                             </li>
                             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#gallery" role="tab"><i class="feather icon-image"></i> Gallery</a></li>
@@ -141,11 +150,11 @@
                                         </div>
                                     </div>
 
-
                                     <div class="form-group">
                                         <label>Redirect URL After Booking</label>
-                                        <input type="text" name="redirect_url" class="form-control">
+                                        <input type="url" name="redirect_url" class="form-control" placeholder="https://example.com" pattern="https?://.*" title="Please enter a valid URL starting with http:// or https://">
                                     </div>
+
 
                                     <div class="form-group">
                                         <label>Payment Gateway</label>

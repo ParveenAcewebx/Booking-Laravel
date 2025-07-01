@@ -78,8 +78,28 @@ class ServiceController extends Controller
     public function servicestore(Request $request)
     {
         $data = $request->validate([
-            'name'                  => 'required|string',
-            'status' => 'required|in:0,1',
+            'name'                  => 'required|string|max:255',
+            'description'           => 'nullable|string',
+            'category'              => 'nullable|exists:categories,id',
+            'duration'              => 'nullable|string|max:100',
+            'thumbnail'             => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
+            'gallery.*'             => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
+            'staff_member'          => 'nullable|array',
+            'staff_member.*'        => 'exists:users,id',
+            'status'                => 'required|in:0,1',
+            'price'                 => 'nullable|numeric|min:0',
+            'currency'              => 'nullable|string|max:5',
+            'appointment_status'    => 'nullable|in:0,1',
+            'cancelling_unit'       => 'required|in:hours,days',
+            'cancelling_value'      => 'required|integer|min:1|max:30',
+            'redirect_url'          => 'nullable|url',
+            'payment_mode'          => 'nullable|in:on_site,stripe',
+            'payment_account'       => 'nullable|in:default,custom',
+            'stripe_test_site_key'  => 'nullable|string',
+            'stripe_test_secret_key' => 'nullable|string',
+            'stripe_live_site_key'  => 'nullable|string',
+            'stripe_live_secret_key' => 'nullable|string',
+            'payment__is_live'      => 'nullable|boolean',
         ]);
 
         if ($request->hasFile('thumbnail')) {
@@ -93,28 +113,15 @@ class ServiceController extends Controller
             }
             $data['gallery'] = json_encode($paths);
         }
+
         $data['staff_member'] = json_encode($request->input('staff_member', []));
         $data['payment__is_live'] = $request->has('payment__is_live') ? 1 : 0;
-        $data['description'] = $request->input('description');
-        $data['category'] = $request->input('category');
-        $data['price'] = $request->input('price');
-        $data['currency'] = $request->input('currency');
-        $data['cancelling_unit'] = $request->input('cancelling_unit');
-        $data['cancelling_value'] = $request->input('cancelling_value');
-        $data['stripe_test_site_key'] = $request->input('stripe_test_site_key');
-        $data['stripe_test_secret_key'] = $request->input('stripe_test_secret_key');
-        $data['stripe_live_secret_key'] = $request->input('stripe_live_secret_key');
-        $data['stripe_live_site_key'] = $request->input('stripe_live_site_key');
-        $data['duration'] = $request->input('duration');
-        $data['payment_mode'] = $request->input('payment_mode');
-        $data['payment_account'] = $request->input('payment_account');
-        $data['redirect_url'] = $request->input('redirect_url');
 
         Service::create($data);
-        return redirect()
-            ->route('service.list')
-            ->with('success', 'Service created successfully');
+
+        return redirect()->route('service.list')->with('success', 'Service created successfully');
     }
+
 
     public function serviceDelete($id)
     {
@@ -143,8 +150,73 @@ class ServiceController extends Controller
     }
 
 
-    public function serviceUpdate(Request $request)
+    public function serviceUpdate(Request $request, $id)
     {
-        return view('service.index');
+        $request->validate([
+            'name'                  => 'required|string|max:255',
+            'description'           => 'nullable|string',
+            'category'              => 'nullable|exists:categories,id',
+            'duration'              => 'nullable|string|max:100',
+            'thumbnail'             => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
+            'gallery.*'             => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
+            'staff_member'          => 'nullable|array',
+            'staff_member.*'        => 'exists:users,id',
+            'status'                => 'required|in:0,1',
+            'price'                 => 'nullable|numeric|min:0',
+            'currency'              => 'nullable|string|max:5',
+            'appointment_status'    => 'nullable|in:0,1',
+            'cancelling_unit'       => 'required|in:hours,days',
+            'cancelling_value'      => 'required|integer|min:1|max:30',
+            'redirect_url'          => 'nullable|url',
+            'payment_mode'          => 'nullable|in:on_site,stripe',
+            'payment_account'       => 'nullable|in:default,custom',
+            'stripe_test_site_key'  => 'nullable|string',
+            'stripe_test_secret_key' => 'nullable|string',
+            'stripe_live_site_key'  => 'nullable|string',
+            'stripe_live_secret_key' => 'nullable|string',
+            'payment__is_live'      => 'nullable|boolean',
+        ]);
+
+        $service = Service::findOrFail($id);
+        $service->name = $request->name;
+        $service->description = $request->description;
+        $service->category = $request->category;
+        $service->status = $request->status;
+        $service->price = $request->price;
+        $service->currency = $request->currency;
+        $service->appointment_status = $request->appointment_status;
+        $service->cancelling_unit = $request->cancelling_unit;
+        $service->cancelling_value = $request->cancelling_value;
+        $service->redirect_url = $request->redirect_url;
+        $service->payment_mode = $request->payment_mode;
+        $service->payment_account = $request->payment_account;
+        $service->payment__is_live = $request->has('payment__is_live');
+
+        if ($request->has('staff_member')) {
+            $service->staff_member = json_encode($request->staff_member);
+        }
+        if ($request->payment_account === 'custom') {
+            $service->stripe_test_site_key = $request->stripe_test_site_key;
+            $service->stripe_test_secret_key = $request->stripe_test_secret_key;
+            $service->stripe_live_site_key = $request->stripe_live_site_key;
+            $service->stripe_live_secret_key = $request->stripe_live_secret_key;
+        }
+
+        // File Handling
+        if ($request->hasFile('thumbnail')) {
+            $service->thumbnail = $request->file('thumbnail')->store('thumbnails', 'public');
+        }
+
+        if ($request->hasFile('gallery')) {
+            $existingGallery = json_decode($service->gallery, true) ?? [];
+            foreach ($request->file('gallery') as $image) {
+                $existingGallery[] = $image->store('gallery', 'public');
+            }
+            $service->gallery = json_encode($existingGallery);
+        }
+
+        $service->save();
+
+        return redirect()->route('service.list')->with('success', 'Service updated successfully!');
     }
 }

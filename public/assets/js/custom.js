@@ -953,67 +953,42 @@ $(function () {
     });
 });
 
-function updateCancellingValueOptions(unit) {
+function updateCancellingValueOptions(unit, selectedValue = null) {
     let $select = $("#cancelling_value");
     $select.empty();
 
     if (unit === "hours") {
-        const hourOptions = [
-            { value: 1, text: "1" },
-            { value: 2, text: "2" },
-            { value: 3, text: "3" },
-            { value: 4, text: "4" },
-            { value: 5, text: "5" },
-            { value: 6, text: "6" },
-            { value: 7, text: "7" },
-            { value: 8, text: "8" },
-            { value: 9, text: "9" },
-            { value: 10, text: "10" },
-            { value: 11, text: "11" },
-            { value: 12, text: "12" },
-            { value: 13, text: "13" },
-            { value: 14, text: "14" },
-            { value: 15, text: "15" },
-            { value: 16, text: "16" },
-            { value: 17, text: "17" },
-            { value: 18, text: "16" },
-            { value: 19, text: "19" },
-            { value: 20, text: "20" },
-            { value: 21, text: "21" },
-            { value: 22, text: "22" },
-            { value: 23, text: "23" },
-            { value: 24, text: "24" },
-        ];
-
-        hourOptions.forEach((opt) => {
-            $select.append(`<option value="${opt.value}">${opt.text}</option>`);
-        });
+        for (let i = 1; i <= 24; i++) {
+            $select.append(
+                `<option value="${i}" ${
+                    parseInt(selectedValue) === i ? "selected" : ""
+                }>${i}</option>`
+            );
+        }
     } else if (unit === "days") {
         for (let i = 1; i <= 365; i++) {
-            $select.append(`<option value="${i}">${i}</option>`);
+            $select.append(
+                `<option value="${i}" ${
+                    parseInt(selectedValue) === i ? "selected" : ""
+                }>${i}</option>`
+            );
         }
     }
 }
 
 $(document).ready(function () {
-    updateCancellingValueOptions($("#cancelling_unit").val());
+    const $unitSelect = $("#cancelling_unit");
+    const selectedValue = $("#cancel_value").val();
 
-    $("#cancelling_unit").on("change", function () {
-        const selectedUnit = $(this).val();
-        updateCancellingValueOptions(selectedUnit);
+    // Populate on load
+    updateCancellingValueOptions($unitSelect.val(), selectedValue);
+
+    // Populate on change
+    $unitSelect.on("change", function () {
+        updateCancellingValueOptions($(this).val());
     });
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-    const quill = new Quill("#quill-editor", {
-        theme: "snow",
-    });
-
-    const form = document.querySelector("form");
-    form.addEventListener("submit", function () {
-        document.querySelector("#description").value = quill.root.innerHTML;
-    });
-});
 $(document).ready(function () {
     function toggleStripeFields() {
         const mode = $("#payment_mode").val();
@@ -1051,4 +1026,18 @@ $(document).ready(function () {
     toggleLiveMode();
 });
 
+// Description Quill editor
+document.addEventListener("DOMContentLoaded", function () {
+    const quill = new Quill("#quill-editor", {
+        theme: "snow",
+    });
 
+    const hiddenTextarea = document.querySelector("#description");
+    if (hiddenTextarea.value) {
+        quill.clipboard.dangerouslyPasteHTML(hiddenTextarea.value);
+    }
+
+    document.querySelector("form").addEventListener("submit", function () {
+        hiddenTextarea.value = quill.root.innerHTML;
+    });
+});
