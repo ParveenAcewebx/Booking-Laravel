@@ -77,6 +77,7 @@ class ServiceController extends Controller
 
     public function servicestore(Request $request)
     {
+        // Validate incoming data
         $data = $request->validate([
             'name'                  => 'required|string|max:255',
             'description'           => 'nullable|string',
@@ -107,33 +108,30 @@ class ServiceController extends Controller
         }
 
         $gallery = [];
-
         if ($request->has('existing_gallery')) {
-            $gallery = array_diff($request->existing_gallery, $request->delete_gallery ?? []);
-        }
-
-        if ($request->has('delete_gallery')) {
-            foreach ($request->delete_gallery as $file) {
-                Storage::disk('public')->delete($file);
+            if ($request->has('delete_gallery')) {
+                foreach ($request->delete_gallery as $file) {
+                    Storage::disk('public')->delete($file); 
+                }
             }
+
+            $gallery = array_diff($request->existing_gallery, $request->delete_gallery ?? []);
         }
 
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $file) {
-                $gallery[] = $file->store('galleries', 'public');
+                $gallery[] = $file->store('galleries', 'public'); // Store new images
             }
         }
 
         $data['gallery'] = json_encode($gallery);
+
         $data['staff_member'] = json_encode($request->input('staff_member', []));
         $data['payment__is_live'] = $request->has('payment__is_live') ? 1 : 0;
-        $data['staff_member'] = json_encode($request->input('staff_member', []));
-
         Service::create($data);
 
         return redirect()->route('service.list')->with('success', 'Service Created Successfully');
     }
-
 
     public function destroy(Service $service)
     {
