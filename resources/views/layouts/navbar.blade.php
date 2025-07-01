@@ -62,7 +62,23 @@
                         </ul>
                     </li>
                     @endcanany
-
+                    {{-- Role Management --}}
+                    @canany(['view roles', 'create roles', 'edit roles', 'delete roles'])
+                    <li class="nav-item pcoded-hasmenu">
+                        <a href="#!" class="nav-link">
+                            <span class="pcoded-micon"><i class="fas fa-shield-alt"></i></span>
+                            <span class="pcoded-mtext">Manage Role</span>
+                        </a>
+                        <ul class="pcoded-submenu">
+                            @can('create roles')
+                            <li><a href="{{ route('roles.add') }}">Add Role</a></li>
+                            @endcan
+                            @can('view roles')
+                            <li><a href="{{ route('roles.list') }}">All Roles</a></li>
+                            @endcan
+                        </ul>
+                    </li>
+                    @endcanany
                     {{-- Form Management --}}
                     @canany(['view forms', 'create forms', 'edit forms', 'delete forms'])
                     <li class="nav-item pcoded-hasmenu">
@@ -76,6 +92,26 @@
                             @endcan
                             @can('view forms')
                             <li><a href="{{ route('template.list') }}">All Booking Template</a></li>
+                            @endcan
+                        </ul>
+                    </li>
+                    @endcanany
+                    {{-- Service Management --}}
+                    @canany(['view services', 'create services', 'edit services', 'delete services'])
+                    <li class="nav-item pcoded-hasmenu">
+                        <a href="#!" class="nav-link">
+                            <span class="pcoded-micon"><i class="fas fa-tools"></i></span>
+                            <span class="pcoded-mtext">Manage Service</span>
+                        </a>
+                        <ul class="pcoded-submenu">
+                            @can('create services')
+                            <li><a href="{{ route('service.add') }}">Add Service</a></li>
+                            @endcan
+                            @can('view services')
+                            <li><a href="{{ route('service.list') }}">All Services</a></li>
+                            @endcan
+                            @can('view categories')
+                            <li><a href="{{ route('category.list') }}">All Category</a></li>
                             @endcan
                         </ul>
                     </li>
@@ -99,43 +135,8 @@
                     </li>
                     @endcanany
 
-                    {{-- Role Management --}}
-                    @canany(['view roles', 'create roles', 'edit roles', 'delete roles'])
-                    <li class="nav-item pcoded-hasmenu">
-                        <a href="#!" class="nav-link">
-                            <span class="pcoded-micon"><i class="fas fa-shield-alt"></i></span>
-                            <span class="pcoded-mtext">Manage Role</span>
-                        </a>
-                        <ul class="pcoded-submenu">
-                            @can('create roles')
-                            <li><a href="{{ route('roles.add') }}">Add Role</a></li>
-                            @endcan
-                            @can('view roles')
-                            <li><a href="{{ route('roles.list') }}">All Roles</a></li>
-                            @endcan
-                        </ul>
-                    </li>
-                    @endcanany
-                    {{-- Service Management --}}
-                    @canany(['view services', 'create services', 'edit services', 'delete services'])
-                    <li class="nav-item pcoded-hasmenu">
-                        <a href="#!" class="nav-link">
-                            <span class="pcoded-micon"><i class="fas fa-tools"></i></span>
-                            <span class="pcoded-mtext">Manage Service</span>
-                        </a>
-                        <ul class="pcoded-submenu">
-                            @can('create services')
-                            <li><a href="{{ route('service.add') }}">Add Service</a></li>
-                            @endcan
-                            @can('view services')
-                            <li><a href="{{ route('service.list') }}">All Services</a></li>
-                            @endcan
-                            @can('view categories')
-                            <li><a href="{{ route('category.list') }}">All Categories</a></li>
-                            @endcan
-                        </ul>
-                    </li>
-                    @endcanany
+
+
                 </ul>
             </div>
 
