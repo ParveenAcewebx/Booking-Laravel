@@ -1,7 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
-
+namespace App\Http\Controllers\frontend;
+use App\Http\Controllers\Controller;
 use App\Helpers\Shortcode;
 
 use Illuminate\Http\Request;

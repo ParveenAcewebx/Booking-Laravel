@@ -1,15 +1,15 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\BookingTemplateController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\BookingController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\FormController;
-use App\Http\Controllers\ServiceController;
-use App\Http\Controllers\CategoryController;
+    use Illuminate\Support\Facades\Route;
+    use App\Http\Controllers\admin\UserController;
+    use App\Http\Controllers\admin\BookingTemplateController;
+    use App\Http\Controllers\admin\ProfileController;
+    use App\Http\Controllers\admin\BookingController;
+    use App\Http\Controllers\admin\DashboardController;
+    use App\Http\Controllers\admin\RoleController;
+    use App\Http\Controllers\frontend\FormController;
+    use App\Http\Controllers\admin\ServiceController;
+    use App\Http\Controllers\admin\CategoryController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
