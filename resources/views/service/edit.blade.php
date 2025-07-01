@@ -49,8 +49,9 @@
                                     <div class="form-group">
                                         <label>Description</label>
                                         <div id="quill-editor" style="height: 200px;"></div>
-                                        <textarea name="description" id="description" class="d-none">{!! $service->description !!}</textarea>
+                                        <textarea name="description" id="description" class="d-none">{{ old('description', $service->description) }}</textarea>
                                     </div>
+
                                     <div class="form-group">
                                         <label>Category</label>
                                         <select name="category" class="form-control">
@@ -60,15 +61,19 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                
+
 
                                     <div class="form-group">
                                         <label>Thumbnail</label>
                                         <input type="file" name="thumbnail" class="form-control">
+
                                         @if($service->thumbnail)
-                                        <img src="{{ asset('storage/' . $service->thumbnail) }}" alt="Thumbnail" height="80" class="mt-2">
+                                        <a href="{{ asset('storage/' . $service->thumbnail) }}" target="_blank">
+                                            <img src="{{ asset('storage/' . $service->thumbnail) }}" alt="Thumbnail" height="80" class="mt-2">
+                                        </a>
                                         @endif
                                     </div>
+
                                     <div class="form-group">
                                         <label>Staff Member</label>
                                         <select name="staff_member[]" class="form-control select2" multiple>
@@ -124,20 +129,25 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label>Cancel Unit</label>
-                                        <select name="cancelling_unit" class="form-control">
-                                            <option value="hours" {{ $service->cancelling_unit == 'hours' ? 'selected' : '' }}>Hours</option>
-                                            <option value="days" {{ $service->cancelling_unit == 'days' ? 'selected' : '' }}>Days</option>
-                                        </select>
+                                        <label>Minimum Time Required Before Canceling</label>
+                                        <div class="d-flex">
+                                            <select name="cancelling_unit" class="form-control mr-2" id="cancelling_unit">
+                                                <option value="hours" {{ $service->cancelling_unit == 'hours' ? 'selected' : '' }}>Hours</option>
+                                                <option value="days" {{ $service->cancelling_unit == 'days' ? 'selected' : '' }}>Days</option>
+                                            </select>
+
+                                            <select name="cancelling_value" class="form-control" id="cancelling_value">
+                                                <!-- Options populated by JS -->
+                                            </select>
+                                            <input type="hidden" id="cancel_value" value="{{ $service->cancelling_value }}">
+                                        </div>
                                     </div>
                                     <div class="form-group">
-                                        <label>Cancel Value</label>
-                                        <input type="number" name="cancelling_value" class="form-control" value="{{ $service->cancelling_value }}">
+                                        <label>Redirect URL After Booking</label>
+                                        <input type="url" name="redirect_url" class="form-control value=" {{ $service->redirect_url }}"" placeholder="https://example.com" pattern="https?://.*" title="Please enter a valid URL starting with http:// or https://">
                                     </div>
-                                    <div class="form-group">
-                                        <label>Redirect URL</label>
-                                        <input type="text" name="redirect_url" class="form-control" value="{{ $service->redirect_url }}">
-                                    </div>
+
+
                                     <div class="form-group">
                                         <label>Payment Mode</label>
                                         <select name="payment_mode" class="form-control" id="payment_mode">
@@ -210,3 +220,31 @@
     }
 </style>
 @endpush
+<script>
+    function populateCancellingValues(unit, selectedValue = null) {
+        const valueSelect = document.getElementById("cancelling_value");
+        valueSelect.innerHTML = "";
+
+        let max = unit === "hours" ? 24 : 30;
+        for (let i = 1; i <= max; i++) {
+            const option = document.createElement("option");
+            option.value = i;
+            option.text = i;
+            if (parseInt(selectedValue) === i) {
+                option.selected = true;
+            }
+            valueSelect.appendChild(option);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const unitSelect = document.getElementById("cancelling_unit");
+        const selectedValue = document.getElementById("cancel_value")?.value || null;
+
+        populateCancellingValues(unitSelect.value, selectedValue);
+
+        unitSelect.addEventListener("change", function() {
+            populateCancellingValues(this.value);
+        });
+    });
+</script>
