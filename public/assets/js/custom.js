@@ -1087,3 +1087,14 @@ previewContainer.addEventListener("click", function (e) {
         upload.remove();
     }
 });
+ document.addEventListener('DOMContentLoaded', function () {
+    if (typeof $ !== 'undefined' && $.fn.select2) {
+      $('.select2-mash').select2({
+        theme: 'bootstrap',
+        placeholder: 'Select an option',
+        width: '100%'
+      });
+    } else {
+      console.error('Select2 or jQuery not loaded.');
+    }
+  });

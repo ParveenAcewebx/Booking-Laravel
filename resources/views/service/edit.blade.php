@@ -102,12 +102,18 @@
 
                                         <div class="form-group">
                                             <label>Staff Member</label>
-                                            <select name="staff_member[]" class="form-control select2" multiple>
+                                            <select name="staff_member[]" class="form-control select2-mash" multiple required>
+                                                @php
+                                                $selectedStaff = old('staff_member', json_decode($service->staff_member ?? '[]', true));
+                                                @endphp
                                                 @foreach($staffUsers as $user)
-                                                <option value="{{ $user->id }}" {{ in_array($user->id, json_decode($service->staff_member, true) ?? []) ? 'selected' : '' }}>{{ $user->name }}</option>
+                                                <option value="{{ $user->id }}" {{ in_array($user->id, $selectedStaff) ? 'selected' : '' }}>
+                                                    {{ $user->name }}
+                                                </option>
                                                 @endforeach
                                             </select>
                                         </div>
+
                                         <div class="form-group">
                                             <label>Status</label>
                                             <select name="status" class="form-control" required>
