@@ -20,7 +20,7 @@
                     <div class="col-md-2">
                         <div class="page-header-titles float-right">
                             @can('create forms')
-                                <a href="{{ route('template.add') }}" class="btn btn-primary float-right p-2">Add Form</a>
+                            <a href="{{ route('template.add') }}" class="btn btn-primary float-right p-2">Add Form</a>
                             @endcan
                         </div>
                     </div>
@@ -62,36 +62,68 @@
             processing: true,
             serverSide: true,
             ajax: "{{ route('template.list') }}",
-            columns: [
-                { data: 'id', name: 'id', visible: false }, // 👈 required for sorting DESC
-                { data: 'template_name', name: 'template_name', orderable: true, searchable: true }, 
-                { data: 'created_by', name: 'created_by' },
-                { data: 'created_at', name: 'created_at' },
-                { data: 'status', name: 'status', orderable: false, searchable: false },
-                { data: 'action', name: 'action', orderable: false, searchable: false },
+            columns: [{
+                    data: 'id',
+                    name: 'id',
+                    visible: false
+                }, // 👈 required for sorting DESC
+                {
+                    data: 'template_name',
+                    name: 'template_name',
+                    orderable: true,
+                    searchable: true
+                },
+                {
+                    data: 'created_by',
+                    name: 'created_by'
+                },
+                {
+                    data: 'created_at',
+                    name: 'created_at'
+                },
+                {
+                    data: 'status',
+                    name: 'status',
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                },
             ],
-            order: [[0, 'desc']], // 👈 sort by id (hidden)
-            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+            order: [
+                [0, 'desc']
+            ], // 👈 sort by id (hidden)
+            lengthMenu: [
+                [10, 25, 50, 100],
+                [10, 25, 50, 100]
+            ],
         });
-    });
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "4000",
+            "positionClass": "toast-top-right"
+        };
 
-    document.addEventListener("DOMContentLoaded", function() {
+        // Toastr messages from session
         @if(session('success'))
-        swal({
-            title: "Success!",
-            text: "{{ session('success') }}",
-            icon: "success",
-            buttons: "OK"
-        });
+        toastr.success("{{ session('success') }}");
         @endif
 
         @if(session('error'))
-        swal({
-            title: "Error!",
-            text: "{{ session('error') }}",
-            icon: "error",
-            button: "OK"
-        });
+        toastr.error("{{ session('error') }}");
+        @endif
+
+        @if(session('info'))
+        toastr.info("{{ session('info') }}");
+        @endif
+
+        @if(session('warning'))
+        toastr.warning("{{ session('warning') }}");
         @endif
     });
 </script>

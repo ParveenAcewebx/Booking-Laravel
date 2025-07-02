@@ -1050,7 +1050,7 @@ if (galleryInput) {
             reader.onload = function (event) {
                 const col = document.createElement("div");
                 col.className = "col-md-3 mb-3 position-relative new-upload";
-                col.dataset.filename = file.name; // 👈 track filename
+                col.dataset.filename = file.name; 
                 col.innerHTML = `
                     <div class="card shadow-sm">
                         <img src="${event.target.result}" class="card-img-top img-thumbnail" alt="Preview">
@@ -1068,7 +1068,6 @@ if (galleryInput) {
 
 // Handle deletes
 previewContainer.addEventListener("click", function (e) {
-    // Delete existing images (from DB)
     if (e.target.classList.contains("delete-existing-image")) {
         const parent = e.target.closest(".existing-image");
         const imagePath = parent.dataset.image;
@@ -1078,26 +1077,25 @@ previewContainer.addEventListener("click", function (e) {
         input.type = "hidden";
         input.name = "delete_gallery[]";
         input.value = imagePath;
-        document.querySelector("form").appendChild(input); // 💡 Move outside parent, ensure it's in form
+        document.querySelector("form").appendChild(input); 
     }
 
-    // Delete newly uploaded images (from preview and file list)
     if (e.target.classList.contains("delete-new-upload")) {
         const upload = e.target.closest(".new-upload");
         const fileName = upload.dataset.filename;
 
-        // Remove from DataTransfer
         const dt = new DataTransfer();
         Array.from(selectedFiles.files).forEach((file) => {
             if (file.name !== fileName) {
                 dt.items.add(file);
             }
         });
-        selectedFiles = dt; // 🆕 replace with new filtered object
+        selectedFiles = dt; 
         galleryInput.files = selectedFiles.files;
         upload.remove();
     }
 });
+
 // All Service Select Dropdown
 $(function () {
     const select2Fields = [

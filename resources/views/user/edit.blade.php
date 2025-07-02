@@ -187,24 +187,27 @@
     </section>
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function() {
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "4000",
+                "positionClass": "toast-top-right"
+            };
+
             @if(session('success'))
-            swal({
-                title: "Success!",
-                text: "{{ session('success') }}",
-                icon: "success",
-                timer: 2000,
-                buttons: false
-            });
+            toastr.success("{{ session('success') }}");
             @endif
 
             @if(session('error'))
-            swal({
-                title: "Error!",
-                text: "{{ session('error') }}",
-                icon: "error",
-                timer: 2000,
-                buttons: false
-            });
+            toastr.error("{{ session('error') }}");
+            @endif
+
+            @if(session('info'))
+            toastr.info("{{ session('info') }}");
+            @endif
+
+            @if(session('warning'))
+            toastr.warning("{{ session('warning') }}");
             @endif
         });
     </script>

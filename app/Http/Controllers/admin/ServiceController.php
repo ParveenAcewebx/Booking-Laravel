@@ -77,7 +77,6 @@ class ServiceController extends Controller
 
     public function servicestore(Request $request)
     {
-        // Step 1: Validate incoming data
         $data = $request->validate([
             'name'                   => 'required|string|max:255',
             'description'            => 'nullable|string',
@@ -126,7 +125,7 @@ class ServiceController extends Controller
             }
         }
 
-        $data['gallery'] = json_encode(array_values($gallery)); // Reset index
+        $data['gallery'] = json_encode(array_values($gallery)); 
 
         $data['staff_member'] = json_encode($request->input('staff_member', []));
         $data['payment__is_live'] = $request->has('payment__is_live') ? 1 : 0;

@@ -93,24 +93,28 @@
                 [10, 25, 50, 100]
             ]
         });
-    });
-    document.addEventListener("DOMContentLoaded", function() {
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "4000",
+            "positionClass": "toast-top-right"
+        };
+
+        // Toastr messages from session
         @if(session('success'))
-        swal({
-            title: "Success!",
-            text: "{{ session('success') }}",
-            icon: "success",
-            button: "OK"
-        });
+        toastr.success("{{ session('success') }}");
         @endif
 
         @if(session('error'))
-        swal({
-            title: "Error!",
-            text: "{{ session('error') }}",
-            icon: "error",
-            button: "OK"
-        });
+        toastr.error("{{ session('error') }}");
+        @endif
+
+        @if(session('info'))
+        toastr.info("{{ session('info') }}");
+        @endif
+
+        @if(session('warning'))
+        toastr.warning("{{ session('warning') }}");
         @endif
     });
 </script>
