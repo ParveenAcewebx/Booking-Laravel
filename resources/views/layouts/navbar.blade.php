@@ -50,7 +50,7 @@
                     <li class="nav-item pcoded-hasmenu">
                         <a href="#!" class="nav-link">
                             <span class="pcoded-micon"><i class="feather icon-users"></i></span>
-                            <span class="pcoded-mtext">User</span>
+                            <span class="pcoded-mtext">Users</span>
                         </a>
                         <ul class="pcoded-submenu">
                             @can('create users')
@@ -67,7 +67,7 @@
                     <li class="nav-item pcoded-hasmenu">
                         <a href="#!" class="nav-link">
                             <span class="pcoded-micon"><i class="fas fa-shield-alt"></i></span>
-                            <span class="pcoded-mtext">Manage Role</span>
+                            <span class="pcoded-mtext">Manage Roles</span>
                         </a>
                         <ul class="pcoded-submenu">
                             @can('create roles')
@@ -84,7 +84,7 @@
                     <li class="nav-item pcoded-hasmenu">
                         <a href="#!" class="nav-link">
                             <span class="pcoded-micon"><i class="feather icon-file-text"></i></span>
-                            <span class="pcoded-mtext">Booking Template</span>
+                            <span class="pcoded-mtext">Booking Templates</span>
                         </a>
                         <ul class="pcoded-submenu">
                             @can('create forms')
@@ -101,7 +101,7 @@
                     <li class="nav-item pcoded-hasmenu">
                         <a href="#!" class="nav-link">
                             <span class="pcoded-micon"><i class="fas fa-tools"></i></span>
-                            <span class="pcoded-mtext">Manage Service</span>
+                            <span class="pcoded-mtext">Manage Services</span>
                         </a>
                         <ul class="pcoded-submenu">
                             @can('create services')
@@ -122,7 +122,7 @@
                     <li class="nav-item pcoded-hasmenu">
                         <a href="#!" class="nav-link">
                             <span class="pcoded-micon"><i class="feather icon-book"></i></span>
-                            <span class="pcoded-mtext">Booking</span>
+                            <span class="pcoded-mtext">Bookings</span>
                         </a>
                         <ul class="pcoded-submenu">
                             @can('create bookings')
