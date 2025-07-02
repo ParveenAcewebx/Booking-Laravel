@@ -35,7 +35,7 @@
                             <table id="service-list-table" class="table table-striped nowrap" width="100%">
                                 <thead>
                                     <tr>
-                                        <th >ID</th> {{-- Hidden for sorting --}}
+                                        <th>ID</th> {{-- Hidden for sorting --}}
                                         <th>Name</th>
                                         <th>Description</th>
                                         <th>Staff Member</th>
@@ -54,56 +54,46 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        @if(session('success'))
-        swal({
-            title: "Success!",
-            text: "{{ session('success') }}",
-            icon: "success",
-            button: "OK"
-        });
-        @endif
-    });
-</script>
-
-<script>
-    $(function() {
+    $(function () {
         $('#service-list-table').DataTable({
             processing: true,
             serverSide: true,
             ajax: "{{ route('service.list') }}",
-            columns: [{
-                    data: 'id',
-                    name: 'id',
-                    visible: false
-                },
-                {
-                    data: 'name',
-                    name: 'name'
-                },
-                {
-                    data: 'description',
-                    name: 'description'
-                },
-                {
-                    data: 'staff_member',
-                    name: 'staff_member'
-                },
-                {
-                    data: 'status',
-                    name: 'status'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false,
-                    searchable: false
-                }
+            columns: [
+                { data: 'id', name: 'id', visible: false },
+                { data: 'name', name: 'name' },
+                { data: 'description', name: 'description' },
+                { data: 'staff_member', name: 'staff_member' },
+                { data: 'status', name: 'status' },
+                { data: 'action', name: 'action', orderable: false, searchable: false }
             ],
-            order: [
-                [0, 'desc']
-            ],
+            order: [[0, 'desc']],
         });
+
+        // Toastr configuration
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "4000",
+            "positionClass": "toast-top-right"
+        };
+
+        // Toastr messages from session
+        @if (session('success'))
+            toastr.success("{{ session('success') }}");
+        @endif
+
+        @if (session('error'))
+            toastr.error("{{ session('error') }}");
+        @endif
+
+        @if (session('info'))
+            toastr.info("{{ session('info') }}");
+        @endif
+
+        @if (session('warning'))
+            toastr.warning("{{ session('warning') }}");
+        @endif
     });
 </script>
 @endsection

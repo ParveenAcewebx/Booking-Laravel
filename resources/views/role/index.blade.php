@@ -58,42 +58,69 @@
 
 <!-- DataTables & SweetAlert -->
 <script>
-    $(function () {
+    $(function() {
         $('#roles-list-table').DataTable({
             processing: true,
             serverSide: true,
             ajax: "{{ route('roles.list') }}",
-            columns: [
-                { data: 'id', name: 'id', visible: false }, // Hidden ID for ordering
-                { data: 'name', name: 'name' },
-                { data: 'permissions', name: 'permissions', orderable: false, searchable: false },
-                { data: 'status', name: 'status', orderable: false, searchable: false },
-                @canany(['edit roles', 'delete roles'])
-                { data: 'action', name: 'action', orderable: false, searchable: false }
+            columns: [{
+                    data: 'id',
+                    name: 'id',
+                    visible: false
+                }, 
+                {
+                    data: 'name',
+                    name: 'name'
+                },
+                {
+                    data: 'permissions',
+                    name: 'permissions',
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: 'status',
+                    name: 'status',
+                    orderable: false,
+                    searchable: false
+                },
+                @canany(['edit roles', 'delete roles']) {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                }
                 @endcanany
             ],
-            order: [[0, 'desc']], // sort by hidden ID column DESC
-            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+            order: [
+                [0, 'desc']
+            ], 
+            lengthMenu: [
+                [10, 25, 50, 100],
+                [10, 25, 50, 100]
+            ],
         });
-    });
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "4000",
+            "positionClass": "toast-top-right"
+        };
 
-    document.addEventListener("DOMContentLoaded", function () {
         @if(session('success'))
-        swal({
-            title: "Success!",
-            text: "{{ session('success') }}",
-            icon: "success",
-            button: "OK"
-        });
+        toastr.success("{{ session('success') }}");
         @endif
 
         @if(session('error'))
-        swal({
-            title: "Error!",
-            text: "{{ session('error') }}",
-            icon: "error",
-            button: "OK"
-        });
+        toastr.error("{{ session('error') }}");
+        @endif
+
+        @if(session('info'))
+        toastr.info("{{ session('info') }}");
+        @endif
+
+        @if(session('warning'))
+        toastr.warning("{{ session('warning') }}");
         @endif
     });
 </script>

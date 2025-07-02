@@ -204,10 +204,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Redirect URL After Booking</label>
-                                            <input type="url" name="redirect_url" class="form-control value=" {{ $service->redirect_url }}"" placeholder="https://example.com" pattern="https?://.*" title="Please enter a valid URL starting with http:// or https://">
+                                            <input type="url" name="redirect_url" class="form-control" value="{{ $service->redirect_url }}" placeholder="https://example.com" pattern="https?://.*" title="Please enter a valid URL starting with http:// or https://">
                                         </div>
-
-
                                         <div class="form-group">
                                             <label>Payment Mode</label>
                                             <select name="payment_mode" class="form-control payment_mode" id="payment_mode">
