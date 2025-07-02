@@ -4,6 +4,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\BookingTemplate;
+use App\Models\Service;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +30,7 @@ class DashboardController extends Controller
     public function index(){
         $allusers = $this->allUsers;
         $bookingForms = BookingTemplate::all();
+        $services = Service::all();
         $bookings = Booking::all();
         $loginId = session('previous_login_id');
         $loginUser = null;
@@ -36,6 +38,6 @@ class DashboardController extends Controller
         if ($loginId) {
             $loginUser = User::find($loginId);  
         }
-        return view('layouts.dashboard', ['allusers' => $allusers,'bookingForms'=>$bookingForms,'bookings'=>$bookings,'loginUser'=>$loginUser]);
+        return view('layouts.dashboard', ['allusers' => $allusers,'bookingForms'=>$bookingForms,'bookings'=>$bookings,'loginUser'=>$loginUser,'services'=>$services]);
     }
 }

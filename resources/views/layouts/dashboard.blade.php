@@ -23,7 +23,7 @@
         <!-- [ Main Content ] start -->
         <div class="row">
             <!-- View Chart Start-->
-            <div class="col-xl-4 col-md-6">
+            <div class="col-xl-3 col-md-6">
                 <div class="card flat-card">
                     <div class="row-table">
                         <a href="{{ route('user.list') }}" class="dashboard-card-link">
@@ -38,7 +38,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xl-4 col-md-6">
+            <div class="col-xl-3 col-md-6">
                 <div class="card flat-card">
                     <div class="row-table">
                         <a href="{{ route('booking.list') }}" class="dashboard-card-link">
@@ -52,7 +52,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xl-4 col-md-12">
+            <div class="col-xl-3 col-md-12">
                 <div class="card flat-card">
                     <div class="row-table">
                         <a href="{{ route('template.list') }}" class="dashboard-card-link">
@@ -60,6 +60,21 @@
                                 <div class="card-body">
                                     <h6 class="text-dark m-b-5">Total Booking Templates</h6>
                                     <h4 class="text-dark mb-0">{{count($bookingForms);}}</h4>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-12">
+                <div class="card flat-card">
+                    <div class="row-table">
+                        <a href="{{ route('service.list') }}" class="dashboard-card-link">
+                            <div class="bg-white dash-card dashboard-card-hover">
+                                <div class="card-body">
+                                    <h6 class="text-dark m-b-5">Total Services</h6>
+                                    <h4 class="text-dark mb-0">{{count($services);}}</h4>
                                 </div>
                             </div>
                         </a>
