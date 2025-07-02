@@ -161,27 +161,28 @@
                                     <!-- Status Checkbox -->
                                     <div class="col-md-12" @if($hideFields) style="display:none;" @endif>
                                         <div class="form-group">
-                                            <label class="form-label">Status</label><br>
-                                            <label style="cursor: pointer;">
-                                                <input type="checkbox" name="status" value="{{ config('constants.status.active') }}"
+                                            <label class="form-label d-block">Status</label>
+
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox"
+                                                    class="custom-control-input"
+                                                    name="status"
+                                                    id="status"
+                                                    value="{{ config('constants.status.active') }}"
                                                     {{ $user->status == config('constants.status.active') ? 'checked' : '' }}>
-                                                Active
-                                            </label>
+                                                <label class="custom-control-label" for="status">Active</label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-
                                 <!-- Submit button -->
                                 <button type="submit" class="btn btn-primary">Update</button>
-
                             </div>
                         </div>
                     </div>
-
                     <!-- [ Form Validation ] end -->
                 </div>
             </form>
-
             <!-- [ Main Content ] end -->
         </div>
     </section>

@@ -39,20 +39,21 @@
                             <div class="form-group">
                                 <label for="category_name">Category Name</label>
                                 <input type="text" name="category_name" id="category_name" class="form-control"
-                                       placeholder="Enter category name"
-                                       value="{{ old('category_name', $category->category_name) }}" required>
+                                    placeholder="Enter category name"
+                                    value="{{ old('category_name', $category->category_name) }}" required>
                             </div>
 
                             <!-- Status Checkbox -->
-                            <div class="form-check mt-2">
+                            <div class="custom-control custom-checkbox mt-2">
                                 {{-- Hidden input ensures a value is always submitted --}}
                                 <input type="hidden" name="status" value="{{ config('constants.status.inactive') }}">
-                                
+
                                 <input type="checkbox" name="status" value="{{ config('constants.status.active') }}"
-                                       class="form-check-input" id="status"
-                                       {{ $category->status == config('constants.status.active') ? 'checked' : '' }}>
-                                <label class="form-check-label" for="status">Active</label>
+                                    class="custom-control-input" id="status"
+                                    {{ $category->status == config('constants.status.active') ? 'checked' : '' }}>
+                                <label class="custom-control-label" for="status">Active</label>
                             </div>
+
                         </div>
                     </div>
 

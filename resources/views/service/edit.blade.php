@@ -90,8 +90,12 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Thumbnail</label>
-                                            <input type="file" name="thumbnail" class="form-control">
+                                            <label for="thumbnail">Thumbnail</label>
+                                            <div class="custom-file">
+                                                <input type="file" name="thumbnail" class="custom-file-input" id="thumbnail">
+                                                <label class="custom-file-label" for="thumbnail">Choose file...</label>
+                                                <div class="invalid-feedback">Please upload a valid thumbnail.</div>
+                                            </div>
 
                                             @if($service->thumbnail)
                                             <a href="{{ asset('storage/' . $service->thumbnail) }}" target="_blank">
@@ -216,42 +220,56 @@
 
                                         {{-- Stripe Options --}}
                                         <div class="stripe-options {{ $service->payment_mode == 'stripe' ? '' : 'd-none' }}">
-                                            <div class="form-check">
-                                                <label class="form-check-label">
-                                                    <input class="form-check-input" type="radio" name="payment_account" value="default" {{ $service->payment_account == 'default' ? 'checked' : '' }}> Use Default Stripe Account
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <label class="form-check-label">
-                                                    <input class="form-check-input" type="radio" name="payment_account" value="custom" {{ $service->payment_account == 'custom' ? 'checked' : '' }}> Use Different Stripe Account
-                                                </label>
+                                            {{-- Stripe Account Type Radios --}}
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" id="stripeDefault" name="payment_account" value="default"
+                                                    class="custom-control-input"
+                                                    {{ $service->payment_account == 'default' ? 'checked' : '' }}>
+                                                <label class="custom-control-label" for="stripeDefault">Use Default Stripe Account</label>
                                             </div>
 
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" id="stripeCustom" name="payment_account" value="custom"
+                                                    class="custom-control-input"
+                                                    {{ $service->payment_account == 'custom' ? 'checked' : '' }}>
+                                                <label class="custom-control-label" for="stripeCustom">Use Different Stripe Account</label>
+                                            </div>
+
+                                            {{-- Stripe Credentials Section --}}
                                             <div class="stripe-credentials mt-3 {{ $service->payment_account == 'custom' ? '' : 'd-none' }}">
-                                                <div class="form-group">
-                                                    <label>Stripe Mode</label><br>
-                                                    <input type="checkbox" id="payment__is_live" name="payment__is_live" value="1" {{ $service->payment__is_live ? 'checked' : '' }}> <label for="payment__is_live">Live Mode</label>
+                                                {{-- Stripe Mode Toggle (Live/Test) --}}
+                                                <div class="custom-control custom-checkbox mb-3">
+                                                    <input type="checkbox" class="custom-control-input" id="payment__is_live"
+                                                        name="payment__is_live" value="1"
+                                                        {{ $service->payment__is_live ? 'checked' : '' }}>
+                                                    <label class="custom-control-label" for="payment__is_live">Live Mode</label>
                                                 </div>
 
+                                                {{-- Test Mode Keys --}}
                                                 <div class="stripe-test {{ $service->payment__is_live ? 'd-none' : '' }}">
                                                     <div class="form-group">
-                                                        <label>Test Site Key</label>
-                                                        <input type="text" name="stripe_test_site_key" class="form-control" value="{{ $service->stripe_test_site_key }}">
+                                                        <label for="stripe_test_site_key">Test Site Key</label>
+                                                        <input type="text" name="stripe_test_site_key" id="stripe_test_site_key"
+                                                            class="form-control" value="{{ $service->stripe_test_site_key }}">
                                                     </div>
                                                     <div class="form-group">
-                                                        <label>Test Secret Key</label>
-                                                        <input type="text" name="stripe_test_secret_key" class="form-control" value="{{ $service->stripe_test_secret_key }}">
+                                                        <label for="stripe_test_secret_key">Test Secret Key</label>
+                                                        <input type="text" name="stripe_test_secret_key" id="stripe_test_secret_key"
+                                                            class="form-control" value="{{ $service->stripe_test_secret_key }}">
                                                     </div>
                                                 </div>
 
+                                                {{-- Live Mode Keys --}}
                                                 <div class="stripe-live {{ $service->payment__is_live ? '' : 'd-none' }}">
                                                     <div class="form-group">
-                                                        <label>Live Site Key</label>
-                                                        <input type="text" name="stripe_live_site_key" class="form-control" value="{{ $service->stripe_live_site_key }}">
+                                                        <label for="stripe_live_site_key">Live Site Key</label>
+                                                        <input type="text" name="stripe_live_site_key" id="stripe_live_site_key"
+                                                            class="form-control" value="{{ $service->stripe_live_site_key }}">
                                                     </div>
                                                     <div class="form-group">
-                                                        <label>Live Secret Key</label>
-                                                        <input type="text" name="stripe_live_secret_key" class="form-control" value="{{ $service->stripe_live_secret_key }}">
+                                                        <label for="stripe_live_secret_key">Live Secret Key</label>
+                                                        <input type="text" name="stripe_live_secret_key" id="stripe_live_secret_key"
+                                                            class="form-control" value="{{ $service->stripe_live_secret_key }}">
                                                     </div>
                                                 </div>
                                             </div>

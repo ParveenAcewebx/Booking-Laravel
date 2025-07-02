@@ -69,7 +69,7 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group mt-3">
                                                             <label>Staff List</label>
-                                                            <select class="form-control" name="selected_staff">
+                                                            <select class="form-control selected_staff" name="selected_staff">
                                                                 <option value="">Select Staff</option>
                                                                 @foreach($alluser as $user)
                                                                 <option value="{{ $user->name }}" data-customer_id="{{ $user->id }}">{{ $user->name }}</option>
