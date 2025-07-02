@@ -431,7 +431,7 @@ class UserController extends Controller
         $userToSwitch = User::findOrFail($id);
         Auth::login($userToSwitch);
 
-        return redirect('/');
+        return redirect('/admin');
     }
 
     public function switchBack()
@@ -447,9 +447,9 @@ class UserController extends Controller
                 session()->forget('impersonate_original_user');
                 Cookie::queue(Cookie::forget('impersonate_original_user'));
 
-                return redirect('/');
+                return redirect('/admin');
             }
         }
-        return redirect('/');
+        return redirect('/admin');
     }
 }
