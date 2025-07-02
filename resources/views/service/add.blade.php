@@ -62,7 +62,7 @@
 
                                     <div class="form-group">
                                         <label>Category</label>
-                                        <select name="category" class="form-control">
+                                        <select name="category" class="form-control category">
                                             <option value="">-- Select Category --</option>
                                             @foreach($categories as $category)
                                             <option value="{{ $category->id }}">{{ $category->category_name }}</option>
@@ -72,7 +72,7 @@
 
                                     <div class="form-group">
                                         <label>Duration</label>
-                                        <select name="duration" class="form-control">
+                                        <select name="duration" class="form-control durartion">
                                             <option value="">-- Select Duration --</option>
                                             @for ($minutes = 30; $minutes <= 1440; $minutes +=30)
                                                 @php
@@ -109,7 +109,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Status</label>
-                                        <select name="status" class="form-control" required>
+                                        <select name="status" class="form-control status" required>
                                             @foreach($defaultStatus as $label => $value)
                                             <option value="{{ $value }}" {{ old('status', $defaultStatus) == $value ? 'selected' : '' }}>
                                                 {{ ucfirst($label) }}
@@ -123,7 +123,7 @@
                                 <div class="tab-pane" id="pricing" role="tabpanel">
                                     <div class="form-group">
                                         <label>Currency</label>
-                                        <select name="currency" class="form-control">
+                                        <select name="currency" class="form-control currency">
                                             @foreach($currencies as $code => $currency)
                                             <option value="{{ $code }}">{{ $code }}</option>
                                             @endforeach
@@ -180,7 +180,7 @@
                                 <div class="tab-pane" id="settings" role="tabpanel">
                                     <div class="form-group">
                                         <label>Default Appointment Status</label>
-                                        <select name="appointment_status" class="form-control">
+                                        <select name="appointment_status" class="form-control appointment_status">
                                             @foreach($appointmentStats as $label => $value)
                                             <option value="{{ $value }}" {{ old('appointment_status') == $value ? 'selected' : '' }}>
                                                 {{ ucfirst($label) }}
@@ -192,11 +192,11 @@
                                     <div class="form-group">
                                         <label>Minimum Time Required Before Canceling</label>
                                         <div class="d-flex">
-                                            <select name="cancelling_unit" class="form-control mr-2" id="cancelling_unit">
+                                            <select name="cancelling_unit" class="form-control mr-2 currency_unit" id="cancelling_unit">
                                                 <option value="hours">Hours</option>
                                                 <option value="days">Days</option>
                                             </select>
-                                            <select name="cancelling_value" class="form-control" id="cancelling_value">
+                                            <select name="cancelling_value" class="form-control cancelling_value" id="cancelling_value">
                                                 <!-- Populated dynamically with JS -->
                                             </select>
                                         </div>
@@ -210,7 +210,7 @@
 
                                     <div class="form-group">
                                         <label>Payment Gateway</label>
-                                        <select name="payment_mode" class="form-control" id="payment_mode">
+                                        <select name="payment_mode" class="form-control payment_mode" id="payment_mode">
                                             <option value="on_site">On Site</option>
                                             <option value="stripe">Stripe</option>
                                         </select>
