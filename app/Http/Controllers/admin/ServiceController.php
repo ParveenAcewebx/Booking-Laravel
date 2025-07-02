@@ -77,30 +77,30 @@ class ServiceController extends Controller
 
     public function servicestore(Request $request)
     {
-        // Validate incoming data
+        // Step 1: Validate incoming data
         $data = $request->validate([
-            'name'                  => 'required|string|max:255',
-            'description'           => 'nullable|string',
-            'category'              => 'nullable|exists:categories,id',
-            'duration'              => 'nullable|string|max:100',
-            'thumbnail'             => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
-            'gallery.*'             => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
-            'staff_member'          => 'nullable|array',
-            'staff_member.*'        => 'exists:users,id',
-            'status'                => 'required|in:0,1',
-            'price'                 => 'nullable|numeric',
-            'currency'              => 'nullable|string|max:5',
-            'appointment_status'    => 'nullable|in:0,1',
-            'cancelling_unit'       => 'required|in:hours,days',
-            'cancelling_value'      => 'required|integer',
-            'redirect_url'          => 'nullable|url',
-            'payment_mode'          => 'nullable|in:on_site,stripe',
-            'payment_account'       => 'nullable|in:default,custom',
-            'stripe_test_site_key'  => 'nullable|string',
+            'name'                   => 'required|string|max:255',
+            'description'            => 'nullable|string',
+            'category'               => 'nullable|exists:categories,id',
+            'duration'               => 'nullable|string|max:100',
+            'thumbnail'              => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
+            'gallery.*'              => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
+            'staff_member'           => 'nullable|array',
+            'staff_member.*'         => 'exists:users,id',
+            'status'                 => 'required|in:0,1',
+            'price'                  => 'nullable|numeric',
+            'currency'               => 'nullable|string|max:5',
+            'appointment_status'     => 'nullable|in:0,1',
+            'cancelling_unit'        => 'required|in:hours,days',
+            'cancelling_value'       => 'required|integer',
+            'redirect_url'           => 'nullable|url',
+            'payment_mode'           => 'nullable|in:on_site,stripe',
+            'payment_account'        => 'nullable|in:default,custom',
+            'stripe_test_site_key'   => 'nullable|string',
             'stripe_test_secret_key' => 'nullable|string',
-            'stripe_live_site_key'  => 'nullable|string',
+            'stripe_live_site_key'   => 'nullable|string',
             'stripe_live_secret_key' => 'nullable|string',
-            'payment__is_live'      => 'nullable|boolean',
+            'payment__is_live'       => 'nullable|boolean',
         ]);
 
         if ($request->hasFile('thumbnail')) {
@@ -108,30 +108,33 @@ class ServiceController extends Controller
         }
 
         $gallery = [];
+
         if ($request->has('existing_gallery')) {
-            if ($request->has('delete_gallery')) {
-                foreach ($request->delete_gallery as $file) {
-                    Storage::disk('public')->delete($file); 
-                }
+            $existingGallery = $request->existing_gallery;
+            $deletedGallery = $request->delete_gallery ?? [];
+
+            foreach ($deletedGallery as $file) {
+                Storage::disk('public')->delete($file);
             }
 
-            $gallery = array_diff($request->existing_gallery, $request->delete_gallery ?? []);
+            $gallery = array_diff($existingGallery, $deletedGallery);
         }
 
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $file) {
-                $gallery[] = $file->store('galleries', 'public'); // Store new images
+                $gallery[] = $file->store('galleries', 'public');
             }
         }
 
-        $data['gallery'] = json_encode($gallery);
+        $data['gallery'] = json_encode(array_values($gallery)); // Reset index
 
         $data['staff_member'] = json_encode($request->input('staff_member', []));
         $data['payment__is_live'] = $request->has('payment__is_live') ? 1 : 0;
-        Service::create($data);
 
+        Service::create($data);
         return redirect()->route('service.list')->with('success', 'Service Created Successfully');
     }
+
 
     public function destroy(Service $service)
     {
