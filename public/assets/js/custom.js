@@ -1087,14 +1087,25 @@ previewContainer.addEventListener("click", function (e) {
         upload.remove();
     }
 });
- document.addEventListener('DOMContentLoaded', function () {
-    if (typeof $ !== 'undefined' && $.fn.select2) {
-      $('.select2-mash').select2({
-        theme: 'bootstrap',
-        placeholder: 'Select an option',
-        width: '100%'
-      });
-    } else {
-      console.error('Select2 or jQuery not loaded.');
-    }
-  });
+// All Service Select Dropdown
+$(function () {
+    const select2Fields = [
+        { selector: ".status", placeholder: "Select a status" },
+        { selector: ".durartion", placeholder: "Select Duration" },
+        { selector: ".category", placeholder: "Select Category" },
+        { selector: ".select2-mash", placeholder: "Select an option" },
+        { selector: ".currency", placeholder: "Select Currency" },
+        { selector: ".currency_unit" },
+        { selector: ".cancelling_value" },
+        { selector: ".appointment_status" },
+        { selector: ".payment_mode" }
+    ];
+
+    select2Fields.forEach(field => {
+        $(field.selector).select2({
+            theme: "bootstrap",
+            placeholder: field.placeholder || "Select",
+            width: "100%"
+        });
+    });
+});

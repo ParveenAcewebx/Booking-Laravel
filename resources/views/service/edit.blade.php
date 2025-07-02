@@ -54,7 +54,7 @@
 
                                         <div class="form-group">
                                             <label>Category</label>
-                                            <select name="category" class="form-control">
+                                            <select name="category" class="form-control category">
                                                 <option value="">-- Select Category --</option>
                                                 @foreach($categories as $category)
                                                 <option value="{{ $category->id }}" {{ $service->category == $category->id ? 'selected' : '' }}>{{ $category->category_name }}</option>
@@ -64,7 +64,7 @@
 
                                         <div class="form-group">
                                             <label>Duration</label>
-                                            <select name="duration" class="form-control">
+                                            <select name="duration" class="form-control durartion">
                                                 <option value="">-- Select Duration --</option>
                                                 @for ($minutes = 30; $minutes <= 1440; $minutes +=30)
                                                     @php
@@ -116,7 +116,7 @@
 
                                         <div class="form-group">
                                             <label>Status</label>
-                                            <select name="status" class="form-control" required>
+                                            <select name="status" class="form-control status" required>
                                                 @foreach($statuses as $label => $value)
                                                 <option value="{{ $value }}" {{ $service->status == $value ? 'selected' : '' }}>{{ ucfirst($label) }}</option>
                                                 @endforeach
@@ -127,7 +127,7 @@
                                     <div class="tab-pane" id="pricing" role="tabpanel">
                                         <div class="form-group">
                                             <label>Currency</label>
-                                            <select name="currency" class="form-control">
+                                            <select name="currency" class="form-control currency">
                                                 @foreach($currencies as $code => $currency)
                                                 <option value="{{ $code }}" {{ $service->currency == $code ? 'selected' : '' }}>{{ $code }}</option>
                                                 @endforeach
@@ -182,7 +182,7 @@
                                     <div class="tab-pane" id="settings" role="tabpanel">
                                         <div class="form-group">
                                             <label>Default Appointment Status</label>
-                                            <select name="appointment_status" class="form-control">
+                                            <select name="appointment_status" class="form-control appointment_status">
                                                 @foreach($appointmentStats as $label => $value)
                                                 <option value="{{ $value }}" {{ $service->appointment_status == $value ? 'selected' : '' }}>{{ ucfirst($label) }}</option>
                                                 @endforeach
@@ -191,12 +191,12 @@
                                         <div class="form-group">
                                             <label>Minimum Time Required Before Canceling</label>
                                             <div class="d-flex">
-                                                <select name="cancelling_unit" class="form-control mr-2" id="cancelling_unit">
+                                                <select name="cancelling_unit" class="form-control mr-2 currency_unit" id="cancelling_unit">
                                                     <option value="hours" {{ $service->cancelling_unit == 'hours' ? 'selected' : '' }}>Hours</option>
                                                     <option value="days" {{ $service->cancelling_unit == 'days' ? 'selected' : '' }}>Days</option>
                                                 </select>
 
-                                                <select name="cancelling_value" class="form-control" id="cancelling_value">
+                                                <select name="cancelling_value" class="form-control cancelling_value" id="cancelling_value">
                                                     <!-- Options populated by JS -->
                                                 </select>
                                                 <input type="hidden" id="cancel_value" value="{{ $service->cancelling_value }}">
@@ -210,7 +210,7 @@
 
                                         <div class="form-group">
                                             <label>Payment Mode</label>
-                                            <select name="payment_mode" class="form-control" id="payment_mode">
+                                            <select name="payment_mode" class="form-control payment_mode" id="payment_mode">
                                                 <option value="on_site" {{ $service->payment_mode == 'on_site' ? 'selected' : '' }}>On Site</option>
                                                 <option value="stripe" {{ $service->payment_mode == 'stripe' ? 'selected' : '' }}>Stripe</option>
                                             </select>
