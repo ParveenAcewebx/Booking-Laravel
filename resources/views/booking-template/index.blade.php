@@ -66,7 +66,7 @@
                     data: 'id',
                     name: 'id',
                     visible: false
-                }, // 👈 required for sorting DESC
+                }, 
                 {
                     data: 'template_name',
                     name: 'template_name',
@@ -96,7 +96,7 @@
             ],
             order: [
                 [0, 'desc']
-            ], // 👈 sort by id (hidden)
+            ], 
             lengthMenu: [
                 [10, 25, 50, 100],
                 [10, 25, 50, 100]

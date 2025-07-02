@@ -24,14 +24,14 @@ class ServiceController extends Controller
 
             return DataTables::of($services)
                 ->addColumn('status', function ($row) {
-                    if ($row->status == 1) {
-                        return '<span class="badge badge-success">Active</span>';
-                    } else {
-                        return '<span class="badge badge-danger">Inactive</span>';
-                    }
+                    $statuses = config('constants.status');
+
+                    return $row->status == $statuses['active']
+                        ? '<span class="badge badge-success">Active</span>'
+                        : '<span class="badge badge-danger">Inactive</span>';
                 })
                 ->addColumn('description', function ($row) {
-                    return strip_tags($row->description);
+                    return $row->description;
                 })
                 ->addColumn('staff_member', function ($row) {
                     $staffIds = json_decode($row->staff_member, true) ?? [];
@@ -58,7 +58,7 @@ class ServiceController extends Controller
                     }
                     return $btn;
                 })
-                ->rawColumns(['status', 'action'])
+                ->rawColumns(['status', 'action', 'description'])
                 ->make(true);
         }
 
@@ -125,7 +125,7 @@ class ServiceController extends Controller
             }
         }
 
-        $data['gallery'] = json_encode(array_values($gallery)); 
+        $data['gallery'] = json_encode(array_values($gallery));
 
         $data['staff_member'] = json_encode($request->input('staff_member', []));
         $data['payment__is_live'] = $request->has('payment__is_live') ? 1 : 0;
