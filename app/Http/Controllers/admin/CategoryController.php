@@ -79,9 +79,8 @@ class CategoryController extends Controller
         Category::create([
             'category_name' => $request->category_name,
             'slug' => Str::uuid(),
-            'status' => $request->status,
+            'status' => $request->status ?? 0,
         ]);
-
         return redirect()->route('category.list')->with('success', 'Category Created Successfully.');
     }
 

@@ -35,15 +35,15 @@
                                 <label for="name" class="font-weight-bold">Role Name <span class="text-danger">*</span></label>
                                 <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $role->name ?? '') }}" required>
                                 @error('name')
-                                    <span class="invalid-feedback">{{ $message }}</span>
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
 
                             <!-- Status -->
                             <div class="form-group mt-3">
-                                <div class="form-check">
-                                    <input type="checkbox" name="status" id="status" value="1" class="form-check-input" {{ old('status', $role->status ?? 1) ? 'checked' : '' }}>
-                                    <label for="status" class="form-check-label font-weight-bold">Active</label>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="status" id="status" value="1" class="custom-control-input" {{ old('status', $role->status ?? 1) ? 'checked' : '' }}>
+                                    <label for="status" class="custom-control-label font-weight-bold">Active</label>
                                 </div>
                                 @error('status')
                                     <span class="text-danger">{{ $message }}</span>
@@ -57,8 +57,11 @@
                                     <table class="table table-bordered mb-0">
                                         <thead class="thead-light">
                                             <tr>
-                                                <th style="width: 50px;">
-                                                    <input type="checkbox" id="select-all-permissions">
+                                                <th style="width: 60px;">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" id="select-all-permissions" class="custom-control-input">
+                                                        <label class="custom-control-label" for="select-all-permissions"></label>
+                                                    </div>
                                                 </th>
                                                 <th>Name</th>
                                             </tr>
@@ -76,10 +79,12 @@
                                                     }
                                                     $groupSlug = $group['slug'];
                                                 @endphp
-                                                <!-- Group Row -->
                                                 <tr class="bg-light align-middle">
                                                     <td class="text-center">
-                                                        <input type="checkbox" class="group-checkbox" data-group="{{ $groupSlug }}" id="group_{{ $groupKey }}" {{ $groupHasCheckedPerm ? 'checked' : '' }}>
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input group-checkbox" data-group="{{ $groupSlug }}" id="group_{{ $groupKey }}" {{ $groupHasCheckedPerm ? 'checked' : '' }}>
+                                                            <label class="custom-control-label" for="group_{{ $groupKey }}"></label>
+                                                        </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-between align-items-center w-100">
@@ -91,12 +96,14 @@
                                                     </td>
                                                 </tr>
 
-                                                <!-- Permission Rows -->
                                                 @foreach($group['roles'] as $permission)
                                                     @php $permissionId = Str::slug($permission); @endphp
                                                     <tr class="permission-row group-perms-{{ $groupSlug }}" style="display: none;">
                                                         <td class="text-center pl-4">
-                                                            <input type="checkbox" name="permissions[]" value="{{ $permission }}" class="permission-checkbox group-{{ $groupSlug }}" id="perm_{{ $permissionId }}" {{ in_array($permission, $oldPerms) ? 'checked' : '' }}>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input type="checkbox" name="permissions[]" value="{{ $permission }}" class="custom-control-input permission-checkbox group-{{ $groupSlug }}" id="perm_{{ $permissionId }}" {{ in_array($permission, $oldPerms) ? 'checked' : '' }}>
+                                                                <label class="custom-control-label" for="perm_{{ $permissionId }}"></label>
+                                                            </div>
                                                         </td>
                                                         <td>
                                                             <label for="perm_{{ $permissionId }}" class="mb-0">
@@ -127,5 +134,3 @@
     </div>
 </div>
 @endsection
-
-

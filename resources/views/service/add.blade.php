@@ -28,7 +28,6 @@
             </div>
             @endif
         </div>
-
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
@@ -44,7 +43,6 @@
                             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#gallery" role="tab"><i class="feather icon-image"></i> Gallery</a></li>
                             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#settings" role="tab"><i class="feather icon-settings"></i> Settings</a></li>
                         </ul>
-
                         <form method="POST" action="{{ route('service.store') }}" enctype="multipart/form-data">
                             @csrf
                             <div class="tab-content">
@@ -59,7 +57,6 @@
                                         <div id="quill-editor" style="height: 200px;"></div>
                                         <textarea name="description" id="description" class="d-none"></textarea>
                                     </div>
-
                                     <div class="form-group">
                                         <label>Category</label>
                                         <select name="category" class="form-control category">
@@ -69,7 +66,6 @@
                                             @endforeach
                                         </select>
                                     </div>
-
                                     <div class="form-group">
                                         <label>Duration</label>
                                         <select name="duration" class="form-control durartion">
@@ -94,10 +90,13 @@
                                                 @endfor
                                         </select>
                                     </div>
-
-                                    <div class="form-group">
-                                        <label>Thumbnail</label>
-                                        <input type="file" name="thumbnail" class="form-control">
+                                    <div class="form-group col-md-12 p-0">
+                                        <label class="form-label">Thumbnail</label>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="validatedCustomFile" name="thumbnail">
+                                            <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
+                                            <div class="invalid-feedback">Please upload a valid thumbnail.</div>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="staff_member">Staff Member</label>
@@ -117,9 +116,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-
                                 </div>
-
                                 <div class="tab-pane" id="pricing" role="tabpanel">
                                     <div class="form-group">
                                         <label>Currency</label>
@@ -141,13 +138,10 @@
                                             oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/^(\d+(\.\d{0,3})?).*$/, '$1');"
                                             placeholder="e.g., 100 or 100.50">
                                     </div>
-
                                 </div>
-
                                 <div class="tab-pane" id="gallery" role="tabpanel">
                                     <div class="form-group">
                                         <label class="form-label">Gallery</label>
-
                                         {{-- Add Image Tile --}}
                                         <div class="col-md-3 mb-3">
                                             <label for="galleryInput"
@@ -160,7 +154,6 @@
                                             </label>
                                             <input type="file" name="gallery[]" id="galleryInput" class="d-none gallery-input" multiple accept="image/*">
                                         </div>
-
                                         {{-- Preview Existing + New --}}
                                         <div class="row mb-3" id="galleryPreviewContainer">
                                             @if(isset($service) && $service->gallery)
@@ -188,7 +181,6 @@
                                             @endforeach
                                         </select>
                                     </div>
-
                                     <div class="form-group">
                                         <label>Minimum Time Required Before Canceling</label>
                                         <div class="d-flex">
@@ -201,13 +193,10 @@
                                             </select>
                                         </div>
                                     </div>
-
                                     <div class="form-group">
                                         <label>Redirect URL After Booking</label>
                                         <input type="url" name="redirect_url" class="form-control" placeholder="https://example.com" pattern="https?://.*" title="Please enter a valid URL starting with http:// or https://">
                                     </div>
-
-
                                     <div class="form-group">
                                         <label>Payment Gateway</label>
                                         <select name="payment_mode" class="form-control payment_mode" id="payment_mode">
@@ -215,31 +204,24 @@
                                             <option value="stripe">Stripe</option>
                                         </select>
                                     </div>
-
                                     {{-- Stripe Options --}}
                                     <div class="stripe-options d-none">
-                                        <div class="form-check">
-                                            <label class="form-check-label">
-                                                <input class="form-check-input" type="radio" name="payment_account" value="default" checked>
-                                                Use Default Stripe Account
-                                            </label>
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="stripeDefault" name="payment_account" value="default" class="custom-control-input" checked>
+                                            <label class="custom-control-label" for="stripeDefault">Use Default Stripe Account</label>
                                         </div>
-
-                                        <div class="form-check">
-                                            <label class="form-check-label">
-                                                <input class="form-check-input" type="radio" name="payment_account" value="custom">
-                                                Use Different Stripe Account
-                                            </label>
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="stripeCustom" name="payment_account" value="custom" class="custom-control-input">
+                                            <label class="custom-control-label" for="stripeCustom">Use Different Stripe Account</label>
                                         </div>
-
-
                                         <div class="stripe-credentials mt-3 d-none">
                                             <div class="form-group">
-                                                <label>Stripe Mode</label><br>
-                                                <input type="checkbox" id="payment__is_live" name="payment__is_live" value="1">
-                                                <label for="payment__is_live">Live Mode</label>
+                                                <label class="form-label d-block">Stripe Mode</label>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" id="payment__is_live" name="payment__is_live" value="1">
+                                                    <label class="custom-control-label" for="payment__is_live">Live Mode</label>
+                                                </div>
                                             </div>
-
                                             <div class="stripe-test">
                                                 <div class="form-group">
                                                     <label>Test Site Key</label>
@@ -250,7 +232,6 @@
                                                     <input type="text" name="stripe_test_secret_key" class="form-control">
                                                 </div>
                                             </div>
-
                                             <div class="stripe-live d-none">
                                                 <div class="form-group">
                                                     <label>Live Site Key</label>
@@ -265,7 +246,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="mt-4">
                                 <button class="btn btn-primary">Save</button>
                                 <a href="{{ route('service.list') }}" class="btn btn-secondary">Back</a>

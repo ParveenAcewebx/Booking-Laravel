@@ -1050,7 +1050,7 @@ if (galleryInput) {
             reader.onload = function (event) {
                 const col = document.createElement("div");
                 col.className = "col-md-3 mb-3 position-relative new-upload";
-                col.dataset.filename = file.name; 
+                col.dataset.filename = file.name;
                 col.innerHTML = `
                     <div class="card shadow-sm">
                         <img src="${event.target.result}" class="card-img-top img-thumbnail" alt="Preview">
@@ -1077,7 +1077,7 @@ previewContainer.addEventListener("click", function (e) {
         input.type = "hidden";
         input.name = "delete_gallery[]";
         input.value = imagePath;
-        document.querySelector("form").appendChild(input); 
+        document.querySelector("form").appendChild(input);
     }
 
     if (e.target.classList.contains("delete-new-upload")) {
@@ -1090,7 +1090,7 @@ previewContainer.addEventListener("click", function (e) {
                 dt.items.add(file);
             }
         });
-        selectedFiles = dt; 
+        selectedFiles = dt;
         galleryInput.files = selectedFiles.files;
         upload.remove();
     }
@@ -1107,14 +1107,15 @@ $(function () {
         { selector: ".currency_unit" },
         { selector: ".cancelling_value" },
         { selector: ".appointment_status" },
-        { selector: ".payment_mode" }
+        { selector: ".payment_mode" },
     ];
 
-    select2Fields.forEach(field => {
+    select2Fields.forEach((field) => {
         $(field.selector).select2({
             theme: "bootstrap",
             placeholder: field.placeholder || "Select",
-            width: "100%"
+            width: "100%",
         });
     });
 });
+

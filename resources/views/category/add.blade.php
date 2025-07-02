@@ -42,10 +42,9 @@
                                 </span>
                                 @enderror
                             </div>
-
-                            <div class="form-check mt-2">
-                                <input type="checkbox" name="status" value="1" class="form-check-input" id="status">
-                                <label class="form-check-label" for="status">Active</label>
+                            <div class="custom-control custom-checkbox mt-2">
+                                <input type="checkbox" name="status" value="1" class="custom-control-input" id="status" checked>
+                                <label class="custom-control-label" for="status">Active</label>
                             </div>
                         </div>
                     </div>

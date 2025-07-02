@@ -56,7 +56,7 @@ class RoleController extends Controller
                             ucfirst($entity) . ' (' . count($permissions) . ')</span><br>';
                     }
 
-                    return $html ?: '-';
+                    return $html ?: '';
                 })
                 ->editColumn('status', function ($role) {
                     return $role->status == config('constants.status.active')
