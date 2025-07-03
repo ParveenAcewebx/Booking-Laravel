@@ -22,8 +22,13 @@ use App\Http\Controllers\admin\CategoryController;
 */
 
 Route::get('/', function () {
-    return 'echo';
+   return view('frontend.landing');
 });
+
+Route::get('/category', function () {
+   return view('frontend.landing');
+});
+
 
 Route::get('/admin', function () {
     return redirect()->route('dashboard');

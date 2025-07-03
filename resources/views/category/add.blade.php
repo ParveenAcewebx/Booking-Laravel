@@ -35,13 +35,22 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="category_name">Category Name</label>
-                                <input type="text" name="category_name" id="category_name" class="form-control" placeholder="Enter category name" required>
+                                <input
+                                    type="text"
+                                    name="category_name"
+                                    id="category_name"
+                                    class="form-control @error('category_name') is-invalid @enderror"
+                                    placeholder="Enter category name"
+                                    value="{{ old('category_name') }}"
+                                    required>
                                 @error('category_name')
-                                <span class="invalid-feedback d-block" role="alert">
+                                <span class="invalid-feedback d-block" id="categoryNameError" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
                                 @enderror
                             </div>
+
+
                             <div class="custom-control custom-checkbox mt-2">
                                 <input type="checkbox" name="status" value="1" class="custom-control-input" id="status" checked>
                                 <label class="custom-control-label" for="status">Active</label>

@@ -696,95 +696,79 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.addEventListener("DOMContentLoaded", function () {
     const selectAll = document.getElementById("select-all-permissions");
+    if (!selectAll) return; // ⛔ Exit if element not found
 
     function updateSelectAllCheckbox() {
         const all = document.querySelectorAll(".permission-checkbox");
         const checked = Array.from(all).filter((cb) => cb.checked);
         selectAll.checked = checked.length === all.length;
-        selectAll.indeterminate =
-            checked.length > 0 && checked.length < all.length;
+        selectAll.indeterminate = checked.length > 0 && checked.length < all.length;
     }
 
+    // Group checkbox toggle
     document.querySelectorAll(".group-checkbox").forEach((groupCheckbox) => {
         groupCheckbox.addEventListener("change", function () {
             const groupKey = this.dataset.group;
-            const checkboxes = document.querySelectorAll(
-                `.permission-checkbox.group-${groupKey}`
-            );
+            const checkboxes = document.querySelectorAll(`.permission-checkbox.group-${groupKey}`);
             checkboxes.forEach((cb) => (cb.checked = this.checked));
             updateSelectAllCheckbox();
         });
     });
 
+    // Select all permissions
     selectAll.addEventListener("change", function () {
         const checked = this.checked;
-        document
-            .querySelectorAll(".permission-checkbox")
-            .forEach((cb) => (cb.checked = checked));
-        document
-            .querySelectorAll(".group-checkbox")
-            .forEach((cb) => (cb.checked = checked));
+        document.querySelectorAll(".permission-checkbox").forEach((cb) => (cb.checked = checked));
+        document.querySelectorAll(".group-checkbox").forEach((cb) => (cb.checked = checked));
         updateSelectAllCheckbox();
     });
 
+    // Single permission checkbox change
     document.querySelectorAll(".permission-checkbox").forEach((cb) => {
         cb.addEventListener("change", function () {
-            const groupClass = Array.from(cb.classList).find((cls) =>
-                cls.startsWith("group-")
-            );
+            const groupClass = Array.from(cb.classList).find((cls) => cls.startsWith("group-"));
             if (!groupClass) return;
             const groupKey = groupClass.replace("group-", "");
-            const groupCB = document.querySelector(
-                `.group-checkbox[data-group="${groupKey}"]`
-            );
-            const perms = document.querySelectorAll(
-                `.permission-checkbox.group-${groupKey}`
-            );
+            const groupCB = document.querySelector(`.group-checkbox[data-group="${groupKey}"]`);
+            const perms = document.querySelectorAll(`.permission-checkbox.group-${groupKey}`);
             const anyChecked = Array.from(perms).some((p) => p.checked);
             groupCB.checked = anyChecked;
             updateSelectAllCheckbox();
         });
     });
 
+    // Toggle icon to collapse/expand group
     document.querySelectorAll(".toggle-icon").forEach((icon) => {
         icon.addEventListener("click", function () {
             const groupKey = this.dataset.group;
             const rows = document.querySelectorAll(`.group-perms-${groupKey}`);
-            const isVisible = Array.from(rows).some(
-                (r) => r.style.display !== "none"
-            );
+            const isVisible = Array.from(rows).some((r) => r.style.display !== "none");
 
-            rows.forEach(
-                (r) => (r.style.display = isVisible ? "none" : "table-row")
-            );
-
+            rows.forEach((r) => (r.style.display = isVisible ? "none" : "table-row"));
             this.classList.toggle("icon-chevron-right", isVisible);
             this.classList.toggle("icon-chevron-down", !isVisible);
         });
     });
 
+    // Initial state setup
     document.querySelectorAll(".group-checkbox").forEach((groupCheckbox) => {
         const groupKey = groupCheckbox.dataset.group;
-        const perms = document.querySelectorAll(
-            `.permission-checkbox.group-${groupKey}`
-        );
+        const perms = document.querySelectorAll(`.permission-checkbox.group-${groupKey}`);
         const anyChecked = Array.from(perms).some((p) => p.checked);
         groupCheckbox.checked = anyChecked;
 
-        const icon = document.querySelector(
-            `.toggle-icon[data-group="${groupKey}"]`
-        );
+        const icon = document.querySelector(`.toggle-icon[data-group="${groupKey}"]`);
         if (icon) {
             icon.classList.remove("icon-chevron-down");
             icon.classList.add("icon-chevron-right");
         }
-        document
-            .querySelectorAll(`.group-perms-${groupKey}`)
-            .forEach((r) => (r.style.display = "none"));
+
+        document.querySelectorAll(`.group-perms-${groupKey}`).forEach((r) => (r.style.display = "none"));
     });
 
     updateSelectAllCheckbox();
 });
+
 
 document.addEventListener("DOMContentLoaded", function () {
     // Toggle input visibility
@@ -890,10 +874,14 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("DOMContentLoaded", function () {
     const mobileToggle = document.getElementById("mobile-collapse");
     const switchBackText = document.getElementById("switchBackText");
-    const navbarSwitchButton = document.getElementsByClassName(
-        "navbar-switch-button"
-    )[0];
+    const navbarSwitchButton = document.getElementsByClassName("navbar-switch-button")[0];
     const navbar = document.querySelector(".pcoded-navbar");
+
+    // Check if all elements are found before proceeding
+    if (!mobileToggle || !switchBackText || !navbarSwitchButton || !navbar) {
+        console.warn("One or more navbar elements are missing.");
+        return;
+    }
 
     function hideOrShowSwitchBackText() {
         if (navbar.classList.contains("navbar-collapsed")) {
@@ -905,11 +893,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // Initial delay to allow class state to settle
     setTimeout(hideOrShowSwitchBackText, 100);
+
+    // Toggle collapse state
     mobileToggle.addEventListener("click", function () {
         setTimeout(hideOrShowSwitchBackText, 100);
     });
 
+    // Show text on hover when collapsed
     navbar.addEventListener("mouseenter", function () {
         if (navbar.classList.contains("navbar-collapsed")) {
             switchBackText.style.display = "inline";
@@ -917,6 +909,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    // Hide text when mouse leaves the navbar
     navbar.addEventListener("mouseleave", function () {
         if (navbar.classList.contains("navbar-collapsed")) {
             switchBackText.style.display = "none";
@@ -924,6 +917,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
 
 $(function () {
     $("#payment_mode").on("change", function () {
@@ -1029,72 +1023,83 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     const hiddenTextarea = document.querySelector("#description");
-    if (hiddenTextarea.value) {
-        quill.clipboard.dangerouslyPasteHTML(hiddenTextarea.value);
-    }
+    if (hiddenTextarea) {
+        if (hiddenTextarea.value) {
+            quill.clipboard.dangerouslyPasteHTML(hiddenTextarea.value);
+        }
 
-    document.querySelector("form").addEventListener("submit", function () {
-        hiddenTextarea.value = quill.root.innerHTML;
-    });
+        document.querySelector("form").addEventListener("submit", function () {
+            hiddenTextarea.value = quill.root.innerHTML;
+        });
+    }
 });
+
 
 //Upload delete gallery
-let selectedFiles = new DataTransfer();
-const galleryInput = document.getElementById("galleryInput");
-const previewContainer = document.getElementById("galleryPreviewContainer");
+document.addEventListener("DOMContentLoaded", function () {
+    let selectedFiles = new DataTransfer();
+    const galleryInput = document.getElementById("galleryInput");
+    const previewContainer = document.getElementById("galleryPreviewContainer");
 
-if (galleryInput) {
-    galleryInput.addEventListener("change", function (e) {
-        Array.from(e.target.files).forEach((file) => {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                const col = document.createElement("div");
-                col.className = "col-md-3 mb-3 position-relative new-upload";
-                col.dataset.filename = file.name;
-                col.innerHTML = `
-                    <div class="card shadow-sm">
-                        <img src="${event.target.result}" class="card-img-top img-thumbnail" alt="Preview">
-                        <button type="button" class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-new-upload" title="Remove image">&times;</button>
-                    </div>
-                `;
-                previewContainer.appendChild(col);
-            };
-            reader.readAsDataURL(file);
-            selectedFiles.items.add(file);
+    if (galleryInput && previewContainer) {
+        // Handle new uploads
+        galleryInput.addEventListener("change", function (e) {
+            Array.from(e.target.files).forEach((file) => {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const col = document.createElement("div");
+                    col.className = "col-md-3 mb-3 position-relative new-upload";
+                    col.dataset.filename = file.name;
+                    col.innerHTML = `
+                        <div class="card shadow-sm">
+                            <img src="${event.target.result}" class="card-img-top img-thumbnail" alt="Preview">
+                            <button type="button" class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-new-upload" title="Remove image">&times;</button>
+                        </div>
+                    `;
+                    previewContainer.appendChild(col);
+                };
+                reader.readAsDataURL(file);
+                selectedFiles.items.add(file);
+            });
+            galleryInput.files = selectedFiles.files;
         });
-        galleryInput.files = selectedFiles.files;
-    });
-}
 
-// Handle deletes
-previewContainer.addEventListener("click", function (e) {
-    if (e.target.classList.contains("delete-existing-image")) {
-        const parent = e.target.closest(".existing-image");
-        const imagePath = parent.dataset.image;
-        parent.style.display = "none";
+        // Handle deletions (existing and new)
+        previewContainer.addEventListener("click", function (e) {
+            // Delete existing image
+            if (e.target.classList.contains("delete-existing-image")) {
+                const parent = e.target.closest(".existing-image");
+                const imagePath = parent.dataset.image;
+                parent.style.display = "none";
 
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "delete_gallery[]";
-        input.value = imagePath;
-        document.querySelector("form").appendChild(input);
-    }
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.name = "delete_gallery[]";
+                input.value = imagePath;
+                document.querySelector("form").appendChild(input);
+            }
 
-    if (e.target.classList.contains("delete-new-upload")) {
-        const upload = e.target.closest(".new-upload");
-        const fileName = upload.dataset.filename;
+            // Delete newly uploaded image
+            if (e.target.classList.contains("delete-new-upload")) {
+                const upload = e.target.closest(".new-upload");
+                const fileName = upload.dataset.filename;
 
-        const dt = new DataTransfer();
-        Array.from(selectedFiles.files).forEach((file) => {
-            if (file.name !== fileName) {
-                dt.items.add(file);
+                const dt = new DataTransfer();
+                Array.from(selectedFiles.files).forEach((file) => {
+                    if (file.name !== fileName) {
+                        dt.items.add(file);
+                    }
+                });
+                selectedFiles = dt;
+                galleryInput.files = selectedFiles.files;
+                upload.remove();
             }
         });
-        selectedFiles = dt;
-        galleryInput.files = selectedFiles.files;
-        upload.remove();
+    } else {
+        console.warn("galleryInput or galleryPreviewContainer not found in DOM.");
     }
 });
+
 
 // All Service Select Dropdown
 $(function () {
