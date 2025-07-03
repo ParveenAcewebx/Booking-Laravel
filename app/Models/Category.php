@@ -14,4 +14,8 @@ class Category extends Model
         'created_at',
         'status',
     ];
+    public function services()
+    {
+        return $this->hasMany(Service::class, 'id');
+    }
 }
