@@ -10,6 +10,7 @@ use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\frontend\FormController;
 use App\Http\Controllers\admin\ServiceController;
 use App\Http\Controllers\admin\CategoryController;
+use App\Http\Controllers\frontend\CategoryListingController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,11 +23,13 @@ use App\Http\Controllers\admin\CategoryController;
 */
 
 Route::get('/', function () {
-   return view('frontend.landing');
-});
+    return view('frontend.landing');
+})->name('home');
 
-Route::get('/category', function () {
-   return view('frontend.landing');
+Route::get('/categories', [CategoryListingController::class, 'listing'])->name('categories.listing');
+
+Route::get('/booking', function () {
+    return view('frontend.booking');
 });
 
 
@@ -37,7 +40,7 @@ Route::get('/admin', function () {
 
 Route::get('/form/{id}', [FormController::class, 'show'])->name('form.show');
 Route::post('/form/{id}', [FormController::class, 'store'])->name('form.store');
-// Route::get('/category/{id}', [CategoryController::class, 'show'])->name('category.show');
+Route::get('/category/{id}', [CategoryListingController::class, 'show'])->name('category.show');
 
 // Guest routes (not logged in)
 Route::middleware('guest')->group(function () {

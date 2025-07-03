@@ -31,4 +31,8 @@ class Service extends Model
         'stripe_live_secret_key',
         'payment_account'
     ];
+     public function category()
+    {
+        return $this->belongsTo(Category::class, 'category');
+    }
 }
