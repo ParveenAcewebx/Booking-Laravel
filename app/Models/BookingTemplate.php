@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,4 +14,8 @@ class BookingTemplate extends Model
         'created_by',
         'slug'
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }

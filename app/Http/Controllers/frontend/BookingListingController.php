@@ -1,24 +1,28 @@
 <?php
 
 namespace App\Http\Controllers\frontend;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
+
 use App\Http\Controllers\Controller;
-use App\Models\Booking;
+use Illuminate\Support\Facades\Auth;
+use App\Models\BookingTemplate;
+use App\Models\User;
 
 class BookingListingController extends Controller
 {
     public function listing()
     {
-        $userId = Auth::id();
-        $categories = Booking::where('status', config('constants.status.active'))
-            ->withCount('services')
-            ->get();
-        return view('frontend.categoryListing', compact('categories','userId'));
-    }
+        if (!Auth::check()) {
+            return view('frontend.bookingListing', [
+                'bookings' => BookingTemplate::all(),
+                'username' => null
+            ]);
+        }
 
-    public function show()
-    {
-        return "data";
+        $userId = Auth::id();           
+        $username = Auth::user()->name; 
+
+        $bookings = BookingTemplate::where('created_by', $username)->get();
+
+        return view('frontend.bookingListing', compact('bookings', 'userId'));
     }
 }

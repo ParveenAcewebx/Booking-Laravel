@@ -36,7 +36,7 @@
 
   @include('frontend.layouts.header')
 
-  <main class="mx-auto py-8">
+  <main class="mx-auto">
     @yield('content')
   </main>
 

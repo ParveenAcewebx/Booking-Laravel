@@ -11,6 +11,7 @@ use App\Http\Controllers\frontend\FormController;
 use App\Http\Controllers\admin\ServiceController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\frontend\CategoryListingController;
+use App\Http\Controllers\frontend\BookingListingController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,20 +28,16 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/categories', [CategoryListingController::class, 'listing'])->name('categories.listing');
-
-Route::get('/booking', function () {
-    return view('frontend.booking');
-});
-
+Route::get('/booking', [BookingListingController::class, 'listing'])->name('booking.listing');
 
 Route::get('/admin', function () {
     return redirect()->route('dashboard');
 });
 
 
-Route::get('/form/{id}', [FormController::class, 'show'])->name('form.show');
-Route::post('/form/{id}', [FormController::class, 'store'])->name('form.store');
-Route::get('/category/{id}', [CategoryListingController::class, 'show'])->name('category.show');
+Route::get('/form/{slug}', [FormController::class, 'show'])->name('form.show');
+Route::post('/form/{slug}', [FormController::class, 'store'])->name('form.store');
+Route::get('/category/{slug}', [CategoryListingController::class, 'show'])->name('category.show');
 
 // Guest routes (not logged in)
 Route::middleware('guest')->group(function () {
