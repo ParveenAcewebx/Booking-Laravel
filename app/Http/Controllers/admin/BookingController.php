@@ -28,7 +28,7 @@ class BookingController extends Controller
     protected $allUsers;
     public function __construct()
     {
-        $this->allUsers = User::all();
+        $this->allUsers = User::role('Staff')->get();
     }
 
     public function index(Request $request)
