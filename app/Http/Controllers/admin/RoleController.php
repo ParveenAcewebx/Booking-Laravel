@@ -35,10 +35,8 @@ class RoleController extends Controller
     {
         $loginId = session('previous_login_id');
         $loginUser = $loginId ? User::find($loginId) : null;
-
         if ($request->ajax()) {
-            $roles = Role::with('permissions')->select('id', 'name', 'status');
-
+            $roles = Role::with(['permissions', 'users'])->select('id', 'name', 'status');
             return DataTables::of($roles)
                 ->addIndexColumn()
                 ->addColumn('permissions', function ($role) {
@@ -73,13 +71,21 @@ class RoleController extends Controller
                     }
 
                     if (auth()->user()->can('delete roles')) {
-                        $btn .= '<form action="' . route('roles.delete', $role->id) . '" method="POST" id="delete-role-' . $role->id . '" style="display:inline;">
-                                    ' . csrf_field() . '
-                                    <input type="hidden" name="_method" value="DELETE">
-                                    <button type="button" onclick="deleteRole(' . $role->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Role">
+                        if ($role->users->count() == 0) {
+                            // show delete button only if no users assigned
+                            $btn .= '<form action="' . route('roles.delete', $role->id) . '" method="POST" id="delete-role-' . $role->id . '" style="display:inline;">
+                                        ' . csrf_field() . '
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="button" onclick="deleteRole(' . $role->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Role">
+                                            <i class="feather icon-trash-2"></i>
+                                        </button>
+                                    </form>';
+                        } else {
+                            // optional: show disabled button with tooltip
+                            $btn .= '<button type="button" class="btn btn-icon btn-secondary" data-toggle="tooltip" title="Cannot delete: role assigned to users" disabled>
                                         <i class="feather icon-trash-2"></i>
-                                    </button>
-                                </form>';
+                                    </button>';
+                        }
                     }
 
                     return $btn;
@@ -87,7 +93,6 @@ class RoleController extends Controller
                 ->rawColumns(['permissions', 'status', 'action'])
                 ->make(true);
         }
-
         return view('role.index', compact('loginUser'));
     }
 
