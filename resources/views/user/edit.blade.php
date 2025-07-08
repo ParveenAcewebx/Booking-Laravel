@@ -117,25 +117,31 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <!-- Phone Number -->
+                                    <!-- Phone Number -->                                    
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="form-label">Phone Number</label>
-                                            <input type="text"
-                                                class="form-control"
-                                                name="phone_number"
-                                                value="{{ old('phone_number', $user->phone_number) }}"
-                                                placeholder="Enter Phone Number"
-                                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                                maxlength="10"
-                                                required>
+                                            <div class="input-group">
+                                                <select class="form-select" id="country-select" style="max-width: 200px;">
+                                                    @foreach($phoneCountries as $country)
+                                                        <option value="{{ $country['code'] }}"
+                                                            @if(
+                                                            (!old('phone_number', $user->phone_number ?? null) && $country['code'] == '+91') ||
+                                                            (old('phone_number', $user->phone_number ?? null) && Str::startsWith(old('phone_number', $user->phone_number ?? null), $country['code']))
+                                                            ) selected @endif>
+                                                            {{ $country['flag'] }} {{ $country['name'] }} ({{ $country['code'] }})
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                <input type="text" class="form-control" id="phone_number" name="phone_number"
+                                                    placeholder="Enter phone number"
+                                                    value="{{ old('phone_number', $user->phone_number ?? null) }}" required>
+                                            </div>
                                             @error('phone_number')
-                                            <div class="error text-danger mt-1">{{ $message }}</div>
+                                                <div class="error">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
-
-
                                     <!-- Role -->
                                     @php
                                     $hideFields = Str::contains(request()->path(), 'profile') && Auth::check() && Auth::id() == $user->id;
