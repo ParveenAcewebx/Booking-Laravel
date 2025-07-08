@@ -13,6 +13,7 @@ class Category extends Model
         'slug',
         'created_at',
         'status',
+        'thumbnail',
     ];
     public function services()
     {

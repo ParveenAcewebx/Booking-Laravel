@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        <form action="{{ route('category.store') }}" method="POST">
+        <form action="{{ route('category.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="card">
                 <div class="card-header">
@@ -49,15 +49,27 @@
                                 </span>
                                 @enderror
                             </div>
-
-
                             <div class="custom-control custom-checkbox mt-2">
                                 <input type="checkbox" name="status" value="1" class="custom-control-input" id="status" checked>
                                 <label class="custom-control-label" for="status">Active</label>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Thumbnail</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Upload</span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" name="thumbnail" id="thumbnail">
+                                    <label class="custom-file-label" for="thumbnail">Choose file</label>
+                                </div>
+                            </div>
+                            @error('thumbnail')
+                            <div class="error">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
-
                     <div class="row mt-4">
                         <div class="col-md-12 text-left">
                             <button type="submit" class="btn btn-primary">Save</button>
