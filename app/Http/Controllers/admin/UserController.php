@@ -129,7 +129,11 @@ class UserController extends Controller
             'password' => 'required|min:6|confirmed',
             'role' => 'required',
             'status' => 'nullable|boolean',
+            'code' => 'required',
+            'phone_number' => 'required'
         ]);
+
+        $fullPhoneNumber = $request->code . $request->phone_number;
 
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
@@ -141,7 +145,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'avatar' => $avatarPath,
-            'phone_number' => $request->phone_number,
+            'phone_number' => $fullPhoneNumber,
             'status' => $request->has('status') ? config('constants.status.active') : config('constants.status.inactive'),
         ]);
 
@@ -192,7 +196,6 @@ class UserController extends Controller
 
     public function userUpdate(Request $request, $id = null)
     {
-
         if ($id == null) {
             $id = Auth::id();
         }
@@ -201,43 +204,40 @@ class UserController extends Controller
             'username' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'nullable|min:6|confirmed',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'code' => 'required',
+            'phone_number' => 'required'
         ]);
 
         $user = User::findOrFail($id);
 
-        // Handle avatar upload
         $avatarPath = $user->avatar;
         if ($request->hasFile('avatar')) {
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
         }
 
-
         $status = $request->has('status') ? config('constants.status.active') : config('constants.status.inactive');
-        // Update user basic fields
+        $fullPhoneNumber = $request->code . $request->phone_number;
+
         $user->update([
             'name' => $request->username,
             'email' => $request->email,
-            'phone_number' => $request->phone_number,
+            'phone_number' => $fullPhoneNumber,
             'avatar' => $avatarPath,
             'status' => $status,
         ]);
 
-        // Update password if provided
         if ($request->password) {
             $user->update([
                 'password' => bcrypt($request->password)
             ]);
         }
 
-        // Update role
         $userRole = Role::find($request->role);
-        $user->roles()->detach();
-        $user->assignRole($userRole);
+        $user->roles()->sync([$userRole->id]);
 
         return back()->with('success', 'User Updated Successfully.');
     }
-
 
     public function userDelete($id)
     {

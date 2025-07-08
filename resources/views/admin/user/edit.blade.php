@@ -122,14 +122,14 @@
                                         <div class="form-group">
                                             <label class="form-label">Phone Number</label>
                                             <div class="input-group">
-                                                <select class="form-select" id="country-select" style="max-width: 200px;">
+                                                <select class="form-control" id="country-select" name="code" style="max-width: 100px;">
                                                     @foreach($phoneCountries as $country)
                                                         <option value="{{ $country['code'] }}"
                                                             @if(
-                                                            (!old('phone_number', $user->phone_number ?? null) && $country['code'] == '+91') ||
-                                                            (old('phone_number', $user->phone_number ?? null) && Str::startsWith(old('phone_number', $user->phone_number ?? null), $country['code']))
+                                                                (!old('phone_number', $user->phone_number ?? null) && $country['code'] == '+91') ||
+                                                                (old('phone_number', $user->phone_number ?? null) && Str::startsWith(old('phone_number', $user->phone_number ?? null), $country['code']))
                                                             ) selected @endif>
-                                                            {{ $country['flag'] }} {{ $country['name'] }} ({{ $country['code'] }})
+                                                            {{ $country['code'] }}
                                                         </option>
                                                     @endforeach
                                                 </select>
