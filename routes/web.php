@@ -12,6 +12,7 @@ use App\Http\Controllers\admin\ServiceController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\frontend\CategoryListingController;
 use App\Http\Controllers\frontend\BookingListingController;
+use App\Http\Controllers\admin\StaffController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes

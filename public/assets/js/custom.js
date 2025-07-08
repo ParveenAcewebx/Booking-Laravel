@@ -1113,6 +1113,7 @@ $(function () {
         { selector: ".cancelling_value" },
         { selector: ".appointment_status" },
         { selector: ".payment_mode" },
+        { selector: ".select2" },
     ];
 
     select2Fields.forEach((field) => {
@@ -1123,5 +1124,3 @@ $(function () {
         });
     });
 });
-
-

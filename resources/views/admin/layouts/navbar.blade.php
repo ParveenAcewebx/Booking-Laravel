@@ -113,7 +113,7 @@
                             @can('view categories')
                             <li><a href="{{ route('category.list') }}">Categories</a></li>
                             @endcan
-                             @can('view staff')
+                             @can('view staffs')
                             <li><a href="{{ route('staff.list') }}">Staffs</a></li>
                             @endcan
                         </ul>
