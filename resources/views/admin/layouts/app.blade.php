@@ -37,10 +37,11 @@
 
     <div id="app">
         <!-- Header -->
-        @include('layouts.header')
+        @include('admin.layouts.header')
 
         <!-- Side nav bar -->
-        @include('layouts.navbar')
+        @include('admin.layouts.navbar')
+
 
         <!-- all contents -->
         @yield('content')

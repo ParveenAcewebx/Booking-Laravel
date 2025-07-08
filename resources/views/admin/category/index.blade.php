@@ -1,7 +1,6 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
 @section('content')
-
 <div class="pcoded-main-container">
     <div class="pcoded-content">
         <div class="page-header">
@@ -9,37 +8,35 @@
                 <div class="row align-items-center">
                     <div class="col-md-10">
                         <div class="page-header-title">
-                            <h5>All Booking Templates</h5>
+                            <h5>All Categories</h5>
                         </div>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="feather icon-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('template.list') }}">Booking Template</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('template.list') }}">All Booking Templates</a></li>
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('dashboard') }}">
+                                    <i class="feather icon-home"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item"><a href="{{ route('category.list') }}">Categories</a></li>
+                            <li class="breadcrumb-item">All Categories</li>
                         </ul>
                     </div>
                     <div class="col-md-2">
-                        <div class="page-header-titles float-right">
-                            @can('create forms')
-                            <a href="{{ route('template.add') }}" class="btn btn-primary float-right p-2">Add Form</a>
-                            @endcan
-                        </div>
+                        <a href="{{ route('category.create') }}" class="btn btn-primary float-right p-2">Add Category</a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Main Content -->
         <div class="row">
             <div class="col-lg-12">
                 <div class="card user-profile-list">
                     <div class="card-body">
                         <div class="dt-responsive">
-                            <table class="table table-striped nowrap" id="booking-templates-table" width="100%">
+                            <table class="table table-striped nowrap" id="categories-table" width="100%">
                                 <thead>
                                     <tr>
-                                        <th style="display:none;">ID</th> {{-- Hidden but sortable --}}
-                                        <th>Name</th>
-                                        <th>Created By</th>
+                                        <th style="display:none;">ID</th>
+                                        <th>Category Name</th>
                                         <th>Created Date</th>
                                         <th>Status</th>
                                         <th>Actions</th>
@@ -58,24 +55,18 @@
 
 <script type="text/javascript">
     $(function() {
-        $('#booking-templates-table').DataTable({
+        $('#categories-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('template.list') }}",
+            ajax: "{{ route('category.list') }}",
             columns: [{
                     data: 'id',
                     name: 'id',
                     visible: false
-                }, 
-                {
-                    data: 'template_name',
-                    name: 'template_name',
-                    orderable: true,
-                    searchable: true
                 },
                 {
-                    data: 'created_by',
-                    name: 'created_by'
+                    data: 'category_name',
+                    name: 'category_name'
                 },
                 {
                     data: 'created_at',
@@ -96,11 +87,11 @@
             ],
             order: [
                 [0, 'desc']
-            ], 
+            ],
             lengthMenu: [
                 [10, 25, 50, 100],
                 [10, 25, 50, 100]
-            ],
+            ]
         });
         toastr.options = {
             "closeButton": true,
@@ -127,5 +118,4 @@
         @endif
     });
 </script>
-
 @endsection

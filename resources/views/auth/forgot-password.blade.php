@@ -1,4 +1,4 @@
-@extends('layouts.public')
+@extends('admin.layouts.public')
 
 @section('content')
 <!-- [ auth-signin ] start -->

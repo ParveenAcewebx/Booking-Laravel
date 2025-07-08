@@ -96,7 +96,7 @@ class BookingController extends Controller
                 ->make(true);
         }
 
-        return view('booking.index', compact('loginUser'));
+        return view('admin.booking.index', compact('loginUser'));
     }
 
 
@@ -107,7 +107,7 @@ class BookingController extends Controller
         $loginId = session('previous_login_id');
         $loginUser = $loginId ? User::find($loginId) : null;
 
-        return view('booking.add', [
+        return view('admin.booking.add', [
             'alltemplates' => $alltemplates,
             'allusers' => $allusers,
             'alluser' => $allusers,
@@ -173,7 +173,7 @@ class BookingController extends Controller
         $loginId = session('previous_login_id');
         $loginUser = $loginId ? User::find($loginId) : null;
 
-        return view('booking.edit', [
+        return view('admin.booking.edit', [
             'booking' => $booking,
             'dynamicFieldHtml' => $dynamicFieldHtml,
             'staffList' => $this->allUsers,

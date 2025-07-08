@@ -1,4 +1,4 @@
-@extends('layouts.front')
+@extends('frontend.layouts.app')
 
 @section('content')
 <div class="container py-5">

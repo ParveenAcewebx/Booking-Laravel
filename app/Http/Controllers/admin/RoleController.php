@@ -93,7 +93,7 @@ class RoleController extends Controller
                 ->rawColumns(['permissions', 'status', 'action'])
                 ->make(true);
         }
-        return view('role.index', compact('loginUser'));
+        return view('admin.role.index', compact('loginUser'));
     }
 
     public function roleAdd()
@@ -104,7 +104,7 @@ class RoleController extends Controller
         $loginId = session('previous_login_id');
         $loginUser = $loginId ? User::find($loginId) : null;
 
-        return view('role.add', compact('roleGroups', 'permissions', 'loginUser'));
+        return view('admin.role.add', compact('roleGroups', 'permissions', 'loginUser'));
     }
 
     public function store(Request $request)
@@ -143,7 +143,7 @@ class RoleController extends Controller
         $roleGroups = config('constants.role_groups');
         $permissions = Permission::all();
 
-        return view('role.edit', compact('role', 'roleGroups', 'rolePermissions', 'permissions', 'loginUser'));
+        return view('admin.role.edit', compact('role', 'roleGroups', 'rolePermissions', 'permissions', 'loginUser'));
     }
 
     public function roleUpdate(Request $request, $id)

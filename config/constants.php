@@ -13,6 +13,15 @@ return [
         'on_site' => 'site',
         'stripe' => 'stripe',
     ],
+    'week_days' => [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday',
+    ],
     'role_groups' => [
         'users' => [
             'name' => "Users",
@@ -43,6 +52,11 @@ return [
             'name' => "Categories",
             'slug' => 'categories',
             'roles' => ['view categories', 'create categories', 'edit categories', 'delete categories']
+        ],
+        'staffs' => [
+            'name' => "Staffs",
+            'slug' => 'staffs',
+            'roles' => ['view staffs', 'create staffs', 'edit staffs', 'delete staffs']
         ],
     ],
     'currencies' => [

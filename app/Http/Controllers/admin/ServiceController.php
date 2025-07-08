@@ -62,7 +62,7 @@ class ServiceController extends Controller
                 ->make(true);
         }
 
-        return view('service.index');
+        return view('admin.service.index');
     }
 
     public function serviceAdd(Request $request)
@@ -72,7 +72,7 @@ class ServiceController extends Controller
         $defaultStatus = config('constants.status');
         $currencies = config('constants.currencies');
         $appointmentStats = config('constants.appointment_status');
-        return view('service.add', compact('categories', 'staffUsers', 'defaultStatus', 'currencies', 'appointmentStats'));
+        return view('admin.service.add', compact('categories', 'staffUsers', 'defaultStatus', 'currencies', 'appointmentStats'));
     }
 
     public function servicestore(Request $request)
@@ -149,7 +149,7 @@ class ServiceController extends Controller
         $appointmentStats = config('constants.appointment_status');
         $statuses = config('constants.status');
 
-        return view('service.edit', compact(
+        return view('admin.service.edit', compact(
             'service',
             'categories',
             'staffUsers',

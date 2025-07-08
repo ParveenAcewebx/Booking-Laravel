@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 @section('content')
 <!-- [ Main Content ] start -->
 <div class="pcoded-main-container">

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\admin;
+
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\form;
@@ -100,7 +101,7 @@ class UserController extends Controller
                 ->make(true);
         }
 
-        return view('user.index', compact('loginUser'));
+        return view('admin.user.index', compact('loginUser'));
     }
 
 
@@ -117,7 +118,7 @@ class UserController extends Controller
             $loginUser = User::find($loginId);
         }
 
-        return view('user.add', compact('allRoles', 'allusers', 'originalUserId', 'loginUser', 'phoneCountries'));
+        return view('admin.user.add', compact('allRoles', 'allusers', 'originalUserId', 'loginUser', 'phoneCountries'));
     }
 
     public function userSave(Request $request)
@@ -178,7 +179,7 @@ class UserController extends Controller
             $currentRole = $roles[0]->id;
         }
 
-        return view('user.edit', [
+        return view('admin.user.edit', [
             'user' => $user,
             'allRoles' => Role::where('status', 1)->get(),
             'allusers' => $allusers,
@@ -219,7 +220,7 @@ class UserController extends Controller
             'email' => $request->email,
             'phone_number' => $request->phone_number,
             'avatar' => $avatarPath,
-            'status' => $status, 
+            'status' => $status,
         ]);
 
         // Update password if provided
@@ -270,26 +271,23 @@ class UserController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $user = Auth::user();
-
-            if ($user->status != 1 && $user->hasRole('Admin')) {
+            if ($user->status != 1 && $user->hasRole('Administrator')) {
                 Auth::logout();
                 return redirect('/login')->with('error', 'Your account is inactive. Please contact support.');
-            }
-
-            if ($user->hasRole('Customer') ) { 
+            } elseif ($user->hasRole('Administrator') && $user->status == 1) {
+                return redirect()->intended('/dashboard');
+            } elseif ($user->hasRole('Customer') && $user->status == 0) {
                 Auth::logout();
                 return redirect('/login')->with('error', 'You do not have permissions to access this area.');
+            } else {
+                return redirect('/');
             }
 
             session(['previous_login_id' => $user->id]);
-            return redirect()->intended('/');
         }
 
         return redirect('/login')->with('error', 'Invalid credentials. Please try again.');
     }
-
-
-
 
     public function showRegistrationForm()
     {

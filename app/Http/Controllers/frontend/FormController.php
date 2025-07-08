@@ -17,7 +17,7 @@ class FormController extends Controller
     {
         $template = BookingTemplate::where('slug', $slug)->firstOrFail();
         $formHtml = FormHelper::renderDynamicFieldHTML($template->data);
-        return view('form.show', compact('formHtml', 'template'));
+        return view('frontend.form.show', compact('formHtml', 'template'));
     }
 
     public function store(Request $request, $id)

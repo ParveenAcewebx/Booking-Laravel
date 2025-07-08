@@ -144,6 +144,22 @@ Route::middleware('auth')->group(function () {
         Route::delete('/category/{category}', [CategoryController::class, 'destroy'])->name('category.destroy');
     });
 
+    Route::middleware('permission:view staffs')->group(function () {
+        Route::get('/staff', [StaffController::class, 'index'])->name('staff.list');
+    });
+    Route::middleware('permission:create staffs')->group(function () {
+        Route::get('/staff/create', [StaffController::class, 'create'])->name('staff.create');
+        Route::post('/staff/store', [StaffController::class, 'store'])->name('staff.store');
+    });
+    Route::middleware('permission:edit staffs')->group(function () {
+        Route::get('/staff/{staff}/edit', [StaffController::class, 'edit'])->name('staff.edit');
+        Route::put('/staff/{staff}', [StaffController::class, 'update'])->name('staff.update');
+    });
+    Route::middleware('permission:delete staffs')->group(function () {
+        Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->name('staff.destroy');
+    });
+
+
     Route::get('/profile', [UserController::class, 'userEdit'])->name('profile');
     Route::post('/user/{id}/update', [UserController::class, 'userUpdate'])->name('user.update');
     // General routes (dashboard, logout, etc.)

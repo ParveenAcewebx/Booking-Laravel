@@ -38,6 +38,6 @@ class DashboardController extends Controller
         if ($loginId) {
             $loginUser = User::find($loginId);  
         }
-        return view('layouts.dashboard', ['allusers' => $allusers,'bookingForms'=>$bookingForms,'bookings'=>$bookings,'loginUser'=>$loginUser,'services'=>$services]);
+        return view('admin.layouts.dashboard', ['allusers' => $allusers,'bookingForms'=>$bookingForms,'bookings'=>$bookings,'loginUser'=>$loginUser,'services'=>$services]);
     }
 }

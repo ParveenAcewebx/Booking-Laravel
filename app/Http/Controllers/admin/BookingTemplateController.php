@@ -73,7 +73,7 @@ class BookingTemplateController extends Controller
                 ->make(true);
         }
 
-        return view('booking-template.index', compact('loginUser'));
+        return view('admin.booking-template.index', compact('loginUser'));
     }
 
     public function templateSave(Request $request)
@@ -129,7 +129,7 @@ class BookingTemplateController extends Controller
         if ($loginId) {
             $loginUser = User::find($loginId);
         }
-        return view('booking-template.edit', ['templates' => $template, 'allusers' => $allusers, 'loginUser' => $loginUser]);
+        return view('admin.booking-template.edit', ['templates' => $template, 'allusers' => $allusers, 'loginUser' => $loginUser]);
     }
 
     public function templateAdd()
@@ -141,6 +141,6 @@ class BookingTemplateController extends Controller
         if ($loginId) {
             $loginUser = User::find($loginId);
         }
-        return view('booking-template.add', compact('allusers', 'loginUser'));
+        return view('admin.booking-template.add', compact('allusers', 'loginUser'));
     }
 }
