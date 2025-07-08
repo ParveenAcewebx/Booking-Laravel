@@ -1124,20 +1124,4 @@ $(function () {
     });
 });
 
-// Country Code Phone Number
-document.addEventListener('DOMContentLoaded', function() {
-    const countrySelect = document.getElementById('country-select');
-    const phoneInput = document.getElementById('phone_number');
-
-    // when user changes country
-    countrySelect.addEventListener('change', function() {
-        phoneInput.value = this.value;
-    });
-
-    // only set initial code if phone input is empty
-    if (!phoneInput.value) {
-        phoneInput.value = countrySelect.value;
-    }
-});
-
 
