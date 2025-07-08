@@ -75,12 +75,21 @@ class CategoryController extends Controller
     {
         $request->validate([
             'category_name' => 'required|string|max:255|unique:categories,category_name',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        $thumbnailPath = null;
+
+        if ($request->hasFile('thumbnail')) {
+            $thumbnailPath = $request->file('thumbnail')->store('cat-thumbnails', 'public');
+        }
         Category::create([
             'category_name' => $request->category_name,
             'slug' => Str::uuid(),
+            'thumbnail' => $thumbnailPath,
             'status' => $request->status ?? 0,
         ]);
+
         return redirect()->route('category.list')->with('success', 'Category Created Successfully.');
     }
 
@@ -94,16 +103,25 @@ class CategoryController extends Controller
         $request->validate([
             'category_name' => 'required|string|max:255',
             'status' => 'required|in:' . config('constants.status.active') . ',' . config('constants.status.inactive'),
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $category->update([
+        $data = [
             'category_name' => $request->category_name,
             'status' => $request->status,
             'slug' => $category->slug ?? Str::uuid(),
-        ]);
+        ];
+
+        if ($request->hasFile('thumbnail')) {
+            // Optionally delete old file here if you want
+            $data['thumbnail'] = $request->file('thumbnail')->store('cat-thumbnails', 'public');
+        }
+
+        $category->update($data);
 
         return redirect()->route('category.list')->with('success', 'Category Updated Successfully.');
     }
+
 
     public function destroy(Category $category)
     {
