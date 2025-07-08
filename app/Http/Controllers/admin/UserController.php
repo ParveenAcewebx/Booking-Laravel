@@ -110,13 +110,14 @@ class UserController extends Controller
         $allusers = $this->allUsers;
         $originalUserId = $this->originalUserId;
         $loginId = session('previous_login_id');
+        $phoneCountries = config('phone_countries');
         $loginUser = null;
 
         if ($loginId) {
             $loginUser = User::find($loginId);
         }
 
-        return view('user.add', compact('allRoles', 'allusers', 'originalUserId', 'loginUser'));
+        return view('user.add', compact('allRoles', 'allusers', 'originalUserId', 'loginUser', 'phoneCountries'));
     }
 
     public function userSave(Request $request)
@@ -160,6 +161,7 @@ class UserController extends Controller
         }
         $user = User::findOrFail($id);
         $user->unsetRelation('roles')->unsetRelation('permissions');
+        $phoneCountries = config('phone_countries');
         $roles = $user->roles;
         $currentRole = null;
 
@@ -182,6 +184,7 @@ class UserController extends Controller
             'allusers' => $allusers,
             'currentRole' => $currentRole,
             'originalUserId' => $originalUserId,
+            'phoneCountries' => $phoneCountries,
             'loginUser' => $loginUser
         ]);
     }
