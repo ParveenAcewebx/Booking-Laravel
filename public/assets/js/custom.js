@@ -591,7 +591,7 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 const selectedOption =
                     bookingTemplateList.options[
-                        bookingTemplateList.selectedIndex
+                    bookingTemplateList.selectedIndex
                     ];
                 if (templateError) templateError.style.display = "none";
                 if (bookingtemplateid)
@@ -954,16 +954,14 @@ function updateCancellingValueOptions(unit, selectedValue = null) {
     if (unit === "hours") {
         for (let i = 1; i <= 24; i++) {
             $select.append(
-                `<option value="${i}" ${
-                    parseInt(selectedValue) === i ? "selected" : ""
+                `<option value="${i}" ${parseInt(selectedValue) === i ? "selected" : ""
                 }>${i}</option>`
             );
         }
     } else if (unit === "days") {
         for (let i = 1; i <= 365; i++) {
             $select.append(
-                `<option value="${i}" ${
-                    parseInt(selectedValue) === i ? "selected" : ""
+                `<option value="${i}" ${parseInt(selectedValue) === i ? "selected" : ""
                 }>${i}</option>`
             );
         }
@@ -1113,7 +1111,10 @@ $(function () {
         { selector: ".cancelling_value" },
         { selector: ".appointment_status" },
         { selector: ".payment_mode" },
-        { selector: ".select2" },
+        { selector: ".select_role" },
+        { selector: ".select2_working_days" },
+        { selector: ".select_start_time" },
+        { selector: ".select_end_time" }
     ];
 
     select2Fields.forEach((field) => {
@@ -1121,6 +1122,97 @@ $(function () {
             theme: "bootstrap",
             placeholder: field.placeholder || "Select",
             width: "100%",
+        });
+    });
+});
+
+
+
+$(document).ready(function () {
+
+    // Toggle chevron icons on collapse show/hide
+    $('#workingHoursAccordion')
+        .on('show.bs.collapse', function (e) {
+            const targetId = $(e.target).attr('id');
+            $(this).find(`[data-target="#${targetId}"] i`)
+                .removeClass('icon-chevron-down')
+                .addClass('icon-chevron-up');
+        })
+        .on('hide.bs.collapse', function (e) {
+            const targetId = $(e.target).attr('id');
+            $(this).find(`[data-target="#${targetId}"] i`)
+                .removeClass('icon-chevron-up')
+                .addClass('icon-chevron-down');
+        });
+
+    // Disable end time options before or equal to start time
+    $('select[name^="working_days"][name$="[start]"]').on('change', function () {
+        const selectedStart = this.value;
+        const parent = $(this).closest('.d-flex');
+        const $endSelect = parent.find('select[name^="working_days"][name$="[end]"]');
+
+        if (!$endSelect.length) return;
+
+        const [startHour, startMinute] = selectedStart.split(':').map(Number);
+        const startMinutes = startHour * 60 + startMinute;
+
+        $endSelect.find('option').each(function () {
+            const [optHour, optMinute] = this.value.split(':').map(Number);
+            const optMinutes = optHour * 60 + optMinute;
+            this.disabled = optMinutes <= startMinutes;
+        });
+
+        if ($endSelect.val() && $endSelect.find('option:selected').prop('disabled')) {
+            $endSelect.prop('selectedIndex', 0);
+        }
+    });
+
+    // Apply/Reset Monday values to all days
+    $('.apply-to-all-days').on('change', function () {
+        const isChecked = this.checked;
+        const $sourceCard = $(this).closest('.card-body');
+
+        const startTime = $sourceCard.find('.start-time').val() || '00:00';
+        const endTime = $sourceCard.find('.end-time').val() || '00:00';
+        const services = $sourceCard.find('.service-select').val();
+
+        $('.card-body').each(function () {
+            const $this = $(this);
+            if ($this.is($sourceCard)) return;
+
+            if (isChecked) {
+                $this.find('.start-time').val(startTime).trigger('change');
+                $this.find('.end-time').val(endTime).trigger('change');
+                $this.find('.service-select').val(services).trigger('change');
+            } else {
+                $this.find('.start-time').val('00:00').trigger('change');
+                $this.find('.end-time').val('00:00').trigger('change');
+                $this.find('.service-select').val([]).trigger('change');
+            }
+        });
+    });
+
+
+    // Add day off dynamically
+    $('#addDayOffBtn').on('click', function () {
+        const template = $('#dayOffTemplate').html();
+        const uniqueId = Math.floor(Math.random() * 1000000);
+        const html = template.replace(/__RANDOM__/g, uniqueId);
+        const $entry = $(html);
+
+        $('#dayOffRepeater').append($entry);
+
+        $entry.find('.select2-days').select2({
+            theme: 'bootstrap'
+        });
+
+        $entry.find('.date-range-picker').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                format: 'MMMM D, YYYY'
+            }
+        }).on('apply.daterangepicker', function (ev, picker) {
+            $(this).val(picker.startDate.format('MMMM D, YYYY') + ' - ' + picker.endDate.format('MMMM D, YYYY'));
         });
     });
 });

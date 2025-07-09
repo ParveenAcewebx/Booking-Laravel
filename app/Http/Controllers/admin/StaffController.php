@@ -13,6 +13,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class StaffController extends Controller
 {
+    protected $allUsers;
+
+    public function __construct()
+    {
+        $this->allUsers = User::all();
+    }
+
     public function index(Request $request)
     {
         $loginId = session('previous_login_id');
@@ -43,14 +50,14 @@ class StaffController extends Controller
                 ->addColumn('action', function ($row) use ($currentUser) {
                     $btn = '';
 
-                    if ($currentUser->can('edit users')) {
+                    if ($currentUser->can('edit staffs')) {
                         $btn .= '<a href="' . route('staff.edit', [$row->id]) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit User">
                             <i class="fas fa-pencil-alt"></i>
                          </a> ';
                     }
 
-                    if ($currentUser->can('delete users') && Auth::id() != $row->id) {
-                        $btn .= '<form action="' . route('staff.destroy', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">
+                    if ($currentUser->can('delete staffs') && Auth::id() != $row->id) {
+                        $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">
                             ' . csrf_field() . '
                             <input type="hidden" name="_method" value="DELETE">
                             <button type="button" onclick="return deleteUser(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete User">
@@ -71,10 +78,11 @@ class StaffController extends Controller
     public function create()
     {
         $roles = Role::all();
+        $weekDays = config('constants.week_days');
         $phoneCountries = collect(config('phone_countries'))->unique('code')->values();
         $services = Service::with('category')->get();
 
-        return view('admin.staff.add', compact('roles', 'services', 'phoneCountries'));
+        return view('admin.staff.add', compact('roles', 'services', 'phoneCountries', 'weekDays' ));
     }
 
     public function store(Request $request)
@@ -150,5 +158,18 @@ class StaffController extends Controller
         $staff->syncRoles([$role->name]);
 
         return redirect()->route('staff.list')->with('success', 'Staff Updated Successfully!');
+    }
+
+    public function destroy($id)
+    {
+        $user = User::find($id);
+        $authuser_id = Auth::user()->id;
+        $username = $user->name;
+        if ($authuser_id != $id) {
+            $user->delete();
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => 'login', 'message' => 'Item not found']);
+        }
     }
 }
