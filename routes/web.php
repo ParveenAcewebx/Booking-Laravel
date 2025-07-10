@@ -36,6 +36,7 @@ Route::get('/admin', function () {
 });
 
 
+
 Route::get('/form/{slug}', [FormController::class, 'show'])->name('form.show');
 Route::post('/form/{slug}', [FormController::class, 'store'])->name('form.store');
 // Route::get('/category/{slug}', [CategoryListingController::class, 'show'])->name('category.show');
@@ -52,7 +53,7 @@ Route::middleware('guest')->group(function () {
     Route::post('password/reset', [UserController::class, 'reset'])->name('password.update');
 });
 // Authenticated routes
-Route::middleware('auth')->group(function () {
+Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('/{id}/switch', [UserController::class, 'switchUser'])->name('user.switch');
     Route::post('/switch-back', [UserController::class, 'switchBack'])->name('user.switch.back');
     Route::get('/booking/load-template-html/{id}', [BookingController::class, 'loadTemplateHTML']);

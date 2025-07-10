@@ -481,11 +481,11 @@ jQuery(function ($) {
             };
 
             $.ajax({
-                url: "/template/save",
+                url: "/admin/template/save",
                 method: "POST",
                 data: templateData,
                 success: function () {
-                    window.location.href = window.location.origin + "/template";
+                    window.location.href = window.location.origin + "/admin/template";
                 },
                 error: function (xhr) {
                     console.error(xhr.responseText);
@@ -625,7 +625,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const bookingtemplateid = selectedOption.dataset.id;
 
-            fetch(`/booking/load-template-html/${bookingtemplateid}`)
+            fetch(`/admin/booking/load-template-html/${bookingtemplateid}`)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error("Template fetch failed.");

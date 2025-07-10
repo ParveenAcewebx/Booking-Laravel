@@ -153,7 +153,7 @@ class BookingController extends Controller
         ]);
 
         return $booking
-            ? redirect('/bookings')->with('success', 'Booking Added Successfully.')
+            ? redirect('/admin/bookings')->with('success', 'Booking Added Successfully.')
             : redirect()->back()->with('error', 'It failed. Please try again.');
     }
 
