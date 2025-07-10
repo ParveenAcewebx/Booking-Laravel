@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Service;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
+use App\Models\StaffAssociation;
 
 class ServiceController extends Controller
 {
@@ -23,7 +24,7 @@ class ServiceController extends Controller
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
-            $services = Service::all();
+            $services = Service::with('staffAssociations')->get();
 
             return DataTables::of($services)
                 ->addColumn('status', function ($row) {
@@ -37,17 +38,19 @@ class ServiceController extends Controller
                     return $row->description;
                 })
                 ->addColumn('staff_member', function ($row) {
-                    $staffIds = json_decode($row->staff_member, true) ?? [];
-                    $staff = User::whereIn('id', $staffIds)->pluck('name')->toArray();
-                    return implode(', ', $staff);
+                    // Get staff IDs from staff_associations
+                    $staffIds = $row->staffAssociations->pluck('staff_member')->toArray();
+                    // Fetch user names
+                    $staffNames = User::whereIn('id', $staffIds)->pluck('name')->toArray();
+                    return implode(', ', $staffNames);
                 })
                 ->addColumn('action', function ($row) {
                     $btn = '';
 
                     if (auth()->user()->can('edit services')) {
                         $btn .= '<a href="' . route('service.edit', $row->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit Service">
-                                <i class="fas fa-pencil-alt"></i>
-                            </a> ';
+                            <i class="fas fa-pencil-alt"></i>
+                        </a> ';
                     }
 
                     if (auth()->user()->can('delete services')) {
@@ -136,13 +139,21 @@ class ServiceController extends Controller
         $data['staff_member'] = json_encode($request->input('staff_member', []));
         $data['payment__is_live'] = $request->has('payment__is_live') ? 1 : 0;
 
-        Service::create($data);
+        $service = Service::create($data);
+        $lastServiceId = $service->id;
+        $staffMembers = $request->input('staff_member', []);
+        foreach ($staffMembers as $staffId) {
+            StaffAssociation::create([
+                'service_id' => $lastServiceId,
+                'staff_member' => $staffId
+            ]);
+        }
         return redirect()->route('service.list')->with('success', 'Service Created Successfully');
     }
 
-
     public function destroy(Service $service)
     {
+        StaffAssociation::where('service_id', $service->id)->delete();
         $service->delete();
         return response()->json(['success' => true]);
     }
@@ -157,6 +168,8 @@ class ServiceController extends Controller
         $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
 
+        $associatedStaffIds = $service->staffAssociations()->pluck('staff_member')->toArray();
+
         return view('admin.service.edit', compact(
             'service',
             'categories',
@@ -164,10 +177,10 @@ class ServiceController extends Controller
             'currencies',
             'appointmentStats',
             'statuses',
-            'loginUser'
+            'loginUser',
+            'associatedStaffIds'
         ));
     }
-
 
     public function serviceUpdate(Request $request, $id)
     {
@@ -202,20 +215,22 @@ class ServiceController extends Controller
 
         $service = Service::findOrFail($id);
 
-        $service->name = $request->name;
-        $service->description = $request->description;
-        $service->category = $request->category;
-        $service->duration = $request->duration;
-        $service->status = $request->status;
-        $service->price = $request->price;
-        $service->currency = $request->currency;
-        $service->appointment_status = $request->appointment_status;
-        $service->cancelling_unit = $request->cancelling_unit;
-        $service->cancelling_value = $request->cancelling_value;
-        $service->redirect_url = $request->redirect_url;
-        $service->payment_mode = $request->payment_mode;
-        $service->payment_account = $request->payment_account;
-        $service->payment__is_live = $request->has('payment__is_live') ? 1 : 0;
+        $service->fill([
+            'name'                  => $request->name,
+            'description'           => $request->description,
+            'category'              => $request->category,
+            'duration'              => $request->duration,
+            'status'                => $request->status,
+            'price'                 => $request->price,
+            'currency'              => $request->currency,
+            'appointment_status'    => $request->appointment_status,
+            'cancelling_unit'       => $request->cancelling_unit,
+            'cancelling_value'      => $request->cancelling_value,
+            'redirect_url'          => $request->redirect_url,
+            'payment_mode'          => $request->payment_mode,
+            'payment_account'       => $request->payment_account,
+            'payment__is_live'      => $request->has('payment__is_live') ? 1 : 0,
+        ]);
 
         if ($request->payment_account === 'custom') {
             $service->stripe_test_site_key = $request->stripe_test_site_key;
@@ -228,17 +243,15 @@ class ServiceController extends Controller
             $service->thumbnail = $request->file('thumbnail')->store('thumbnails', 'public');
         }
 
-        $finalGallery = [];
+        // Gallery processing
         $existingGallery = $request->input('existing_gallery', []);
         $deletedGallery = $request->input('delete_gallery', []);
 
-        if (!empty($deletedGallery)) {
-            foreach ($deletedGallery as $deletedPath) {
-                Storage::disk('public')->delete($deletedPath);
-            }
+        foreach ($deletedGallery as $deletedPath) {
+            Storage::disk('public')->delete($deletedPath);
         }
 
-        $finalGallery = array_diff($existingGallery, $deletedGallery ?? []);
+        $finalGallery = array_diff($existingGallery, $deletedGallery);
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $file) {
                 $finalGallery[] = $file->store('gallery', 'public');
@@ -246,9 +259,27 @@ class ServiceController extends Controller
         }
 
         $service->gallery = json_encode(array_values($finalGallery));
-        $service->staff_member = json_encode($request->input('staff_member', []));
-
         $service->save();
+
+        $newStaffIds = $request->input('staff_member', []);
+        $existingStaffIds = StaffAssociation::where('service_id', $service->id)
+            ->pluck('staff_member')
+            ->toArray();
+
+        $toAdd = array_diff($newStaffIds, $existingStaffIds);
+        foreach ($toAdd as $staffId) {
+            StaffAssociation::create([
+                'service_id'   => $service->id,
+                'staff_member' => $staffId,
+            ]);
+        }
+
+        $toDelete = array_diff($existingStaffIds, $newStaffIds);
+        if (!empty($toDelete)) {
+            StaffAssociation::where('service_id', $service->id)
+                ->whereIn('staff_member', $toDelete)
+                ->delete();
+        }
 
         return redirect()->route('service.list')->with('success', 'Service Updated Successfully!');
     }

@@ -149,7 +149,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::get('/staff', [StaffController::class, 'index'])->name('staff.list');
     });
     Route::middleware('permission:create staffs')->group(function () {
-        Route::get('/staff/create', [StaffController::class, 'create'])->name('staff.create');
+        Route::get('/staff/add', [StaffController::class, 'add'])->name('staff.create');
         Route::post('/staff/store', [StaffController::class, 'store'])->name('staff.store');
     });
     Route::middleware('permission:edit staffs')->group(function () {
