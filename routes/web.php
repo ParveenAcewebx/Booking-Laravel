@@ -53,8 +53,7 @@ Route::middleware('guest')->group(function () {
     Route::post('password/reset', [UserController::class, 'reset'])->name('password.update');
 });
 // Authenticated routes
-    Route::prefix('admin')->middleware('auth')->group(function () {
-    Route::middleware('auth')->prefix('admin')->group(function () {
+Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('/{id}/switch', [UserController::class, 'switchUser'])->name('user.switch');
     Route::post('/switch-back', [UserController::class, 'switchBack'])->name('user.switch.back');
     Route::get('/booking/load-template-html/{id}', [BookingController::class, 'loadTemplateHTML']);
