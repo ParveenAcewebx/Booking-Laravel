@@ -80,17 +80,17 @@
                     </li>
                     @endcanany
                     {{-- Form Management --}}
-                    @canany(['view forms', 'create forms', 'edit forms', 'delete forms'])
+                    @canany(['view templates', 'create templates', 'edit templates', 'delete templates'])
                     <li class="nav-item pcoded-hasmenu">
                         <a href="#!" class="nav-link">
                             <span class="pcoded-micon"><i class="feather icon-file-text"></i></span>
                             <span class="pcoded-mtext">Booking Templates</span>
                         </a>
                         <ul class="pcoded-submenu">
-                            @can('create forms')
+                            @can('create templates')
                             <li><a href="{{ route('template.add') }}">Add Booking Template</a></li>
                             @endcan
-                            @can('view forms')
+                            @can('view templates')
                             <li><a href="{{ route('template.list') }}">All Booking Template</a></li>
                             @endcan
                         </ul>

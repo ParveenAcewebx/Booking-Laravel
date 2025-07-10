@@ -33,10 +33,10 @@ return [
             'slug' => 'roles',
             'roles' => ['view roles', 'create roles', 'edit roles', 'delete roles']
         ],
-        'forms' => [
-            'name' => "Forms",
-            'slug' => 'forms',
-            'roles' => ['view forms', 'create forms', 'edit forms', 'delete forms']
+        'templates' => [
+            'name' => "Templates",
+            'slug' => 'templates',
+            'roles' => ['view templates', 'create templates', 'edit templates', 'delete templates']
         ],
         'bookings' => [
             'name' => "Bookings",
