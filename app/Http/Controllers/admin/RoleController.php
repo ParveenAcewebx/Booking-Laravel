@@ -1,20 +1,23 @@
 <?php
 
 namespace App\Http\Controllers\admin;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
 use DataTables;
-
+use Illuminate\Support\Facades\Cookie;
 class RoleController extends Controller
 {
     protected $allUsers;
+    protected $originalUserId;
 
     public function __construct()
     {
         $this->allUsers = User::all();
+        $this->originalUserId = session('impersonate_original_user') ?? Cookie::get('impersonate_original_user');
     }
 
     protected function syncPermissionsFromConfig()
@@ -33,6 +36,8 @@ class RoleController extends Controller
 
     public function index(Request $request)
     {
+        $loginId = session('impersonate_original_user');
+        $loginUser = $loginId ? User::find($loginId) : null;
         if ($request->ajax()) {
             $roles = Role::with(['permissions', 'users'])->select('id', 'name', 'status');
             return DataTables::of($roles)
@@ -91,12 +96,12 @@ class RoleController extends Controller
                 ->rawColumns(['permissions', 'status', 'action'])
                 ->make(true);
         }
-        return view('admin.role.index');
+        return view('admin.role.index', compact('loginUser'));
     }
 
     public function roleAdd()
     {
-        $this->syncPermissionsFromConfig(); 
+        $this->syncPermissionsFromConfig();
         $roleGroups = config('constants.role_groups');
         $permissions = Permission::all();
         $loginId = session('impersonate_original_user');
@@ -107,7 +112,7 @@ class RoleController extends Controller
 
     public function store(Request $request)
     {
-        $this->syncPermissionsFromConfig(); 
+        $this->syncPermissionsFromConfig();
 
         $validated = $request->validate([
             'name' => 'required|string|unique:roles,name',
@@ -146,7 +151,7 @@ class RoleController extends Controller
 
     public function roleUpdate(Request $request, $id)
     {
-        $this->syncPermissionsFromConfig(); 
+        $this->syncPermissionsFromConfig();
 
         $request->validate([
             'name' => 'required|string|max:255',

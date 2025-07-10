@@ -7,11 +7,23 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
-
+use Illuminate\Support\Facades\Cookie;
+use App\Models\User;
 class CategoryController extends Controller
 {
+    protected $allUsers;
+    protected $originalUserId;
+    public function __construct()
+    {
+        $this->allUsers = User::all();
+        $this->originalUserId = session('impersonate_original_user') ?? Cookie::get('impersonate_original_user');
+    }
     public function index(Request $request)
     {
+
+        $loginId = session('impersonate_original_user');
+        $loginUser = $loginId ? User::find($loginId) : null;
+        $loginId = session('impersonate_original_user');
         if ($request->ajax()) {
             $categories = Category::select('id', 'category_name', 'status', 'created_at', 'slug');
 
@@ -63,12 +75,14 @@ class CategoryController extends Controller
                 ->make(true);
         }
 
-        return view('admin.category.index');
+        return view('admin.category.index',compact('loginUser'));
     }
 
     public function create()
     {
-        return view('admin.category.add');
+        $loginId = session('impersonate_original_user');
+        $loginUser = $loginId ? User::find($loginId) : null;
+        return view('admin.category.add', compact('loginUser'));
     }
 
     public function store(Request $request)
@@ -95,7 +109,9 @@ class CategoryController extends Controller
 
     public function edit(Category $category)
     {
-        return view('admin.category.edit', compact('category'));
+        $loginId = session('impersonate_original_user');
+        $loginUser = $loginId ? User::find($loginId) : null;
+        return view('admin.category.edit', compact('category', 'loginUser'));
     }
 
     public function update(Request $request, Category $category)
