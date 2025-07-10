@@ -113,12 +113,27 @@
                             @can('view categories')
                             <li><a href="{{ route('category.list') }}">Categories</a></li>
                             @endcan
-                             @can('view staffs')
-                            <li><a href="{{ route('staff.list') }}">Staffs</a></li>
+                        </ul>
+                    </li>
+                    @endcanany
+
+                    @canany(['view staffs', 'create staffs', 'edit staffs', 'delete staffs'])
+                    <li class="nav-item pcoded-hasmenu">
+                        <a href="#!" class="nav-link">
+                            <span class="pcoded-micon"><i class="fas fa-user-tie"></i></span>
+                            <span class="pcoded-mtext">Manage Staffs</span>
+                        </a>
+                        <ul class="pcoded-submenu">
+                            @can('create staffs')
+                            <li><a href="{{ route('staff.create') }}">Add Staff</a></li>
+                            @endcan
+                            @can('view staffs')
+                            <li><a href="{{ route('staff.list') }}">All Staffs</a></li>
                             @endcan
                         </ul>
                     </li>
                     @endcanany
+
 
                     {{-- Booking Management --}}
                     @canany(['view bookings', 'create bookings', 'edit bookings', 'delete bookings'])
