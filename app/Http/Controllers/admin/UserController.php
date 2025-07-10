@@ -155,6 +155,7 @@ class UserController extends Controller
         $user->assignRole($userRole);
 
         if ($user) {
+            return redirect('/admin/user')->with('success', 'User Added Successfully.');
             return redirect()->route('user.list')->with('success', 'User Added Successfully.');
         } else {
             return redirect()->back()->with('error', 'It failed. Please try again.');
@@ -277,7 +278,7 @@ class UserController extends Controller
                 Auth::logout();
                 return redirect('/login')->with('error', 'Your account is inactive. Please contact support.');
             } elseif ($user->hasRole('Administrator') && $user->status == 1) {
-                return redirect()->intended('/dashboard');
+                return redirect()->intended('/admin/dashboard');
             } elseif ($user->hasRole('Customer') && $user->status == 0) {
                 Auth::logout();
                 return redirect('/login')->with('error', 'You do not have permissions to access this area.');
