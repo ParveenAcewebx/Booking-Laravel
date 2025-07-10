@@ -22,7 +22,7 @@ class RoleHasPermissionsTable extends Seeder
         $staff->givePermissionTo(
             array_merge(
                 $roleGroups['bookings']['roles'],
-                $roleGroups['forms']['roles']
+                $roleGroups['templates']['roles']
             )
         );
 
@@ -32,7 +32,7 @@ class RoleHasPermissionsTable extends Seeder
         $customer = Role::findByName('Customer');
         $customer->givePermissionTo([
             $roleGroups['bookings']['roles'][0], // view bookings
-            $roleGroups['forms']['roles'][0],    // view forms
+            $roleGroups['templates']['roles'][0],// view templates
             $roleGroups['roles']['roles'][0],    // view roles
             $roleGroups['users']['roles'][0],    // view users
         ]);

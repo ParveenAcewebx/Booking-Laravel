@@ -58,7 +58,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('/switch-back', [UserController::class, 'switchBack'])->name('user.switch.back');
     Route::get('/booking/load-template-html/{id}', [BookingController::class, 'loadTemplateHTML']);
 
-    // Routes for editing (edit users, edit forms, etc.)
+    // Routes for editing (edit users, edit templates, etc.)
     Route::middleware('permission:view users')->group(function () {
         Route::get('/user', [UserController::class, 'index'])->name('user.list');
     });
@@ -73,20 +73,20 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::middleware('permission:delete users')->group(function () {
         Route::delete('/user/{userid}/delete', [UserController::class, 'userDelete'])->name('user.delete');
     });
-    Route::middleware('permission:view forms')->group(function () {
+    Route::middleware('permission:view templates')->group(function () {
         Route::get('/template', [BookingTemplateController::class, 'index'])->name('template.list');
     });
-    Route::middleware('permission:create forms')->group(function () {
+    Route::middleware('permission:create templates')->group(function () {
         Route::get('/template/add', [BookingTemplateController::class, 'templateAdd'])->name('template.add');
         Route::post('/template/save', [BookingTemplateController::class, 'templateSave'])->name('template.save');
     });
-    Route::middleware('permission:edit forms')->group(function () {
+    Route::middleware('permission:edit templates')->group(function () {
         Route::get('/template/{formid}/edit', [BookingTemplateController::class, 'templateEdit'])->name('template.edit');
     });
-    Route::middleware('permission:delete forms')->group(function () {
+    Route::middleware('permission:delete templates')->group(function () {
         Route::delete('/template/{formid}/delete', [BookingTemplateController::class, 'templateDelete'])->name('template.delete');
     });
-    // Routes for viewing data (view users, view forms, etc.)
+    // Routes for viewing data (view users, view templates, etc.)
     Route::middleware('permission:view bookings')->group(function () {
         Route::get('/bookings', [BookingController::class, 'index'])->name('booking.list');
     });

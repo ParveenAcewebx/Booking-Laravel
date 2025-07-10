@@ -45,13 +45,13 @@ class BookingTemplateController extends Controller
                 ->addColumn('action', function ($row) {
                     $btn = '';
 
-                    if (Auth::user()->can('edit forms')) {
+                    if (Auth::user()->can('edit templates')) {
                         $btn .= '<a href="' . route('template.edit', [$row->id]) . '" class="btn btn-icon btn-success" title="Edit Form">
                         <i class="fas fa-pencil-alt"></i>
                     </a> ';
                     }
 
-                    if (Auth::user()->can('delete forms')) {
+                    if (Auth::user()->can('delete templates')) {
                         $btn .= '<form action="' . route('template.delete', [$row->id]) . '" method="POST" id="deleteTemplate-' . $row->id . '" style="display:inline;">
                         <input type="hidden" name="_method" value="DELETE">
                         ' . csrf_field() . '
