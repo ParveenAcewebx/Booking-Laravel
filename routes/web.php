@@ -38,7 +38,7 @@ Route::get('/admin', function () {
 
 Route::get('/form/{slug}', [FormController::class, 'show'])->name('form.show');
 Route::post('/form/{slug}', [FormController::class, 'store'])->name('form.store');
-// Route::get('/category/{slug}', [CategoryListingController::class, 'show'])->name('category.show');
+Route::get('/categories/{slug}', [CategoryListingController::class, 'show'])->name('categories.show');
 
 // Guest routes (not logged in)
 Route::middleware('guest')->group(function () {

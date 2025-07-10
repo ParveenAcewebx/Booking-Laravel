@@ -14,7 +14,7 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       @forelse ($categories as $category)
-        <a href="{{ route('category.show', $category->slug) }}"
+        <a href="{{ route('categories.show', $category->slug) }}"
            class="block p-5 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all dark:bg-neutral-800 dark:border-neutral-700">
           <div class="flex items-center justify-between">
             <div>
