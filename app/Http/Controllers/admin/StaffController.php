@@ -74,7 +74,7 @@ class StaffController extends Controller
         return view('admin.staff.index', compact('loginUser'));
     }
 
-    public function create()
+    public function add()
     {
         $roles = Role::all();
         $weekDays = config('constants.week_days');

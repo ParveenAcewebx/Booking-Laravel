@@ -150,7 +150,39 @@
 
                                 {{-- TAB: ASSIGNED SERVICES --}}
                                 <div class="tab-pane fade" id="assigned-services" role="tabpanel">
-                                  ASSIGNED SERVICES
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0">
+                                            <thead class="bg-light">
+                                                <tr>
+                                                    <th class="text-left">Services</th>
+                                                    <th class="text-center">Price</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse($services as $service)
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group mb-0">
+                                                            <label class="form-check-label">
+                                                                {{ $service->name }} @if($service->price) - ${{ $service->price }} @endif
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input type="text"
+                                                            name="assigned_services[{{ $service->id }}][price]"
+                                                            class="form-control form-control-sm text-center"
+                                                            value="{{$service->currency}} ${{ number_format($service->price, 2) }}" disabled>
+                                                    </td>
+                                                </tr>
+                                                @empty
+                                                <tr>
+                                                    <td colspan="2" class="text-center text-muted">No services available</td>
+                                                </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
 
                                 {{-- TAB: WORK HOURS --}}
