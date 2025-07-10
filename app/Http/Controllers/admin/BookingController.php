@@ -170,11 +170,14 @@ class BookingController extends Controller
         $selectedStaffUser = User::where('name', $booking->selected_staff)->first();
         $booking->selected_staff = $selectedStaffUser?->id;
 
+        $loginId = session('impersonate_original_user');
+        $loginUser = $loginId ? User::find($loginId) : null;
 
         return view('admin.booking.edit', [
             'booking' => $booking,
             'dynamicFieldHtml' => $dynamicFieldHtml,
             'staffList' => $this->allUsers,
+            'loginUser' => $loginUser,
         ]);
     }
 

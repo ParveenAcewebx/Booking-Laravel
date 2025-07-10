@@ -22,9 +22,8 @@ class StaffController extends Controller
 
     public function index(Request $request)
     {
-        $loginId = session('previous_login_id');
+        $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
-
         if ($request->ajax()) {
             $currentUser = Auth::user();
             $statusLabels = array_flip(config('constants.status'));
@@ -80,9 +79,11 @@ class StaffController extends Controller
         $roles = Role::all();
         $weekDays = config('constants.week_days');
         $phoneCountries = collect(config('phone_countries'))->unique('code')->values();
-        $services = Service::with('category')->get();
+        $services = Service::all();
+        $loginId = session('impersonate_original_user');
+        $loginUser = $loginId ? User::find($loginId) : null;
 
-        return view('admin.staff.add', compact('roles', 'services', 'phoneCountries', 'weekDays' ));
+        return view('admin.staff.add', compact('roles', 'services', 'phoneCountries', 'weekDays', 'loginUser'));
     }
 
     public function store(Request $request)
@@ -122,8 +123,10 @@ class StaffController extends Controller
         $roles = Role::all();
         $phoneCountries = collect(config('phone_countries'))->unique('code')->values();
         $services = Service::with('category')->get();
+        $loginId = session('impersonate_original_user');
+        $loginUser = $loginId ? User::find($loginId) : null;
 
-        return view('admin.staff.edit', compact('staff', 'roles', 'services', 'phoneCountries'));
+        return view('admin.staff.edit', compact('staff', 'roles', 'services', 'phoneCountries', 'loginUser'));
     }
 
     public function update(Request $request, User $staff)

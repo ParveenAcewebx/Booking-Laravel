@@ -25,6 +25,9 @@ class BookingTemplateController extends Controller
 
     public function index(Request $request)
     {
+        $loginId = session('impersonate_original_user');
+        $loginUser = $loginId ? User::find($loginId) : null;
+
         if ($request->ajax()) {
             $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by','slug']);
 
@@ -70,7 +73,7 @@ class BookingTemplateController extends Controller
                 ->make(true);
         }
 
-        return view('admin.booking-template.index');
+        return view('admin.booking-template.index', compact('loginUser'));
     }
 
     public function templateSave(Request $request)

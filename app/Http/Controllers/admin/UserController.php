@@ -24,7 +24,9 @@ class UserController extends Controller
     public function __construct()
     {
         $this->allUsers = User::all();
-        $this->originalUserId = session('impersonate_original_user') ?? Cookie::get('impersonate_original_user');
+        $this->originalUserId = session()->has('impersonate_original_user')
+            ? session('impersonate_original_user')
+            : Cookie::get('impersonate_original_user');
     }
     public function index(Request $request)
     {
@@ -154,6 +156,7 @@ class UserController extends Controller
 
         if ($user) {
             return redirect('/admin/user')->with('success', 'User Added Successfully.');
+            return redirect()->route('user.list')->with('success', 'User Added Successfully.');
         } else {
             return redirect()->back()->with('error', 'It failed. Please try again.');
         }

@@ -19,6 +19,9 @@ class ServiceController extends Controller
 {
     public function index(Request $request)
     {
+        $loginId = session('impersonate_original_user');
+        $loginUser = $loginId ? User::find($loginId) : null;
+
         if ($request->ajax()) {
             $services = Service::all();
 
@@ -62,7 +65,7 @@ class ServiceController extends Controller
                 ->make(true);
         }
 
-        return view('admin.service.index');
+        return view('admin.service.index', compact('loginUser'));
     }
 
     public function serviceAdd(Request $request)
@@ -72,7 +75,10 @@ class ServiceController extends Controller
         $defaultStatus = config('constants.status');
         $currencies = config('constants.currencies');
         $appointmentStats = config('constants.appointment_status');
-        return view('admin.service.add', compact('categories', 'staffUsers', 'defaultStatus', 'currencies', 'appointmentStats'));
+        $loginId = session('impersonate_original_user');
+        $loginUser = $loginId ? User::find($loginId) : null;
+
+        return view('admin.service.add', compact('categories', 'staffUsers', 'defaultStatus', 'currencies', 'appointmentStats', 'loginUser'));
     }
 
     public function servicestore(Request $request)
@@ -148,6 +154,8 @@ class ServiceController extends Controller
         $currencies = config('constants.currencies');
         $appointmentStats = config('constants.appointment_status');
         $statuses = config('constants.status');
+        $loginId = session('impersonate_original_user');
+        $loginUser = $loginId ? User::find($loginId) : null;
 
         return view('admin.service.edit', compact(
             'service',
@@ -155,7 +163,8 @@ class ServiceController extends Controller
             'staffUsers',
             'currencies',
             'appointmentStats',
-            'statuses'
+            'statuses',
+            'loginUser'
         ));
     }
 

@@ -39,7 +39,7 @@ Route::get('/admin', function () {
 
 Route::get('/form/{slug}', [FormController::class, 'show'])->name('form.show');
 Route::post('/form/{slug}', [FormController::class, 'store'])->name('form.store');
-// Route::get('/category/{slug}', [CategoryListingController::class, 'show'])->name('category.show');
+Route::get('/categories/{slug}', [CategoryListingController::class, 'show'])->name('categories.show');
 
 // Guest routes (not logged in)
 Route::middleware('guest')->group(function () {
@@ -53,14 +53,14 @@ Route::middleware('guest')->group(function () {
     Route::post('password/reset', [UserController::class, 'reset'])->name('password.update');
 });
 // Authenticated routes
-Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::middleware('auth')->prefix('admin')->group(function () {
     Route::post('/{id}/switch', [UserController::class, 'switchUser'])->name('user.switch');
     Route::post('/switch-back', [UserController::class, 'switchBack'])->name('user.switch.back');
     Route::get('/booking/load-template-html/{id}', [BookingController::class, 'loadTemplateHTML']);
 
     // Routes for editing (edit users, edit forms, etc.)
     Route::middleware('permission:view users')->group(function () {
-
         Route::get('/user', [UserController::class, 'index'])->name('user.list');
     });
     Route::middleware('permission:create users')->group(function () {
