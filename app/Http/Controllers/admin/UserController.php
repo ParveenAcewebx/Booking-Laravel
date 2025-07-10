@@ -28,7 +28,7 @@ class UserController extends Controller
     }
     public function index(Request $request)
     {
-        $loginId = session('previous_login_id');
+        $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
@@ -110,7 +110,7 @@ class UserController extends Controller
         $allRoles = Role::where('status', 1)->get();
         $allusers = $this->allUsers;
         $originalUserId = $this->originalUserId;
-        $loginId = session('previous_login_id');
+        $loginId = session('impersonate_original_user');
         $phoneCountries = config('phone_countries');
         $loginUser = null;
 
@@ -172,7 +172,7 @@ class UserController extends Controller
 
         $allusers =  $this->allUsers;
         $originalUserId = $this->originalUserId;
-        $loginId = session('previous_login_id');
+        $loginId = session('impersonate_original_user');
         $loginUser = null;
 
         if ($loginId) {
@@ -283,7 +283,7 @@ class UserController extends Controller
                 return redirect('/');
             }
 
-            session(['previous_login_id' => $user->id]);
+            session(['impersonate_original_user' => $user->id]);
         }
 
         return redirect('/login')->with('error', 'Invalid credentials. Please try again.');
@@ -320,7 +320,7 @@ class UserController extends Controller
     public function logout()
     {
         Auth::logout();
-        session()->forget(['impersonate_original_user', 'previous_login_id']);
+        session()->forget(['impersonate_original_user', 'impersonate_original_user']);
         Cookie::queue(Cookie::forget('impersonate_original_user'));
         session()->flush();
 
@@ -404,7 +404,6 @@ class UserController extends Controller
         $staffRole->givePermissionTo($viewPermission);
         $bookingRole->givePermissionTo($editPermission, $viewPermission);
         $user = User::where('id', User::min('id'))->first();
-        echo $user->id;
         $user->assignRole($adminRole);
         $users = User::where('id', '!=', $user->id)->get();
         foreach ($users as $userToUpdate) {

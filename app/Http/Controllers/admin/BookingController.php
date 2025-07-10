@@ -33,7 +33,7 @@ class BookingController extends Controller
 
     public function index(Request $request)
     {
-        $loginId = session('previous_login_id');
+        $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
@@ -104,7 +104,7 @@ class BookingController extends Controller
     {
         $alltemplates = BookingTemplate::all();
         $allusers = $this->allUsers;
-        $loginId = session('previous_login_id');
+        $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
 
         return view('admin.booking.add', [
@@ -170,14 +170,11 @@ class BookingController extends Controller
         $selectedStaffUser = User::where('name', $booking->selected_staff)->first();
         $booking->selected_staff = $selectedStaffUser?->id;
 
-        $loginId = session('previous_login_id');
-        $loginUser = $loginId ? User::find($loginId) : null;
 
         return view('admin.booking.edit', [
             'booking' => $booking,
             'dynamicFieldHtml' => $dynamicFieldHtml,
             'staffList' => $this->allUsers,
-            'loginUser' => $loginUser,
         ]);
     }
 

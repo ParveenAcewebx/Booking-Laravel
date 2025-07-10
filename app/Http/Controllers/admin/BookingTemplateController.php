@@ -25,9 +25,6 @@ class BookingTemplateController extends Controller
 
     public function index(Request $request)
     {
-        $loginId = session('previous_login_id');
-        $loginUser = $loginId ? User::find($loginId) : null;
-
         if ($request->ajax()) {
             $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by','slug']);
 
@@ -73,7 +70,7 @@ class BookingTemplateController extends Controller
                 ->make(true);
         }
 
-        return view('admin.booking-template.index', compact('loginUser'));
+        return view('admin.booking-template.index');
     }
 
     public function templateSave(Request $request)
@@ -123,7 +120,7 @@ class BookingTemplateController extends Controller
     {
         $allusers  = $this->allUsers;
         $template = BookingTemplate::find($id);
-        $loginId = session('previous_login_id');
+        $loginId = session('impersonate_original_user');
         $loginUser = null;
 
         if ($loginId) {
@@ -135,7 +132,7 @@ class BookingTemplateController extends Controller
     public function templateAdd()
     {
         $allusers  = $this->allUsers;
-        $loginId = session('previous_login_id');
+        $loginId = session('impersonate_original_user');
         $loginUser = null;
 
         if ($loginId) {

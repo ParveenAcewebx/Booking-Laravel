@@ -33,8 +33,6 @@ class RoleController extends Controller
 
     public function index(Request $request)
     {
-        $loginId = session('previous_login_id');
-        $loginUser = $loginId ? User::find($loginId) : null;
         if ($request->ajax()) {
             $roles = Role::with(['permissions', 'users'])->select('id', 'name', 'status');
             return DataTables::of($roles)
@@ -93,7 +91,7 @@ class RoleController extends Controller
                 ->rawColumns(['permissions', 'status', 'action'])
                 ->make(true);
         }
-        return view('admin.role.index', compact('loginUser'));
+        return view('admin.role.index');
     }
 
     public function roleAdd()
@@ -101,7 +99,7 @@ class RoleController extends Controller
         $this->syncPermissionsFromConfig(); 
         $roleGroups = config('constants.role_groups');
         $permissions = Permission::all();
-        $loginId = session('previous_login_id');
+        $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
 
         return view('admin.role.add', compact('roleGroups', 'permissions', 'loginUser'));
@@ -137,7 +135,7 @@ class RoleController extends Controller
         $this->syncPermissionsFromConfig();
 
         $role = Role::findOrFail($id);
-        $loginId = session('previous_login_id');
+        $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
         $rolePermissions = $role->permissions->pluck('name')->toArray();
         $roleGroups = config('constants.role_groups');
