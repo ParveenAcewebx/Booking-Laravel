@@ -5,9 +5,11 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Service;
+use App\Models\StaffAssociation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -24,14 +26,14 @@ class StaffController extends Controller
     {
         $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
+
         if ($request->ajax()) {
             $currentUser = Auth::user();
             $statusLabels = array_flip(config('constants.status'));
 
-            $query = User::with('roles')
-                ->whereHas('roles', function ($q) {
-                    $q->where('name', 'Staff');
-                });
+            $query = User::with('roles')->whereHas('roles', function ($q) {
+                $q->where('name', 'Staff');
+            });
 
             return DataTables::of($query)
                 ->addIndexColumn()
@@ -52,7 +54,7 @@ class StaffController extends Controller
                     if ($currentUser->can('edit staffs')) {
                         $btn .= '<a href="' . route('staff.edit', [$row->id]) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit User">
                             <i class="fas fa-pencil-alt"></i>
-                         </a> ';
+                        </a> ';
                     }
 
                     if ($currentUser->can('delete staffs') && Auth::id() != $row->id) {
@@ -76,7 +78,7 @@ class StaffController extends Controller
 
     public function add()
     {
-        $roles = Role::all();
+        $roles = Role::where('name', 'Staff')->first();
         $weekDays = config('constants.week_days');
         $phoneCountries = collect(config('phone_countries'))->unique('code')->values();
         $services = Service::all();
@@ -115,18 +117,41 @@ class StaffController extends Controller
         $role = Role::findById($request->role, 'web');
         $user->assignRole($role->name);
 
+        if ($request->has('assigned_services') && is_array($request->assigned_services)) {
+            foreach ($request->assigned_services as $serviceData) {
+
+                StaffAssociation::create([
+                    'staff_member' => $user->id,
+                    'service_id' => $serviceData['id'],
+                ]);
+            }
+        }
         return redirect()->route('staff.list')->with('success', 'Staff Created Successfully!');
     }
 
     public function edit(User $staff)
     {
-        $roles = Role::all();
+        $roles = Role::where('name', 'Staff')->first();
         $phoneCountries = collect(config('phone_countries'))->unique('code')->values();
-        $services = Service::with('category')->get();
+        $weekDays = config('constants.week_days');
+
+        $assignedServices = Service::whereIn('id', StaffAssociation::where('staff_member', $staff->id)->pluck('service_id'))
+            ->with('category')
+            ->get();
+
+        $services = Service::all();
         $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
 
-        return view('admin.staff.edit', compact('staff', 'roles', 'services', 'phoneCountries', 'loginUser'));
+        return view('admin.staff.edit', compact(
+            'staff',
+            'roles',
+            'phoneCountries',
+            'assignedServices',
+            'services',
+            'loginUser',
+            'weekDays'
+        ));
     }
 
     public function update(Request $request, User $staff)
@@ -139,17 +164,14 @@ class StaffController extends Controller
             'phone_number' => 'required',
         ]);
 
-        $fullPhoneNumber = $request->code . $request->phone_number;
-
-        if ($request->hasFile('avatar')) {
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
-            $staff->avatar = $avatarPath;
-        }
-
         $staff->name = $request->name;
         $staff->email = $request->email;
-        $staff->phone_number = $fullPhoneNumber;
+        $staff->phone_number = $request->code . $request->phone_number;
         $staff->status = $request->has('status') ? config('constants.status.active') : config('constants.status.inactive');
+
+        if ($request->hasFile('avatar')) {
+            $staff->avatar = $request->file('avatar')->store('avatars', 'public');
+        }
 
         if ($request->filled('password')) {
             $staff->password = Hash::make($request->password);
@@ -160,14 +182,24 @@ class StaffController extends Controller
         $role = Role::findById($request->role, 'web');
         $staff->syncRoles([$role->name]);
 
+        $submittedServices = $request->input('assigned_services', []);
+        $serviceIds = collect($submittedServices)
+            ->pluck('id')
+            ->filter()
+            ->map(fn($id) => (int) $id)
+            ->unique()
+            ->values()
+            ->all();
+
+        $staff->services()->sync($serviceIds);
         return redirect()->route('staff.list')->with('success', 'Staff Updated Successfully!');
     }
-
+    
     public function destroy($id)
     {
         $user = User::find($id);
         $authuser_id = Auth::user()->id;
-        $username = $user->name;
+
         if ($authuser_id != $id) {
             $user->delete();
             return response()->json(['success' => true]);

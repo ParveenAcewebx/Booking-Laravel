@@ -29,7 +29,7 @@ class Service extends Model
         'stripe_test_site_key',
         'stripe_live_site_key',
         'stripe_live_secret_key',
-        'payment_account'
+        'payment_account',
     ];
     public function category()
     {

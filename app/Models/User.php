@@ -29,4 +29,9 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function services()
+    {
+        return $this->belongsToMany(Service::class, 'staff_associations', 'staff_member', 'service_id')
+            ->withTimestamps();
+    }
 }

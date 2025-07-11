@@ -1216,3 +1216,135 @@ $(document).ready(function () {
         });
     });
 });
+
+
+$(function () {
+    const addedServices = new Set();
+    const totalServiceCount = $('.service-option').length;
+
+    // Initialize with preloaded services
+    $('#servicesTable tbody tr[data-id]').each(function () {
+        addedServices.add($(this).data('id').toString());
+    });
+
+    // Show/hide "No services" message
+    function toggleNoServicesRow() {
+        const hasRows = $('#servicesTable tbody tr[data-id]').length > 0;
+        if (!hasRows) {
+            if (!$('#noServiceRow').length) {
+                $('#servicesTable tbody').append(`
+                    <tr id="noServiceRow">
+                        <td colspan="3" class="text-center text-muted">No services assigned yet.</td>
+                    </tr>
+                `);
+            }
+        } else {
+            $('#noServiceRow').remove();
+        }
+    }
+
+    // Enable/Disable Add button
+    function updateAddButtonState() {
+        $('#addServicesBtn').prop('disabled', addedServices.size >= totalServiceCount);
+    }
+
+    // Refresh dropdowns based on assigned services
+    function refreshWorkingDaysServices() {
+        let services = [];
+
+        $('#servicesTable tbody tr[data-id]').each(function () {
+            const id = $(this).data('id');
+            const name = $(this).find('td:first').text().trim();
+            services.push({ id, name });
+        });
+
+        $('.service-select').each(function () {
+            const $select = $(this);
+            const currentValues = $select.val() || [];
+            $select.empty();
+
+            if (services.length === 0) {
+                $select.append('<option value="">No service assigned yet</option>');
+            } else {
+                services.forEach(service => {
+                    const selected = currentValues.includes(String(service.id)) ? 'selected' : '';
+                    $select.append(`<option value="${service.id}" ${selected}>${service.name}</option>`);
+                });
+            }
+
+            if ($select.hasClass('select2-hidden-accessible')) {
+                $select.trigger('change.select2');
+            }
+        });
+    }
+
+    // On modal open - reset checkboxes
+    $('#servicesModal').on('show.bs.modal', function () {
+        $('.service-checkbox').prop('checked', false);
+        $('.service-option').show();
+
+        addedServices.forEach(id => {
+            $('#service_' + id).closest('.service-option').hide();
+        });
+    });
+
+    // Add selected services from modal
+    $('#addSelectedServices').on('click', function () {
+        $('.service-checkbox:checked').each(function () {
+            const id = $(this).val();
+            if (addedServices.has(id)) return;
+
+            const name = $(this).data('name');
+            const rawPrice = $(this).data('price');
+            let price = parseFloat(String(rawPrice).replace(/[^0-9.]/g, '')).toFixed(2);
+            if (isNaN(price)) price = '0.00';
+
+            const row = `
+                <tr data-id="${id}">
+                    <td>
+                        <input type="hidden" name="assigned_services[${id}][id]" value="${id}">
+                        ${name}
+                    </td>
+                    <td class="text-center">
+                        <input type="text" name="assigned_services[${id}][price]"
+                            class="form-control form-control-sm text-center"
+                            value="$${price}" readonly>
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-danger remove-service">REMOVE</button>
+                    </td>
+                </tr>
+            `;
+
+            $('#servicesTable tbody').append(row);
+            addedServices.add(id);
+        });
+
+        $('#servicesModal').modal('hide');
+        toggleNoServicesRow();
+        updateAddButtonState();
+        refreshWorkingDaysServices();
+    });
+
+    // Remove a service
+    $('#servicesTable').on('click', '.remove-service', function () {
+        const row = $(this).closest('tr');
+        const id = row.data('id').toString();
+        row.remove();
+        addedServices.delete(id);
+
+        const $checkbox = $('#service_' + id);
+        if ($checkbox.length > 0) {
+            $checkbox.closest('.service-option').show();
+        }
+
+        toggleNoServicesRow();
+        updateAddButtonState();
+        refreshWorkingDaysServices();
+    });
+
+    // Initial load setup
+    toggleNoServicesRow();
+    updateAddButtonState();
+    refreshWorkingDaysServices();
+});

@@ -90,11 +90,8 @@ class ServiceController extends Controller
             'name'                   => 'required|string|max:255',
             'description'            => 'nullable|string',
             'category'               => 'nullable|exists:categories,id',
-            'duration'               => 'nullable|string|max:100',
             'thumbnail'              => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
             'gallery.*'              => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
-            'staff_member'           => 'nullable|array',
-            'staff_member.*'         => 'exists:users,id',
             'status'                 => 'required|in:0,1',
             'price'                  => 'nullable|numeric',
             'currency'               => 'nullable|string|max:5',
@@ -135,7 +132,7 @@ class ServiceController extends Controller
         }
 
         $data['gallery'] = json_encode(array_values($gallery));
-
+    
         $data['staff_member'] = json_encode($request->input('staff_member', []));
         $data['payment__is_live'] = $request->has('payment__is_live') ? 1 : 0;
 
@@ -188,7 +185,6 @@ class ServiceController extends Controller
             'name'                  => 'required|string|max:255',
             'description'           => 'nullable|string',
             'category'              => 'nullable|exists:categories,id',
-            'duration'              => 'nullable|string|max:100',
             'thumbnail'             => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
             'gallery.*'             => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
             'existing_gallery'      => 'nullable|array',
@@ -202,7 +198,6 @@ class ServiceController extends Controller
             'currency'              => 'nullable|string|max:5',
             'appointment_status'    => 'nullable|in:0,1',
             'cancelling_unit'       => 'required|in:hours,days',
-            'cancelling_value'      => 'required|integer|min:1|max:30',
             'redirect_url'          => 'nullable|url',
             'payment_mode'          => 'nullable|in:on_site,stripe',
             'payment_account'       => 'nullable|in:default,custom',
@@ -257,7 +252,6 @@ class ServiceController extends Controller
                 $finalGallery[] = $file->store('gallery', 'public');
             }
         }
-
         $service->gallery = json_encode(array_values($finalGallery));
         $service->save();
 
