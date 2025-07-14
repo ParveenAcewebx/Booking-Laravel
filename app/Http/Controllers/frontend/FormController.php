@@ -13,12 +13,15 @@ use Illuminate\Support\Facades\Storage;
 
 class FormController extends Controller
 {
-    public function show($slug)
+    public function show(Request $request, $slug)
     {
         $template = BookingTemplate::where('slug', $slug)->firstOrFail();
-        $formHtml = FormHelper::renderDynamicFieldHTML($template->data);
-        return view('frontend.form.show', compact('formHtml', 'template'));
+        $formHtml = FormHelper::renderDynamicFieldHTML($template->data, [], 'tailwind');
+        // Check if request has source=iframe
+        $isIframe = $request->query('source') === 'iframe';
+        return view('frontend.form.show', compact('formHtml', 'template', 'isIframe'));
     }
+
 
     public function store(Request $request, $id)
     {

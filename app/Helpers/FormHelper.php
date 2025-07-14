@@ -6,7 +6,7 @@ use App\Helpers\Shortcode;
 
 class FormHelper
 {
-    public static function renderDynamicFieldHTML($templateJson, $values = [])
+    public static function renderDynamicFieldHTML($templateJson, $values = [], $theme = 'bootstrap')
     {
         $fields = is_array($templateJson) ? $templateJson : json_decode($templateJson, true);
         $html = '';
@@ -16,12 +16,47 @@ class FormHelper
             return '<div class="alert alert-danger">Invalid form template JSON.</div>';
         }
 
+        // Theme-based classes
+        $classes = [
+            'bootstrap' => [
+                'group' => 'form-group mb-3',
+                'label' => 'form-label',
+                'input' => 'form-control',
+                'select' => 'form-control',
+                'textarea' => 'form-control',
+                'checkboxWrapper' => 'form-check',
+                'checkbox' => 'form-check-input',
+                'checkboxLabel' => 'form-check-label',
+                'radioWrapper' => 'form-check',
+                'radio' => 'form-check-input',
+                'radioLabel' => 'form-check-label',
+                'file' => 'form-control',
+                'helpText' => 'form-text text-muted',
+            ],
+            'tailwind' => [
+                'group' => 'mb-6',
+                'label' => 'block mb-2 text-sm font-medium text-gray-700',
+                'input' => 'mt-1 block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 focus:border-blue-500 focus:ring-blue-500 text-sm shadow-sm',
+                'select' => 'mt-1 block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 focus:border-blue-500 focus:ring-blue-500 text-sm shadow-sm',
+                'textarea' => 'mt-1 block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 focus:border-blue-500 focus:ring-blue-500 text-sm shadow-sm',
+                'checkboxWrapper' => 'flex items-center mb-2 space-x-2',
+                'checkbox' => 'h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500',
+                'checkboxLabel' => 'text-sm font-medium text-gray-700',
+                'radioWrapper' => 'flex items-center mb-2 space-x-2',
+                'radio' => 'h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500',
+                'radioLabel' => 'text-sm font-medium text-gray-700',
+                'file' => 'block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-gray-100 file:py-2 file:px-4 file:text-sm file:font-semibold file:text-gray-700 hover:file:bg-gray-200',
+                'helpText' => 'text-gray-500 text-xs mt-1',
+            ]
+        ];
+
+        $c = $classes[$theme] ?? $classes['bootstrap'];
+
         foreach ($fields as $field) {
             $type = $field['type'] ?? 'text';
             $subtype = $field['subtype'] ?? 'text';
             $label = $field['label'] ?? '';
             $name = $field['name'] ?? uniqid('field_');
-            $class = $field['className'] ?? 'form-control';
             $placeholder = $field['placeholder'] ?? '';
             $required = (!empty($field['required']) && $field['required'] === 'true') ? 'required' : '';
             $value = $values[$name] ?? '';
@@ -50,43 +85,46 @@ class FormHelper
                     $content = nl2br(htmlspecialchars($label));
                     $html .= ($type === 'section' || $type === 'newsection')
                         ? "<hr><h5>$content</h5>"
-                        : "<div class='form-group'><$tag>$content</$tag></div>";
+                        : "<div class='{$c['group']}'><$tag>$content</$tag></div>";
                     break;
 
                 case 'file':
-                    $html .= "<div class='form-group'><label>$label</label>
-                            <input type='file' name='$inputNameAttr' class='$class' " . ($multiple ? 'multiple' : '') . " $required>";
+                    $html .= "<div class='{$c['group']}'>
+                            <label class='{$c['label']}'>$label</label>
+                            <input type='file' name='$inputNameAttr' class='{$c['file']}' " . ($multiple ? 'multiple' : '') . " $required>";
                     if (!empty($value)) {
                         $files = is_array($value) ? $value : [$value];
                         foreach ($files as $file) {
                             $fileUrl = asset('storage/' . $file);
-                            $html .= "<small class='form-text text-muted'>Uploaded: <a href='$fileUrl' target='_blank'>View</a></small>";
+                            $html .= "<small class='{$c['helpText']}'>Uploaded: <a href='$fileUrl' target='_blank'>View</a></small>";
                         }
                     }
                     $html .= "</div>";
                     break;
 
                 case 'number':
-                    $html .= "<div class='form-group'><label>$label</label>";
+                    $html .= "<div class='{$c['group']}'>
+                            <label class='{$c['label']}'>$label</label>";
                     if ($subtype === 'range') {
-                        $html .= "<input type='range' name='$inputName' class='$class' value='" . htmlspecialchars($value) . "' min='$min' max='$max' step='$step' $required>
-                                <div class='d-flex justify-content-between text-muted'><small>Min: $min</small><small>Max: $max</small></div>";
+                        $html .= "<input type='range' name='$inputName' class='{$c['input']}' value='" . htmlspecialchars($value) . "' min='$min' max='$max' step='$step' $required>
+                                <div class='flex justify-between text-gray-500 text-sm'><small>Min: $min</small><small>Max: $max</small></div>";
                     } else {
-                        $html .= "<input type='number' name='$inputName' class='$class' value='" . htmlspecialchars($value) . "' min='$min' max='$max' step='$step' placeholder='" . htmlspecialchars($placeholder) . "' $required>";
+                        $html .= "<input type='number' name='$inputName' class='{$c['input']}' value='" . htmlspecialchars($value) . "' min='$min' max='$max' step='$step' placeholder='" . htmlspecialchars($placeholder) . "' $required>";
                     }
                     $html .= "</div>";
                     break;
 
                 case 'select':
-                    $html .= "<div class='form-group'><label>$label</label>";
-                    $multipleAttr = $multiple ? 'multiple' : '';
                     $valueArr = $multiple ? (is_array($value) ? $value : (json_decode($value, true) ?: [$value])) : [(string) $value];
                     $optionValues = array_column($options, 'value');
-                    $html .= "<select name='$inputNameAttr' class='$class' $multipleAttr $required>";
+                    $multipleAttr = $multiple ? 'multiple' : '';
+                    $html .= "<div class='{$c['group']}'>
+                            <label class='{$c['label']}'>$label</label>
+                            <select name='$inputNameAttr' class='{$c['select']}' $multipleAttr $required>";
                     foreach ($options as $opt) {
                         $val = $opt['value'] ?? '';
                         $lbl = $opt['label'] ?? $val;
-                        $selected = in_array((string) $val, $valueArr) ? 'selected' : '';
+                        $selected = in_array((string)$val, $valueArr) ? 'selected' : '';
                         $html .= "<option value='" . htmlspecialchars($val) . "' $selected>" . htmlspecialchars($lbl) . "</option>";
                     }
                     if ($other) {
@@ -98,60 +136,76 @@ class FormHelper
                     }
                     $html .= "</select>";
                     if ($other) {
-                        $html .= "<input type='text' name='dynamic[{$name}_other]' class='$class mt-1' placeholder='Please specify' value='" . htmlspecialchars($otherVal) . "'>";
+                        $html .= "<input type='text' name='dynamic[{$name}_other]' class='{$c['input']} mt-1' placeholder='Please specify' value='" . htmlspecialchars($otherVal) . "'>";
                     }
                     $html .= "</div>";
                     break;
 
                 case 'checkbox-group':
-                    $html .= "<div class='form-group'><label>$label</label><br>";
                     $valueArr = is_array($value) ? $value : (json_decode($value, true) ?: [$value]);
                     $optionValues = array_column($options, 'value');
+                    $html .= "<div class='{$c['group']}'>
+                            <label class='{$c['label']}'>$label</label>";
                     foreach ($options as $i => $opt) {
                         $val = $opt['value'] ?? '';
                         $lbl = $opt['label'] ?? $val;
-                        $isChecked = in_array((string) $val, $valueArr) ? 'checked' : '';
+                        $isChecked = in_array((string)$val, $valueArr) ? 'checked' : '';
                         $requiredAttr = ($i === 0 && $required) ? 'required' : '';
-                        $html .= "<label><input type='checkbox' name='{$inputName}[]' value='" . htmlspecialchars($val) . "' $isChecked $requiredAttr> " . htmlspecialchars($lbl) . "</label><br>";
+                        $html .= "<div class='{$c['checkboxWrapper']}'>
+                                    <input type='checkbox' name='{$inputName}[]' value='" . htmlspecialchars($val) . "' class='{$c['checkbox']}' $isChecked $requiredAttr>
+                                    <label class='{$c['checkboxLabel']}'>" . htmlspecialchars($lbl) . "</label>
+                                  </div>";
                     }
                     if ($other) {
                         $isOtherChecked = in_array('__other__', $valueArr) ? 'checked' : '';
                         $otherVal = $values["{$name}_other"][0] ?? '';
-                        $html .= "<label><input type='checkbox' name='{$inputName}[]' value='__other__' $isOtherChecked> Other</label>";
-                        $html .= "<input type='text' name='dynamic[{$name}_other][]' class='$class mt-1' placeholder='Please specify' value='" . htmlspecialchars($otherVal) . "'>";
+                        $html .= "<div class='{$c['checkboxWrapper']}'>
+                                    <input type='checkbox' name='{$inputName}[]' value='__other__' class='{$c['checkbox']}' $isOtherChecked>
+                                    <label class='{$c['checkboxLabel']}'>Other</label>
+                                  </div>
+                                  <input type='text' name='dynamic[{$name}_other][]' class='{$c['input']} mt-1' placeholder='Please specify' value='" . htmlspecialchars($otherVal) . "'>";
                     }
                     $html .= "</div>";
                     break;
 
                 case 'radio-group':
-                    $html .= "<div class='form-group'><label>$label</label><br>";
                     $optionValues = array_column($options, 'value');
                     $idBase = uniqid($name . '_');
+                    $html .= "<div class='{$c['group']}'>
+                            <label class='{$c['label']}'>$label</label>";
                     foreach ($options as $i => $opt) {
                         $val = $opt['value'] ?? '';
                         $lbl = $opt['label'] ?? $val;
                         $id = $idBase . "_$i";
                         $checked = $val == $value ? 'checked' : '';
-                        $html .= "<div class='form-check'><input type='radio' id='$id' name='$inputName' value='" . htmlspecialchars($val) . "' class='form-check-input' $checked $required><label for='$id' class='form-check-label'>" . htmlspecialchars($lbl) . "</label></div>";
+                        $html .= "<div class='{$c['radioWrapper']}'>
+                                    <input type='radio' id='$id' name='$inputName' value='" . htmlspecialchars($val) . "' class='{$c['radio']}' $checked $required>
+                                    <label for='$id' class='{$c['radioLabel']}'>" . htmlspecialchars($lbl) . "</label>
+                                  </div>";
                     }
                     if ($other) {
                         $isOther = $value === '__other__' || (!in_array($value, $optionValues) && !empty($value));
                         $otherVal = $isOther ? ($values["{$name}_other"] ?? $value) : '';
                         $otherId = $idBase . '_other';
-                        $html .= "<div class='form-check'><input type='radio' id='$otherId' name='$inputName' value='__other__' class='form-check-input' " . ($isOther ? 'checked' : '') . " $required><label for='$otherId' class='form-check-label'>Other</label></div>";
-                        $html .= "<input type='text' name='dynamic[{$name}_other]' class='$class mt-1' placeholder='Please specify' value='" . htmlspecialchars($otherVal) . "'>";
+                        $html .= "<div class='{$c['radioWrapper']}'>
+                                    <input type='radio' id='$otherId' name='$inputName' value='__other__' class='{$c['radio']}' " . ($isOther ? 'checked' : '') . " $required>
+                                    <label for='$otherId' class='{$c['radioLabel']}'>Other</label>
+                                  </div>
+                                  <input type='text' name='dynamic[{$name}_other]' class='{$c['input']} mt-1' placeholder='Please specify' value='" . htmlspecialchars($otherVal) . "'>";
                     }
                     $html .= "</div>";
                     break;
 
                 case 'textarea':
-                    $html .= "<div class='form-group'><label>$label</label><textarea name='$inputName' class='$class' placeholder='" . htmlspecialchars($placeholder) . "' $required>" . htmlspecialchars($value) . "</textarea></div>";
+                    $html .= "<div class='{$c['group']}'>
+                            <label class='{$c['label']}'>$label</label>
+                            <textarea name='$inputName' class='{$c['textarea']}' placeholder='" . htmlspecialchars($placeholder) . "' $required>" . htmlspecialchars($value) . "</textarea>
+                          </div>";
                     break;
 
                 case 'shortcodeblock':
-
                     $shortcodeValue = $field['value'] ?? '';
-                    $html .= "<div class='form-group'>" . Shortcode::render(trim($shortcodeValue, '[]'), $values) . "</div>";
+                    $html .= "<div class='{$c['group']}'>" . Shortcode::render(trim($shortcodeValue, '[]'), $values) . "</div>";
                     break;
 
                 default:
@@ -166,7 +220,10 @@ class FormHelper
                             };
                         }
                     }
-                    $html .= "<div class='form-group'><label>$label</label><input type='$subtype' name='$inputName' class='$class' value='" . htmlspecialchars($value) . "' placeholder='" . htmlspecialchars($placeholder) . "' $required></div>";
+                    $html .= "<div class='{$c['group']}'>
+                            <label class='{$c['label']}'>$label</label>
+                            <input type='$subtype' name='$inputName' class='{$c['input']}' value='" . htmlspecialchars($value) . "' placeholder='" . htmlspecialchars($placeholder) . "' $required>
+                          </div>";
                     break;
             }
         }

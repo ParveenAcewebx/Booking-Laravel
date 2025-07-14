@@ -34,13 +34,17 @@
 
 <body class="bg-gray-50 text-neutral-900 dark:bg-neutral-900 dark:text-white">
 
-  @include('frontend.layouts.header')
+  @unless($isIframe ?? false)
+      @include('frontend.layouts.header')
+  @endunless
 
   <main class="mx-auto">
     @yield('content')
   </main>
 
-  @include('frontend.layouts.footer')
+  @unless($isIframe ?? false)
+      @include('frontend.layouts.footer')
+  @endunless
 
 </body>
 </html>
