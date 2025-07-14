@@ -23,7 +23,7 @@ class FormController extends Controller
         return view('frontend.form.show', compact('formHtml', 'template', 'isIframe'));
     }
 
-    public function store(Request $request, $id)
+    public function store(Request $request, $slug)
     {
         $template = BookingTemplate::findOrFail($slug);
         $bookingData = json_decode($request->input('booking_data'), true) ?? [];
