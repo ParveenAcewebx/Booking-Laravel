@@ -164,7 +164,9 @@ class BookingController extends Controller
         $formStructureJson = $booking->template->data ?? '[]';
         $formStructureArray = json_decode($formStructureJson, true);
 
-        $dynamicFieldHtml = FormHelper::renderDynamicFieldHTML($formStructureArray, $dynamicValues);
+        // explicitly use bootstrap for backend
+        $dynamicFieldHtml = FormHelper::renderDynamicFieldHTML($formStructureArray, $dynamicValues, 'bootstrap');
+
         $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
 
         $selectedStaffUser = User::where('name', $booking->selected_staff)->first();
@@ -180,6 +182,7 @@ class BookingController extends Controller
             'loginUser' => $loginUser,
         ]);
     }
+
 
     public function bookingUpdate(Request $request, $id)
     {
@@ -260,9 +263,9 @@ class BookingController extends Controller
                 'message' => 'Template not found.'
             ], 404);
         }
-
         try {
-            $html = FormHelper::renderDynamicFieldHTML($template->data);
+            // explicitly use bootstrap for backend
+            $html = FormHelper::renderDynamicFieldHTML($template->data, [], 'bootstrap');
             return response()->json([
                 'success' => true,
                 'html' => $html
@@ -274,4 +277,5 @@ class BookingController extends Controller
             ], 500);
         }
     }
+
 }
