@@ -14,7 +14,7 @@
                 @if($day === 'Monday')
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input apply-to-all-days"
-                               id="applyAllDaysCheckbox" data-day="{{ $daySlug }}">
+                               id="applyAllDaysCheckbox" name= "apply_all_days" data-day="{{ $daySlug }}">
                         <label class="custom-control-label ml-1 mb-0 medium" for="applyAllDaysCheckbox">
                             Apply to all days
                         </label>
@@ -80,3 +80,5 @@
         </div>
     </div>
 </div>
+
+

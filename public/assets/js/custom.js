@@ -1127,10 +1127,37 @@ $(function () {
 });
 
 
-
 $(document).ready(function () {
 
-    // Toggle chevron icons on collapse show/hide
+    function applyEndTimeRestrictions($startSelect) {
+        const selectedStart = $startSelect.val();
+        const parent = $startSelect.closest('.d-flex');
+        const $endSelect = parent.find('select[name$="[end]"]');
+
+        if (!$endSelect.length) return;
+
+        const [startHour, startMinute] = selectedStart.split(':').map(Number);
+        const startMinutes = startHour * 60 + startMinute;
+
+        $endSelect.find('option').each(function () {
+            const [optHour, optMinute] = this.value.split(':').map(Number);
+            const optMinutes = optHour * 60 + optMinute;
+            this.disabled = optMinutes <= startMinutes;
+        });
+
+        if ($endSelect.find('option:selected').prop('disabled')) {
+            $endSelect.val('00:00').trigger('change');
+        }
+    }
+
+    $('select[name^="working_days"][name$="[start]"]').on('change', function () {
+        applyEndTimeRestrictions($(this));
+    });
+
+    $('select[name^="working_days"][name$="[start]"]').each(function () {
+        applyEndTimeRestrictions($(this));
+    });
+
     $('#workingHoursAccordion')
         .on('show.bs.collapse', function (e) {
             const targetId = $(e.target).attr('id');
@@ -1145,29 +1172,6 @@ $(document).ready(function () {
                 .addClass('icon-chevron-down');
         });
 
-    // Disable end time options before or equal to start time
-    $('select[name^="working_days"][name$="[start]"]').on('change', function () {
-        const selectedStart = this.value;
-        const parent = $(this).closest('.d-flex');
-        const $endSelect = parent.find('select[name^="working_days"][name$="[end]"]');
-
-        if (!$endSelect.length) return;
-
-        const [startHour, startMinute] = selectedStart.split(':').map(Number);
-        const startMinutes = startHour * 60 + startMinute;
-
-        $endSelect.find('option').each(function () {
-            const [optHour, optMinute] = this.value.split(':').map(Number);
-            const optMinutes = optHour * 60 + optMinute;
-            this.disabled = optMinutes <= startMinutes;
-        });
-
-        if ($endSelect.val() && $endSelect.find('option:selected').prop('disabled')) {
-            $endSelect.prop('selectedIndex', 0);
-        }
-    });
-
-    // Apply/Reset Monday values to all days
     $('.apply-to-all-days').on('change', function () {
         const isChecked = this.checked;
         const $sourceCard = $(this).closest('.card-body');
@@ -1192,31 +1196,11 @@ $(document).ready(function () {
         });
     });
 
-
-    // Add day off dynamically
-    $('#addDayOffBtn').on('click', function () {
-        const template = $('#dayOffTemplate').html();
-        const uniqueId = Math.floor(Math.random() * 1000000);
-        const html = template.replace(/__RANDOM__/g, uniqueId);
-        const $entry = $(html);
-
-        $('#dayOffRepeater').append($entry);
-
-        $entry.find('.select2-days').select2({
-            theme: 'bootstrap'
-        });
-
-        $entry.find('.date-range-picker').daterangepicker({
-            autoUpdateInput: false,
-            locale: {
-                format: 'MMMM D, YYYY'
-            }
-        }).on('apply.daterangepicker', function (ev, picker) {
-            $(this).val(picker.startDate.format('MMMM D, YYYY') + ' - ' + picker.endDate.format('MMMM D, YYYY'));
-        });
+    $('.select2_working_days').select2({
+        theme: 'bootstrap',
+        width: '100%'
     });
 });
-
 
 $(function () {
     const addedServices = new Set();
@@ -1264,7 +1248,7 @@ $(function () {
             $select.empty();
 
             if (services.length === 0) {
-                $select.append('<option value="">No service assigned yet</option>');
+                // $select.append('');
             } else {
                 services.forEach(service => {
                     const selected = currentValues.includes(String(service.id)) ? 'selected' : '';

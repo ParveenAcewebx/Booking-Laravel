@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Staff;
 use App\Models\Service;
 use App\Models\StaffAssociation;
 use Illuminate\Http\Request;
@@ -105,6 +106,7 @@ class StaffController extends Controller
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
         }
 
+        // Create user
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -116,24 +118,46 @@ class StaffController extends Controller
 
         $role = Role::findById($request->role, 'web');
         $user->assignRole($role->name);
-
+        $applyToAllDays = $request->has('apply_all_days') ? 1 : 0;
         if ($request->has('assigned_services') && is_array($request->assigned_services)) {
             foreach ($request->assigned_services as $serviceData) {
-
                 StaffAssociation::create([
                     'staff_member' => $user->id,
                     'service_id' => $serviceData['id'],
                 ]);
             }
         }
+
+        $workingHours = [];
+        if ($request->has('working_days')) {
+            foreach ($request->working_days as $day => $data) {
+                $workingHours[$day] = [
+                    'start' => $data['start'] ?? null,
+                    'end' => $data['end'] ?? null,
+                    'services' => $data['service_1'] ?? [],
+                ];
+            }
+            $workingHours['apply_all_days'] = $applyToAllDays;
+        }
+
+        Staff::create([
+            'staff_id' => $user->id,
+            'work_hours' => json_encode($workingHours),
+            'days_off' => null,
+
+        ]);
+
         return redirect()->route('staff.list')->with('success', 'Staff Created Successfully!');
     }
+
 
     public function edit(User $staff)
     {
         $roles = Role::where('name', 'Staff')->first();
         $phoneCountries = collect(config('phone_countries'))->unique('code')->values();
         $weekDays = config('constants.week_days');
+        $staffMeta = Staff::where('staff_id', $staff->id)->first();
+
 
         $assignedServices = Service::whereIn('id', StaffAssociation::where('staff_member', $staff->id)->pluck('service_id'))
             ->with('category')
@@ -150,7 +174,8 @@ class StaffController extends Controller
             'assignedServices',
             'services',
             'loginUser',
-            'weekDays'
+            'weekDays',
+            'staffMeta'
         ));
     }
 
@@ -178,7 +203,6 @@ class StaffController extends Controller
         }
 
         $staff->save();
-
         $role = Role::findById($request->role, 'web');
         $staff->syncRoles([$role->name]);
 
@@ -192,9 +216,31 @@ class StaffController extends Controller
             ->all();
 
         $staff->services()->sync($serviceIds);
+        $workingHours = [];
+        $applyToAllDays = $request->has('apply_all_days') ? 1 : 0;
+
+        if ($request->has('working_days')) {
+            foreach ($request->working_days as $day => $data) {
+                $workingHours[$day] = [
+                    'start' => $data['start'] ?? null,
+                    'end' => $data['end'] ?? null,
+                    'services' => $data['service_1'] ?? [],
+                ];
+            }
+            $workingHours['apply_all_days'] = $applyToAllDays;
+        }
+
+        Staff::updateOrCreate(
+            ['staff_id' => $staff->id],
+            [
+                'work_hours' => json_encode($workingHours),
+                'days_off' => null,
+            ]
+        );
+
         return redirect()->route('staff.list')->with('success', 'Staff Updated Successfully!');
     }
-    
+
     public function destroy($id)
     {
         $user = User::find($id);
