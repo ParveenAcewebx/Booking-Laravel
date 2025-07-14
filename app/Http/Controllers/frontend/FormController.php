@@ -49,7 +49,7 @@ class FormController extends Controller
             }
         }
 
-        $lastInsertedId = '111';
+        $lastInsertedId = '0';
         if (!empty($bookingData['first_name']) && !empty($bookingData['last_name'])) {
 
             $user = User::create([

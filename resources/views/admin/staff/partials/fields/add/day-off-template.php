@@ -5,23 +5,23 @@
                 <div class="form-group col-md-5">
                     <label class="font-weight-bold">Day(s) Off <span class="text-danger">*</span></label>
                     <input type="text"
-                           name="day_offs[][offs]"
+                           name="day_offs[__INDEX__][offs]"
                            class="form-control"
-                           placeholder="e.g. Monday, Wednesday"
+                           placeholder="e.g. Diwali, Festival, Leave"
                            required>
                 </div>
 
                 <div class="form-group col-md-5">
                     <label class="font-weight-bold">Date Range <span class="text-danger">*</span></label>
                     <input type="text"
-                           name="day_offs[][date]"
+                           name="day_offs[__INDEX__][date]"
                            class="form-control date-range-picker"
                            placeholder="MMMM D, YYYY - MMMM D, YYYY"
                            required>
                 </div>
             </div>
 
-                <button type="button"
+            <button type="button"
                     class="btn btn-sm btn-outline-danger position-absolute"
                     style="top: 10px; right: 10px;"
                     onclick="this.closest('.day-off-entry').remove();">

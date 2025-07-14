@@ -8,7 +8,7 @@
                 </button>
             </div>
             <div id="dayOffRepeater"></div>
-            @include('admin.staff.partials.fields.day-off-template')
+            @include('admin.staff.partials.fields.add.day-off-template')
         </div>
     </div>
 </div>

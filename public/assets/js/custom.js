@@ -1332,3 +1332,22 @@ $(function () {
     updateAddButtonState();
     refreshWorkingDaysServices();
 });
+
+let dayOffIndex = 0;
+
+$('#addDayOffBtn').on('click', function () {
+    const template = $('#dayOffTemplate').html().replace(/__INDEX__/g, dayOffIndex);
+    const $entry = $(template);
+
+    $('#dayOffRepeater').append($entry);
+    dayOffIndex++;
+
+    // Initialize date range picker
+    $entry.find('.date-range-picker').daterangepicker({
+        autoUpdateInput: false,
+        locale: { format: 'MMMM D, YYYY' }
+    }).on('apply.daterangepicker', function (ev, picker) {
+        $(this).val(picker.startDate.format('MMMM D, YYYY') + ' - ' + picker.endDate.format('MMMM D, YYYY'));
+    });
+});
+

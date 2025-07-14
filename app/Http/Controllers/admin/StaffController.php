@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class StaffController extends Controller
 {
@@ -73,7 +75,6 @@ class StaffController extends Controller
                 ->rawColumns(['name', 'status', 'action'])
                 ->make(true);
         }
-
         return view('admin.staff.index', compact('loginUser'));
     }
 
@@ -85,9 +86,9 @@ class StaffController extends Controller
         $services = Service::all();
         $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
-
         return view('admin.staff.add', compact('roles', 'services', 'phoneCountries', 'weekDays', 'loginUser'));
     }
+
 
     public function store(Request $request)
     {
@@ -101,12 +102,13 @@ class StaffController extends Controller
 
         $fullPhoneNumber = $request->code . $request->phone_number;
 
+        // Upload avatar if present
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
         }
 
-        // Create user
+        // Create the user
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -116,9 +118,11 @@ class StaffController extends Controller
             'status' => $request->has('status') ? config('constants.status.active') : config('constants.status.inactive'),
         ]);
 
+        // Assign role
         $role = Role::findById($request->role, 'web');
         $user->assignRole($role->name);
-        $applyToAllDays = $request->has('apply_all_days') ? 1 : 0;
+
+        // Assigned services
         if ($request->has('assigned_services') && is_array($request->assigned_services)) {
             foreach ($request->assigned_services as $serviceData) {
                 StaffAssociation::create([
@@ -128,7 +132,9 @@ class StaffController extends Controller
             }
         }
 
+        $applyToAllDays = $request->has('apply_all_days') ? 1 : 0;
         $workingHours = [];
+
         if ($request->has('working_days')) {
             foreach ($request->working_days as $day => $data) {
                 $workingHours[$day] = [
@@ -140,11 +146,38 @@ class StaffController extends Controller
             $workingHours['apply_all_days'] = $applyToAllDays;
         }
 
+        $dayOffsGrouped = [];
+        if ($request->has('day_offs') && is_array($request->day_offs)) {
+            foreach ($request->day_offs as $off) {
+                $label = $off['offs'] ?? null;
+                $dateRange = $off['date'] ?? null;
+
+                if ($label && $dateRange) {
+                    try {
+                        [$start, $end] = explode(' - ', $dateRange);
+                        $startDate = Carbon::createFromFormat('F j, Y', trim($start));
+                        $endDate = Carbon::createFromFormat('F j, Y', trim($end));
+                        $period = CarbonPeriod::create($startDate, $endDate);
+
+                        $group = [];
+                        foreach ($period as $date) {
+                            $group[] = [
+                                'label' => $label,
+                                'date' => $date->format('F j, Y'),
+                            ];
+                        }
+                        $dayOffsGrouped[] = $group;
+                    } catch (\Exception $e) {
+                        continue;
+                    }
+                }
+            }
+        }
+
         Staff::create([
             'staff_id' => $user->id,
             'work_hours' => json_encode($workingHours),
-            'days_off' => null,
-
+            'days_off' => json_encode($dayOffsGrouped),
         ]);
 
         return redirect()->route('staff.list')->with('success', 'Staff Created Successfully!');
@@ -157,8 +190,6 @@ class StaffController extends Controller
         $phoneCountries = collect(config('phone_countries'))->unique('code')->values();
         $weekDays = config('constants.week_days');
         $staffMeta = Staff::where('staff_id', $staff->id)->first();
-
-
         $assignedServices = Service::whereIn('id', StaffAssociation::where('staff_member', $staff->id)->pluck('service_id'))
             ->with('category')
             ->get();
@@ -166,6 +197,12 @@ class StaffController extends Controller
         $services = Service::all();
         $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
+
+
+        $decodedDayOffs = [];
+        if ($staffMeta && $staffMeta->days_off) {
+            $decodedDayOffs = json_decode($staffMeta->days_off, true);
+        }
 
         return view('admin.staff.edit', compact(
             'staff',
@@ -175,7 +212,8 @@ class StaffController extends Controller
             'services',
             'loginUser',
             'weekDays',
-            'staffMeta'
+            'staffMeta',
+            'decodedDayOffs'
         ));
     }
 

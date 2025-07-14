@@ -9,7 +9,7 @@
                             $headingId = 'heading' . ucfirst($daySlug);
                             $isFirst = $index === 0;
                         @endphp
-                        @include('admin.staff.partials.fields.working-day', compact('day', 'daySlug', 'collapseId', 'headingId', 'isFirst'))
+                        @include('admin.staff.partials.fields.add.working-day', compact('day', 'daySlug', 'collapseId', 'headingId', 'isFirst'))
                     @endforeach
                 </div>
             </div>
