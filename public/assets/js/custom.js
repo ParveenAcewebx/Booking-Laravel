@@ -1014,7 +1014,7 @@ $(document).ready(function () {
     toggleLiveMode();
 });
 
-// Description Quill editor
+/* --------------------------  Start Quill Editor  ------------------------ */
 document.addEventListener("DOMContentLoaded", function () {
     const quill = new Quill("#quill-editor", {
         theme: "snow",
@@ -1031,9 +1031,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+/* --------------------------  End Quill Editor  ------------------------ */
 
+/* --------------------------  Start Gallery Logics  ------------------------ */
 
-//Upload delete gallery
 document.addEventListener("DOMContentLoaded", function () {
     let selectedFiles = new DataTransfer();
     const galleryInput = document.getElementById("galleryInput");
@@ -1097,9 +1098,10 @@ document.addEventListener("DOMContentLoaded", function () {
         console.warn("galleryInput or galleryPreviewContainer not found in DOM.");
     }
 });
+/* --------------------------  End Gallery Logics  ------------------------ */
 
 
-// All Service Select Dropdown
+/* --------------------------  Start Select2 Dropdown Classes  ------------------------ */
 $(function () {
     const select2Fields = [
         { selector: ".status", placeholder: "Select a status" },
@@ -1125,8 +1127,9 @@ $(function () {
         });
     });
 });
+/* --------------------------  End Select2 Dropdown Classes  ------------------------ */
 
-
+/* --------------------------  Start Work Hours Function  ------------------------ */
 $(document).ready(function () {
 
     function applyEndTimeRestrictions($startSelect) {
@@ -1332,22 +1335,6 @@ $(function () {
     updateAddButtonState();
     refreshWorkingDaysServices();
 });
+/* ------------------------  End Work Hours Function  ---------------------------- */
 
-let dayOffIndex = 0;
-
-$('#addDayOffBtn').on('click', function () {
-    const template = $('#dayOffTemplate').html().replace(/__INDEX__/g, dayOffIndex);
-    const $entry = $(template);
-
-    $('#dayOffRepeater').append($entry);
-    dayOffIndex++;
-
-    // Initialize date range picker
-    $entry.find('.date-range-picker').daterangepicker({
-        autoUpdateInput: false,
-        locale: { format: 'MMMM D, YYYY' }
-    }).on('apply.daterangepicker', function (ev, picker) {
-        $(this).val(picker.startDate.format('MMMM D, YYYY') + ' - ' + picker.endDate.format('MMMM D, YYYY'));
-    });
-});
 

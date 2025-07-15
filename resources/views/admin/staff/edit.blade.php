@@ -72,45 +72,4 @@
         </div>
     </div>
 </div>
-<input type="hidden" id="dayOffData" value='@json($decodedDayOffs ?? [])'>
-@push('scripts')
-<script>
-    const dayOffData = @json($decodedDayOffs);
-
-    $(function () {
-        if (Array.isArray(dayOffData)) {
-            dayOffData.forEach((group, index) => {
-                if (!Array.isArray(group) || group.length === 0) return;
-
-                const label = group[0].label || '';
-                const startDate = group[0].date;
-                const endDate = group[group.length - 1].date;
-
-                const range = `${startDate} - ${endDate}`;
-                const template = $('#dayOffTemplate').html();
-                const html = template.replace(/__INDEX__/g, index);
-                const $entry = $(html);
-
-                $entry.find('input[name$="[offs]"]').val(label);
-                $entry.find('input[name$="[date]"]').val(range);
-
-                $('#dayOffRepeater').append($entry);
-
-                // Re-init date range picker
-                $entry.find('.date-range-picker').daterangepicker({
-                    autoUpdateInput: false,
-                    locale: {
-                        format: 'MMMM D, YYYY'
-                    }
-                }).on('apply.daterangepicker', function (ev, picker) {
-                    $(this).val(picker.startDate.format('MMMM D, YYYY') + ' - ' + picker.endDate.format('MMMM D, YYYY'));
-                }).trigger('apply.daterangepicker', {
-                    startDate: moment(startDate, 'MMMM D, YYYY'),
-                    endDate: moment(endDate, 'MMMM D, YYYY')
-                });
-            });
-        }
-    });
-</script>
-@endpush
 @endsection

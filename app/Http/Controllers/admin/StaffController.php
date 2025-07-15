@@ -69,7 +69,6 @@ class StaffController extends Controller
                             </button>
                         </form>';
                     }
-
                     return $btn;
                 })
                 ->rawColumns(['name', 'status', 'action'])
@@ -89,7 +88,6 @@ class StaffController extends Controller
         return view('admin.staff.add', compact('roles', 'services', 'phoneCountries', 'weekDays', 'loginUser'));
     }
 
-
     public function store(Request $request)
     {
         $request->validate([
@@ -102,13 +100,11 @@ class StaffController extends Controller
 
         $fullPhoneNumber = $request->code . $request->phone_number;
 
-        // Upload avatar if present
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
         }
 
-        // Create the user
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -118,11 +114,9 @@ class StaffController extends Controller
             'status' => $request->has('status') ? config('constants.status.active') : config('constants.status.inactive'),
         ]);
 
-        // Assign role
         $role = Role::findById($request->role, 'web');
         $user->assignRole($role->name);
 
-        // Assigned services
         if ($request->has('assigned_services') && is_array($request->assigned_services)) {
             foreach ($request->assigned_services as $serviceData) {
                 StaffAssociation::create([
@@ -179,7 +173,6 @@ class StaffController extends Controller
             'work_hours' => json_encode($workingHours),
             'days_off' => json_encode($dayOffsGrouped),
         ]);
-
         return redirect()->route('staff.list')->with('success', 'Staff Created Successfully!');
     }
 
@@ -198,10 +191,20 @@ class StaffController extends Controller
         $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
 
+        $groupedDayOffs = [];
+        if (!empty($staffMeta->days_off)) {
+            $decoded = json_decode($staffMeta->days_off, true);
+            $flattened = collect($decoded)->flatten(1);
+            $groupedDayOffs = $flattened->groupBy('label')->map(function ($items, $label) {
+                $dates = collect($items)->pluck('date')->sort()->values();
+                $start = $dates->first();
+                $end = $dates->last();
 
-        $decodedDayOffs = [];
-        if ($staffMeta && $staffMeta->days_off) {
-            $decodedDayOffs = json_decode($staffMeta->days_off, true);
+                return [
+                    'label' => $label,
+                    'range' => $start . ' - ' . $end
+                ];
+            })->values()->toArray();
         }
 
         return view('admin.staff.edit', compact(
@@ -213,7 +216,7 @@ class StaffController extends Controller
             'loginUser',
             'weekDays',
             'staffMeta',
-            'decodedDayOffs'
+            'groupedDayOffs'
         ));
     }
 
@@ -241,22 +244,17 @@ class StaffController extends Controller
         }
 
         $staff->save();
+
         $role = Role::findById($request->role, 'web');
         $staff->syncRoles([$role->name]);
 
+        // Sync assigned services
         $submittedServices = $request->input('assigned_services', []);
-        $serviceIds = collect($submittedServices)
-            ->pluck('id')
-            ->filter()
-            ->map(fn($id) => (int) $id)
-            ->unique()
-            ->values()
-            ->all();
-
+        $serviceIds = collect($submittedServices)->pluck('id')->filter()->map(fn($id) => (int) $id)->unique()->values()->all();
         $staff->services()->sync($serviceIds);
+
         $workingHours = [];
         $applyToAllDays = $request->has('apply_all_days') ? 1 : 0;
-
         if ($request->has('working_days')) {
             foreach ($request->working_days as $day => $data) {
                 $workingHours[$day] = [
@@ -268,14 +266,48 @@ class StaffController extends Controller
             $workingHours['apply_all_days'] = $applyToAllDays;
         }
 
-        Staff::updateOrCreate(
-            ['staff_id' => $staff->id],
-            [
-                'work_hours' => json_encode($workingHours),
-                'days_off' => null,
-            ]
-        );
+        $dayOffsRaw = $request->input('day_offs', []);
+        $nestedDayOffs = [];
 
+        foreach ($dayOffsRaw as $entry) {
+            $label = $entry['offs'] ?? null;
+            $range = $entry['date'] ?? null;
+
+            if ($label && $range) {
+                try {
+                    [$startDate, $endDate] = explode(' - ', $range);
+                    $start = Carbon::createFromFormat('F j, Y', trim($startDate));
+                    $end = Carbon::createFromFormat('F j, Y', trim($endDate));
+
+                    if ($start->gt($end)) {
+                        [$start, $end] = [$end, $start]; // swap if in wrong order
+                    }
+
+                    $block = [];
+                    while ($start->lte($end)) {
+                        $block[] = [
+                            'label' => $label,
+                            'date' => $start->format('F j, Y'),
+                        ];
+                        $start->addDay();
+                    }
+
+                    $nestedDayOffs[] = $block;
+                } catch (\Exception $e) {
+                    continue;
+                }
+            }
+        }
+
+        $staffMeta = Staff::firstOrNew(['staff_id' => $staff->id]);
+        $staffMeta->work_hours = json_encode($workingHours);
+
+        // Only update if valid day offs exist
+        if (!empty($nestedDayOffs)) {
+            $staffMeta->days_off = json_encode($nestedDayOffs);
+        }
+
+        $staffMeta->save();
         return redirect()->route('staff.list')->with('success', 'Staff Updated Successfully!');
     }
 
@@ -285,10 +317,17 @@ class StaffController extends Controller
         $authuser_id = Auth::user()->id;
 
         if ($authuser_id != $id) {
-            $user->delete();
-            return response()->json(['success' => true]);
+            if ($user) {
+                $user->delete();
+
+                Staff::where('staff_id', $id)->delete();
+                StaffAssociation::where('staff_member', $id)->delete();
+                return response()->json(['success' => true]);
+            }
+
+            return response()->json(['success' => false, 'message' => 'User not found.']);
         } else {
-            return response()->json(['success' => 'login', 'message' => 'Item not found']);
+            return response()->json(['success' => 'login', 'message' => 'Cannot delete logged-in user.']);
         }
     }
 }

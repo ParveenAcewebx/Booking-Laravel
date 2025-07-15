@@ -1,3 +1,4 @@
+<!-- Days Off Tab -->
 <div class="tab-pane fade" id="days-off" role="tabpanel">
     <div class="row">
         <div class="col-md-12">
@@ -12,3 +13,7 @@
         </div>
     </div>
 </div>
+
+<!-- Hidden field for JSON Data -->
+<input type="hidden" id="editDayOffData" value='@json($groupedDayOffs)'>
+
