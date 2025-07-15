@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('staffs', function (Blueprint $table) {
             $table->id();
             $table->string('staff_id')->nullable(); 
-            $table->string('work_hours')->nullable();
-            $table->string('days_off')->nullable();
+            $table->longText('work_hours')->nullable();
+            $table->longText('days_off')->nullable();
             $table->timestamps();
         });
     }
