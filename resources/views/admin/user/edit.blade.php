@@ -170,22 +170,25 @@
                                     <!-- Status Checkbox -->
                                     <div class="col-md-12" @if($hideFields) style="display:none;" @endif>
                                         <div class="form-group">
-                                            <label class="form-label d-block">Status</label>
-
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox"
-                                                    class="custom-control-input"
-                                                    name="status"
-                                                    id="status"
-                                                    value="{{ config('constants.status.active') }}"
-                                                    {{ $user->status == config('constants.status.active') ? 'checked' : '' }}>
-                                                <label class="custom-control-label" for="status">Active</label>
-                                            </div>
+                                            <label for="status" class="form-label d-block">Status</label>
+                                            <select name="status" id="status" class="form-control select-user">
+                                                <option value="{{ config('constants.status.active') }}"
+                                                    {{ old('status', $user->status) == config('constants.status.active') ? 'selected' : '' }}>
+                                                    Active
+                                                </option>
+                                                <option value="{{ config('constants.status.inactive') }}"
+                                                    {{ old('status', $user->status) == config('constants.status.inactive') ? 'selected' : '' }}>
+                                                    Inactive
+                                                </option>
+                                            </select>
+                                            @error('status')
+                                            <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
                                 <!-- Submit button -->
-                                <button type="submit" class="btn btn-primary">Update</button>
+                                <button type="submit" class="btn btn-primary mt-3">Update</button>
                             </div>
                         </div>
                     </div>

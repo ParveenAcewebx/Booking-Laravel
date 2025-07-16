@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Cookie;
 use App\Models\User;
+
 class CategoryController extends Controller
 {
     protected $allUsers;
@@ -68,7 +69,7 @@ class CategoryController extends Controller
                 ->make(true);
         }
 
-        return view('admin.category.index',compact('loginUser'));
+        return view('admin.category.index', compact('loginUser'));
     }
 
     public function create()
@@ -94,7 +95,7 @@ class CategoryController extends Controller
             'category_name' => $request->category_name,
             'slug' => Str::uuid(),
             'thumbnail' => $thumbnailPath,
-            'status' => $request->status ?? 0,
+            'status' => $request->status ? config('constants.status.active') : config('constants.status.inactive'),
         ]);
 
         return redirect()->route('category.list')->with('success', 'Category Created Successfully.');
@@ -122,14 +123,13 @@ class CategoryController extends Controller
         ];
 
         if ($request->hasFile('thumbnail')) {
-            // Optionally delete old file here if you want
             $data['thumbnail'] = $request->file('thumbnail')->store('cat-thumbnails', 'public');
         }
 
         $category->update($data);
-
         return redirect()->route('category.list')->with('success', 'Category Updated Successfully.');
     }
+
 
 
     public function destroy(Category $category)

@@ -49,10 +49,23 @@
                                 </span>
                                 @enderror
                             </div>
-                            <div class="custom-control custom-checkbox mt-2">
-                                <input type="checkbox" name="status" value="1" class="custom-control-input" id="status" checked>
-                                <label class="custom-control-label" for="status">Active</label>
+                            <div class="form-group mt-3">
+                                <label for="status" class="form-label d-block">Status</label>
+                                <select name="status" id="status" class="form-control select-user">
+                                    <option value="{{ config('constants.status.active') }}"
+                                        {{ old('status', config('constants.status.active')) == config('constants.status.active') ? 'selected' : '' }}>
+                                        Active
+                                    </option>
+                                    <option value="{{ config('constants.status.inactive') }}"
+                                        {{ old('status') == config('constants.status.inactive') ? 'selected' : '' }}>
+                                        Inactive
+                                    </option>
+                                </select>
+                                @error('status')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
+
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Thumbnail</label>

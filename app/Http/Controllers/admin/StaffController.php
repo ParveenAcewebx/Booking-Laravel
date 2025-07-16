@@ -81,7 +81,7 @@ class StaffController extends Controller
     {
         $roles = Role::where('name', 'Staff')->first();
         $weekDays = config('constants.week_days');
-        $phoneCountries = collect(config('phone_countries'))->unique('code')->values();
+        $phoneCountries = config('phone_countries');
         $services = Service::all();
         $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
@@ -99,7 +99,7 @@ class StaffController extends Controller
         ]);
 
         $fullPhoneNumber = $request->phone_number;
-        // dd($request->code);
+
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
@@ -234,8 +234,8 @@ class StaffController extends Controller
         $staff->name = $request->name;
         $staff->email = $request->email;
         $staff->phone_number =  $request->phone_number;
-        $staff->status = $request->has('status') ? config('constants.status.active') : config('constants.status.inactive');
         $staff->phone_code = $request->code;
+        $staff->status = $request->status ? config('constants.status.active') : config('constants.status.inactive');
 
         if ($request->hasFile('avatar')) {
             $staff->avatar = $request->file('avatar')->store('avatars', 'public');

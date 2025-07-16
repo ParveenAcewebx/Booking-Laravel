@@ -130,7 +130,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
             'role' => 'required',
-            'status' => 'nullable|boolean',
+            'status' => 'required|in:' . config('constants.status.active') . ',' . config('constants.status.inactive'),
             'code' => 'required',
             'phone_number' => 'required'
         ]);
@@ -141,7 +141,6 @@ class UserController extends Controller
         if ($request->hasFile('avatar')) {
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
         }
-
         $user = User::create([
             'name' => $request->username,
             'email' => $request->email,
@@ -149,7 +148,7 @@ class UserController extends Controller
             'avatar' => $avatarPath,
             'phone_number' => $fullPhoneNumber,
             'phone_code' => $request->code,
-            'status' => $request->has('status') ? config('constants.status.active') : config('constants.status.inactive'),
+            'status' => $request->status,
         ]);
 
         $userRole = Role::find($request->role);
@@ -210,7 +209,9 @@ class UserController extends Controller
             'password' => 'nullable|min:6|confirmed',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'code' => 'required',
-            'phone_number' => 'required'
+            'phone_number' => 'required',
+            'status' => 'required|in:' . config('constants.status.active') . ',' . config('constants.status.inactive'),
+
         ]);
 
         $user = User::findOrFail($id);
@@ -220,7 +221,7 @@ class UserController extends Controller
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
         }
 
-        $status = $request->has('status') ? config('constants.status.active') : config('constants.status.inactive');
+        $status = $request->status;
         $fullPhoneNumber = $request->phone_number;
 
         $user->update([

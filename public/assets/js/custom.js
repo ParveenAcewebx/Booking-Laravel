@@ -1104,19 +1104,11 @@ document.addEventListener("DOMContentLoaded", function () {
 /* --------------------------  Start Select2 Dropdown Classes  ------------------------ */
 $(function () {
     const select2Fields = [
-        { selector: ".status", placeholder: "Select a status" },
         { selector: ".durartion", placeholder: "Select Duration" },
         { selector: ".category", placeholder: "Select Category" },
         { selector: ".select2-mash", placeholder: "Select an option" },
         { selector: ".currency", placeholder: "Select Currency" },
-        { selector: ".currency_unit" },
-        { selector: ".cancelling_value" },
-        { selector: ".appointment_status" },
-        { selector: ".payment_mode" },
-        { selector: ".select_role" },
-        { selector: ".select2_working_days" },
-        { selector: ".select_start_time" },
-        { selector: ".select_end_time" }
+        { selector: ".select-user" }
     ];
 
     select2Fields.forEach((field) => {
@@ -1199,7 +1191,7 @@ $(document).ready(function () {
         });
     });
 
-    $('.select2_working_days').select2({
+    $('.select-user').select2({
         theme: 'bootstrap',
         width: '100%'
     });

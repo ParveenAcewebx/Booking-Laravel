@@ -129,7 +129,7 @@
 
                                     <div class="form-group">
                                         <label>Status</label>
-                                        <select name="status" class="form-control status" required>
+                                        <select name="status" class="form-control select-user" required>
                                             @foreach($statuses as $label => $value)
                                             <option value="{{ $value }}" {{ $service->status == $value ? 'selected' : '' }}>{{ ucfirst($label) }}</option>
                                             @endforeach
@@ -140,7 +140,7 @@
                                 <div class="tab-pane" id="pricing" role="tabpanel">
                                     <div class="form-group">
                                         <label>Currency</label>
-                                        <select name="currency" class="form-control currency">
+                                        <select name="currency" class="form-control select-user">
                                             @foreach($currencies as $code => $currency)
                                             <option value="{{ $code }}" {{ $service->currency == $code ? 'selected' : '' }}>{{ $code }}</option>
                                             @endforeach
@@ -195,7 +195,7 @@
                                 <div class="tab-pane" id="settings" role="tabpanel">
                                     <div class="form-group">
                                         <label>Default Appointment Status</label>
-                                        <select name="appointment_status" class="form-control appointment_status">
+                                        <select name="appointment_status" class="form-control select-user">
                                             @foreach($appointmentStats as $label => $value)
                                             <option value="{{ $value }}" {{ $service->appointment_status == $value ? 'selected' : '' }}>{{ ucfirst($label) }}</option>
                                             @endforeach
@@ -204,12 +204,12 @@
                                     <div class="form-group">
                                         <label>Minimum Time Required Before Canceling</label>
                                         <div class="d-flex">
-                                            <select name="cancelling_unit" class="form-control mr-2 currency_unit" id="cancelling_unit">
+                                            <select name="cancelling_unit" class="form-control mr-2 select-user" id="cancelling_unit">
                                                 <option value="hours" {{ $service->cancelling_unit == 'hours' ? 'selected' : '' }}>Hours</option>
                                                 <option value="days" {{ $service->cancelling_unit == 'days' ? 'selected' : '' }}>Days</option>
                                             </select>
 
-                                            <select name="cancelling_value" class="form-control cancelling_value" id="cancelling_value">
+                                            <select name="cancelling_value" class="form-control select-user" id="cancelling_value">
                                                 <!-- Options populated by JS -->
                                             </select>
                                             <input type="hidden" id="cancel_value" value="{{ $service->cancelling_value }}">
@@ -221,7 +221,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Payment Mode</label>
-                                        <select name="payment_mode" class="form-control payment_mode" id="payment_mode">
+                                        <select name="payment_mode" class="form-control select-user" id="payment_mode">
                                             <option value="on_site" {{ $service->payment_mode == 'on_site' ? 'selected' : '' }}>On Site</option>
                                             <option value="stripe" {{ $service->payment_mode == 'stripe' ? 'selected' : '' }}>Stripe</option>
                                         </select>
@@ -296,15 +296,14 @@
         </div>
     </div>
 </div>
-@endsection
 
-@push('styles')
+
 <style>
     .gallery-preview img {
         object-fit: cover;
     }
 </style>
-@endpush
+
 <script>
     function populateCancellingValues(unit, selectedValue = null) {
         const valueSelect = document.getElementById("cancelling_value");
@@ -333,3 +332,4 @@
         });
     });
 </script>
+@endsection

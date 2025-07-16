@@ -74,13 +74,13 @@
                                         <div class="input-group">
                                             <select class="form-control" id="country-select" name="code" style="max-width: 100px;">
                                                 @foreach($phoneCountries as $country)
-                                                    <option value="{{ $country['code'] }}"
-                                                        @if(
-                                                            (!old('phone_number', $user->phone_number ?? null) && $country['code'] == '+91') ||
-                                                            (old('phone_number', $user->phone_number ?? null) && Str::startsWith(old('phone_number', $user->phone_number ?? null), $country['code']))
-                                                        ) selected @endif>
-                                                        {{ $country['code'] }}
-                                                    </option>
+                                                <option value="{{ $country['code'] }}"
+                                                    @if(
+                                                    (!old('phone_number', $user->phone_number ?? null) && $country['code'] == '+91') ||
+                                                    (old('phone_number', $user->phone_number ?? null) && Str::startsWith(old('phone_number', $user->phone_number ?? null), $country['code']))
+                                                    ) selected @endif>
+                                                    {{ $country['code'] }}
+                                                </option>
                                                 @endforeach
                                             </select>
                                             <input type="text" class="form-control" id="phone_number" name="phone_number"
@@ -88,7 +88,7 @@
                                                 value="{{ old('phone_number', $user->phone_number ?? null) }}" required>
                                         </div>
                                         @error('phone_number')
-                                            <div class="error">{{ $message }}</div>
+                                        <div class="error">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -124,25 +124,27 @@
                                     @enderror
                                 </div>
                                 <!-- Status Checkbox -->
-                                <div class="col-md-12 mt-3">
+                                <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label d-block">Status</label>
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox"
-                                                class="custom-control-input"
-                                                name="status"
-                                                id="status"
-                                                value="{{ config('constants.status.active') }}"
-                                                checked>
-                                            <label class="custom-control-label" for="status">Active</label>
-                                        </div>
+                                        <label for="status" class="form-label d-block">Status</label>
+                                        <select name="status" id="status" class="form-control select-user">
+                                            <option value="{{ config('constants.status.active') }}"
+                                                {{ old('status') == config('constants.status.active') ? 'selected' : '' }}>
+                                                Active
+                                            </option>
+                                            <option value="{{ config('constants.status.inactive') }}"
+                                                {{ old('status') == config('constants.status.inactive') ? 'selected' : '' }}>
+                                                Inactive
+                                            </option>
+                                        </select>
                                         @error('status')
-                                        <div class="error">{{ $message }}</div>
+                                        <div class="error text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
+
                             </div>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary mt-3">Submit</button>
                         </form>
                     </div>
                 </div>

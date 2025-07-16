@@ -48,7 +48,7 @@ $applyAllDays = $workHours['apply_all_days'] ?? 0;
         <div class="card-body pt-2 pb-2 px-3">
             <div class="d-flex">
                 {{-- Start Time --}}
-                <select class="form-control form-control-sm w-auto start-time select_start_time"
+                <select class="form-control form-control-sm w-auto start-time select-user"
                     name="working_days[{{ $daySlug }}][start]">
                     @for($h = 0; $h < 24; $h++)
                         @foreach(['00', '30' ] as $m)
@@ -62,7 +62,7 @@ $applyAllDays = $workHours['apply_all_days'] ?? 0;
                 </select>
 
                 {{-- End Time --}}
-                <select class="form-control form-control-sm w-auto end-time ml-2 select_end_time"
+                <select class="form-control form-control-sm w-auto end-time ml-2 select-user"
                     name="working_days[{{ $daySlug }}][end]">
                     @for($h = 0; $h < 24; $h++)
                         @foreach(['00', '30' ] as $m)
@@ -78,7 +78,7 @@ $applyAllDays = $workHours['apply_all_days'] ?? 0;
 
             {{-- Service Selection --}}
             <div class="d-flex align-items-center mt-3 w-100">
-                <select class="form-control select2_working_days service-select"
+                <select class="form-control select-user service-select"
                     name="working_days[{{ $daySlug }}][service_1][]"
                     multiple>
                     @forelse($services as $service)

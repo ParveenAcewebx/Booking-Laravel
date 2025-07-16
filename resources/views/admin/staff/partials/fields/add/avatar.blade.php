@@ -41,9 +41,9 @@
         <div class="input-group">
             <select class="form-control" name="code" style="max-width: 100px;">
                 @foreach($phoneCountries as $country)
-                    <option value="{{ $country['code'] }}" {{ $country['code'] == '+91' ? 'selected' : '' }}>
-                        {{ $country['code'] }}
-                    </option>
+                <option value="{{ $country['code'] }}" {{ $country['code'] == '+91' ? 'selected' : '' }}>
+                    {{ $country['code'] }}
+                </option>
                 @endforeach
             </select>
             <input type="text" class="form-control" name="phone_number" placeholder="Enter phone number" required>
@@ -52,22 +52,31 @@
 </div>
 
 @if($roles)
-    <div class="col-md-6 d-none">
-        <div class="form-group">
-            <label>Role:</label>
-            <select class="form-control select_role" name="role" required>
-                <option value="{{ $roles->id }}" selected>{{ $roles->name }}</option>
-            </select>
-        </div>
+<div class="col-md-6 d-none">
+    <div class="form-group">
+        <label>Role:</label>
+        <select class="form-control select-user" name="role" required>
+            <option value="{{ $roles->id }}" selected>{{ $roles->name }}</option>
+        </select>
     </div>
+</div>
 @endif
 
-<div class="col-md-12">
+<div class="col-md-6">
     <div class="form-group">
-        <label class="form-label d-block">Status</label>
-        <div class="custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" name="status" id="status" value="{{ config('constants.status.active') }}" checked>
-            <label class="custom-control-label" for="status">Active</label>
-        </div>
+        <label for="status" class="form-label d-block">Status</label>
+        <select name="status" id="status" class="form-control select-user">
+            <option value="{{ config('constants.status.active') }}"
+                {{ old('status') == config('constants.status.active') ? 'selected' : '' }}>
+                Active
+            </option>
+            <option value="{{ config('constants.status.inactive') }}"
+                {{ old('status') == config('constants.status.inactive') ? 'selected' : '' }}>
+                Inactive
+            </option>
+        </select>
+        @error('status')
+        <div class="error text-danger">{{ $message }}</div>
+        @enderror
     </div>
 </div>

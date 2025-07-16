@@ -120,7 +120,7 @@ class RoleController extends Controller
             'permissions.*' => 'string',
         ]);
 
-        $status = $request->has('status') ? 1 : 0;
+        $status = $request->status ? config('constants.status.active') : config('constants.status.inactive');
 
         $role = Role::create([
             'name' => $validated['name'],
@@ -170,7 +170,7 @@ class RoleController extends Controller
         }
 
         $role->name = $request->name;
-        $role->status = $request->has('status') ? 1 : 0;
+        $role->status = $request->status ? config('constants.status.active') : config('constants.status.inactive');
         $role->save();
 
         $role->syncPermissions($request->permissions ?? []);

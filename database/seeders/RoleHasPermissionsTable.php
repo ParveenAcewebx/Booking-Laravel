@@ -31,10 +31,6 @@ class RoleHasPermissionsTable extends Seeder
 
         $customer = Role::findByName('Customer');
         $customer->givePermissionTo([
-            $roleGroups['bookings']['roles'][0], // view bookings
-            $roleGroups['templates']['roles'][0],// view templates
-            $roleGroups['roles']['roles'][0],    // view roles
-            $roleGroups['users']['roles'][0],    // view users
         ]);
     }
 }

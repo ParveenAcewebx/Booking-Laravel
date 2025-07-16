@@ -45,25 +45,15 @@
                             <div class="form-group">
                                 <label for="category_name">Category Name</label>
                                 <input type="text"
-                                       name="category_name"
-                                       id="category_name"
-                                       class="form-control @error('category_name') is-invalid @enderror"
-                                       placeholder="Enter category name"
-                                       value="{{ old('category_name', $category->category_name) }}"
-                                       required>
+                                    name="category_name"
+                                    id="category_name"
+                                    class="form-control @error('category_name') is-invalid @enderror"
+                                    placeholder="Enter category name"
+                                    value="{{ old('category_name', $category->category_name) }}"
+                                    required>
                                 @error('category_name')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
-                            </div>
-                            <div class="custom-control custom-checkbox mt-2">
-                                <input type="hidden" name="status" value="{{ config('constants.status.inactive') }}">
-                                <input type="checkbox"
-                                       name="status"
-                                       value="{{ config('constants.status.active') }}"
-                                       class="custom-control-input"
-                                       id="status"
-                                       {{ $category->status == config('constants.status.active') ? 'checked' : '' }}>
-                                <label class="custom-control-label" for="status">Active</label>
                             </div>
                         </div>
                         <div class="col-md-12">
@@ -75,9 +65,9 @@
                                     </div>
                                     <div class="custom-file">
                                         <input type="file"
-                                               class="custom-file-input @error('thumbnail') is-invalid @enderror"
-                                               name="thumbnail"
-                                               id="thumbnail">
+                                            class="custom-file-input @error('thumbnail') is-invalid @enderror"
+                                            name="thumbnail"
+                                            id="thumbnail">
                                         <label class="custom-file-label" for="thumbnail">Choose file</label>
                                     </div>
                                 </div>
@@ -92,12 +82,30 @@
                                 <label>Current Thumbnail</label>
                                 <div class="mb-2">
                                     <img src="{{ !empty($category->thumbnail) ? asset('storage/' . $category->thumbnail) : asset('assets/images/no-image-available.png') }}"
-                                         alt="Category thumbnail"
-                                         class="rounded shadow-sm"
-                                         style="width: 120px; height: 120px; object-fit: cover;">
+                                        alt="Category thumbnail"
+                                        class="rounded shadow-sm"
+                                        style="width: 120px; height: 120px; object-fit: cover;">
                                 </div>
                             </div>
                         </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="status" class="form-label d-block">Status</label>
+                        <select name="status" id="status" class="form-control select-user">
+                            <option value="{{ config('constants.status.active') }}"
+                                {{ old('status', $category->status) == config('constants.status.active') ? 'selected' : '' }}>
+                                Active
+                            </option>
+                            <option value="{{ config('constants.status.inactive') }}"
+                                {{ old('status', $category->status) == config('constants.status.inactive') ? 'selected' : '' }}>
+                                Inactive
+                            </option>
+                        </select>
+
+                        @error('status')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
                     </div>
                     <!-- Submit -->
                     <div class="row mt-4">

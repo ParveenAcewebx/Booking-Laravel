@@ -33,23 +33,31 @@
 
                             <div class="form-group">
                                 <label for="name" class="font-weight-bold">Role Name <span class="text-danger">*</span></label>
-                                <input type="text" name="name" id="name" 
-                                       class="form-control @error('name') is-invalid @enderror" 
-                                       value="{{ old('name') }}" required>
+                                <input type="text" name="name" id="name"
+                                    class="form-control @error('name') is-invalid @enderror"
+                                    value="{{ old('name') }}" required>
                                 @error('name')
-                                    <span class="invalid-feedback d-block">{{ $message }}</span>
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
 
                             <div class="form-group mt-3">
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="status" name="status" value="1" {{ old('status', 1) ? 'checked' : '' }}>
-                                    <label class="custom-control-label font-weight-bold" for="status">Active</label>
-                                </div>
+                                <label for="status" class="form-label d-block">Status</label>
+                                <select name="status" id="status" class="form-control select-user">
+                                    <option value="{{ config('constants.status.active') }}"
+                                        {{ old('status', 1) == config('constants.status.active') ? 'selected' : '' }}>
+                                        Active
+                                    </option>
+                                    <option value="{{ config('constants.status.inactive') }}"
+                                        {{ old('status', 1) == config('constants.status.inactive') ? 'selected' : '' }}>
+                                        Inactive
+                                    </option>
+                                </select>
                                 @error('status')
-                                    <span class="text-danger">{{ $message }}</span>
+                                <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
+
 
                             <div class="form-group mt-4">
                                 <label class="font-weight-bold">Permissions</label>
@@ -69,47 +77,47 @@
                                         </thead>
                                         <tbody>
                                             @foreach($roleGroups as $groupKey => $group)
-                                                <tr class="bg-light align-middle">
-                                                    <td class="text-center">
-                                                        <div class="custom-control custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input group-checkbox" id="group_{{ $groupKey }}" data-group="{{ $group['slug'] }}">
-                                                            <label class="custom-control-label" for="group_{{ $groupKey }}"></label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-between align-items-center w-100">
-                                                            <span class="font-weight-bold">{{ $group['name'] }}</span>
-                                                            <i class="feather icon-chevron-right toggle-icon" data-group="{{ $group['slug'] }}" style="cursor: pointer;"></i>
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                            <tr class="bg-light align-middle">
+                                                <td class="text-center">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input group-checkbox" id="group_{{ $groupKey }}" data-group="{{ $group['slug'] }}">
+                                                        <label class="custom-control-label" for="group_{{ $groupKey }}"></label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                                        <span class="font-weight-bold">{{ $group['name'] }}</span>
+                                                        <i class="feather icon-chevron-right toggle-icon" data-group="{{ $group['slug'] }}" style="cursor: pointer;"></i>
+                                                    </div>
+                                                </td>
+                                            </tr>
 
-                                                @foreach($group['roles'] as $permission)
-                                                    @php $permissionId = \Illuminate\Support\Str::slug($permission); @endphp
-                                                    <tr class="permission-row group-perms-{{ $group['slug'] }}" style="display: none;">
-                                                        <td class="text-center pl-4">
-                                                            <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" 
-                                                                       name="permissions[]" 
-                                                                       value="{{ $permission }}" 
-                                                                       class="custom-control-input permission-checkbox group-{{ $group['slug'] }}" 
-                                                                       id="perm_{{ $permissionId }}">
-                                                                <label class="custom-control-label" for="perm_{{ $permissionId }}"></label>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <label for="perm_{{ $permissionId }}" class="mb-0">
-                                                                {{ ucfirst($permission) }}
-                                                            </label>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
+                                            @foreach($group['roles'] as $permission)
+                                            @php $permissionId = \Illuminate\Support\Str::slug($permission); @endphp
+                                            <tr class="permission-row group-perms-{{ $group['slug'] }}" style="display: none;">
+                                                <td class="text-center pl-4">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox"
+                                                            name="permissions[]"
+                                                            value="{{ $permission }}"
+                                                            class="custom-control-input permission-checkbox group-{{ $group['slug'] }}"
+                                                            id="perm_{{ $permissionId }}">
+                                                        <label class="custom-control-label" for="perm_{{ $permissionId }}"></label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <label for="perm_{{ $permissionId }}" class="mb-0">
+                                                        {{ ucfirst($permission) }}
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            @endforeach
                                             @endforeach
                                         </tbody>
                                     </table>
                                 </div>
                                 @error('permissions')
-                                    <span class="text-danger">{{ $message }}</span>
+                                <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
 

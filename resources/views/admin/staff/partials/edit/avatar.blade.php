@@ -76,22 +76,29 @@
         <div class="col-md-6 d-none">
             <div class="form-group">
                 <label>Role:</label>
-                <select class="form-control select_role" name="role" required>
+                <select class="form-control select-user" name="role" required>
                     <option value="{{ $roles->id }}" selected>{{ $roles->name }}</option>
                 </select>
             </div>
         </div>
         @endif
         {{-- Status --}}
-        <div class="col-md-12">
+        <div class="col-md-6">
             <div class="form-group">
-                <label class="form-label d-block">Status</label>
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" name="status" id="status"
-                        value="{{ config('constants.status.active') }}"
-                        {{ $staff->status == config('constants.status.active') ? 'checked' : '' }}>
-                    <label class="custom-control-label" for="status">Active</label>
-                </div>
+                <label for="status" class="form-label d-block">Status</label>
+                <select name="status" id="status" class="form-control select-user">
+                    <option value="{{ config('constants.status.active') }}"
+                        {{ old('status', $staff->status) == config('constants.status.active') ? 'selected' : '' }}>
+                        Active
+                    </option>
+                    <option value="{{ config('constants.status.inactive') }}"
+                        {{ old('status', $staff->status) == config('constants.status.inactive') ? 'selected' : '' }}>
+                        Inactive
+                    </option>
+                </select>
+                @error('status')
+                <div class="text-danger">{{ $message }}</div>
+                @enderror
             </div>
         </div>
 
