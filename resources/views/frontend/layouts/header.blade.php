@@ -75,10 +75,6 @@
         class="block py-2 font-medium {{ request()->routeIs('home') ? 'text-black dark:text-white' : 'text-gray-600 dark:text-gray-300' }}">
         Bookings
       </a>
-      <!-- <a href="{{ route('categories.listing') }}"
-        class="block py-2 font-medium {{ request()->routeIs('categories.listing') ? 'text-black dark:text-white' : 'text-gray-600 dark:text-gray-300' }}">
-        Category
-      </a> -->
       <a href="#" class="block py-2 text-gray-600 dark:text-gray-300">Checkout</a>
     </div>
   </header>
