@@ -117,20 +117,23 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <!-- Phone Number -->                                    
+                                    <!-- Phone Number -->
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="form-label">Phone Number</label>
                                             <div class="input-group">
-                                                <select class="form-control" id="country-select" name="code" style="max-width: 100px;">
+                                                <select class="form-control" id="country-select" name="phone_code" style="max-width: 100px;">
                                                     @foreach($phoneCountries as $country)
-                                                        <option value="{{ $country['code'] }}"
-                                                            @if(
-                                                                (!old('phone_number', $user->phone_number ?? null) && $country['code'] == '+91') ||
-                                                                (old('phone_number', $user->phone_number ?? null) && Str::startsWith(old('phone_number', $user->phone_number ?? null), $country['code']))
-                                                            ) selected @endif>
-                                                            {{ $country['code'] }}
-                                                        </option>
+                                                    <option value="{{ $country['code'] }}"
+                                                        @if(
+                                                        (!old('phone_code', $user->phone_code ?? null) && $country['code'] == '+91') ||
+                                                        (old('phone_code', $user->phone_code ?? null) == $country['code'])
+                                                        )
+                                                        selected
+                                                        @endif
+                                                        >
+                                                        {{ $country['code'] }}
+                                                    </option>
                                                     @endforeach
                                                 </select>
                                                 <input type="text" class="form-control" id="phone_number" name="phone_number"
@@ -138,7 +141,7 @@
                                                     value="{{ old('phone_number', $user->phone_number ?? null) }}" required>
                                             </div>
                                             @error('phone_number')
-                                                <div class="error">{{ $message }}</div>
+                                            <div class="error">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>

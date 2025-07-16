@@ -135,7 +135,7 @@ class UserController extends Controller
             'phone_number' => 'required'
         ]);
 
-        $fullPhoneNumber = $request->code . $request->phone_number;
+        $fullPhoneNumber = $request->phone_number;
 
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
@@ -148,6 +148,7 @@ class UserController extends Controller
             'password' => bcrypt($request->password),
             'avatar' => $avatarPath,
             'phone_number' => $fullPhoneNumber,
+            'phone_code' => $request->code,
             'status' => $request->has('status') ? config('constants.status.active') : config('constants.status.inactive'),
         ]);
 
@@ -220,7 +221,7 @@ class UserController extends Controller
         }
 
         $status = $request->has('status') ? config('constants.status.active') : config('constants.status.inactive');
-        $fullPhoneNumber = $request->code . $request->phone_number;
+        $fullPhoneNumber = $request->phone_number;
 
         $user->update([
             'name' => $request->username,
@@ -228,6 +229,7 @@ class UserController extends Controller
             'phone_number' => $fullPhoneNumber,
             'avatar' => $avatarPath,
             'status' => $status,
+            'phone_code' => $request->code,
         ]);
 
         if ($request->password) {

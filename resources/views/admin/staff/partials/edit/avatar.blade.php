@@ -51,14 +51,18 @@
                     <select class="form-control" name="code" style="max-width: 100px;">
                         @foreach($phoneCountries as $country)
                         <option value="{{ $country['code'] }}"
-                            @if((!old('phone_number', $staff->phone_number ?? null) && $country['code'] == '+91') ||
-                            (old('phone_number', $staff->phone_number ?? null) && Str::startsWith(old('phone_number', $staff->phone_number ?? null), $country['code'])))
+                            @if(
+                            (!old('phone_code', $staff->phone_code ?? null) && $country['code'] == '+91') ||
+                            (old('phone_code', $staff->phone_code ?? null) == $country['code'])
+                            )
                             selected
-                            @endif>
+                            @endif
+                            >
                             {{ $country['code'] }}
                         </option>
                         @endforeach
                     </select>
+
                     <input type="text" class="form-control" name="phone_number"
                         value="{{ old('phone_number', $staff->phone_number ?? '') }}" required>
                 </div>

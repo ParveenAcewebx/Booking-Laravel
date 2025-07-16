@@ -98,8 +98,8 @@ class StaffController extends Controller
             'phone_number' => 'required'
         ]);
 
-        $fullPhoneNumber = $request->code . $request->phone_number;
-
+        $fullPhoneNumber = $request->phone_number;
+        // dd($request->code);
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
@@ -111,6 +111,7 @@ class StaffController extends Controller
             'password' => bcrypt($request->password),
             'avatar' => $avatarPath,
             'phone_number' => $fullPhoneNumber,
+            'phone_code' => $request->code,
             'status' => $request->has('status') ? config('constants.status.active') : config('constants.status.inactive'),
         ]);
 
@@ -180,7 +181,7 @@ class StaffController extends Controller
     public function edit(User $staff)
     {
         $roles = Role::where('name', 'Staff')->first();
-        $phoneCountries = collect(config('phone_countries'))->unique('code')->values();
+        $phoneCountries = config('phone_countries');
         $weekDays = config('constants.week_days');
         $staffMeta = Staff::where('staff_id', $staff->id)->first();
         $assignedServices = Service::whereIn('id', StaffAssociation::where('staff_member', $staff->id)->pluck('service_id'))
@@ -232,8 +233,9 @@ class StaffController extends Controller
 
         $staff->name = $request->name;
         $staff->email = $request->email;
-        $staff->phone_number = $request->code . $request->phone_number;
+        $staff->phone_number =  $request->phone_number;
         $staff->status = $request->has('status') ? config('constants.status.active') : config('constants.status.inactive');
+        $staff->phone_code = $request->code;
 
         if ($request->hasFile('avatar')) {
             $staff->avatar = $request->file('avatar')->store('avatars', 'public');
