@@ -62,13 +62,6 @@ class CategoryController extends Controller
                         </form>
                     ';
                     }
-
-                    if (auth()->user()->hasRole('Administrator') &&  $category->status != 0) {
-                        $btn .= '<a href="' . url('/category/' . $category->slug) . '" class="btn btn-icon btn-info ml-1" title="View Booking" target="_blank">
-                        <i class="feather icon-eye"></i>
-                    </a>';
-                    }
-
                     return $btn ?: '';
                 })
                 ->rawColumns(['action', 'status'])

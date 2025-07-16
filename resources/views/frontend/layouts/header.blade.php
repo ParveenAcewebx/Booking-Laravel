@@ -16,11 +16,6 @@
                   {{ request()->routeIs('booking.listing') ? 'text-black dark:text-white before:absolute before:bottom-0.5 before:w-full before:h-1 before:bg-yellow-400' : 'text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white' }}">
           Bookings
         </a>
-        <!-- <a href="{{ route('categories.listing') }}"
-          class="relative font-medium
-                  {{ request()->routeIs('categories.listing') ? 'text-black dark:text-white before:absolute before:bottom-0.5 before:w-full before:h-1 before:bg-yellow-400' : 'text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white' }}">
-          Category
-        </a> -->
       </div>
       <!-- Buttons & Mobile Toggle -->
       <div class="flex items-center gap-2 relative" x-data="{ open: false }">
