@@ -80,12 +80,14 @@ class StaffController extends Controller
     public function add()
     {
         $roles = Role::where('name', 'Staff')->first();
+        $staffUsers = User::role('staff')->get();
+
         $weekDays = config('constants.week_days');
         $phoneCountries = config('phone_countries');
         $services = Service::all();
         $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
-        return view('admin.staff.add', compact('roles', 'services', 'phoneCountries', 'weekDays', 'loginUser'));
+        return view('admin.staff.add', compact('roles', 'services','staffUsers', 'phoneCountries', 'weekDays', 'loginUser'));
     }
 
     public function store(Request $request)
@@ -112,7 +114,7 @@ class StaffController extends Controller
             'avatar' => $avatarPath,
             'phone_number' => $fullPhoneNumber,
             'phone_code' => $request->code,
-            'status' => $request->has('status') ? config('constants.status.active') : config('constants.status.inactive'),
+            'status' => $request->status ? config('constants.status.active') : config('constants.status.inactive'),
         ]);
 
         $role = Role::findById($request->role, 'web');
