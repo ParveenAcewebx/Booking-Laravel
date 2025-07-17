@@ -1330,6 +1330,8 @@ $(function () {
 /* ------------------------  End Work Hours Function  ---------------------------- */
 
 
+/* ------------------------ Start Services Thumbnail Function  ---------------------------- */
+
 $(document).ready(function () {
     function handleFileInput(fileInputId, previewContainerId, previewImageId, removeButtonId, removeFlagId = null) {
         const fileInput = $(fileInputId);
@@ -1371,19 +1373,12 @@ $(document).ready(function () {
             previewContainer.addClass('d-none');
             if (removeFlag) removeFlag.val(1);
         });
-
-        // If already has image on page load, set filename
-        // const existingImageSrc = previewImage.attr('src');
-        // if (existingImageSrc) {
-        //     const filename = existingImageSrc.split('/').pop();
-        //     if (filename) {
-        //         fileLabel.text(filename);
-        //     }
-        // }
     }
 
     // Init both file uploaders
     handleFileInput('#validatedCustomFile', '#image-preview-container', '#image-preview', '#remove-preview');
     handleFileInput('#thumbnailInput', '#edit-thumbnail-preview-container', '#edit-thumbnail-preview', '#remove-preview', '#removeThumbnailFlag');
-});
+    handleFileInput('#thumbnail', '#image-preview-container, #preview-container', '#image-preview, #preview-image', '#remove-preview', '#remove_existing_thumbnail');
 
+});
+/* ------------------------ End Services Thumbnail Function  ---------------------------- */

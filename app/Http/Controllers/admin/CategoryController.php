@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 
 class CategoryController extends Controller
@@ -122,15 +123,25 @@ class CategoryController extends Controller
             'slug' => $category->slug ?? Str::uuid(),
         ];
 
+        // If a new image is uploaded, store and replace
         if ($request->hasFile('thumbnail')) {
+            if ($category->thumbnail && Storage::disk('public')->exists($category->thumbnail)) {
+                Storage::disk('public')->delete($category->thumbnail);
+            }
             $data['thumbnail'] = $request->file('thumbnail')->store('cat-thumbnails', 'public');
+        }
+        // If user removed existing image and didn't upload a new one
+        elseif ($request->remove_existing_thumbnail == '1') {
+            if ($category->thumbnail && Storage::disk('public')->exists($category->thumbnail)) {
+                Storage::disk('public')->delete($category->thumbnail);
+            }
+            $data['thumbnail'] = null;
         }
 
         $category->update($data);
+
         return redirect()->route('category.list')->with('success', 'Category Updated Successfully.');
     }
-
-
 
     public function destroy(Category $category)
     {

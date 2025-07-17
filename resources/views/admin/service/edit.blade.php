@@ -143,10 +143,8 @@
                                 </div>
 
                                 <div class="tab-pane" id="gallery" role="tabpanel">
-
                                     <div class="form-group">
                                         <label for="thumbnail" class="form-label">Thumbnail</label>
-
                                         <div class="custom-file">
                                             <input type="file" name="thumbnail" class="custom-file-input" id="thumbnailInput"
                                                 accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
@@ -155,13 +153,14 @@
                                         </div>
 
                                         {{-- Preview Card --}}
-                                        <div id="edit-thumbnail-preview-container" class="row mt-3 {{ $service->thumbnail ? '' : 'd-none' }}">
+                                        <div id="edit-thumbnail-preview-container" class="row mt-3">
                                             <div class="col-md-3 position-relative">
                                                 <div class="card shadow-sm">
                                                     <img id="edit-thumbnail-preview"
-                                                        src="{{ $service->thumbnail ? asset('storage/' . $service->thumbnail) : '' }}"
+                                                        src="{{ $service->thumbnail ? asset('storage/' . $service->thumbnail) : asset('assets/images/no-image-available.png') }}"
                                                         class="card-img-top img-thumbnail"
-                                                        alt="Thumbnail Preview">
+                                                        alt="Thumbnail Preview"
+                                                        style="object-fit: contain; height: 120px; width: 100%;">
 
                                                     {{-- Remove Button Like Screenshot --}}
                                                     <button type="button"
@@ -175,6 +174,7 @@
                                         </div>
                                         <input type="hidden" name="remove_thumbnail" id="removeThumbnailFlag" value="0">
                                     </div>
+
 
                                     <div class="form-group">
                                         <label class="form-label">Gallery</label>

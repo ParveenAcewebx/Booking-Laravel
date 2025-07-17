@@ -131,7 +131,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::get('/category', [CategoryController::class, 'index'])->name('category.list');
     });
     Route::middleware('permission:create categories')->group(function () {
-        Route::get('/category/create', [CategoryController::class, 'create'])->name('category.create');
+        Route::get('/category/add', [CategoryController::class, 'create'])->name('category.create');
         Route::post('/category/store', [CategoryController::class, 'store'])->name('category.store');
     });
     Route::middleware('permission:edit categories')->group(function () {

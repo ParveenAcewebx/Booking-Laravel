@@ -40,7 +40,7 @@
 
                 <div class="card-body">
                     <div class="row">
-                        <!-- Category Name & Status -->
+                        <!-- Category Name -->
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="category_name">Category Name</label>
@@ -56,6 +56,8 @@
                                 @enderror
                             </div>
                         </div>
+
+                        <!-- Thumbnail Upload -->
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="thumbnail">Upload New Thumbnail</label>
@@ -67,7 +69,8 @@
                                         <input type="file"
                                             class="custom-file-input @error('thumbnail') is-invalid @enderror"
                                             name="thumbnail"
-                                            id="thumbnail">
+                                            id="thumbnail"
+                                            accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
                                         <label class="custom-file-label" for="thumbnail">Choose file</label>
                                     </div>
                                 </div>
@@ -76,19 +79,26 @@
                                 @enderror
                             </div>
                         </div>
-                        <!-- Thumbnail -->
-                        <div class="col-md-12">
+
+                        <!-- Image Preview + Remove -->
+                        <div class="col-md-12 mt-4" id="preview-container">
                             <div class="form-group">
-                                <label>Current Thumbnail</label>
-                                <div class="mb-2">
+                                <div class="mb-2 position-relative d-inline-block">
                                     <img src="{{ !empty($category->thumbnail) ? asset('storage/' . $category->thumbnail) : asset('assets/images/no-image-available.png') }}"
                                         alt="Category thumbnail"
+                                        id="preview-image"
                                         class="rounded shadow-sm"
                                         style="width: 120px; height: 120px; object-fit: cover;">
+                                    <button type="button"
+                                        id="remove-preview"
+                                        class="btn btn-sm btn-dark text-white rounded-pill delete-existing-image position-absolute top-0 end-0"
+                                        title="Remove image">
+                                        &times;
+                                    </button>
                                 </div>
                             </div>
                         </div>
-
+                        <input type="hidden" name="remove_existing_thumbnail" id="remove_existing_thumbnail" value="0">
                     </div>
                     <div class="form-group">
                         <label for="status" class="form-label d-block">Status</label>

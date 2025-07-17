@@ -74,14 +74,32 @@
                                     <span class="input-group-text">Upload</span>
                                 </div>
                                 <div class="custom-file">
-                                    <input type="file" class="custom-file-input" name="thumbnail" id="thumbnail">
+                                    <input type="file" class="custom-file-input" name="thumbnail" id="thumbnail"
+                                        accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
                                     <label class="custom-file-label" for="thumbnail">Choose file</label>
                                 </div>
                             </div>
+
+                            <div id="image-preview-container" class="row d-none mt-3">
+                                <div class="col-md-3 position-relative">
+                                    <div class="card shadow-sm">
+                                        <img id="image-preview" class="card-img-top img-thumbnail" alt="Image Preview">
+
+                                        {{-- Gallery-style close button --}}
+                                        <button type="button"
+                                            id="remove-preview"
+                                            class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
+                                            title="Remove image">
+                                            &times;
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                             @error('thumbnail')
-                            <div class="error">{{ $message }}</div>
+                            <div class="error text-danger">{{ $message }}</div>
                             @enderror
                         </div>
+
                     </div>
                     <div class="row mt-4">
                         <div class="col-md-12 text-left">
