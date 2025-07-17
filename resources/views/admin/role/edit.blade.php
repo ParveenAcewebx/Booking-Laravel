@@ -38,26 +38,6 @@
                                 <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
-
-                            <!-- Status -->
-                            <div class="form-group mt-3">
-                                <label for="status" class="form-label d-block">Status</label>
-                                <select name="status" id="status" class="form-control select-user">
-                                    <option value="{{ config('constants.status.active') }}"
-                                        {{ old('status', $role->status) == config('constants.status.active') ? 'selected' : '' }}>
-                                        Active
-                                    </option>
-                                    <option value="{{ config('constants.status.inactive') }}"
-                                        {{ old('status', $role->status) == config('constants.status.inactive') ? 'selected' : '' }}>
-                                        Inactive
-                                    </option>
-                                </select>
-                                @error('status')
-                                <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-
                             <!-- Permissions Table -->
                             <div class="form-group mt-4">
                                 <label class="font-weight-bold">Permissions</label>
@@ -128,7 +108,23 @@
                                 <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
-
+                            <!-- Status -->
+                            <div class="form-group mt-3">
+                                <label for="status" class="form-label d-block">Status</label>
+                                <select name="status" id="status" class="form-control select-user">
+                                    <option value="{{ config('constants.status.active') }}"
+                                        {{ old('status', $role->status) == config('constants.status.active') ? 'selected' : '' }}>
+                                        Active
+                                    </option>
+                                    <option value="{{ config('constants.status.inactive') }}"
+                                        {{ old('status', $role->status) == config('constants.status.inactive') ? 'selected' : '' }}>
+                                        Inactive
+                                    </option>
+                                </select>
+                                @error('status')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
                             <!-- Submit Buttons -->
                             <div class="form-group mt-4">
                                 <button type="submit" class="btn btn-primary">Update</button>
