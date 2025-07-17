@@ -1330,3 +1330,60 @@ $(function () {
 /* ------------------------  End Work Hours Function  ---------------------------- */
 
 
+$(document).ready(function () {
+    function handleFileInput(fileInputId, previewContainerId, previewImageId, removeButtonId, removeFlagId = null) {
+        const fileInput = $(fileInputId);
+        const previewContainer = $(previewContainerId);
+        const previewImage = $(previewImageId);
+        const removeButton = $(removeButtonId);
+        const fileLabel = fileInput.closest('.custom-file').find('.custom-file-label');
+        const removeFlag = removeFlagId ? $(removeFlagId) : null;
+
+        // Handle change
+        fileInput.on('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Only JPG, PNG, and GIF files are allowed.');
+                fileInput.val('');
+                fileLabel.text('Choose file...');
+                previewContainer.addClass('d-none');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previewImage.attr('src', e.target.result);
+                previewContainer.removeClass('d-none');
+                fileLabel.text(file.name);
+                if (removeFlag) removeFlag.val(0);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Handle remove
+        removeButton.on('click', function () {
+            fileInput.val('');
+            fileLabel.text('Choose file...');
+            previewImage.attr('src', '');
+            previewContainer.addClass('d-none');
+            if (removeFlag) removeFlag.val(1);
+        });
+
+        // If already has image on page load, set filename
+        // const existingImageSrc = previewImage.attr('src');
+        // if (existingImageSrc) {
+        //     const filename = existingImageSrc.split('/').pop();
+        //     if (filename) {
+        //         fileLabel.text(filename);
+        //     }
+        // }
+    }
+
+    // Init both file uploaders
+    handleFileInput('#validatedCustomFile', '#image-preview-container', '#image-preview', '#remove-preview');
+    handleFileInput('#thumbnailInput', '#edit-thumbnail-preview-container', '#edit-thumbnail-preview', '#remove-preview', '#removeThumbnailFlag');
+});
+

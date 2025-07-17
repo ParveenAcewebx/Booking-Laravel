@@ -132,7 +132,7 @@ class ServiceController extends Controller
         }
 
         $data['gallery'] = json_encode(array_values($gallery));
-    
+
         $data['staff_member'] = json_encode($request->input('staff_member', []));
         $data['payment__is_live'] = $request->has('payment__is_live') ? 1 : 0;
 
@@ -206,10 +206,12 @@ class ServiceController extends Controller
             'stripe_live_site_key'  => 'nullable|string',
             'stripe_live_secret_key' => 'nullable|string',
             'payment__is_live'      => 'nullable|boolean',
+            'remove_thumbnail'      => 'nullable|in:0,1',
         ]);
 
         $service = Service::findOrFail($id);
 
+        // Fill base fields
         $service->fill([
             'name'                  => $request->name,
             'description'           => $request->description,
@@ -227,18 +229,27 @@ class ServiceController extends Controller
             'payment__is_live'      => $request->has('payment__is_live') ? 1 : 0,
         ]);
 
-        if ($request->payment_account === 'custom') {
-            $service->stripe_test_site_key = $request->stripe_test_site_key;
-            $service->stripe_test_secret_key = $request->stripe_test_secret_key;
-            $service->stripe_live_site_key = $request->stripe_live_site_key;
-            $service->stripe_live_secret_key = $request->stripe_live_secret_key;
-        }
+        $service->stripe_test_site_key   = $request->stripe_test_site_key;
+        $service->stripe_test_secret_key = $request->stripe_test_secret_key;
+        $service->stripe_live_site_key   = $request->stripe_live_site_key;
+        $service->stripe_live_secret_key = $request->stripe_live_secret_key;
 
         if ($request->hasFile('thumbnail')) {
+            // Remove old one if exists
+            if ($service->thumbnail && Storage::disk('public')->exists($service->thumbnail)) {
+                Storage::disk('public')->delete($service->thumbnail);
+            }
+            // Store new
             $service->thumbnail = $request->file('thumbnail')->store('thumbnails', 'public');
+        } elseif ($request->input('remove_thumbnail') == '1') {
+            // If removal flag is set and no new image
+            if ($service->thumbnail && Storage::disk('public')->exists($service->thumbnail)) {
+                Storage::disk('public')->delete($service->thumbnail);
+            }
+            $service->thumbnail = null;
         }
 
-        // Gallery processing
+        // Process gallery deletions
         $existingGallery = $request->input('existing_gallery', []);
         $deletedGallery = $request->input('delete_gallery', []);
 
@@ -247,6 +258,8 @@ class ServiceController extends Controller
         }
 
         $finalGallery = array_diff($existingGallery, $deletedGallery);
+
+        // Upload new images
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $file) {
                 $finalGallery[] = $file->store('gallery', 'public');
@@ -255,6 +268,7 @@ class ServiceController extends Controller
         $service->gallery = json_encode(array_values($finalGallery));
         $service->save();
 
+        // Handle staff associations
         $newStaffIds = $request->input('staff_member', []);
         $existingStaffIds = StaffAssociation::where('service_id', $service->id)
             ->pluck('staff_member')
@@ -274,7 +288,6 @@ class ServiceController extends Controller
                 ->whereIn('staff_member', $toDelete)
                 ->delete();
         }
-
         return redirect()->route('service.list')->with('success', 'Service Updated Successfully!');
     }
 }

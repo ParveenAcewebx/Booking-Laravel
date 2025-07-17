@@ -96,22 +96,6 @@
                                                 @endfor
                                         </select>
                                     </div>
-
-                                    <div class="form-group">
-                                        <label for="thumbnail">Thumbnail</label>
-                                        <div class="custom-file">
-                                            <input type="file" name="thumbnail" class="custom-file-input" id="thumbnail">
-                                            <label class="custom-file-label" for="thumbnail">Choose file...</label>
-                                            <div class="invalid-feedback">Please upload a valid thumbnail.</div>
-                                        </div>
-
-                                        @if($service->thumbnail)
-                                        <a href="{{ asset('storage/' . $service->thumbnail) }}" target="_blank">
-                                            <img src="{{ asset('storage/' . $service->thumbnail) }}" alt="Thumbnail" height="80" class="mt-2">
-                                        </a>
-                                        @endif
-                                    </div>
-
                                     <div class="form-group">
                                         <label>Staff Member</label>
                                         <select name="staff_member[]" class="form-control select2-mash" multiple required>
@@ -159,20 +143,55 @@
                                 </div>
 
                                 <div class="tab-pane" id="gallery" role="tabpanel">
+
+                                    <div class="form-group">
+                                        <label for="thumbnail" class="form-label">Thumbnail</label>
+
+                                        <div class="custom-file">
+                                            <input type="file" name="thumbnail" class="custom-file-input" id="thumbnailInput"
+                                                accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                                            <label class="custom-file-label" for="thumbnailInput">Choose file...</label>
+                                            <div class="invalid-feedback">Please upload a valid thumbnail.</div>
+                                        </div>
+
+                                        {{-- Preview Card --}}
+                                        <div id="edit-thumbnail-preview-container" class="row mt-3 {{ $service->thumbnail ? '' : 'd-none' }}">
+                                            <div class="col-md-3 position-relative">
+                                                <div class="card shadow-sm">
+                                                    <img id="edit-thumbnail-preview"
+                                                        src="{{ $service->thumbnail ? asset('storage/' . $service->thumbnail) : '' }}"
+                                                        class="card-img-top img-thumbnail"
+                                                        alt="Thumbnail Preview">
+
+                                                    {{-- Remove Button Like Screenshot --}}
+                                                    <button type="button"
+                                                        id="remove-preview"
+                                                        class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
+                                                        title="Remove image">
+                                                        &times;
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="remove_thumbnail" id="removeThumbnailFlag" value="0">
+                                    </div>
+
                                     <div class="form-group">
                                         <label class="form-label">Gallery</label>
 
                                         {{-- Add Image Tile --}}
-                                        <div class="col-md-3 mb-3">
+                                        <div class="col-md-12 mb-3 pr-1 pl-0">
                                             <label for="galleryInput"
                                                 class="w-100 h-100 d-flex justify-content-center align-items-center border border-primary border-dashed rounded bg-light"
                                                 style="min-height: 150px; cursor: pointer;">
                                                 <div class="text-center text-primary">
                                                     <div style="font-size: 2rem;">+</div>
                                                     <div>Add Image</div>
+                                                    <small class="d-block text-muted mt-1">Accepted formats: JPG, JPEG, PNG, GIF</small>
+
                                                 </div>
                                             </label>
-                                            <input type="file" name="gallery[]" id="galleryInput" class="d-none gallery-input" multiple accept="image/*">
+                                            <input type="file" name="gallery[]" id="galleryInput" class="d-none gallery-input" multiple accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
                                         </div>
 
                                         {{-- Gallery Preview Grid --}}

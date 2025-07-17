@@ -90,14 +90,6 @@
                                                 @endfor
                                         </select>
                                     </div>
-                                    <div class="form-group col-md-12 p-0">
-                                        <label class="form-label">Thumbnail</label>
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="validatedCustomFile" name="thumbnail">
-                                            <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
-                                            <div class="invalid-feedback">Please upload a valid thumbnail.</div>
-                                        </div>
-                                    </div>
                                     <div class="form-group">
                                         <label for="staff_member">Staff Member</label>
                                         <select name="staff_member[]" class="form-control select2-mash" multiple required>
@@ -140,19 +132,48 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane" id="gallery" role="tabpanel">
-                                    <div class="form-group">
+                                    <div class="form-group col-md-12 p-0">
+                                        <label class="form-label">Thumbnail</label>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="validatedCustomFile" name="thumbnail"
+                                                accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                                            <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
+                                            <div class="invalid-feedback">Please upload a valid thumbnail.</div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Styled Preview Like Gallery --}}
+                                    <div id="image-preview-container" class="row d-none mt-3">
+                                        <div class="col-md-3 position-relative">
+                                            <div class="card shadow-sm">
+                                                <img id="image-preview" class="card-img-top img-thumbnail" alt="Image Preview">
+
+                                                {{-- Gallery-style close button --}}
+                                                <button type="button"
+                                                    id="remove-preview"
+                                                    class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
+                                                    title="Remove image">
+                                                    &times;
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mt-3">
                                         <label class="form-label">Gallery</label>
                                         {{-- Add Image Tile --}}
-                                        <div class="col-md-3 mb-3">
+                                        <div class="col-md-12 mb-3 pr-1 pl-0">
                                             <label for="galleryInput"
                                                 class="w-100 h-100 d-flex justify-content-center align-items-center border border-primary border-dashed rounded bg-light"
                                                 style="min-height: 150px; cursor: pointer;">
                                                 <div class="text-center text-primary">
                                                     <div style="font-size: 2rem;">+</div>
                                                     <div>Add Image</div>
+                                                    <small class="d-block text-muted mt-1">Accepted formats: JPG, JPEG, PNG, GIF</small>
+
                                                 </div>
                                             </label>
-                                            <input type="file" name="gallery[]" id="galleryInput" class="d-none gallery-input" multiple accept="image/*">
+                                            <input type="file" name="gallery[]" id="galleryInput" class="d-none gallery-input" multiple accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
                                         </div>
                                         {{-- Preview Existing + New --}}
                                         <div class="row mb-3" id="galleryPreviewContainer">
