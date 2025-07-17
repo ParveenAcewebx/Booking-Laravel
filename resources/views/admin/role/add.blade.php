@@ -102,7 +102,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="status" class="form-label d-block">Status</label>
+                                <label for="status" class="form-label d-block font-weight-bold">Status</label>
                                 <select name="status" id="status" class="form-control select-user">
                                     <option value="{{ config('constants.status.active') }}"
                                         {{ old('status', 1) == config('constants.status.active') ? 'selected' : '' }}>

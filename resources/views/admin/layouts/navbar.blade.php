@@ -2,13 +2,12 @@
     <div class="navbar-wrapper d-flex flex-column" style="height: 92vh;">
         <div class="navbar-content scroll-div flex-grow-1 d-flex flex-column">
 
+            {{-- User Header --}}
             <div>
-                <!-- User Profile Header -->
                 <div class="main-menu-header">
                     <img class="img-radius hei-40"
-                        src="{{ Auth::user()->avatar ? Storage::url(Auth::user()->avatar) : asset('assets/images/no-image-available.png') }}"
-                        alt="User-Profile-Image">
-
+                         src="{{ Auth::user()->avatar ? Storage::url(Auth::user()->avatar) : asset('assets/images/no-image-available.png') }}"
+                         alt="User-Profile-Image">
                     <div class="user-details">
                         <div id="more-details">
                             <span class="mb-0 font-weight-bold">
@@ -19,7 +18,6 @@
                     </div>
                 </div>
 
-                <!-- Collapsible User Actions -->
                 <div class="collapse" id="nav-user-link">
                     <ul class="list-inline">
                         <li class="list-inline-item">
@@ -35,145 +33,172 @@
                     </ul>
                 </div>
 
-                <!-- Navigation Menu -->
+                {{-- Sidebar Menu --}}
                 <ul class="nav pcoded-inner-navbar">
 
-
+                    {{-- Dashboard --}}
                     <li class="nav-item">
-                        <a href="{{ route('dashboard') }}" class="nav-link">
+                        <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                             <span class="pcoded-micon"><i class="feather icon-home"></i></span>
                             <span class="pcoded-mtext">Dashboard</span>
                         </a>
                     </li>
-                    {{-- User Management --}}
+
+                    {{-- Users --}}
                     @canany(['view users', 'create users', 'edit users', 'delete users'])
-                    <li class="nav-item pcoded-hasmenu">
-                        <a href="#!" class="nav-link">
-                            <span class="pcoded-micon"><i class="feather icon-users"></i></span>
-                            <span class="pcoded-mtext">Users</span>
-                        </a>
-                        <ul class="pcoded-submenu">
-                            @can('create users')
-                            <li><a href="{{ route('user.add') }}">Add User</a></li>
-                            @endcan
-                            @can('view users')
-                            <li><a href="{{ route('user.list') }}">All Users</a></li>
-                            @endcan
-                        </ul>
-                    </li>
+                        <li class="nav-item pcoded-hasmenu {{ request()->routeIs('user.*') ? 'pcoded-trigger' : '' }}">
+                            <a href="#!" class="nav-link">
+                                <span class="pcoded-micon"><i class="feather icon-users"></i></span>
+                                <span class="pcoded-mtext">Users</span>
+                            </a>
+                            <ul class="pcoded-submenu" @if(request()->routeIs('user.*')) style="display:block;" @endif>
+                                @can('create users')
+                                    <li class="{{ request()->routeIs('user.add') ? 'active' : '' }}">
+                                        <a href="{{ route('user.add') }}">Add User</a>
+                                    </li>
+                                @endcan
+                                @can('view users')
+                                    <li class="{{ request()->routeIs('user.list') ? 'active' : '' }}">
+                                        <a href="{{ route('user.list') }}">All Users</a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
                     @endcanany
-                    {{-- Role Management --}}
+
+                    {{-- Roles --}}
                     @canany(['view roles', 'create roles', 'edit roles', 'delete roles'])
-                    <li class="nav-item pcoded-hasmenu">
-                        <a href="#!" class="nav-link">
-                            <span class="pcoded-micon"><i class="fas fa-shield-alt"></i></span>
-                            <span class="pcoded-mtext">Manage Roles</span>
-                        </a>
-                        <ul class="pcoded-submenu">
-                            @can('create roles')
-                            <li><a href="{{ route('roles.add') }}">Add Role</a></li>
-                            @endcan
-                            @can('view roles')
-                            <li><a href="{{ route('roles.list') }}">All Roles</a></li>
-                            @endcan
-                        </ul>
-                    </li>
+                        <li class="nav-item pcoded-hasmenu {{ request()->routeIs('roles.*') ? 'pcoded-trigger' : '' }}">
+                            <a href="#!" class="nav-link">
+                                <span class="pcoded-micon"><i class="fas fa-shield-alt"></i></span>
+                                <span class="pcoded-mtext">Manage Roles</span>
+                            </a>
+                            <ul class="pcoded-submenu" @if(request()->routeIs('roles.*')) style="display:block;" @endif>
+                                @can('create roles')
+                                    <li class="{{ request()->routeIs('roles.add') ? 'active' : '' }}">
+                                        <a href="{{ route('roles.add') }}">Add Role</a>
+                                    </li>
+                                @endcan
+                                @can('view roles')
+                                    <li class="{{ request()->routeIs('roles.list') ? 'active' : '' }}">
+                                        <a href="{{ route('roles.list') }}">All Roles</a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
                     @endcanany
-                    {{-- Form Management --}}
+
+                    {{-- Booking Templates --}}
                     @canany(['view templates', 'create templates', 'edit templates', 'delete templates'])
-                    <li class="nav-item pcoded-hasmenu">
-                        <a href="#!" class="nav-link">
-                            <span class="pcoded-micon"><i class="feather icon-file-text"></i></span>
-                            <span class="pcoded-mtext">Booking Templates</span>
-                        </a>
-                        <ul class="pcoded-submenu">
-                            @can('create templates')
-                            <li><a href="{{ route('template.add') }}">Add Booking Template</a></li>
-                            @endcan
-                            @can('view templates')
-                            <li><a href="{{ route('template.list') }}">All Booking Template</a></li>
-                            @endcan
-                        </ul>
-                    </li>
+                        <li class="nav-item pcoded-hasmenu {{ request()->routeIs('template.*') ? 'pcoded-trigger' : '' }}">
+                            <a href="#!" class="nav-link">
+                                <span class="pcoded-micon"><i class="feather icon-file-text"></i></span>
+                                <span class="pcoded-mtext">Booking Templates</span>
+                            </a>
+                            <ul class="pcoded-submenu" @if(request()->routeIs('template.*')) style="display:block;" @endif>
+                                @can('create templates')
+                                    <li class="{{ request()->routeIs('template.add') ? 'active' : '' }}">
+                                        <a href="{{ route('template.add') }}">Add Booking Template</a>
+                                    </li>
+                                @endcan
+                                @can('view templates')
+                                    <li class="{{ request()->routeIs('template.list') ? 'active' : '' }}">
+                                        <a href="{{ route('template.list') }}">All Booking Templates</a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
                     @endcanany
-                    {{-- Service Management --}}
+
+                    {{-- Services --}}
                     @canany(['view services', 'create services', 'edit services', 'delete services'])
-                    <li class="nav-item pcoded-hasmenu">
-                        <a href="#!" class="nav-link">
-                            <span class="pcoded-micon"><i class="fas fa-tools"></i></span>
-                            <span class="pcoded-mtext">Manage Services</span>
-                        </a>
-                        <ul class="pcoded-submenu">
-                            @can('create services')
-                            <li><a href="{{ route('service.add') }}">Add Service</a></li>
-                            @endcan
-                            @can('view services')
-                            <li><a href="{{ route('service.list') }}">All Services</a></li>
-                            @endcan
-                            @can('view categories')
-                            <li><a href="{{ route('category.list') }}">Categories</a></li>
-                            @endcan
-                        </ul>
-                    </li>
+                        <li class="nav-item pcoded-hasmenu {{ request()->routeIs('service.*') ? 'pcoded-trigger' : '' }}">
+                            <a href="#!" class="nav-link">
+                                <span class="pcoded-micon"><i class="fas fa-tools"></i></span>
+                                <span class="pcoded-mtext">Manage Services</span>
+                            </a>
+                            <ul class="pcoded-submenu" @if(request()->routeIs('service.*')) style="display:block;" @endif>
+                                @can('create services')
+                                    <li class="{{ request()->routeIs('service.add') ? 'active' : '' }}">
+                                        <a href="{{ route('service.add') }}">Add Service</a>
+                                    </li>
+                                @endcan
+                                @can('view services')
+                                    <li class="{{ request()->routeIs('service.list') ? 'active' : '' }}">
+                                        <a href="{{ route('service.list') }}">All Services</a>
+                                    </li>
+                                @endcan
+                                @can('view categories')
+                                    <li class="{{ request()->routeIs('category.list') ? 'active' : '' }}">
+                                        <a href="{{ route('category.list') }}">Categories</a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
                     @endcanany
 
+                    {{-- Staffs --}}
                     @canany(['view staffs', 'create staffs', 'edit staffs', 'delete staffs'])
-                    <li class="nav-item pcoded-hasmenu">
-                        <a href="#!" class="nav-link">
-                            <span class="pcoded-micon"><i class="fas fa-user-tie"></i></span>
-                            <span class="pcoded-mtext">Manage Staffs</span>
-                        </a>
-                        <ul class="pcoded-submenu">
-                            @can('create staffs')
-                            <li><a href="{{ route('staff.create') }}">Add Staff</a></li>
-                            @endcan
-                            @can('view staffs')
-                            <li><a href="{{ route('staff.list') }}">All Staffs</a></li>
-                            @endcan
-                        </ul>
-                    </li>
+                        <li class="nav-item pcoded-hasmenu {{ request()->routeIs('staff.*') ? 'pcoded-trigger' : '' }}">
+                            <a href="#!" class="nav-link">
+                                <span class="pcoded-micon"><i class="fas fa-user-tie"></i></span>
+                                <span class="pcoded-mtext">Manage Staffs</span>
+                            </a>
+                            <ul class="pcoded-submenu" @if(request()->routeIs('staff.*')) style="display:block;" @endif>
+                                @can('create staffs')
+                                    <li class="{{ request()->routeIs('staff.create') ? 'active' : '' }}">
+                                        <a href="{{ route('staff.create') }}">Add Staff</a>
+                                    </li>
+                                @endcan
+                                @can('view staffs')
+                                    <li class="{{ request()->routeIs('staff.list') ? 'active' : '' }}">
+                                        <a href="{{ route('staff.list') }}">All Staffs</a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
                     @endcanany
 
-
-                    {{-- Booking Management --}}
+                    {{-- Bookings --}}
                     @canany(['view bookings', 'create bookings', 'edit bookings', 'delete bookings'])
-                    <li class="nav-item pcoded-hasmenu">
-                        <a href="#!" class="nav-link">
-                            <span class="pcoded-micon"><i class="feather icon-book"></i></span>
-                            <span class="pcoded-mtext">Bookings</span>
-                        </a>
-                        <ul class="pcoded-submenu">
-                            @can('create bookings')
-                            <li><a href="{{ route('booking.add') }}">Add Booking</a></li>
-                            @endcan
-                            @can('view bookings')
-                            <li><a href="{{ route('booking.list') }}">All Bookings</a></li>
-                            @endcan
-                        </ul>
-                    </li>
+                        <li class="nav-item pcoded-hasmenu {{ request()->routeIs('booking.*') ? 'pcoded-trigger' : '' }}">
+                            <a href="#!" class="nav-link">
+                                <span class="pcoded-micon"><i class="feather icon-book"></i></span>
+                                <span class="pcoded-mtext">Bookings</span>
+                            </a>
+                            <ul class="pcoded-submenu" @if(request()->routeIs('booking.*')) style="display:block;" @endif>
+                                @can('create bookings')
+                                    <li class="{{ request()->routeIs('booking.add') ? 'active' : '' }}">
+                                        <a href="{{ route('booking.add') }}">Add Booking</a>
+                                    </li>
+                                @endcan
+                                @can('view bookings')
+                                    <li class="{{ request()->routeIs('booking.list') ? 'active' : '' }}">
+                                        <a href="{{ route('booking.list') }}">All Bookings</a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
                     @endcanany
-
-
 
                 </ul>
             </div>
 
-            <!-- Switch Back Button pushed to bottom -->
+            {{-- Switch Back Button --}}
             @php
-            $isImpersonating = session()->has('impersonate_original_user') || Cookie::get('impersonate_original_user');
-            $currentUser = Auth::user();
+                $isImpersonating = session()->has('impersonate_original_user') || Cookie::get('impersonate_original_user');
             @endphp
 
-            @if ($isImpersonating && $currentUser && isset($loginUser))
-            <div class="mt-auto">
-                <form method="POST" action="{{ route('user.switch.back') }}">
-                    @csrf
-                    <button type="submit" class="btn btn-danger btn-block d-flex align-items-center navbar-switch-button">
-                        <i class="feather icon-log-out"></i>
-                        <span id="switchBackText" class="ml-2">Switch Back</span>
-                    </button>
-                </form>
-            </div>
+            @if ($isImpersonating && Auth::user() && isset($loginUser))
+                <div class="mt-auto">
+                    <form method="POST" action="{{ route('user.switch.back') }}">
+                        @csrf
+                        <button type="submit" class="btn btn-danger btn-block d-flex align-items-center navbar-switch-button">
+                            <i class="feather icon-log-out"></i>
+                            <span class="ml-2">Switch Back</span>
+                        </button>
+                    </form>
+                </div>
             @endif
 
         </div>

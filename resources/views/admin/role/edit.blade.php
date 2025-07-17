@@ -110,7 +110,7 @@
                             </div>
                             <!-- Status -->
                             <div class="form-group mt-3">
-                                <label for="status" class="form-label d-block">Status</label>
+                                <label for="status" class="form-label d-block font-weight-bold">Status</label>
                                 <select name="status" id="status" class="form-control select-user">
                                     <option value="{{ config('constants.status.active') }}"
                                         {{ old('status', $role->status) == config('constants.status.active') ? 'selected' : '' }}>
