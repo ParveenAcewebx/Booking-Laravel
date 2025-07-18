@@ -1,4 +1,4 @@
-<div class="tab-pane fade" id="assigned-services" role="tabpanel">
+<div class="tab-pane fade show active" id="assigned-services" role="tabpanel">
     <button type="button" id="addServicesBtn" class="btn btn-sm btn-primary mb-3" data-toggle="modal" data-target="#servicesModal">
         <i class="feather icon-plus"></i> Add Services
     </button>
