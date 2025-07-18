@@ -37,7 +37,7 @@
                 <div class="col-md-8 order-md-1">
                     <div class="card">
                         <div class="card-header">
-                            <h5>Category Details</h5>
+                            <h5>Category Information</h5>
                         </div>
                         <div class="card-body">
                             <div class="row">
