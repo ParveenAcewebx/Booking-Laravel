@@ -67,7 +67,6 @@ class ServiceController extends Controller
                 ->rawColumns(['status', 'action', 'description'])
                 ->make(true);
         }
-
         return view('admin.service.index', compact('loginUser'));
     }
 

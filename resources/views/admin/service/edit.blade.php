@@ -143,17 +143,21 @@
                                 </div>
 
                                 <div class="tab-pane" id="gallery" role="tabpanel">
+
                                     <div class="form-group">
                                         <label for="thumbnail" class="form-label">Thumbnail</label>
+
                                         <div class="custom-file">
                                             <input type="file" name="thumbnail" class="custom-file-input" id="thumbnailInput"
                                                 accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
                                             <label class="custom-file-label" for="thumbnailInput">Choose file...</label>
                                             <div class="invalid-feedback">Please upload a valid thumbnail.</div>
                                         </div>
-
+                                        <small class="form-text text-muted">
+                                            Supported image types: JPG, JPEG, PNG, or GIF.
+                                        </small>
                                         {{-- Preview Card --}}
-                                        <div id="edit-thumbnail-preview-container" class="row mt-3">
+                                        <div id="edit-thumbnail-preview-container" class="row mt-3 ">
                                             <div class="col-md-3 position-relative">
                                                 <div class="card shadow-sm">
                                                     <img id="edit-thumbnail-preview"
@@ -172,6 +176,7 @@
                                                 </div>
                                             </div>
                                         </div>
+
                                         <input type="hidden" name="remove_thumbnail" id="removeThumbnailFlag" value="0">
                                     </div>
 
@@ -187,8 +192,7 @@
                                                 <div class="text-center text-primary">
                                                     <div style="font-size: 2rem;">+</div>
                                                     <div>Add Image</div>
-                                                    <small class="d-block text-muted mt-1">Accepted formats: JPG, JPEG, PNG, GIF</small>
-
+                                                    <small class="d-block text-muted mt-1">Supported image types: JPG, JPEG, PNG, or GIF.</small>
                                                 </div>
                                             </label>
                                             <input type="file" name="gallery[]" id="galleryInput" class="d-none gallery-input" multiple accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">

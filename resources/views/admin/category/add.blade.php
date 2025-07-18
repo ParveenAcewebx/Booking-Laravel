@@ -76,9 +76,14 @@
                                 <div class="custom-file">
                                     <input type="file" class="custom-file-input" name="thumbnail" id="thumbnail"
                                         accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
-                                    <label class="custom-file-label" for="thumbnail">Choose file</label>
+                                    <label class="custom-file-label" for="thumbnail">Choose file...</label>
                                 </div>
                             </div>
+
+                            <small class="form-text text-muted">
+                                Supported image types: JPG, JPEG, PNG, or GIF.
+                            </small>
+
 
                             <div id="image-preview-container" class="row d-none mt-3">
                                 <div class="col-md-3 position-relative">

@@ -140,6 +140,9 @@
                                             <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
                                             <div class="invalid-feedback">Please upload a valid thumbnail.</div>
                                         </div>
+                                         <small class="form-text text-muted">
+                                        Supported image types: JPG, JPEG, PNG, or GIF.
+                                    </small>
                                     </div>
 
                                     {{-- Styled Preview Like Gallery --}}
@@ -169,7 +172,7 @@
                                                 <div class="text-center text-primary">
                                                     <div style="font-size: 2rem;">+</div>
                                                     <div>Add Image</div>
-                                                    <small class="d-block text-muted mt-1">Accepted formats: JPG, JPEG, PNG, GIF</small>
+                                                    <small class="d-block text-muted mt-1">Supported image types: JPG, JPEG, PNG, or GIF.</small>
 
                                                 </div>
                                             </label>

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -202,23 +202,31 @@ class UserController extends Controller
         if ($id == null) {
             $id = Auth::id();
         }
+        $user = User::findOrFail($id);
 
+        $avatarPath = $user->avatar;
+        // dd($avatarPath);
         $request->validate([
             'username' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'nullable|min:6|confirmed',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'code' => 'required',
-            'phone_number' => 'required',
             'status' => 'required|in:' . config('constants.status.active') . ',' . config('constants.status.inactive'),
 
         ]);
 
-        $user = User::findOrFail($id);
-
-        $avatarPath = $user->avatar;
         if ($request->hasFile('avatar')) {
+            if ($avatarPath && Storage::disk('public')->exists($avatarPath)) {
+                Storage::disk('public')->delete($avatarPath);
+            }
+
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
+        }
+        elseif ($request->filled('remove_avatar') && $request->remove_avatar == '1') {
+            if ($avatarPath && Storage::disk('public')->exists($avatarPath)) {
+                Storage::disk('public')->delete($avatarPath);
+            }
+
+            $avatarPath = null;
         }
 
         $status = $request->status;

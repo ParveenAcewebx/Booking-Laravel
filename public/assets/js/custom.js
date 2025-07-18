@@ -1379,6 +1379,7 @@ $(document).ready(function () {
     handleFileInput('#validatedCustomFile', '#image-preview-container', '#image-preview', '#remove-preview');
     handleFileInput('#thumbnailInput', '#edit-thumbnail-preview-container', '#edit-thumbnail-preview', '#remove-preview', '#removeThumbnailFlag');
     handleFileInput('#thumbnail', '#image-preview-container, #preview-container', '#image-preview, #preview-image', '#remove-preview', '#remove_existing_thumbnail');
-
+    handleFileInput('#addAvatarInput','#add-avatar-preview-container','#add-avatar-preview', '#remove-add-avatar-preview','#removeAddAvatarFlag');
+     handleFileInput('#avatarInput','#avatar-preview-container','#avatar-preview', '#remove-avatar-preview','#removeAvatarFlag');
 });
 /* ------------------------ End Services Thumbnail Function  ---------------------------- */

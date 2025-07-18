@@ -1,7 +1,7 @@
 <div class="col-md-12 mb-3 text-center">
     <img src="{{ asset('assets/images/no-image-available.png') }}" class="img-radius mb-3" width="100" alt="User Avatar">
     <div class="custom-file mx-auto">
-        <input type="file" class="custom-file-input" name="avatar" id="avatar">
+        <input type="file" class="custom-file-input" name="avatar" id="avatar" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
         <label class="custom-file-label" for="avatar">Choose file...</label>
     </div>
 </div>

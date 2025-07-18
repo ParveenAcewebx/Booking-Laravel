@@ -71,9 +71,13 @@
                                             name="thumbnail"
                                             id="thumbnail"
                                             accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
-                                        <label class="custom-file-label" for="thumbnail">Choose file</label>
+                                        <label class="custom-file-label" for="thumbnail">Choose file...</label>
                                     </div>
                                 </div>
+                                <small class="form-text text-muted">
+                                    Supported image types: JPG, JPEG, PNG, or GIF.
+                                </small>
+
                                 @error('thumbnail')
                                 <div class="invalid-feedback d-block mt-1">{{ $message }}</div>
                                 @enderror
