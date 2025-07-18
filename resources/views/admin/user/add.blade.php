@@ -28,7 +28,7 @@
             @csrf
             <div class="row">
                 <!-- Left Column -->
-                <div class="col-md-7 order-md-1">
+                <div class="col-md-8 order-md-1">
                     <div class="card">
                         <div class="card-header">
                             <h5>User Information</h5>
@@ -104,7 +104,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label">Role</label>
-                                        <select class="form-control" name="role" required>
+                                        <select class="form-control select-user" name="role" required>
                                             @foreach($allRoles as $role)
                                             <option value="{{ $role->id }}" {{ old('role') == $role->id || $role->name == 'Customer' ? 'selected' : '' }}>
                                                 {{ $role->name }}
@@ -116,71 +116,72 @@
                                         @enderror
                                     </div>
                                 </div>
-
-                                <!-- Status -->
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label class="form-label">Status</label>
-                                        <select name="status" id="status" class="form-control select-user">
-                                            <option value="{{ config('constants.status.active') }}" {{ old('status') == config('constants.status.active') ? 'selected' : '' }}>
-                                                Active
-                                            </option>
-                                            <option value="{{ config('constants.status.inactive') }}" {{ old('status') == config('constants.status.inactive') ? 'selected' : '' }}>
-                                                Inactive
-                                            </option>
-                                        </select>
-                                        @error('status')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
                             </div>
-                            <!-- Submit Button -->
-                            <button type="submit" class="btn btn-primary mt-3">Submit</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Right Column - Original Avatar Upload -->
-                <div class="col-md-5 order-md-2">
+                <div class="col-md-4 order-md-2">
                     <div class="card">
                         <div class="card-header">
-                            <h5>Avatar</h5>
+                            <h5>Settings</h5>
                         </div>
                         <div class="card-body">
-                            <div class="form-group col-md-12 p-0">
-                                {{-- Styled Preview Like Thumbnail --}}
-                                <div id="add-avatar-preview-container" class="row d-none mt-3">
-                                    <div class="col-md-5 position-relative">
-                                        <div class="card shadow-sm">
-                                            <img id="add-avatar-preview" class="card-img-top img-thumbnail" alt="Avatar Preview">
-
-                                            <button type="button"
-                                                id="remove-add-avatar-preview"
-                                                class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
-                                                title="Remove image">
-                                                &times;
-                                            </button>
-                                        </div>
-                                    </div>
+                            <!-- Status -->
+                            <div class="col-md-12 p-0">
+                                <div class="form-group">
+                                    <label class="form-label">Status</label>
+                                    <select name="status" id="status" class="form-control select-user">
+                                        <option value="{{ config('constants.status.active') }}" {{ old('status') == config('constants.status.active') ? 'selected' : '' }}>
+                                            Active
+                                        </option>
+                                        <option value="{{ config('constants.status.inactive') }}" {{ old('status') == config('constants.status.inactive') ? 'selected' : '' }}>
+                                            Inactive
+                                        </option>
+                                    </select>
+                                    @error('status')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
+                            </div>
+                            <div class="form-group col-md-12 p-0">
+                                <label class="form-label">Featured Image</label>
                                 <div class="input-group mb-1">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Upload</span>
                                     </div>
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input" name="avatar" id="addAvatarInput" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
-                                        <label class="custom-file-label" for="addAvatarInput">Choose file...</label>
+                                        <label class="custom-file-label overflow-hidden" for="addAvatarInput">Choose file...</label>
                                     </div>
                                 </div>
                                 <small class="form-text text-muted">
                                     Supported image types: JPG, JPEG, PNG, or GIF.
                                 </small>
                             </div>
+                            {{-- Styled Preview Like Thumbnail --}}
+                            <div id="add-avatar-preview-container" class="row d-none mt-3">
+                                <div class="col-md-5 position-relative">
+                                    <div class="card shadow-sm">
+                                        <img id="add-avatar-preview" class="card-img-top img-thumbnail" alt="Avatar Preview">
+
+                                        <button type="button"
+                                            id="remove-add-avatar-preview"
+                                            class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
+                                            title="Remove image">
+                                            &times;
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                             @error('avatar')
                             <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
-
+                            <!-- Submit Button -->
+                            <div class="text-right mt-0">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
                         </div>
                     </div>
                 </div>

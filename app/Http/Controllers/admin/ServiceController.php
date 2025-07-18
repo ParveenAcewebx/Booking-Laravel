@@ -134,6 +134,7 @@ class ServiceController extends Controller
 
         $data['staff_member'] = json_encode($request->input('staff_member', []));
         $data['payment__is_live'] = $request->has('payment__is_live') ? 1 : 0;
+        $data['duration'] = $request->duration;
 
         $service = Service::create($data);
         $lastServiceId = $service->id;
