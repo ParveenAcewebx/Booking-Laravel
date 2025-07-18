@@ -162,7 +162,6 @@
                             </div>
                             <div class="text-right mt-0">
                                 <button type="submit" class="btn btn-primary">Update</button>
-                                <a href="{{ route('service.list') }}" class="btn btn-secondary">Cancel</a>
                             </div>
                         </div>
                     </div>

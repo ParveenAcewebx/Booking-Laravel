@@ -123,7 +123,6 @@
                             <div class="row mt-4">
                                 <div class="col-md-12 text-right">
                                     <button type="submit" class="btn btn-primary">Save</button>
-                                    <a href="{{ route('category.list') }}" class="btn btn-secondary ml-2">Back</a>
                                 </div>
                             </div>
                         </div>

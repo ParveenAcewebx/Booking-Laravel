@@ -1,95 +1,109 @@
-    @extends('admin.layouts.app')
+@extends('admin.layouts.app')
 
-    @section('content')
-    <section class="pcoded-main-container">
-        <div class="pcoded-content">
-            <div class="page-header">
-                <div class="page-block">
-                    <div class="row align-items-center">
-                        <div class="col-md-12">
-                            <div class="page-header-title">
-                                <h5 class="m-b-10">Edit Booking</h5>
-                            </div>
-                            <ul class="breadcrumb">
-                                <li class="breadcrumb-item">
-                                    <a href="{{ route('dashboard') }}">
-                                        <i class="feather icon-home"></i>
-                                    </a>
-                                </li>
-                                <li class="breadcrumb-item">
-                                    <a href="{{ route('booking.list') }}">Bookings</a>
-                                </li>
-                                <li class="breadcrumb-item">Edit Booking</li>
-                            </ul>
+@section('content')
+<section class="pcoded-main-container">
+    <div class="pcoded-content">
+        <!-- [ Page Header ] start -->
+        <div class="page-header">
+            <div class="page-block">
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <div class="page-header-title">
+                            <h5 class="m-b-10">Edit Booking</h5>
                         </div>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('dashboard') }}">
+                                    <i class="feather icon-home"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('booking.list') }}">Bookings</a>
+                            </li>
+                            <li class="breadcrumb-item">Edit Booking</li>
+                        </ul>
                     </div>
                 </div>
             </div>
+        </div>
+        <!-- [ Page Header ] end -->
 
-            <form action="{{ route('booking.update', $booking->id) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
+        <!-- [ Form Section ] start -->
+        <form action="{{ route('booking.update', $booking->id) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
 
-                <div class="row">
-                    <div class="col-md-12 order-md-2">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5>Edit Booking</h5>
-                            </div>
+            <div class="row">
+                <!-- [ Left Column (8) ] start -->
+                <div class="col-md-8 order-md-1">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Booking Information</h5>
+                        </div>
+                        <div class="card-body">
+                            {{-- Success or Error Messages --}}
+                            @if(session('success'))
+                            <div class="alert alert-success">{{ session('success') }}</div>
+                            @endif
+                            @if(session('error'))
+                            <div class="alert alert-danger">{{ session('error') }}</div>
+                            @endif
 
-                            <div class="card-body">
-                                {{-- Success or Error Messages --}}
-                                @if(session('success'))
-                                <div class="alert alert-success">{{ session('success') }}</div>
-                                @endif
-                                @if(session('error'))
-                                <div class="alert alert-danger">{{ session('error') }}</div>
-                                @endif
+                            <!-- <h5 class="mb-4">Booking Information</h5> -->
 
-                                <h5 class="mb-4">Booking Information</h5>
+                            {{-- Rendered Dynamic Fields --}}
+                            {!! $dynamicFieldHtml !!}
+                        </div>
+                    </div>
+                </div>
+                <!-- [ Left Column (8) ] end -->
 
-                                {{-- Rendered Dynamic Fields --}}
-                                {!! $dynamicFieldHtml !!}
-
-                                <div class="row">
-                                    {{-- Staff Dropdown --}}
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label">Staff</label>
-                                            <select class="form-control" name="staff" required>
-                                                <option value="">Select Staff</option>
-                                                @foreach($staffList as $staff)
-                                                <option value="{{ $staff->id }}"
-                                                    {{ old('staff', $booking->selected_staff) == $staff->id ? 'selected' : '' }}>
-                                                    {{ $staff->name }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    {{-- Booking Date and Time --}}
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label">Booking Date and Time</label>
-                                            <input
-                                                type="datetime-local"
-                                                class="form-control"
-                                                name="booking_datetime"
-                                                value="{{ old('booking_datetime', $booking->booking_datetime) }}"
-                                                required>
-                                        </div>
+                <!-- [ Right Column (4) ] start -->
+                <div class="col-md-4 order-md-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Status -->
+                            <div class="row">
+                                <!-- Staff Dropdown -->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Staff</label>
+                                        <select class="form-control select-user" name="staff" required>
+                                            <option value="">Select Staff</option>
+                                            @foreach($staffList as $staff)
+                                            <option value="{{ $staff->id }}"
+                                                {{ old('staff', $booking->selected_staff) == $staff->id ? 'selected' : '' }}>
+                                                {{ $staff->name }}
+                                            </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
 
-                                {{-- Submit Button --}}
+                                <!-- Booking Date and Time -->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Booking Date and Time</label>
+                                        <input type="datetime-local" class="form-control" name="booking_datetime"
+                                            value="{{ old('booking_datetime', $booking->booking_datetime) }}" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Save Button for Settings --}}
+                            <div class="text-right mt-4">
                                 <button type="submit" class="btn btn-primary">Update</button>
-                                <a href="{{ route('booking.list') }}" class="btn btn-secondary ml-2">Back</a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </form>
-        </div>
-    </section>
-    @endsection
+                <!-- [ Right Column (4) ] end -->
+            </div>
+        </form>
+        <!-- [ Form Section ] end -->
+    </div>
+</section>
+@endsection

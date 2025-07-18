@@ -180,7 +180,6 @@
                             </div>
                             <div class="text-right mt-0">
                                 <button type="submit" class="btn btn-primary savebutton">Update</button>
-                                <a href="{{ route('staff.list') }}" class="btn btn-secondary">Back</a>
                             </div>
                         </div>
                     </div>

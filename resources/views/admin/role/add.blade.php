@@ -1,46 +1,52 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="pcoded-main-container">
-    <div class="pcoded-content">
-        <div class="page-header">
-            <div class="page-block">
-                <div class="row align-items-center">
-                    <div class="col-md-12">
-                        <div class="page-header-title">
-                            <h5 class="m-b-10">Add Role</h5>
+    <div class="pcoded-main-container">
+        <div class="pcoded-content">
+            <div class="page-header">
+                <div class="page-block">
+                    <div class="row align-items-center">
+                        <div class="col-md-12">
+                            <div class="page-header-title">
+                                <h5 class="m-b-10">Add Role</h5>
+                            </div>
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <a href="{{ route('dashboard') }}">
+                                        <i class="feather icon-home"></i>
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item"><a href="{{ route('roles.list') }}">Roles</a></li>
+                                <li class="breadcrumb-item">Add Role</li>
+                            </ul>
                         </div>
-                        <ul class="breadcrumb">
-                            <li class="breadcrumb-item">
-                                <a href="{{ route('dashboard') }}">
-                                    <i class="feather icon-home"></i>
-                                </a>
-                            </li>
-                            <li class="breadcrumb-item"><a href="{{ route('roles.list') }}">Roles</a></li>
-                            <li class="breadcrumb-item">Add Role</li>
-                        </ul>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col-md-12 mx-auto">
-                <div class="card">
-                    <div class="card-body">
-                        <form action="{{ route('roles.store') }}" method="POST">
-                            @csrf
-
-                            <div class="form-group">
-                                <label for="name" class="font-weight-bold">Role Name <span class="text-danger">*</span></label>
-                                <input type="text" name="name" id="name"
-                                    class="form-control @error('name') is-invalid @enderror"
-                                    value="{{ old('name') }}" required>
-                                @error('name')
-                                <span class="invalid-feedback d-block">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div class="form-group mt-2 mb-1">
+            <form action="{{ route('roles.store') }}" method="POST">
+            @csrf
+            <div class="row">
+                <!-- Left Column -->
+                <div class="col-md-8 order-md-1">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Role Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- Name -->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Role</label>
+                                        <input type="text" name="name" id="name"
+                                        class="form-control @error('name') is-invalid @enderror"
+                                        value="{{ old('name') }}" required>
+                                            @error('name')
+                                            <span class="invalid-feedback d-block">{{ $message }}</span>
+                                            @enderror
+                                    </div>
+                                    <div class="form-group mt-2 mb-1">
                                 <label class="font-weight-bold">Permissions</label>
                                 <div class="table-responsive">
                                     <table class="table table-bordered">
@@ -101,8 +107,23 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
-                                <label for="status" class="form-label d-block font-weight-bold">Status</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Original Avatar Upload -->
+                <div class="col-md-4 order-md-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group col-md-12 p-0">
+                                <!-- Status -->
+                                <div class="form-group mt-3">
+                                    <label for="status" class="form-label d-block font-weight-bold">Status</label>
                                 <select name="status" id="status" class="form-control select-user">
                                     <option value="{{ config('constants.status.active') }}"
                                         {{ old('status', 1) == config('constants.status.active') ? 'selected' : '' }}>
@@ -113,19 +134,21 @@
                                         Inactive
                                     </option>
                                 </select>
-                                @error('status')
-                                <span class="text-danger">{{ $message }}</span>
-                                @enderror
+                                    @error('status')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
-
-                            <div class="form-group mt-4">
-                                <button type="submit" class="btn btn-primary">Save</button>
-                                <a href="{{ route('roles.list') }}" class="btn btn-secondary">Back</a>
+                            <div class="row mt-4">
+                                <div class="col-md-12 text-right">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
+        </form>
         </div>
     </div>
 </div>
