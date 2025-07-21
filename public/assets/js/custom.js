@@ -385,25 +385,53 @@ jQuery(function ($) {
         shortcodeblock: function (fieldData) {
             return {
                 field: `
-                    <div class="shortcode-block"  >
- <input type="text" 
+            <div class="shortcode-block">
+                <select 
                     name="shortcode" 
-                    value="${fieldData.value || ""}" 
-                    placeholder="[your-shortcode]" 
-                    class="form-control"
-                    ${fieldData.required ? "required" : ""} 
-                />
-                    </div>
-                `,
+                    class="form-control shortcode-select" 
+                    data-placeholder="Select a shortcode"
+                >
+                    <option></option>
+                </select>
+            </div>
+        `,
                 onRender: function () {
-                    // No-op
+                    const $select = $('.shortcode-select:last'); // Only target the most recently rendered
+
+                    // Fetch shortcodes from your backend
+                    $.ajax({
+                        url: '/admin/shortcodes/list',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (shortcodes) {
+                            $select.empty().append(`<option></option>`); // clear & add placeholder
+
+                            shortcodes.forEach(function (code) {
+                                const isSelected = fieldData.value === `[${code}]`;
+                                $select.append(
+                                    new Option(`[${code}]`, `[${code}]`, isSelected, isSelected)
+                                );
+                            });
+
+                            // Init select2 after options loaded
+                            $select.select2({
+                                placeholder: "Select a shortcode",
+                                allowClear: true,
+                                width: '100%'
+                            });
+                        },
+                        error: function () {
+                            console.error("Failed to load shortcodes.");
+                        }
+                    });
                 },
                 onSave: function (evt, field) {
-                    const input = $(field).find('input[name="shortcode"]');
-                    fieldData.shortcode = input.val();
+                    const input = $(field).find('select[name="shortcode"]');
+                    fieldData.value = input.val(); // Save selected shortcode
                 },
             };
-        },
+        }
+
     };
 
     const formBuilder = $(fbEditor).formBuilder({

@@ -12,6 +12,8 @@ use App\Http\Controllers\admin\ServiceController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\frontend\BookingListingController;
 use App\Http\Controllers\admin\StaffController;
+use App\Helpers\Shortcode;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -28,13 +30,12 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/booking', [BookingListingController::class, 'listing'])->name('booking.listing');
-
 Route::get('/admin', function () {
     return redirect()->route('dashboard');
 });
-
-
-
+Route::get('/admin/shortcodes/list', function () {
+    return response()->json(Shortcode::getRegisteredShortcodes());
+});
 Route::get('/form/{slug}', [FormController::class, 'show'])->name('form.show');
 Route::post('/form/{slug}', [FormController::class, 'store'])->name('form.store');
 

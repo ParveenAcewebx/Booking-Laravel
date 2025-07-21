@@ -6,13 +6,11 @@ class Shortcode
 {
     protected static $shortcodes = [];
 
-    // Register a shortcode
     public static function register(string $tag, callable $callback)
     {
         self::$shortcodes[$tag] = $callback;
     }
 
-    // Parse shortcodes in content
     public static function parse(string $content): string
     {
         foreach (self::$shortcodes as $tag => $callback) {
@@ -27,7 +25,6 @@ class Shortcode
         return $content;
     }
 
-    // Parse attributes like key="value"
     protected static function parseAttributes($text)
     {
         $attributes = [];
@@ -35,7 +32,6 @@ class Shortcode
         foreach ($matches as $match) {
             $attributes[$match[1]] = $match[2];
         }
-
         return $attributes;
     }
 
@@ -44,7 +40,11 @@ class Shortcode
         if (isset(static::$shortcodes[$name])) {
             return call_user_func(static::$shortcodes[$name], $attrs);
         }
-
         return '';
+    }
+
+    public static function getRegisteredShortcodes(): array
+    {
+        return array_keys(self::$shortcodes);
     }
 }
