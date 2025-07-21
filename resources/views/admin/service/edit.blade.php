@@ -130,10 +130,15 @@
                                 <label for="thumbnail" class="form-label">Featured Image</label>
 
                                 <div class="custom-file">
-                                    <input type="file" name="thumbnail" class="custom-file-input" id="thumbnailInput"
-                                        accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
-                                    <label class="custom-file-label" for="thumbnailInput">Choose file...</label>
-                                    <div class="invalid-feedback">Please upload a valid thumbnail.</div>
+                                    <div class="input-group mb-1">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Upload</span>
+                                    </div>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" name="thumbnail" id="thumbnailInput" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                                        <label class="custom-file-label overflow-hidden" for="thumbnailInput">Choose file...</label>
+                                    </div>
+                                </div>
                                 </div>
                                 <small class="form-text text-muted">
                                     Supported image types: JPG, JPEG, PNG, or GIF.
