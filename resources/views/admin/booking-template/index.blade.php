@@ -20,7 +20,7 @@
                     <div class="col-md-2">
                         <div class="page-header-titles float-right">
                             @can('create templates')
-                            <a href="{{ route('template.add') }}" class="btn btn-primary float-right p-2">Add Form</a>
+                            <a href="{{ route('template.add') }}" class="btn btn-primary float-right p-2">Add New Template</a>
                             @endcan
                         </div>
                     </div>
