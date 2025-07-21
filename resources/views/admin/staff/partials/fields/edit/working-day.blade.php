@@ -17,17 +17,6 @@ $applyAllDays = $workHours['apply_all_days'] ?? 0;
             <span class="font-weight-bold">{{ $day }}</span>
 
             <div class="ml-auto d-flex align-items-center">
-                @if($day === 'Monday')
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input apply-to-all-days"
-                        id="applyAllDaysCheckbox" name="apply_all_days"
-                        {{ $applyAllDays ? 'checked' : '' }}>
-                    <label class="custom-control-label ml-1 mb-0 medium" for="applyAllDaysCheckbox">
-                        Apply to all days
-                    </label>
-                </div>
-                @endif
-
                 <div class="chevron-toggle ml-3"
                     style="cursor:pointer;"
                     data-toggle="collapse"
@@ -73,22 +62,6 @@ $applyAllDays = $workHours['apply_all_days'] ?? 0;
                         </option>
                         @endforeach
                         @endfor
-                </select>
-            </div>
-
-            {{-- Service Selection --}}
-            <div class="d-flex align-items-center mt-3 w-100">
-                <select class="form-control select-user service-select"
-                    name="working_days[{{ $daySlug }}][service_1][]"
-                    multiple>
-                    @forelse($services as $service)
-                    <option value="{{ $service->id }}"
-                        {{ in_array($service->id, $selectedServices) ? 'selected' : '' }}>
-                        {{ $service->name }}
-                    </option>
-                    @empty
-                    <option disabled>No services available</option>
-                    @endforelse
                 </select>
             </div>
         </div>

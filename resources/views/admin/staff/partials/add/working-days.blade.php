@@ -1,4 +1,4 @@
-    <div class="tab-pane fade" id="working-days" role="tabpanel">
+    <div class="tab-pane fade active show" id="working-days" role="tabpanel">
         <div class="row">
             <div class="col-md-12">
                 <div class="accordion" id="workingHoursAccordion">

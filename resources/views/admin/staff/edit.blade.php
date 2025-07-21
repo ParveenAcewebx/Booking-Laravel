@@ -119,6 +119,20 @@
                                     </div>
                                 </div>
                                 @endif
+                                <!-- Assigned Services -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Assigned Services</label>
+                                        <select class="form-control select-user" name="assigned_services[]" multiple="multiple" required>
+                                            @foreach($services as $service)
+                                            <option value="{{ $service->id }}"
+                                                {{ collect($assignedServices)->pluck('id')->contains($service->id) ? 'selected' : '' }}>
+                                                {{ $service->name }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -202,12 +216,7 @@
                         <div class="card-body">
                             <ul class="nav nav-tabs mb-3" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#assigned-services" role="tab">
-                                        <i class="feather icon-briefcase"></i> Assigned Services
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#working-days" role="tab">
+                                    <a class="nav-link active" data-toggle="tab" href="#working-days" role="tab">
                                         <i class="feather icon-clock"></i> Work Hours
                                     </a>
                                 </li>
@@ -219,15 +228,11 @@
                             </ul>
 
                             <div class="tab-content">
-                                {{-- TAB: ASSIGNED SERVICES --}}
-                                @include('admin.staff.partials.edit.assigned-services')
-
                                 {{-- TAB: WORKING DAYS --}}
                                 @include('admin.staff.partials.edit.working-days')
 
                                 {{-- TAB: DAYS OFF --}}
                                 @include('admin.staff.partials.edit.days-off')
-
                             </div>
                         </div>
                     </div>

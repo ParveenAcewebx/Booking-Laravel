@@ -82,10 +82,10 @@ class StaffController extends Controller
     {
         $roles = Role::where('name', 'Staff')->first();
         $staffUsers = User::role('staff')->get();
-
+        $activeStatus = config('constants.status.active');
         $weekDays = config('constants.week_days');
         $phoneCountries = config('phone_countries');
-        $services = Service::all();
+        $services = Service::where('status', $activeStatus)->get();
         $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
         return view('admin.staff.add', compact('roles', 'services', 'staffUsers', 'phoneCountries', 'weekDays', 'loginUser'));
@@ -101,36 +101,37 @@ class StaffController extends Controller
             'phone_number' => 'required'
         ]);
 
-        $fullPhoneNumber = $request->phone_number;
-
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
         }
 
+        // Create User
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'avatar' => $avatarPath,
-            'phone_number' => $fullPhoneNumber,
+            'phone_number' => $request->phone_number,
             'phone_code' => $request->code,
-            'status' => $request->status ? config('constants.status.active') : config('constants.status.inactive'),
+            'status' => $request->status,
         ]);
 
+        // Assign Role
         $role = Role::findById($request->role, 'web');
         $user->assignRole($role->name);
 
+        // Assign Services
         if ($request->has('assigned_services') && is_array($request->assigned_services)) {
-            foreach ($request->assigned_services as $serviceData) {
+            foreach ($request->assigned_services as $serviceId) {
                 StaffAssociation::create([
                     'staff_member' => $user->id,
-                    'service_id' => $serviceData['id'],
+                    'service_id' => $serviceId,
                 ]);
             }
         }
 
-        $applyToAllDays = $request->has('apply_all_days') ? 1 : 0;
+        // Work Hours Per Day
         $workingHours = [];
 
         if ($request->has('working_days')) {
@@ -138,12 +139,12 @@ class StaffController extends Controller
                 $workingHours[$day] = [
                     'start' => $data['start'] ?? null,
                     'end' => $data['end'] ?? null,
-                    'services' => $data['service_1'] ?? [],
+                    'services' => $data['services'] ?? [],
                 ];
             }
-            $workingHours['apply_all_days'] = $applyToAllDays;
         }
 
+        // Days Off Grouping
         $dayOffsGrouped = [];
         if ($request->has('day_offs') && is_array($request->day_offs)) {
             foreach ($request->day_offs as $off) {
@@ -172,13 +173,16 @@ class StaffController extends Controller
             }
         }
 
+        // Save to Staff table
         Staff::create([
             'staff_id' => $user->id,
             'work_hours' => json_encode($workingHours),
             'days_off' => json_encode($dayOffsGrouped),
         ]);
+
         return redirect()->route('staff.list')->with('success', 'Staff Created Successfully!');
     }
+
 
 
     public function edit(User $staff)
@@ -236,20 +240,17 @@ class StaffController extends Controller
 
         $staff->name = $request->name;
         $staff->email = $request->email;
-        $staff->phone_number =  $request->phone_number;
+        $staff->phone_number = $request->phone_number;
         $staff->phone_code = $request->code;
         $staff->status = $request->status ? config('constants.status.active') : config('constants.status.inactive');
 
         // ✅ Avatar Upload or Removal
         if ($request->hasFile('avatar')) {
-            // Delete existing avatar
             if ($staff->avatar && Storage::disk('public')->exists($staff->avatar)) {
                 Storage::disk('public')->delete($staff->avatar);
             }
-            // Store new avatar
             $staff->avatar = $request->file('avatar')->store('avatars', 'public');
         } elseif ($request->input('remove_avatar') == '1') {
-            // Remove avatar if requested
             if ($staff->avatar && Storage::disk('public')->exists($staff->avatar)) {
                 Storage::disk('public')->delete($staff->avatar);
             }
@@ -262,18 +263,16 @@ class StaffController extends Controller
 
         $staff->save();
 
-        // ✅ Sync role
+        // ✅ Sync Role
         $role = Role::findById($request->role, 'web');
         $staff->syncRoles([$role->name]);
 
-        // ✅ Sync assigned services
+        // ✅ Sync Assigned Services (as plain array of service IDs)
         $submittedServices = $request->input('assigned_services', []);
-        $serviceIds = collect($submittedServices)->pluck('id')->filter()->map(fn($id) => (int) $id)->unique()->values()->all();
-        $staff->services()->sync($serviceIds);
+        $staff->services()->sync($submittedServices);
 
-        // ✅ Working hours
+        // ✅ Working Hours
         $workingHours = [];
-        $applyToAllDays = $request->has('apply_all_days') ? 1 : 0;
         if ($request->has('working_days')) {
             foreach ($request->working_days as $day => $data) {
                 $workingHours[$day] = [
@@ -282,10 +281,9 @@ class StaffController extends Controller
                     'services' => $data['service_1'] ?? [],
                 ];
             }
-            $workingHours['apply_all_days'] = $applyToAllDays;
         }
 
-        // ✅ Days off
+        // ✅ Days Off
         $dayOffsRaw = $request->input('day_offs', []);
         $nestedDayOffs = [];
 
@@ -300,7 +298,7 @@ class StaffController extends Controller
                     $end = Carbon::createFromFormat('F j, Y', trim($endDate));
 
                     if ($start->gt($end)) {
-                        [$start, $end] = [$end, $start]; // Swap if wrong order
+                        [$start, $end] = [$end, $start];
                     }
 
                     $block = [];
@@ -319,7 +317,7 @@ class StaffController extends Controller
             }
         }
 
-        // ✅ Staff Meta Update
+        // ✅ Update Staff Meta
         $staffMeta = Staff::firstOrNew(['staff_id' => $staff->id]);
         $staffMeta->work_hours = json_encode($workingHours);
         if (!empty($nestedDayOffs)) {
@@ -329,6 +327,7 @@ class StaffController extends Controller
 
         return redirect()->route('staff.list')->with('success', 'Staff Updated Successfully!');
     }
+
 
 
     public function destroy($id)
