@@ -132,8 +132,14 @@
                             <div class="form-group">
                                 <label>Status</label>
                                 <select name="status" class="form-control select-user">
-                                    <option value="{{ config('constants.status.active') }}" {{ old('status') == config('constants.status.active') ? 'selected' : '' }}>Active</option>
-                                    <option value="{{ config('constants.status.inactive') }}" {{ old('status') == config('constants.status.inactive') ? 'selected' : '' }}>Inactive</option>
+                                    <option value="{{ config('constants.status.active') }}"
+                                        {{ old('status', 1) == config('constants.status.active') ? 'selected' : '' }}>
+                                        Active
+                                    </option>
+                                    <option value="{{ config('constants.status.inactive') }}"
+                                        {{ old('status', 1) == config('constants.status.inactive') ? 'selected' : '' }}>
+                                        Inactive
+                                    </option>
                                 </select>
                                 @error('status')
                                 <div class="text-danger mt-1">{{ $message }}</div>

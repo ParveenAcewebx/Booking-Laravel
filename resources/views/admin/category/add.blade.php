@@ -71,12 +71,12 @@
                                 <div class="form-group mt-3">
                                     <label for="status" class="form-label d-block">Status</label>
                                     <select name="status" id="status" class="form-control select-user">
-                                        <option value="{{ config('constants.status.active') }}"
-                                            {{ old('status', config('constants.status.active')) == config('constants.status.active') ? 'selected' : '' }}>
-                                            Active
-                                        </option>
+                                         <option value="{{ config('constants.status.active') }}"
+                                        {{ old('status', 1) == config('constants.status.active') ? 'selected' : '' }}>
+                                        Active
+                                    </option>
                                         <option value="{{ config('constants.status.inactive') }}"
-                                            {{ old('status') == config('constants.status.inactive') ? 'selected' : '' }}>
+                                            {{ old('status', 1) == config('constants.status.inactive') ? 'selected' : '' }}>>
                                             Inactive
                                         </option>
                                     </select>

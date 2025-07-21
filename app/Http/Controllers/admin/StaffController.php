@@ -177,12 +177,8 @@ class StaffController extends Controller
             'work_hours' => json_encode($workingHours),
             'days_off' => json_encode($dayOffsGrouped),
         ]);
-
         return redirect()->route('staff.list')->with('success', 'Staff Created Successfully!');
     }
-
-
-
     public function edit(User $staff)
     {
         $roles = Role::where('name', 'Staff')->first();

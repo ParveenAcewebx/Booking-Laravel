@@ -133,10 +133,12 @@
                                 <div class="form-group">
                                     <label class="form-label">Status</label>
                                     <select name="status" id="status" class="form-control select-user">
-                                        <option value="{{ config('constants.status.active') }}" {{ old('status') == config('constants.status.active') ? 'selected' : '' }}>
+                                        <option value="{{ config('constants.status.active') }}"
+                                            {{ old('status', 1) == config('constants.status.active') ? 'selected' : '' }}>
                                             Active
                                         </option>
-                                        <option value="{{ config('constants.status.inactive') }}" {{ old('status') == config('constants.status.inactive') ? 'selected' : '' }}>
+                                        <option value="{{ config('constants.status.inactive') }}"
+                                            {{ old('status', 1) == config('constants.status.inactive') ? 'selected' : '' }}>
                                             Inactive
                                         </option>
                                     </select>
