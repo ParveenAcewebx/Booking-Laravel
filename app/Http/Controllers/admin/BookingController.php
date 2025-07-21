@@ -216,15 +216,16 @@ class BookingController extends Controller
         }
 
         $booking->booking_data = json_encode($existingData);
-        $booking->first_name = $existingData['first_name'];
-        $booking->last_name = $existingData['last_name'];
-        $booking->phone_number = $existingData['phone'];
-        $booking->email = $existingData['email'];
+        if (!empty($booking->first_name)) {
+            $booking->first_name = $existingData['first_name'];
+            $booking->last_name = $existingData['last_name'];
+            $booking->phone_number = $existingData['phone'];
+            $booking->email = $existingData['email'];
+        }
         $selectedStaff = User::find($request->input('staff'));
         $booking->selected_staff = $selectedStaff?->name ?? '';
 
         $booking->save();
-
         return redirect()->route('booking.list')->with('success', 'Booking Updated Successfully.');
     }
 
@@ -277,5 +278,4 @@ class BookingController extends Controller
             ], 500);
         }
     }
-
 }
