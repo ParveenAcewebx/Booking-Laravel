@@ -151,32 +151,41 @@
 
                             <!-- Featured Image Upload -->
                             <div class="form-group">
-                                <label>Featured Image</label>
+                                <label class="form-label">Featured Image</label>
                                 <div class="input-group mb-1">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Upload</span>
                                     </div>
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name="avatar" id="addAvatarInput" accept=".jpg,.jpeg,.png,.gif">
-                                        <label class="custom-file-label overflow-hidden" for="addAvatarInput">Choose file...</label>
+                                        <input type="file" class="custom-file-input" name="avatar" id="avatarInput" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                                        <label class="custom-file-label overflow-hidden" for="avatarInput">Choose file...</label>
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">Supported types: JPG, JPEG, PNG, GIF.</small>
+                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
                                 @error('avatar')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
 
-                                <!-- Image Preview -->
-                                <div id="add-avatar-preview-container" class="row d-none mt-3">
+                                {{-- Avatar Preview --}}
+                                <div id="avatar-preview-container" class="row mt-3 {{ !empty($staff->avatar) ? '' : 'd-none' }}">
                                     <div class="col-md-6 position-relative">
                                         <div class="card shadow-sm">
-                                            <img id="add-avatar-preview" class="card-img-top img-thumbnail h-100" alt="Avatar Preview">
-                                            <button type="button" id="remove-add-avatar-preview" class="btn btn-sm btn-dark position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image" title="Remove image">
+                                            <img id="avatar-preview"
+                                                src="{{ !empty($staff->avatar) ? asset('storage/' . $staff->avatar) : asset('assets/images/no-image-available.png') }}"
+                                                class="card-img-top img-thumbnail"
+                                                alt="Avatar Preview"
+                                                style="object-fit: contain; height: 120px; width: 100%;">
+                                            <button type="button"
+                                                id="remove-avatar-preview"
+                                                class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
+                                                title="Remove avatar">
                                                 &times;
                                             </button>
                                         </div>
                                     </div>
                                 </div>
+
+                                <input type="hidden" name="remove_avatar" id="removeAvatarFlag" value="0">
                             </div>
                             <div class="text-right mt-0">
                                 <button type="submit" class="btn btn-primary savebutton">Update</button>

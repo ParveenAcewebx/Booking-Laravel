@@ -15,6 +15,7 @@ use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Illuminate\Support\Facades\Storage;
 
 class StaffController extends Controller
 {
@@ -87,7 +88,7 @@ class StaffController extends Controller
         $services = Service::all();
         $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
-        return view('admin.staff.add', compact('roles', 'services','staffUsers', 'phoneCountries', 'weekDays', 'loginUser'));
+        return view('admin.staff.add', compact('roles', 'services', 'staffUsers', 'phoneCountries', 'weekDays', 'loginUser'));
     }
 
     public function store(Request $request)
@@ -239,8 +240,20 @@ class StaffController extends Controller
         $staff->phone_code = $request->code;
         $staff->status = $request->status ? config('constants.status.active') : config('constants.status.inactive');
 
+        // ✅ Avatar Upload or Removal
         if ($request->hasFile('avatar')) {
+            // Delete existing avatar
+            if ($staff->avatar && Storage::disk('public')->exists($staff->avatar)) {
+                Storage::disk('public')->delete($staff->avatar);
+            }
+            // Store new avatar
             $staff->avatar = $request->file('avatar')->store('avatars', 'public');
+        } elseif ($request->input('remove_avatar') == '1') {
+            // Remove avatar if requested
+            if ($staff->avatar && Storage::disk('public')->exists($staff->avatar)) {
+                Storage::disk('public')->delete($staff->avatar);
+            }
+            $staff->avatar = null;
         }
 
         if ($request->filled('password')) {
@@ -249,14 +262,16 @@ class StaffController extends Controller
 
         $staff->save();
 
+        // ✅ Sync role
         $role = Role::findById($request->role, 'web');
         $staff->syncRoles([$role->name]);
 
-        // Sync assigned services
+        // ✅ Sync assigned services
         $submittedServices = $request->input('assigned_services', []);
         $serviceIds = collect($submittedServices)->pluck('id')->filter()->map(fn($id) => (int) $id)->unique()->values()->all();
         $staff->services()->sync($serviceIds);
 
+        // ✅ Working hours
         $workingHours = [];
         $applyToAllDays = $request->has('apply_all_days') ? 1 : 0;
         if ($request->has('working_days')) {
@@ -270,6 +285,7 @@ class StaffController extends Controller
             $workingHours['apply_all_days'] = $applyToAllDays;
         }
 
+        // ✅ Days off
         $dayOffsRaw = $request->input('day_offs', []);
         $nestedDayOffs = [];
 
@@ -284,7 +300,7 @@ class StaffController extends Controller
                     $end = Carbon::createFromFormat('F j, Y', trim($endDate));
 
                     if ($start->gt($end)) {
-                        [$start, $end] = [$end, $start]; // swap if in wrong order
+                        [$start, $end] = [$end, $start]; // Swap if wrong order
                     }
 
                     $block = [];
@@ -303,17 +319,17 @@ class StaffController extends Controller
             }
         }
 
+        // ✅ Staff Meta Update
         $staffMeta = Staff::firstOrNew(['staff_id' => $staff->id]);
         $staffMeta->work_hours = json_encode($workingHours);
-
-        // Only update if valid day offs exist
         if (!empty($nestedDayOffs)) {
             $staffMeta->days_off = json_encode($nestedDayOffs);
         }
-
         $staffMeta->save();
+
         return redirect()->route('staff.list')->with('success', 'Staff Updated Successfully!');
     }
+
 
     public function destroy($id)
     {
