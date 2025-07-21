@@ -54,7 +54,7 @@ class RoleController extends Controller
                     $html = '';
                     foreach ($groupedPermissions as $entity => $permissions) {
                         $html .= '<span class="badge badge-light-success" data-toggle="tooltip" title="' . e(implode(', ', $permissions)) . '">' .
-                            ucfirst($entity) . ' (' . count($permissions) . ')</span><br>';
+                            ucfirst($entity) . ' (' . count($permissions) . ')</span>';
                     }
 
                     return $html ?: '';
