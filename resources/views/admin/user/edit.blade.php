@@ -86,7 +86,7 @@
                                     <div class="form-group">
                                         <label class="form-label">Phone Number</label>
                                         <div class="input-group">
-                                            <select class="form-control" name="phone_code" style="max-width: 100px;">
+                                            <select class="form-control" name="code" style="max-width: 100px;">
                                                 @foreach($phoneCountries as $country)
                                                 <option value="{{ $country['code'] }}"
                                                     @if(
