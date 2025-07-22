@@ -33,6 +33,9 @@ class VendorController extends Controller
 
     public function index(Request $request)
     {
+        $loginId = session('impersonate_original_user');
+        $loginUser = $loginId ? User::find($loginId) : null;
+
         if ($request->ajax()) {
             $vendors = Vendor::select(['id', 'name', 'description', 'status', 'created_at']);
 
@@ -81,7 +84,7 @@ class VendorController extends Controller
                 ->rawColumns(['name', 'description', 'status', 'action'])
                 ->make(true);
         }
-        return view('admin.vendor.index');
+        return view('admin.vendor.index',compact('loginUser'));
     }
 
     public function add()
