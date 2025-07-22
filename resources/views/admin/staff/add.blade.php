@@ -50,7 +50,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Name:</label>
-                                        <input type="text" class="form-control" name="name" required>
+                                        <input type="text" class="form-control" name="name"value="{{ old('name') }}" required>
                                     </div>
                                 </div>
 
@@ -58,21 +58,21 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Email:</label>
-                                        <input type="email" class="form-control" name="email" required>
+                                        <input type="email" class="form-control" name="email"value="{{ old('email') }}" required>
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Password:</label>
-                                        <input type="password" class="form-control" name="password" required>
+                                        <input type="password" class="form-control" name="password" value="{{ old('password') }}" required>
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Confirm Password:</label>
-                                        <input type="password" class="form-control" name="password_confirmation" required>
+                                        <input type="password" class="form-control" name="password_confirmation"value="{{ old('password_confirmation') }}" required>
                                         <div id="password-error"></div>
                                     </div>
                                 </div>
@@ -81,14 +81,14 @@
                                     <div class="form-group">
                                         <label class="form-label">Phone Number</label>
                                         <div class="input-group">
-                                            <select class="form-control" name="code" style="max-width: 100px;">
+                                            <select class="form-control" name="code" style="max-width: 100px;"value="{{ old('code') }}">
                                                 @foreach($phoneCountries as $country)
                                                 <option value="{{ $country['code'] }}" {{ $country['code'] == '+91' ? 'selected' : '' }}>
                                                     {{ $country['code'] }}
                                                 </option>
                                                 @endforeach
                                             </select>
-                                            <input type="text" class="form-control" name="phone_number" placeholder="Enter phone number" required>
+                                            <input type="text" class="form-control" name="phone_number" placeholder="Enter phone number" value="{{ old('phone_number') }}" required>
                                         </div>
                                     </div>
                                 </div>
@@ -108,8 +108,14 @@
                                     <div class="form-group">
                                         <label class="form-label">Assigned Services</label>
                                         <select class="form-control select-user" name="assigned_services[]" multiple="multiple" required>
-                                            @foreach($services as $service)
-                                            <option value="{{ $service->id }}">{{ $service->name }}</option>
+                                             @foreach($services as $service)
+                                                <option value="{{ $service->id }}" 
+                                                    @if(in_array($service->id, old('assigned_services', [])))
+                                                        selected
+                                                    @endif
+                                                >
+                                                    {{ $service->name }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
