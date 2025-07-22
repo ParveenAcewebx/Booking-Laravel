@@ -28463,7 +28463,7 @@ body.box-layout .pcoded-navbar.theme-horizontal ~ .pcoded-header {
 
 /* Zebra-striping */
 .table-striped tbody tr:nth-of-type(2n+1) {
-    background-color: rgb(0 12 18 / 3%);
+    background-color: rgba(0, 115, 170, 0.03);
 }
 
 /* Hover effect */
@@ -32020,7 +32020,7 @@ new-task label input[type=checkbox] {
 }
 
 .user-profile-list table {
-    border-spacing: 0 5px;
+    /* border-spacing: 0 5px; */
     width: calc(100% - 10px);
     margin: 0 5px;
 }

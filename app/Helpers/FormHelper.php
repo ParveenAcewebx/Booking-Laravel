@@ -90,8 +90,8 @@ class FormHelper
 
                 case 'file':
                     $html .= "<div class='{$c['group']}'>
-                            <label class='{$c['label']}'>$label</label>
-                            <input type='file' name='$inputNameAttr' class='{$c['file']}' " . ($multiple ? 'multiple' : '') . " $required>";
+                                <label class='{$c['label']}'>$label</label>
+                                <input type='file' name='$inputNameAttr' class='{$c['file']}' " . ($multiple ? 'multiple' : '') . " $required>";
                     if (!empty($value)) {
                         $files = is_array($value) ? $value : [$value];
                         foreach ($files as $file) {
@@ -103,11 +103,10 @@ class FormHelper
                     break;
 
                 case 'number':
-                    $html .= "<div class='{$c['group']}'>
-                            <label class='{$c['label']}'>$label</label>";
+                    $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label</label>";
                     if ($subtype === 'range') {
                         $html .= "<input type='range' name='$inputName' class='{$c['input']}' value='" . htmlspecialchars($value) . "' min='$min' max='$max' step='$step' $required>
-                                <div class='flex justify-between text-gray-500 text-sm'><small>Min: $min</small><small>Max: $max</small></div>";
+                                  <div class='flex justify-between text-gray-500 text-sm'><small>Min: $min</small><small>Max: $max</small></div>";
                     } else {
                         $html .= "<input type='number' name='$inputName' class='{$c['input']}' value='" . htmlspecialchars($value) . "' min='$min' max='$max' step='$step' placeholder='" . htmlspecialchars($placeholder) . "' $required>";
                     }
@@ -118,9 +117,8 @@ class FormHelper
                     $valueArr = $multiple ? (is_array($value) ? $value : (json_decode($value, true) ?: [$value])) : [(string) $value];
                     $optionValues = array_column($options, 'value');
                     $multipleAttr = $multiple ? 'multiple' : '';
-                    $html .= "<div class='{$c['group']}'>
-                            <label class='{$c['label']}'>$label</label>
-                            <select name='$inputNameAttr' class='{$c['select']}' $multipleAttr $required>";
+                    $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label</label>
+                              <select name='$inputNameAttr' class='{$c['select']}' $multipleAttr $required>";
                     foreach ($options as $opt) {
                         $val = $opt['value'] ?? '';
                         $lbl = $opt['label'] ?? $val;
@@ -144,8 +142,7 @@ class FormHelper
                 case 'checkbox-group':
                     $valueArr = is_array($value) ? $value : (json_decode($value, true) ?: [$value]);
                     $optionValues = array_column($options, 'value');
-                    $html .= "<div class='{$c['group']}'>
-                            <label class='{$c['label']}'>$label</label>";
+                    $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label</label>";
                     foreach ($options as $i => $opt) {
                         $val = $opt['value'] ?? '';
                         $lbl = $opt['label'] ?? $val;
@@ -171,8 +168,7 @@ class FormHelper
                 case 'radio-group':
                     $optionValues = array_column($options, 'value');
                     $idBase = uniqid($name . '_');
-                    $html .= "<div class='{$c['group']}'>
-                            <label class='{$c['label']}'>$label</label>";
+                    $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label</label>";
                     foreach ($options as $i => $opt) {
                         $val = $opt['value'] ?? '';
                         $lbl = $opt['label'] ?? $val;
@@ -197,10 +193,8 @@ class FormHelper
                     break;
 
                 case 'textarea':
-                    $html .= "<div class='{$c['group']}'>
-                            <label class='{$c['label']}'>$label</label>
-                            <textarea name='$inputName' class='{$c['textarea']}' placeholder='" . htmlspecialchars($placeholder) . "' $required>" . htmlspecialchars($value) . "</textarea>
-                          </div>";
+                    $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label</label>
+                              <textarea name='$inputName' class='{$c['textarea']}' placeholder='" . htmlspecialchars($placeholder) . "' $required>" . htmlspecialchars($value) . "</textarea></div>";
                     break;
 
                 case 'shortcodeblock':
@@ -220,10 +214,10 @@ class FormHelper
                             };
                         }
                     }
-                    $html .= "<div class='{$c['group']}'>
-                            <label class='{$c['label']}'>$label</label>
-                            <input type='$subtype' name='$inputName' class='{$c['input']}' value='" . htmlspecialchars($value) . "' placeholder='" . htmlspecialchars($placeholder) . "' $required>
-                          </div>";
+
+                    $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label</label>
+                              <input type='$subtype' name='$inputName' class='{$c['input']}' value='" . htmlspecialchars($value) . "' placeholder='" . htmlspecialchars($placeholder) . "' $required>
+                              </div>";
                     break;
             }
         }

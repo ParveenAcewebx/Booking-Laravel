@@ -30,7 +30,7 @@
 				<div class="card user-profile-list">
 					<div class="card-body">
 						<div class="dt-responsive table-responsive">
-							<table id="booking-list-table" class="table nowrap" width="100%">
+							<table id="booking-list-table" class="table table-striped nowrap" width="100%">
 								<thead>
 									<tr>
 										<th style="display:none;">ID</th> {{-- hidden but sortable --}}
