@@ -72,14 +72,21 @@ class UserController extends Controller
                     }
 
                     if ($currentUser->can('delete users') && Auth::id() != $row->id) {
-                        $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">
-                                ' . csrf_field() . '
-                                <input type="hidden" name="_method" value="DELETE">
-                                <button type="button" onclick="return deleteUser(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete User">
-                                    <i class="feather icon-trash-2"></i>
-                                </button>
-                            </form>';
+                        if ($row->primary_staff == 1) {
+                            $btn .= '<button type="button" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Please First Delete Vendor" disabled>
+                    <i class="feather icon-trash-2"></i>
+                 </button>';
+                        } else {
+                            $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">';
+                            $btn .= csrf_field();
+                            $btn .= method_field('DELETE');
+                            $btn .= '<button type="button" onclick="return deleteUser(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete User">
+                    <i class="feather icon-trash-2"></i>
+                 </button>';
+                            $btn .= '</form>';
+                        }
                     }
+
 
                     if ($isImpersonating && Auth::id() === $row->id) {
                         $btn .= '<form method="POST" action="' . route('user.switch.back') . '" style="display:inline;">
@@ -220,8 +227,7 @@ class UserController extends Controller
             }
 
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
-        }
-        elseif ($request->filled('remove_avatar') && $request->remove_avatar == '1') {
+        } elseif ($request->filled('remove_avatar') && $request->remove_avatar == '1') {
             if ($avatarPath && Storage::disk('public')->exists($avatarPath)) {
                 Storage::disk('public')->delete($avatarPath);
             }
