@@ -12,6 +12,7 @@ use App\Http\Controllers\admin\ServiceController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\frontend\BookingListingController;
 use App\Http\Controllers\admin\StaffController;
+use App\Http\Controllers\admin\VendorController;
 use App\Helpers\Shortcode;
 
 /*
@@ -126,6 +127,20 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     });
     Route::middleware('permission:delete services')->group(function () {
         Route::delete('/service/{service}/delete', [ServiceController::class, 'destroy'])->name('service.delete');
+    });
+
+    Route::middleware('permission:view vendors')->group(function () {
+        Route::get('/vendor', [VendorController::class, 'index'])->name('vendors.list');
+    });
+    Route::middleware('permission:create vendors')->group(function () {
+        Route::get('/vendor/add', [VendorController::class, 'templateAdd'])->name('vendors.add');
+        Route::post('/vendor/save', [VendorController::class, 'templateSave'])->name('vendors.save');
+    });
+    Route::middleware('permission:edit vendors')->group(function () {
+        Route::get('/vendor/{formid}/edit', [VendorController::class, 'templateEdit'])->name('vendors.edit');
+    });
+    Route::middleware('permission:delete vendors')->group(function () {
+        Route::delete('/vendor/{formid}/delete', [VendorController::class, 'templateDelete'])->name('vendors.delete');
     });
 
     Route::middleware('permission:view categories')->group(function () {

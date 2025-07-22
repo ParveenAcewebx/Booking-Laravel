@@ -66,6 +66,30 @@
                     </li>
                     @endcanany
 
+
+                    {{-- Vendors --}}
+                    @canany(['view vendors', 'create vendors', 'edit vendors', 'delete vendors'])
+                    <li class="nav-item pcoded-hasmenu {{ request()->routeIs('vendors.*') ? 'pcoded-trigger' : '' }}">
+                        <a href="#!" class="nav-link">
+                            <span class="pcoded-micon"><i class="fas fa-store"></i></span>
+                            <span class="pcoded-mtext">Manage Vendors</span>
+                        </a>
+                        <ul class="pcoded-submenu" @if(request()->routeIs('roles.*')) style="display:block;" @endif>
+                            @can('create vendors')
+                            <li class="{{ request()->routeIs('vendors.add') ? 'active' : '' }}">
+                                <a href="{{ route('vendors.add') }}">Add Vendors</a>
+                            </li>
+                            @endcan
+                            @can('view vendors')
+                            <li class="{{ request()->routeIs('vendors.list') ? 'active' : '' }}">
+                                <a href="{{ route('vendors.list') }}">All Vendors</a>
+                            </li>
+                            @endcan
+                        </ul>
+                    </li>
+                    @endcanany
+
+
                     {{-- Roles --}}
                     @canany(['view roles', 'create roles', 'edit roles', 'delete roles'])
                     <li class="nav-item pcoded-hasmenu {{ request()->routeIs('roles.*') ? 'pcoded-trigger' : '' }}">

@@ -58,6 +58,11 @@ return [
             'slug' => 'staffs',
             'roles' => ['view staffs', 'create staffs', 'edit staffs', 'delete staffs']
         ],
+        'vendors' => [
+            'name' => "Vendors",
+            'slug' => 'vendors',
+            'roles' => ['view vendors', 'create vendors', 'edit vendors', 'delete vendors']
+        ],
     ],
     'currencies' => [
         'USD' => [
