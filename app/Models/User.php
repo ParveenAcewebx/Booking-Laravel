@@ -19,7 +19,8 @@ class User extends Authenticatable
         'avatar',
         'status',
         'phone_number',
-        'phone_code'
+        'phone_code',
+        'primary_staff'
     ];
     protected $hidden = [
         'password',

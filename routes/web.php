@@ -133,14 +133,15 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::get('/vendor', [VendorController::class, 'index'])->name('vendors.list');
     });
     Route::middleware('permission:create vendors')->group(function () {
-        Route::get('/vendor/add', [VendorController::class, 'templateAdd'])->name('vendors.add');
-        Route::post('/vendor/save', [VendorController::class, 'templateSave'])->name('vendors.save');
+        Route::get('/vendor/add', [VendorController::class, 'add'])->name('vendors.add');
+        Route::post('/vendor/save', [VendorController::class, 'store'])->name('vendors.save');
     });
     Route::middleware('permission:edit vendors')->group(function () {
-        Route::get('/vendor/{formid}/edit', [VendorController::class, 'templateEdit'])->name('vendors.edit');
+        Route::get('/vendor/{formid}/edit', [VendorController::class, 'edit'])->name('vendors.edit');
+        Route::put('/vendor/{vendor}', [VendorController::class, 'Update'])->name('vendors.update');
     });
     Route::middleware('permission:delete vendors')->group(function () {
-        Route::delete('/vendor/{formid}/delete', [VendorController::class, 'templateDelete'])->name('vendors.delete');
+        Route::delete('/vendor/{id}/delete', [VendorController::class, 'destroy'])->name('vendors.delete');
     });
 
     Route::middleware('permission:view categories')->group(function () {

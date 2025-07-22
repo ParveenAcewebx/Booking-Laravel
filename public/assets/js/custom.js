@@ -153,6 +153,50 @@ function deleteBooking(id) {
         }
     });
 }
+function deleteVendor(id, event) {
+    event.preventDefault();
+
+    swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this vendor!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            const form = document.getElementById("delete-vendor-" + id);
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: "POST", // Must be POST due to method spoofing
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success === true) {
+                        swal("Vendor Deleted Successfully.", {
+                            icon: "success",
+                        }).then(() => {
+                            window.location.reload(); // or use DataTable ajax.reload() if you're using DataTables
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    swal("There was an error!", {
+                        icon: "error",
+                    });
+                });
+        }
+    });
+}
+
 
 function deleteRole(id) {
     event.preventDefault();

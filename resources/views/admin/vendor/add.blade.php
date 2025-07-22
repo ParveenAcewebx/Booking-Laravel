@@ -10,12 +10,12 @@
                 <div class="row align-items-center">
                     <div class="col-md-12">
                         <div class="page-header-title">
-                            <h5 class="m-b-10">Add User</h5>
+                            <h5 class="m-b-10">Add Vendor</h5>
                         </div>
                         <ul class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="feather icon-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="#!">User</a></li>
-                            <li class="breadcrumb-item"><a href="#!">Add User</a></li>
+                            <li class="breadcrumb-item"><a href="#!">Vendor</a></li>
+                            <li class="breadcrumb-item"><a href="#!">Add Vendor</a></li>
                         </ul>
                     </div>
                 </div>
@@ -24,14 +24,14 @@
         <!-- [ breadcrumb ] end -->
 
         <!-- [ Main Content ] start -->
-        <form action="{{ route('user.save') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('vendors.save') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
                 <!-- Left Column -->
                 <div class="col-md-8 order-md-1">
                     <div class="card">
                         <div class="card-header">
-                            <h5>User Information</h5>
+                            <h5>Vendor Information</h5>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -56,66 +56,28 @@
                                         @enderror
                                     </div>
                                 </div>
-
-                                <!-- Password -->
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="form-label">Password</label>
-                                        <input type="password" class="form-control" name="password" placeholder="Password" required>
-                                        @error('password')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <!-- Confirm Password -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Confirm Password</label>
-                                        <input type="password" class="form-control" name="password_confirmation" placeholder="Confirm Password" required>
-                                    </div>
-                                </div>
-
-                                <!-- Phone Number -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Phone Number</label>
-                                        <div class="input-group">
-                                            <select class="form-control" id="country-select" name="code" style="max-width: 100px;">
-                                                @foreach($phoneCountries as $country)
-                                                <option value="{{ $country['code'] }}"
-                                                    @if((!old('phone_number') && $country['code']=='+91' ) ||
-                                                    (old('phone_number') && Str::startsWith(old('phone_number'), $country['code'])))
-                                                    selected @endif>
-                                                    {{ $country['code'] }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                            <input type="text" class="form-control" id="phone_number" name="phone_number"
-                                                placeholder="Enter phone number" value="{{ old('phone_number') }}" required>
-                                        </div>
-                                        @error('phone_number')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
-                                        @enderror
+                                        <label>Description</label>
+                                        <div id="quill-editor" style="height: 200px;"></div>
+                                        <textarea name="description" id="description" class="d-none"></textarea>
                                     </div>
                                 </div>
 
                                 <!-- Role -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Role</label>
-                                        <select class="form-control select-user" name="role" required>
-                                            @foreach($allRoles as $role)
-                                            <option value="{{ $role->id }}" {{ old('role') == $role->id || $role->name == 'Customer' ? 'selected' : '' }}>
-                                                {{ $role->name }}
-                                            </option>
-                                            @endforeach
-                                        </select>
-                                        @error('role')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
-                                        @enderror
-                                    </div>
+                                 <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="role_id">Assign Role</label>
+                                    <select name="role_id" class="form-control select-user" required>
+                                        <option value="">-- Select Role --</option>
+                                        @foreach($roles as $role)
+                                        <option value="{{ $role->id }}" {{ strtolower($role->name) == 'staff' ? 'selected' : '' }}>
+                                            {{ $role->name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
                                 </div>
+                                 </div>
                             </div>
                         </div>
                     </div>
@@ -154,7 +116,7 @@
                                         <span class="input-group-text">Upload</span>
                                     </div>
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name="avatar" id="addAvatarInput" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                                        <input type="file" class="custom-file-input" name="thumbnail" id="addAvatarInput" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
                                         <label class="custom-file-label overflow-hidden" for="addAvatarInput">Choose file...</label>
                                     </div>
                                 </div>

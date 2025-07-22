@@ -151,7 +151,7 @@
                                                 src="{{ $service->thumbnail ? asset('storage/' . $service->thumbnail) : asset('assets/images/no-image-available.png') }}"
                                                 class="card-img-top img-thumbnail"
                                                 alt="Thumbnail Preview"
-                                                style="object-fit: contain; height: 120px; width: 100%;">
+                                                style="object-fit: cover; height: 120px; width: 100%;">
 
                                             {{-- Remove Button Like Screenshot --}}
                                             <button type="button"

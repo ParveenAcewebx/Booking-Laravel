@@ -74,10 +74,10 @@
                             <span class="pcoded-micon"><i class="fas fa-store"></i></span>
                             <span class="pcoded-mtext">Manage Vendors</span>
                         </a>
-                        <ul class="pcoded-submenu" @if(request()->routeIs('roles.*')) style="display:block;" @endif>
+                        <ul class="pcoded-submenu" @if(request()->routeIs('vendors.*')) style="display:block;" @endif>
                             @can('create vendors')
                             <li class="{{ request()->routeIs('vendors.add') ? 'active' : '' }}">
-                                <a href="{{ route('vendors.add') }}">Add Vendors</a>
+                                <a href="{{ route('vendors.add') }}">Add Vendor</a>
                             </li>
                             @endcan
                             @can('view vendors')

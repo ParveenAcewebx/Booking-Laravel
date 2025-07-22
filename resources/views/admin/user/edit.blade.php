@@ -171,13 +171,13 @@
 
                                 {{-- Avatar Preview --}}
                                 <div id="avatar-preview-container" class="row mt-3 {{ !empty($user->avatar) ? '' : 'd-none' }}" >
-                                    <div class="col-md-5 position-relative">
+                                    <div class="col-md-6 position-relative">
                                         <div class="card shadow-sm">
                                             <img id="avatar-preview"
                                                 src="{{ !empty($user->avatar) ? asset('storage/' . $user->avatar) : asset('assets/images/no-image-available.png') }}"
                                                 class="card-img-top img-thumbnail"
                                                 alt="Avatar Preview"
-                                                style="object-fit: contain; height: 120px; width: 100%;">
+                                                style="object-fit: cover; height: 120px; width: 100%;">
                                             <button type="button"
                                                 id="remove-avatar-preview"
                                                 class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"

@@ -119,20 +119,6 @@
                                     </div>
                                 </div>
                                 @endif
-                                <!-- Assigned Services -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Assigned Services</label>
-                                        <select class="form-control select-user" name="assigned_services[]" multiple="multiple" required>
-                                            @foreach($services as $service)
-                                            <option value="{{ $service->id }}"
-                                                {{ collect($assignedServices)->pluck('id')->contains($service->id) ? 'selected' : '' }}>
-                                                {{ $service->name }}
-                                            </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -163,6 +149,21 @@
                                 @enderror
                             </div>
 
+                            <!-- Assigned Services -->
+                            <div class="col-md-12 p-0   ">
+                                <div class="form-group">
+                                    <label class="form-label">Assigned Services</label>
+                                    <select class="form-control select-user" name="assigned_services[]" multiple="multiple" required>
+                                        @foreach($services as $service)
+                                        <option value="{{ $service->id }}"
+                                            {{ collect($assignedServices)->pluck('id')->contains($service->id) ? 'selected' : '' }}>
+                                            {{ $service->name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
                             <!-- Featured Image Upload -->
                             <div class="form-group">
                                 <label class="form-label">Featured Image</label>
@@ -188,7 +189,7 @@
                                                 src="{{ !empty($staff->avatar) ? asset('storage/' . $staff->avatar) : asset('assets/images/no-image-available.png') }}"
                                                 class="card-img-top img-thumbnail"
                                                 alt="Avatar Preview"
-                                                style="object-fit: contain; height: 120px; width: 100%;">
+                                                style="object-fit: cover; height: 120px; width: 100%;">
                                             <button type="button"
                                                 id="remove-avatar-preview"
                                                 class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
