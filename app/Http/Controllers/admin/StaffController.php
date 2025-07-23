@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Staff;
 use App\Models\Service;
+use App\Models\Vendor;
+use App\Models\VendorAssociation;
 use App\Models\StaffAssociation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -62,13 +64,19 @@ class StaffController extends Controller
                     }
 
                     if ($currentUser->can('delete staffs') && Auth::id() != $row->id) {
-                        $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">
+                        if ($row->primary_staff == 1) {
+                            $btn .= '<button type="button" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Please First Delete Vendor" disabled>
+                    <i class="feather icon-trash-2"></i>
+                 </button>';
+                        } else {
+                            $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">
                             ' . csrf_field() . '
                             <input type="hidden" name="_method" value="DELETE">
                             <button type="button" onclick="return deleteUser(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete User">
                                 <i class="feather icon-trash-2"></i>
                             </button>
                         </form>';
+                        }
                     }
                     return $btn;
                 })
@@ -83,12 +91,13 @@ class StaffController extends Controller
         $roles = Role::where('name', 'Staff')->first();
         $staffUsers = User::role('staff')->get();
         $activeStatus = config('constants.status.active');
+        $vendorData = Vendor::where('status', $activeStatus)->get();
         $weekDays = config('constants.week_days');
         $phoneCountries = config('phone_countries');
         $services = Service::where('status', $activeStatus)->get();
         $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
-        return view('admin.staff.add', compact('roles', 'services', 'staffUsers', 'phoneCountries', 'weekDays', 'loginUser'));
+        return view('admin.staff.add', compact('roles', 'services', 'staffUsers', 'phoneCountries', 'weekDays', 'loginUser', 'vendorData'));
     }
 
     public function store(Request $request)
@@ -171,20 +180,26 @@ class StaffController extends Controller
                 }
             }
         }
-
         Staff::create([
             'staff_id' => $user->id,
             'work_hours' => json_encode($workingHours),
             'days_off' => json_encode($dayOffsGrouped),
+            'vendor_id' => $request->input('assigned_vendor'),
         ]);
         return redirect()->route('staff.list')->with('success', 'Staff Created Successfully!');
     }
+
     public function edit(User $staff)
     {
         $roles = Role::where('name', 'Staff')->first();
         $phoneCountries = config('phone_countries');
         $weekDays = config('constants.week_days');
+        $activeStatus = config('constants.status.active');
+
         $staffMeta = Staff::where('staff_id', $staff->id)->first();
+        $vendorData = Vendor::where('status', $activeStatus)->get();
+
+        $IsUserPrimaryStaff = $staff->primary_staff;
         $assignedServices = Service::whereIn('id', StaffAssociation::where('staff_member', $staff->id)->pluck('service_id'))
             ->with('category')
             ->get();
@@ -218,7 +233,9 @@ class StaffController extends Controller
             'loginUser',
             'weekDays',
             'staffMeta',
-            'groupedDayOffs'
+            'groupedDayOffs',
+            'IsUserPrimaryStaff',
+            'vendorData'
         ));
     }
 
@@ -315,14 +332,11 @@ class StaffController extends Controller
         if (!empty($nestedDayOffs)) {
             $staffMeta->days_off = json_encode($nestedDayOffs);
         }
-
+        $staffMeta->vendor_id = $request->input('assigned_vendor');
         $staffMeta->save();
 
         return redirect()->route('staff.list')->with('success', 'Staff Updated Successfully!');
     }
-
-
-
 
     public function destroy($id)
     {

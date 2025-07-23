@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->nullable()->after('id');
+        Schema::create('vendor_associations', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('vendor_id');
+            $table->unsignedBigInteger('user_id');
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('vendors', function (Blueprint $table) {
-            $table->dropColumn('user_id');
-        });
+        Schema::dropIfExists('vendor_associations');
     }
 };

@@ -14,11 +14,15 @@ class Vendor extends Model
         'description',
         'thumbnail',
         'status',
-        'user_id'
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function associations()
+    {
+        return $this->hasMany(VendorAssociation::class);
     }
 }

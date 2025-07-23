@@ -150,7 +150,7 @@
                             </div>
 
                             <!-- Assigned Services -->
-                            <div class="col-md-12 p-0   ">
+                            <div class="col-md-12 p-0">
                                 <div class="form-group">
                                     <label class="form-label">Assigned Services</label>
                                     <select class="form-control select-user" name="assigned_services[]" multiple="multiple" required>
@@ -163,6 +163,22 @@
                                     </select>
                                 </div>
                             </div>
+
+                            <div class="col-md-12 p-0">
+                                <div class="form-group">
+                                    <label class="form-label">Assigned Vendors</label>
+                                    <select class="form-control select-user" name="assigned_vendor" required {{ $IsUserPrimaryStaff == 1 ? 'disabled' : '' }}>
+                                        <option value="">Select Vendor</option> {{-- Default option --}}
+                                        @foreach($vendorData as $vendor)
+                                        <option value="{{ $vendor->id }}"
+                                            {{ (isset($staffMeta) && $vendor->id == $staffMeta->vendor_id) ? 'selected' : '' }}>
+                                            {{ $vendor->name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
 
                             <!-- Featured Image Upload -->
                             <div class="form-group">

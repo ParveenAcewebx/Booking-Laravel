@@ -36,33 +36,35 @@ $applyAllDays = $workHours['apply_all_days'] ?? 0;
         data-parent="#workingHoursAccordion">
         <div class="card-body pt-2 pb-2 px-3">
             <div class="d-flex">
-                {{-- Start Time --}}
-                <select class="form-control form-control-sm w-auto start-time select-user"
-                    name="working_days[{{ $daySlug }}][start]">
-                    @for($h = 0; $h < 24; $h++)
-                        @foreach(['00', '30' ] as $m)
-                        @php $time=str_pad($h, 2, '0' , STR_PAD_LEFT) . ':' . $m; @endphp
-                        <option value="{{ $time }}"
-                        {{ $selectedStart == $time ? 'selected' : '' }}>
-                        {{ $time }}
-                        </option>
-                        @endforeach
-                        @endfor
-                </select>
-
-                {{-- End Time --}}
-                <select class="form-control form-control-sm w-auto end-time ml-2 select-user"
-                    name="working_days[{{ $daySlug }}][end]">
-                    @for($h = 0; $h < 24; $h++)
-                        @foreach(['00', '30' ] as $m)
-                        @php $time=str_pad($h, 2, '0' , STR_PAD_LEFT) . ':' . $m; @endphp
-                        <option value="{{ $time }}"
-                        {{ $selectedEnd == $time ? 'selected' : '' }}>
-                        {{ $time }}
-                        </option>
-                        @endforeach
-                        @endfor
-                </select>
+                <div class="col-md-6 p-0">{{-- Start Time --}}
+                    <select class="form-control form-control-sm w-auto start-time select-user"
+                        name="working_days[{{ $daySlug }}][start]">
+                        @for($h = 0; $h < 24; $h++)
+                            @foreach(['00', '30' ] as $m)
+                            @php $time=str_pad($h, 2, '0' , STR_PAD_LEFT) . ':' . $m; @endphp
+                            <option value="{{ $time }}"
+                            {{ $selectedStart == $time ? 'selected' : '' }}>
+                            {{ $time }}
+                            </option>
+                            @endforeach
+                            @endfor
+                    </select>
+                </div>
+                <div class="col-md-6 pr-0">
+                    {{-- End Time --}}
+                    <select class="form-control form-control-sm w-auto end-time ml-2 select-user"
+                        name="working_days[{{ $daySlug }}][end]">
+                        @for($h = 0; $h < 24; $h++)
+                            @foreach(['00', '30' ] as $m)
+                            @php $time=str_pad($h, 2, '0' , STR_PAD_LEFT) . ':' . $m; @endphp
+                            <option value="{{ $time }}"
+                            {{ $selectedEnd == $time ? 'selected' : '' }}>
+                            {{ $time }}
+                            </option>
+                            @endforeach
+                            @endfor
+                    </select>
+                </div>
             </div>
         </div>
     </div>

@@ -13,5 +13,6 @@ class Staff extends Model
         'staff_id',
         'work_hours',
         'days_off',
+        'vendor_id'
     ];
 }

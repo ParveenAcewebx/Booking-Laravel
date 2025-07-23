@@ -20,7 +20,7 @@
                         </ul>
                     </div>
                     <div class="col-md-2 text-right">
-                        <a href="{{ route('service.add') }}" class="btn btn-primary">Add Service</a>
+                        <a href="{{ route('service.add') }}" class="btn btn-primary p-2">Add Service</a>
                     </div>
                 </div>
             </div>

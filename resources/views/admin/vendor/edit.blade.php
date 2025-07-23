@@ -66,23 +66,6 @@
                                         <textarea name="description" id="description" class="d-none">{{ old('description', $vendor->description) }}</textarea>
                                     </div>
                                 </div>
-
-                                <!-- Role -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="role_id">Assign Role</label>
-                                        <select name="role_id" class="form-control select-user" required>
-                                            <option value="">-- Select Role --</option>
-                                            @foreach($roles as $role)
-                                            <option value="{{ $role->id }}"
-                                                {{ old('role_id', $selectedRoleId) == $role->id ? 'selected' : '' }}>
-                                                {{ $role->name }}
-                                            </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
                     </div>

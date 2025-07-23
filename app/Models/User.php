@@ -36,4 +36,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Service::class, 'staff_associations', 'staff_member', 'service_id')
             ->withTimestamps();
     }
+
+    public function vendorAssociations()
+    {
+        return $this->hasMany(VendorAssociation::class);
+    }
 }

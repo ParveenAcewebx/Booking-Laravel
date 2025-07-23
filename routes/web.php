@@ -138,7 +138,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     });
     Route::middleware('permission:edit vendors')->group(function () {
         Route::get('/vendor/{formid}/edit', [VendorController::class, 'edit'])->name('vendors.edit');
-        Route::put('/vendor/{vendor}', [VendorController::class, 'Update'])->name('vendors.update');
+        Route::put('/vendor/{vendor}', [VendorController::class, 'update'])->name('vendors.update');
     });
     Route::middleware('permission:delete vendors')->group(function () {
         Route::delete('/vendor/{id}/delete', [VendorController::class, 'destroy'])->name('vendors.delete');
