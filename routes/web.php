@@ -174,10 +174,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::middleware('permission:delete staffs')->group(function () {
         Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->name('staff.destroy');
     });
-
-    Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
-    Route::post('/settings/store', [SettingsController::class, 'store'])->name('settings.store');
-    
+    Route::middleware('permission:access settings')->group(function () {
+        Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+        Route::post('/settings/store', [SettingsController::class, 'store'])->name('settings.store');
+    });
 
     Route::get('/profile', [UserController::class, 'userEdit'])->name('profile');
     Route::post('/user/{id}/update', [UserController::class, 'userUpdate'])->name('user.update');
