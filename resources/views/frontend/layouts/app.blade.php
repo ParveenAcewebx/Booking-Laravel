@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,6 +28,7 @@
 
   <!-- Preline JS -->
   <script src="https://unpkg.com/preline@latest/dist/preline.js"></script>
+  <script src="{{asset('assets/js/frontend/custom.js')}}"></script>
 
   <!-- (Optional) Alpine.js for more interactivity -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -35,7 +37,7 @@
 <body class="bg-gray-50 text-neutral-900 dark:bg-neutral-900 dark:text-white">
 
   @unless($isIframe ?? false)
-      @include('frontend.layouts.header')
+  @include('frontend.layouts.header')
   @endunless
 
   <main class="mx-auto">
@@ -43,8 +45,9 @@
   </main>
 
   @unless($isIframe ?? false)
-      @include('frontend.layouts.footer')
+  @include('frontend.layouts.footer')
   @endunless
 
 </body>
+
 </html>
