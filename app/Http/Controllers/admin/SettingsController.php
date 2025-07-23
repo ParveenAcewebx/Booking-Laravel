@@ -72,6 +72,6 @@ class SettingsController extends Controller
             );
         }
 
-        return redirect()->back()->with('success', 'Settings saved successfully!');
+        return back()->with('success', 'Settings Updated Successfully.');
     }
 }

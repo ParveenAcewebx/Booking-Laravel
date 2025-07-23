@@ -19,16 +19,6 @@
                 </div>
             </div>
         </div>
-
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        @endif
-
         <form action="{{ route('settings.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
@@ -139,31 +129,82 @@
                                 <input type="text" class="form-control" name="linkedin" placeholder="LinkedIn link or username"
                                     value="{{ old('linkedin') ?? $settings['linkedin'] ?? '' }}">
                             </div>
-
                             <!-- Website Logo -->
                             <div class="form-group">
                                 <label class="form-label">Website Logo</label>
-                                <input type="file" class="form-control-file" name="website_logo">
+                                <div class="input-group mb-1">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Upload</span>
+                                    </div>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" name="website_logo" id="websiteLogoInput" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                                        <label class="custom-file-label overflow-hidden" for="websiteLogoInput">Choose file...</label>
+                                    </div>
+                                </div>
+                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
                                 @error('website_logo')
                                     <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
-                                @if(!empty($settings['website_logo']))
-                                    <img src="{{ asset('storage/' . $settings['website_logo']) }}" alt="Logo" class="img-fluid mt-2" style="max-height: 100px;">
-                                @endif
-                            </div>
 
+                                {{-- Preview --}}
+                                <div id="website-logo-preview-container" class="row mt-3 {{ !empty($settings['website_logo']) ? '' : 'd-none' }}">
+                                    <div class="col-md-6 position-relative">
+                                        <div class="card shadow-sm">
+                                            <img id="website-logo-preview"
+                                                src="{{ !empty($settings['website_logo']) ? asset('storage/' . $settings['website_logo']) : asset('assets/images/no-image-available.png') }}"
+                                                class="card-img-top img-thumbnail"
+                                                alt="Logo Preview"
+                                                style="object-fit: cover; height: 120px; width: 100%;">
+                                            <button type="button"
+                                                id="remove-website-logo-preview"
+                                                class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
+                                                title="Remove website logo"
+                                                onclick="removeImage('website_logo')">
+                                                &times;
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="remove_website_logo" id="removeWebsiteLogoFlag" value="0">
+                            </div>
                             <!-- Favicon -->
                             <div class="form-group">
                                 <label class="form-label">Favicon</label>
-                                <input type="file" class="form-control-file" name="favicon">
+                                <div class="input-group mb-1">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Upload</span>
+                                    </div>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" name="favicon" id="faviconInput" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                                        <label class="custom-file-label overflow-hidden" for="faviconInput">Choose file...</label>
+                                    </div>
+                                </div>
+                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
                                 @error('favicon')
                                     <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
-                                @if(!empty($settings['favicon']))
-                                    <img src="{{ asset('storage/' . $settings['favicon']) }}" alt="Favicon" class="img-fluid mt-2" style="max-height: 50px;">
-                                @endif
-                            </div>
 
+                                {{-- Preview --}}
+                                <div id="favicon-preview-container" class="row mt-3 {{ !empty($settings['favicon']) ? '' : 'd-none' }}">
+                                    <div class="col-md-6 position-relative">
+                                        <div class="card shadow-sm">
+                                            <img id="favicon-preview"
+                                                src="{{ !empty($settings['favicon']) ? asset('storage/' . $settings['favicon']) : asset('assets/images/no-image-available.png') }}"
+                                                class="card-img-top img-thumbnail"
+                                                alt="Favicon Preview"
+                                                style="object-fit: cover; height: 80px; width: 80px;">
+                                            <button type="button"
+                                                id="remove-favicon-preview"
+                                                class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
+                                                title="Remove favicon"
+                                                onclick="removeImage('favicon')">
+                                                &times;
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="remove_favicon" id="removeFaviconFlag" value="0">
+                            </div>
                             <!-- Submit -->
                             <div class="text-right">
                                 <button type="submit" class="btn btn-primary mt-3">Save Settings</button>
@@ -175,4 +216,62 @@
         </form>
     </div>
 </section>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // Show Toastr
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            timeOut: "4000",
+            positionClass: "toast-top-right"
+        };
+        @if(session('success')) toastr.success("{{ session('success') }}"); @endif
+        @if(session('error')) toastr.error("{{ session('error') }}"); @endif
+        @if(session('info')) toastr.info("{{ session('info') }}"); @endif
+        @if(session('warning')) toastr.warning("{{ session('warning') }}"); @endif
+
+        // Update file preview when changed
+        setupImagePreview('websiteLogoInput', 'website-logo-preview', 'website-logo-preview-container', 'removeWebsiteLogoFlag');
+        setupImagePreview('faviconInput', 'favicon-preview', 'favicon-preview-container', 'removeFaviconFlag');
+    });
+
+    function setupImagePreview(inputId, imgId, containerId, flagId) {
+        const input = document.getElementById(inputId);
+        const previewImg = document.getElementById(imgId);
+        const container = document.getElementById(containerId);
+        const removeFlag = document.getElementById(flagId);
+        const label = document.querySelector(`label[for="${inputId}"]`);
+
+        input.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                previewImg.src = URL.createObjectURL(file);
+                container.classList.remove('d-none');
+                label.innerText = file.name;
+                removeFlag.value = 0;
+            } else {
+                // In case file was deselected
+                container.classList.add('d-none');
+                previewImg.src = '';
+                label.innerText = 'Choose file...';
+                removeFlag.value = 1;
+            }
+        });
+    }
+
+    function removeImage(type) {
+        if (type === 'website_logo') {
+            document.getElementById('website-logo-preview-container').classList.add('d-none');
+            document.getElementById('websiteLogoInput').value = '';
+            document.getElementById('removeWebsiteLogoFlag').value = 1;
+            document.querySelector('label[for="websiteLogoInput"]').innerText = 'Choose file...';
+        } else if (type === 'favicon') {
+            document.getElementById('favicon-preview-container').classList.add('d-none');
+            document.getElementById('faviconInput').value = '';
+            document.getElementById('removeFaviconFlag').value = 1;
+            document.querySelector('label[for="faviconInput"]').innerText = 'Choose file...';
+        }
+    }
+</script>
+
 @endsection

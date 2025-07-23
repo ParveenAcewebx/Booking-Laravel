@@ -210,13 +210,14 @@
                     @endcanany
 
                     {{-- Settings --}}
+                    @can('access settings')
                     <li class="nav-item">
                         <a href="{{ route('settings') }}" class="nav-link {{ request()->routeIs('settings') ? 'active' : '' }}">
                             <span class="pcoded-micon"><i class="feather icon-sliders"></i></span>
                             <span class="pcoded-mtext">Settings</span>
                         </a>
                     </li>
-
+                    @endcan
                 </ul>
             </div>
 

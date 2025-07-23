@@ -63,6 +63,11 @@ return [
             'slug' => 'vendors',
             'roles' => ['view vendors', 'create vendors', 'edit vendors', 'delete vendors']
         ],
+        'settings' => [
+            'name' => "Settings",
+            'slug' => 'settings',
+            'roles' => ['access settings']
+        ],
     ],
     'currencies' => [
         'USD' => [
