@@ -3,7 +3,7 @@
     <div class="m-header">
         <a class="mobile-menu" id="mobile-collapse" href="#!"><span></span></a>
         <a href="#!" class="b-brand">
-            <!-- ======== change your logo here ============ -->
+            <img src="{{ asset('assets/images/logo.png') }}" alt="MyBrand Logo" class="img-fluid" style="max-width: 60%;margin: 0 auto;">
         </a>
         <a href="#!" class="mob-toggler">
             <i class="feather icon-more-vertical"></i>
