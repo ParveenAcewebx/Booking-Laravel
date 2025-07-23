@@ -28,9 +28,10 @@
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         },
-          "files": [
-        "app/Helpers/FormHelper.php"
-    ]
+        "files": [
+            "app/Helpers/FormHelper.php",
+            "app/Helpers/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
