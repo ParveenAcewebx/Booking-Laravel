@@ -152,18 +152,20 @@ class VendorController extends Controller
 
     public function edit($id)
     {
-        $vendor = Vendor::with('user.roles')->findOrFail($id);
-        $roles = Role::all();
-        $loginId = session('impersonate_original_user');
-        $loginUser = $loginId ? User::find($loginId) : null;
-
+        $vendor             = Vendor::findOrFail($id);
+        $vendorAssociation  = VendorAssociation::with('user')->findOrFail($id);
+        $roles              = Role::all();
+        $loginId            = session('impersonate_original_user');
+        $loginUser          = $loginId ? User::find($loginId) : null;
+        $serviceIds = StaffAssociation::where('staff_member', $id)->pluck('service_id');
+        $allServiceData = Service::whereIn('id', $serviceIds)->get();
         $assignedRole = $vendor->user?->roles->first();
         if (!$assignedRole) {
             $assignedRole = $roles->firstWhere('name', 'staff');
         }
 
         $selectedRoleId = $assignedRole?->id;
-        return view('admin.vendor.edit', compact('vendor', 'roles', 'loginUser', 'selectedRoleId'));
+        return view('admin.vendor.edit', compact('vendor', 'roles', 'loginUser', 'selectedRoleId', 'allServiceData','allServiceData'));
     }
 
     public function update(Request $request, Vendor $vendor)

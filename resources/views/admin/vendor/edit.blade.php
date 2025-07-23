@@ -140,6 +140,66 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <!-- Nav Tabs -->
+                            <ul class="nav nav-tabs mb-3" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#services" role="tab">
+                                        <i class="fas fa-tools"></i> Services
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#assignServices" role="tab">
+                                        <i class="feather icon-layers"></i> Assign Staff
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <!-- Tab Content (Single Container) -->
+                            <div class="tab-content">
+                                <!-- Services Tab -->
+                                <div class="tab-pane fade show active" id="services" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <ul class="list-group list-group-flush">
+                                                @forelse($allServiceData as $service)
+                                                <li class="list-group-item d-flex align-items-center">
+                                                    <i class="feather icon-check-circle text-primary mr-2"></i>
+                                                    {{ $service->name }}
+                                                </li>
+                                                @empty
+                                                <li class="list-group-item text-muted">
+                                                    No services assigned
+                                                </li>
+                                                @endforelse
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Assign Services Tab -->
+                                <div class="tab-pane fade" id="assignServices" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="mb-3 d-flex justify-content-between align-items-center">
+                                                <h6 class="mb-0 font-weight-bold">Assigned Staff</h6>
+                                                <button type="button" class="btn btn-sm btn-primary" id="addStaffButton">
+                                                    <i class="feather icon-plus"></i> Add Staff
+                                                </button>
+                                            </div>
+                                            <div id="dayOffRepeater"></div>
+                                            @include('admin.vendor.edit.showing-staff-template')
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </form>
         <!-- [ Main Content ] end -->
     </div>

@@ -7,7 +7,14 @@
     display: flex;
     align-items: center;
 }
-
+.list-group-item {
+    border: none;
+    padding: 0.75rem 1rem;
+    font-size: 14px;
+}
+.list-group-item i {
+    font-size: 16px;
+}
 .submit-user .icon-log-out {
     margin-right: 0.75rem;
 }
