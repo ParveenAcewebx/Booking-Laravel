@@ -13,6 +13,7 @@ use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\frontend\BookingListingController;
 use App\Http\Controllers\admin\StaffController;
 use App\Http\Controllers\admin\VendorController;
+use App\Http\Controllers\admin\SettingsController;
 use App\Helpers\Shortcode;
 
 /*
@@ -174,6 +175,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->name('staff.destroy');
     });
 
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+    Route::post('/settings/store', [SettingsController::class, 'store'])->name('settings.store');
+    
 
     Route::get('/profile', [UserController::class, 'userEdit'])->name('profile');
     Route::post('/user/{id}/update', [UserController::class, 'userUpdate'])->name('user.update');
