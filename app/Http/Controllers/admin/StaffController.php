@@ -185,7 +185,7 @@ class StaffController extends Controller
             }
         }
         Staff::create([
-            'staff_id' => $user->id,
+            'user_id' => $user->id,
             'work_hours' => json_encode($workingHours),
             'days_off' => json_encode($dayOffsGrouped),
             'vendor_id' => $request->input('assigned_vendor'),
