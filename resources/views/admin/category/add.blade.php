@@ -76,7 +76,7 @@
                                         Active
                                     </option>
                                         <option value="{{ config('constants.status.inactive') }}"
-                                            {{ old('status', 1) == config('constants.status.inactive') ? 'selected' : '' }}>>
+                                            {{ old('status', 1) == config('constants.status.inactive') ? 'selected' : '' }}>
                                             Inactive
                                         </option>
                                     </select>
