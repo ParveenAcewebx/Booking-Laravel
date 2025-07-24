@@ -32,7 +32,7 @@ class User extends Authenticatable
 
     public function services()
     {
-        return $this->belongsToMany(Service::class, 'staff_associations', 'staff_member', 'service_id')
+        return $this->belongsToMany(Service::class, 'staff_service_associations', 'staff_member', 'service_id')
             ->withTimestamps();
     }
 
