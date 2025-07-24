@@ -43,9 +43,9 @@
                                     <div class="form-group">
                                         <label class="form-label">Name</label>
                                         <input type="text" class="form-control" name="username"
-                                               value="{{ old('username', $vendor->name) }}" placeholder="Name" required>
+                                            value="{{ old('username', $vendor->name) }}" placeholder="Name" required>
                                         @error('username')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
+                                        <div class="text-danger mt-1">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -55,9 +55,9 @@
                                     <div class="form-group">
                                         <label class="form-label">Email</label>
                                         <input type="email" class="form-control" name="email"
-                                               value="{{ old('email', $vendor->email) }}" placeholder="Email" required>
+                                            value="{{ old('email', $vendor->email) }}" placeholder="Email" required>
                                         @error('email')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
+                                        <div class="text-danger mt-1">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -93,7 +93,7 @@
                                         {{ $vendor->status == config('constants.status.inactive') ? 'selected' : '' }}>Inactive</option>
                                 </select>
                                 @error('status')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
 
@@ -106,25 +106,25 @@
                                     </div>
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input" name="thumbnail" id="avatarInput"
-                                               accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                                            accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
                                         <label class="custom-file-label overflow-hidden" for="avatarInput">Choose file...</label>
                                     </div>
                                 </div>
                                 <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
                                 @error('thumbnail')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
 
                                 <!-- Preview -->
                                 <div id="avatar-preview-container"
-                                     class="row mt-3 {{ !empty($vendor->thumbnail) ? '' : 'd-none' }}">
+                                    class="row mt-3 {{ !empty($vendor->thumbnail) ? '' : 'd-none' }}">
                                     <div class="col-md-6 position-relative">
                                         <div class="card shadow-sm">
                                             <img id="avatar-preview"
-                                                 src="{{ !empty($vendor->thumbnail) ? asset('storage/' . $vendor->thumbnail) : asset('assets/images/no-image-available.png') }}"
-                                                 class="card-img-top img-thumbnail"
-                                                 alt="Avatar Preview"
-                                                 style="object-fit: cover; height: 120px; width: 100%;">
+                                                src="{{ !empty($vendor->thumbnail) ? asset('storage/' . $vendor->thumbnail) : asset('assets/images/no-image-available.png') }}"
+                                                class="card-img-top img-thumbnail"
+                                                alt="Avatar Preview"
+                                                style="object-fit: cover; height: 120px; width: 100%;">
                                             <button type="button" id="remove-avatar-preview"
                                                 class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
                                                 title="Remove avatar">
@@ -171,8 +171,8 @@
                                     <div class="stripe-credentialss mt-3">
                                         <div class="custom-control custom-checkbox mb-3">
                                             <input type="checkbox" class="custom-control-input" id="payment__is_live"
-                                                   name="stripe_mode" value="1"
-                                                   {{ $vendor->stripe_mode == 1 ? 'checked' : '' }}>
+                                                name="stripe_mode" value="1"
+                                                {{ $vendor->stripe_mode == 1 ? 'checked' : '' }}>
                                             <label class="custom-control-label" for="payment__is_live">Live Mode</label>
                                         </div>
 
@@ -180,14 +180,14 @@
                                             <div class="form-group">
                                                 <label for="stripe_test_site_key">Test Site Key</label>
                                                 <input type="text" name="stripe_test_site_key" id="stripe_test_site_key"
-                                                       class="form-control"
-                                                       value="{{ old('stripe_test_site_key', $vendor->stripe_test_site_key) }}">
+                                                    class="form-control"
+                                                    value="{{ old('stripe_test_site_key', $vendor->stripe_test_site_key) }}">
                                             </div>
                                             <div class="form-group">
                                                 <label for="stripe_test_secret_key">Test Secret Key</label>
                                                 <input type="text" name="stripe_test_secret_key" id="stripe_test_secret_key"
-                                                       class="form-control"
-                                                       value="{{ old('stripe_test_secret_key', $vendor->stripe_test_secret_key) }}">
+                                                    class="form-control"
+                                                    value="{{ old('stripe_test_secret_key', $vendor->stripe_test_secret_key) }}">
                                             </div>
                                         </div>
 
@@ -195,14 +195,14 @@
                                             <div class="form-group">
                                                 <label for="stripe_live_site_key">Live Site Key</label>
                                                 <input type="text" name="stripe_live_site_key" id="stripe_live_site_key"
-                                                       class="form-control"
-                                                       value="{{ old('stripe_live_site_key', $vendor->stripe_live_site_key) }}">
+                                                    class="form-control"
+                                                    value="{{ old('stripe_live_site_key', $vendor->stripe_live_site_key) }}">
                                             </div>
                                             <div class="form-group">
                                                 <label for="stripe_live_secret_key">Live Secret Key</label>
                                                 <input type="text" name="stripe_live_secret_key" id="stripe_live_secret_key"
-                                                       class="form-control"
-                                                       value="{{ old('stripe_live_secret_key', $vendor->stripe_live_secret_key) }}">
+                                                    class="form-control"
+                                                    value="{{ old('stripe_live_secret_key', $vendor->stripe_live_secret_key) }}">
                                             </div>
                                         </div>
                                     </div>
@@ -216,9 +216,14 @@
                                             <i class="feather icon-plus"></i> Add Staff
                                         </button>
                                     </div>
+
                                     <div id="dayOffRepeater"></div>
                                     @include('admin.vendor.edit.showing-staff-template')
+
+                                    <!-- Hidden JSON with staff data -->
+                                    <input type="hidden" id="editDayOffData" value='@json($staffAssociation)'>
                                 </div>
+
                             </div>
                         </div>
                     </div>

@@ -160,20 +160,31 @@ class VendorController extends Controller
 
     public function edit($id)
     {
-        $vendor             = Vendor::findOrFail($id);
-        $vendorAssociation  = VendorStaffAssociation::with('user')->findOrFail($id);
-        $roles              = Role::all();
-        $loginId            = session('impersonate_original_user');
-        $loginUser          = $loginId ? User::find($loginId) : null;
-        $serviceIds         = StaffServiceAssociation::where('staff_member', $id)->pluck('service_id');
-        $allServiceData     = Service::whereIn('id', $serviceIds)->get();
-        $assignedRole       = $vendor->user?->roles->first();
-        if (!$assignedRole) {
-            $assignedRole = $roles->firstWhere('name', 'staff');
-        }
+        $vendor = Vendor::findOrFail($id);
 
+        // Get staff with user relation
+        $staffAssociation = Staff::where('vendor_id', $id)
+            ->with('user:id,name,email')
+            ->get();
+
+        $roles = Role::all();
+        $loginId = session('impersonate_original_user');
+        $loginUser = $loginId ? User::find($loginId) : null;
+
+        $serviceIds = StaffServiceAssociation::where('staff_member', $id)->pluck('service_id');
+        $allServiceData = Service::whereIn('id', $serviceIds)->get();
+
+        $assignedRole = $vendor->user?->roles->first() ?? $roles->firstWhere('name', 'staff');
         $selectedRoleId = $assignedRole?->id;
-        return view('admin.vendor.edit', compact('vendor', 'roles', 'loginUser', 'selectedRoleId', 'allServiceData', 'allServiceData'));
+
+        return view('admin.vendor.edit', compact(
+            'vendor',
+            'roles',
+            'loginUser',
+            'selectedRoleId',
+            'allServiceData',
+            'staffAssociation'
+        ));
     }
 
     public function update(Request $request, Vendor $vendor)
@@ -197,6 +208,17 @@ class VendorController extends Controller
         $vendor->stripe_test_secret_key     = $request->stripe_test_secret_key;
         $vendor->stripe_live_site_key       = $request->stripe_live_site_key;
         $vendor->stripe_live_secret_key     = $request->stripe_live_secret_key;
+
+        $selectedStaffNames = $request->input('select_staff', []);
+
+        $selectedStaffIds = User::whereIn('name', $selectedStaffNames)
+            ->pluck('id')
+            ->toArray();
+
+        Staff::where('vendor_id', $vendor->id)
+            ->whereNotIn('user_id', $selectedStaffIds)
+            ->update(['vendor_id' => null]);
+
 
         if ($request->hasFile('thumbnail')) {
             if ($vendor->thumbnail && Storage::disk('public')->exists($vendor->thumbnail)) {
