@@ -22,113 +22,119 @@
         <form action="{{ route('settings.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
-                <!-- Left Column -->
-                <div class="col-md-8 order-md-1">
+                <div class="col-md-6 col-xl-4">
                     <div class="card">
-                        <div class="card-header"><h5>Settings</h5></div>
+                        <h5 class="card-header">Date/Time Format</h5>
                         <div class="card-body">
-                            <div class="row">
-                                <!-- Date Format -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Date Format</label>
-                                        <select name="date_format" class="form-control select-user">
-                                            @foreach($dateFormats as $key => $label)
-                                                <option value="{{ $key }}" {{ (old('date_format') ?? $settings['date_format'] ?? '') == $key ? 'selected' : '' }}>{{ $label }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('date_format')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <!-- DateTime Format -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Date/Time Format</label>
-                                        <select name="datetime_format" class="form-control select-user">
-                                            @foreach($datetimeFormats as $key => $label)
-                                                <option value="{{ $key }}" {{ (old('datetime_format') ?? $settings['datetime_format'] ?? '') == $key ? 'selected' : '' }}>{{ $label }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('datetime_format')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <!-- Timezone -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Timezone</label>
-                                        <select name="timezone" class="form-control select-user">
-                                            @foreach($timezones as $timezone)
-                                                <option value="{{ $timezone }}" {{ (old('timezone') ?? $settings['timezone'] ?? '') == $timezone ? 'selected' : '' }}>{{ $timezone }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('timezone')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <!-- Phone Number -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Owner Phone Number</label>
-                                        <div class="input-group">
-                                            <select class="form-control" name="code" style="max-width: 100px;">
-                                                @foreach($phoneCountries as $country)
-                                                    <option value="{{ $country['code'] }}"
-                                                        {{ (old('code') ?? $settings['owner_country_code'] ?? '+91') == $country['code'] ? 'selected' : '' }}>
-                                                        {{ $country['code'] }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            <input type="text" class="form-control" name="owner_phone_number" placeholder="Enter phone number"
-                                                value="{{ old('owner_phone_number') ?? $settings['owner_phone_number'] ?? '' }}" required>
-                                        </div>
-                                        @error('owner_phone_number')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <!-- Owner Email -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Owner Email</label>
-                                        <input type="email" class="form-control" name="owner_email" placeholder="Enter owner email"
-                                            value="{{ old('owner_email') ?? $settings['owner_email'] ?? '' }}" required>
-                                        @error('owner_email')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
+                            <!-- Date Format -->
+                            <div class="form-group">
+                                <label class="form-label">Date Format</label>
+                                <select name="date_format" class="form-control select-user">
+                                    @foreach($dateFormats as $key => $label)
+                                        <option value="{{ $key }}" {{ (old('date_format') ?? $settings['date_format'] ?? '') == $key ? 'selected' : '' }}>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                @error('date_format')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <!-- DateTime Format -->
+                            <div class="form-group">
+                                <label class="form-label">Date/Time Format</label>
+                                <select name="datetime_format" class="form-control select-user">
+                                    @foreach($datetimeFormats as $key => $label)
+                                        <option value="{{ $key }}" {{ (old('datetime_format') ?? $settings['datetime_format'] ?? '') == $key ? 'selected' : '' }}>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                @error('datetime_format')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Right Column -->
-                <div class="col-md-4 order-md-2">
+                <div class="col-md-6 col-xl-4">
                     <div class="card">
-                        <div class="card-header"><h5>Information</h5></div>
+                        <h5 class="card-header">Owner Information</h5>
+                        <div class="card-body">
+                            <!-- Owner Phone Number -->
+                            <div class="form-group">
+                                <label class="form-label">Owner Phone Number</label>
+                                <div class="input-group">
+                                    <select class="form-control" name="code" style="max-width: 100px;">
+                                        @foreach($phoneCountries as $country)
+                                            <option value="{{ $country['code'] }}"
+                                                {{ (old('code') ?? $settings['owner_country_code'] ?? '+91') == $country['code'] ? 'selected' : '' }}>
+                                                {{ $country['code'] }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <input type="text" class="form-control" name="owner_phone_number" placeholder="Enter phone number"
+                                        value="{{ old('owner_phone_number') ?? $settings['owner_phone_number'] ?? '' }}" required>
+                                </div>
+                                @error('owner_phone_number')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <!-- Owner Email -->
+                            <div class="form-group">
+                                <label class="form-label">Owner Email</label>
+                                <input type="email" class="form-control" name="owner_email" placeholder="Enter owner email"
+                                    value="{{ old('owner_email') ?? $settings['owner_email'] ?? '' }}" required>
+                                @error('owner_email')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="card">
+                        <h5 class="card-header">Timezone</h5>
+                        <div class="card-body">
+                            <!-- Timezone -->
+                            <div class="form-group">
+                                <label class="form-label">Timezone</label>
+                                <select name="timezone" class="form-control select-user">
+                                    @foreach($timezones as $timezone)
+                                        <option value="{{ $timezone }}" {{ (old('timezone') ?? $settings['timezone'] ?? '') == $timezone ? 'selected' : '' }}>{{ $timezone }}</option>
+                                    @endforeach
+                                </select>
+                                @error('timezone')
+                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="card">
+                        <h5 class="card-header">Social Media Links</h5>
                         <div class="card-body">
                             <!-- Facebook -->
-                            <div class="form-group">
-                                <label class="form-label">Facebook</label>
-                                <input type="text" class="form-control" name="facebook" placeholder="Facebook link or username"
-                                    value="{{ old('facebook') ?? $settings['facebook'] ?? '' }}">
+                            <label class="form-label">Facebook</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroupPrepend"><i class="fab fa-facebook-f"></i></span>
+                                </div>
+                                <input type="text" class="form-control" name="facebook" id="form-label" placeholder="Facebook link or username" aria-describedby="inputGroupPrepend" value="{{ old('facebook') ?? $settings['facebook'] ?? '' }}">
                             </div>
-
+                            <br>
                             <!-- Linkedin -->
-                            <div class="form-group">
-                                <label class="form-label">LinkedIn</label>
-                                <input type="text" class="form-control" name="linkedin" placeholder="LinkedIn link or username"
-                                    value="{{ old('linkedin') ?? $settings['linkedin'] ?? '' }}">
+                            <label class="form-label">LinkedIn</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroupPrepend"><i class="fab fa-linkedin-in"></i></span>
+                                </div>
+                                <input type="text" class="form-control" name="linkedin" id="form-label" placeholder="LinkedIn link or username" aria-describedby="inputGroupPrepend" value="{{ old('linkedin') ?? $settings['linkedin'] ?? '' }}">
                             </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="card">
+                        <div class="card-header"><h5>Website Logo</h5></div>
+                        <div class="card-body">
                             <!-- Website Logo -->
                             <div class="form-group">
                                 <label class="form-label">Website Logo</label>
@@ -145,7 +151,6 @@
                                 @error('website_logo')
                                     <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
-
                                 {{-- Preview --}}
                                 <div id="website-logo-preview-container" class="row mt-3 {{ !empty($settings['website_logo']) ? '' : 'd-none' }}">
                                     <div class="col-md-6 position-relative">
@@ -166,7 +171,14 @@
                                     </div>
                                 </div>
                                 <input type="hidden" name="remove_website_logo" id="removeWebsiteLogoFlag" value="0">
-                            </div>
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="card">
+                        <div class="card-header"><h5>Website Favicon</h5></div>
+                        <div class="card-body">                            
                             <!-- Favicon -->
                             <div class="form-group">
                                 <label class="form-label">Favicon</label>
