@@ -356,7 +356,7 @@ jQuery(function ($) {
 
     var newfield = [
         {
-            label: "New Section",
+            label: "Next Step",
             attrs: {
                 type: "newsection",
             },
