@@ -1,3 +1,11 @@
+.settings-form{
+    position: relative;
+}
+.settings-btn{
+    position: absolute;
+    right: 0;
+    top: -5rem;
+}
 .submit-user {
     background: none;
     border: none;
