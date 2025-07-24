@@ -198,8 +198,7 @@ class StaffController extends Controller
 
         $staffMeta = Staff::where('user_id', $staff->id)->first();
         $vendorData = Vendor::where('status', $activeStatus)->get();
-
-        $IsUserPrimaryStaff = $staff->primary_staff;
+        $IsUserPrimaryStaff = $staffMeta->primary_staff ?? 0;
         $assignedServices = Service::whereIn('id', StaffServiceAssociation::where('staff_member', $staff->id)->pluck('service_id'))
             ->with('category')
             ->get();
