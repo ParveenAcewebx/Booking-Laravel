@@ -66,7 +66,11 @@ class BookingController extends Controller
                         ->orderBy('customers.name', $order);
                 })
                 ->editColumn('created_at', function ($booking) {
-                    return $booking->created_at ? $booking->created_at->format('Y-m-d H:i:s') : '';
+                    return $booking->created_at
+                    ? $booking->created_at->format(
+                        get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
+                    )
+                    : '';
                 })
                 ->editColumn('status', function ($booking) {
                     return '<span class="badge badge-light-success">Active</span>';

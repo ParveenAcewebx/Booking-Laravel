@@ -6,7 +6,7 @@
             <div class="col-span-full lg:col-span-1">
 
                 <a href="/" class="flex items-center space-x-3 text-xl font-semibold text-black dark:text-white">
-                    <img src="{{ asset('assets/images/logo.png') }}" alt="MyBrand Logo" class="w-auto">
+                    <img src="{{ asset('storage/' . get_setting('website_logo')) }}" alt="MyBrand Logo" class="w-auto">
                 </a>
             </div>
             <!-- End Col -->

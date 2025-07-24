@@ -34,7 +34,11 @@ class BookingTemplateController extends Controller
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($row) {
-                    return $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : '';
+                return $row->created_at
+                ? $row->created_at->format(
+                    get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
+                )
+                : '';
                 })
                 ->addColumn('status', function ($row) {
                     return '<span class="badge badge-success">Active</span>';

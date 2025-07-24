@@ -47,7 +47,11 @@ class StaffController extends Controller
                     return '<h6 class="m-b-0">' . e($row->name) . '</h6><p class="m-b-0">' . e($row->email) . '</p>';
                 })
                 ->editColumn('created_at', function ($row) {
-                    return $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : '';
+                    return $row->created_at
+                    ? $row->created_at->format(
+                        get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
+                    )
+                    : '';
                 })
                 ->addColumn('status', function ($row) use ($statusLabels) {
                     return $row->status == config('constants.status.active')
