@@ -69,7 +69,6 @@ class FormHelper
                 $currentChunk = [];
             }
         }
-
         if (!empty($currentChunk)) {
             $chunks[] = $currentChunk;
         }
@@ -96,28 +95,36 @@ class FormHelper
                 $step = $field['step'] ?? '1';
                 $inputName = "dynamic[$name]";
                 $inputNameAttr = $multiple ? $inputName . '[]' : $inputName;
-
                 switch ($type) {
                     case 'hidden':
-                        $htmlHidden .= "<input type='hidden' name='$inputName' value='" . htmlspecialchars($value, ENT_QUOTES) . "'>";
-                        break;
-
+                      $htmlHidden .= "<input type='hidden' name='$inputName' value='" . htmlspecialchars($value, ENT_QUOTES) . "'>";
+                    break;
                     case 'header':
                     case 'paragraph':
                     case 'section':
                     case 'newsection':
-                        $tag = $type === 'header'
-                            ? (in_array($subtype, ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']) ? $subtype : 'h4')
-                            : ($type === 'paragraph' ? (in_array($subtype, ['address', 'p', 'blockquote']) ? $subtype : 'p') : '');
-                        $content = nl2br(htmlspecialchars($label));
-                        $html .= ($type === 'section' || $type === 'newsection')
-                            ? ""
-                            : "<div class='{$c['group']}'><$tag>$content</$tag></div>";
+                    $tag = $type === 'header'
+                        ? (in_array($subtype, ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']) ? $subtype : 'h4')
+                        : ($type === 'paragraph' ? (in_array($subtype, ['address', 'p', 'blockquote']) ? $subtype : 'p') : '');
+                    $headingClasses = [
+                        'h1' => 'text-4xl font-bold mb-4',
+                        'h2' => 'text-3xl font-semibold mb-3',
+                        'h3' => 'text-2xl font-medium mb-2',
+                        'h4' => 'text-xl font-normal mb-2',
+                        'h5' => 'text-lg font-light mb-2',
+                        'h6' => 'text-base font-light mb-2',
+                    ];
+                    $headingClass = $headingClasses[$tag] ?? 'text-xl font-medium mb-2'; 
+                    $content = nl2br(htmlspecialchars($label));
+                    $html .= ($type === 'section' || $type === 'newsection')
+                        ? ""
+                        : "<div class='{$c['group']}'><$tag class='$headingClass'>$content</$tag></div>";
+
                         break;
 
                     case 'file':
                         $html .= "<div class='{$c['group']}'>
-                                <label class='{$c['label']}'>$label</label>
+                                <label class='{$c['label']}'>$label ".($required ? ' <span class="text-red-500">*</span>' : '')."</label>
                                 <input type='file' name='$inputNameAttr' class='{$c['file']}' " . ($multiple ? 'multiple' : '') . " $required>";
                         if (!empty($value)) {
                             $files = is_array($value) ? $value : [$value];
@@ -130,7 +137,7 @@ class FormHelper
                         break;
 
                     case 'number':
-                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label</label>";
+                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label ".($required ? ' <span class="text-red-500">*</span>' : ''). "</label>";
                         if ($subtype === 'range') {
                             $html .= "<input type='range' name='$inputName' class='{$c['input']}' value='" . htmlspecialchars($value) . "' min='$min' max='$max' step='$step' $required>
                                   <div class='flex justify-between text-gray-500 text-sm'><small>Min: $min</small><small>Max: $max</small></div>";
@@ -144,8 +151,8 @@ class FormHelper
                         $valueArr = $multiple ? (is_array($value) ? $value : (json_decode($value, true) ?: [$value])) : [(string) $value];
                         $optionValues = array_column($options, 'value');
                         $multipleAttr = $multiple ? 'multiple' : '';
-                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label</label>
-                              <select name='$inputNameAttr' class='{$c['select']}' $multipleAttr $required>";
+                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label ".($required ? ' <span class="text-red-500">*</span>' : '')."</label>
+                              <select name='$inputNameAttr' class='{$c['select']}'$required >";
                         foreach ($options as $opt) {
                             $val = $opt['value'] ?? '';
                             $lbl = $opt['label'] ?? $val;
@@ -169,7 +176,7 @@ class FormHelper
                     case 'checkbox-group':
                         $valueArr = is_array($value) ? $value : (json_decode($value, true) ?: [$value]);
                         $optionValues = array_column($options, 'value');
-                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label</label>";
+                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label ". ($required ? ' <span class="text-red-500">*</span>' : '') ."</label>";
                         foreach ($options as $i => $opt) {
                             $val = $opt['value'] ?? '';
                             $lbl = $opt['label'] ?? $val;
@@ -178,8 +185,11 @@ class FormHelper
                           
                             $html .= "<div class='{$c['checkboxWrapper']}'>
                                     <input type='checkbox' name='{$inputName}[]' value='" . htmlspecialchars($val) . "' class='{$c['checkbox']}' $isChecked $requiredAttr>
-                                    <label class='{$c['checkboxLabel']}'>" . htmlspecialchars($lbl) . "</label>
-                                  </div>";
+                                    <label class='{$c['checkboxLabel']}'>" . htmlspecialchars($lbl).($required ? ' <span class="text-red-500">*</span>' : ''). "</label>
+                                  
+                                    </div>
+                                        <p class='checkbox-error-message text-red-500 text-xs mt-1'></p>";
+                                  
                         }
                         if ($other) {
                             $isOtherChecked = in_array('__other__', $valueArr) ? 'checked' : '';
@@ -189,14 +199,14 @@ class FormHelper
                                     <label class='{$c['checkboxLabel']}'>Other</label>
                                   </div>
                                   <input type='text' name='dynamic[{$name}_other][]' class='{$c['input']} mt-1' placeholder='Please specify' value='" . htmlspecialchars($otherVal) . "'>";
-                        }
+                                }
                         $html .= "</div>";
                         break;
 
                     case 'radio-group':
                         $optionValues = array_column($options, 'value');
                         $idBase = uniqid($name . '_');
-                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label</label>";
+                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label ". ($required ? ' <span class="text-red-500">*</span>' : '')."</label>";
                         foreach ($options as $i => $opt) {
                             $val = $opt['value'] ?? '';
                             $lbl = $opt['label'] ?? $val;
@@ -205,7 +215,10 @@ class FormHelper
                             $html .= "<div class='{$c['radioWrapper']}'>
                                     <input type='radio' id='$id' name='$inputName' value='" . htmlspecialchars($val) . "' class='{$c['radio']}' $checked $required>
                                     <label for='$id' class='{$c['radioLabel']}'>" . htmlspecialchars($lbl) . "</label>
-                                  </div>";
+                                    
+                                  </div>
+                                  
+                                  ";
                         }
                         if ($other) {
                             $isOther = $value === '__other__' || (!in_array($value, $optionValues) && !empty($value));
@@ -217,11 +230,12 @@ class FormHelper
                                   </div>
                                   <input type='text' name='dynamic[{$name}_other]' class='{$c['input']} mt-1' placeholder='Please specify' value='" . htmlspecialchars($otherVal) . "'>";
                         }
-                        $html .= "</div>";
+                        $html .= "<p class='radio-error-message text-red-500 text-xs mt-1'></p>
+                        </div>";
                         break;
 
                     case 'textarea':
-                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label</label>
+                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label ".($required ? ' <span class="text-red-500">*</span>' : '')."</label>
                               <textarea name='$inputName' class='{$c['textarea']}' placeholder='" . htmlspecialchars($placeholder) . "' $required>" . htmlspecialchars($value) . "</textarea></div>";
                         break;
 
@@ -244,7 +258,7 @@ class FormHelper
                             }
                         }
 
-                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label</label>
+                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label ".($required ? ' <span class="text-red-500">*</span>' : '')."</label>
                               <input type='$subtype' name='$inputName' class='{$c['input']}' value='" . htmlspecialchars($value) . "' placeholder='" . htmlspecialchars($placeholder) . "' $required>
                               </div>";
                         break;

@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (checkedCheckboxes.length === 0) {
                     field.classList.add('border-red-500'); // Add red border to indicate error
-                    let errorMessage = field.parentElement.querySelector('.checkbox-error-message');
+                    let errorMessage = document.querySelector('.checkbox-error-message');
                     
                     // Check if error message already exists, if not, create and append
                     if (!errorMessage) {

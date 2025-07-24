@@ -34,17 +34,17 @@ class AppServiceProvider extends ServiceProvider
             $userForm  = '';
 
             $userForm .= "<div class='form-group {$c['group']}'>";
-            $userForm .= "<label for='first_name'class='{$c['label']}'>First Name</label>";
+            $userForm .= "<label for='first_name'class='{$c['label']}'>First Name <span class='text-red-500'>*</span></label>";
             $userForm .= "<input type='text' name='dynamic[first_name]' id='first_name' class='form-control {$c['input']}' value='" . e($firstName) . "' placeholder='First Name' required>";
             $userForm .= "</div>";
 
             $userForm .= "<div class='form-group {$c['group']}'>";
-            $userForm .= "<label for='last_name' class='{$c['label']}'>Last Name</label>";
+            $userForm .= "<label for='last_name' class='{$c['label']}'>Last Name <span class='text-red-500'>*</span></label>";
             $userForm .= "<input type='text' name='dynamic[last_name]' id='last_name' class='form-control {$c['input']}' value='" . e($lastName) . "' placeholder='Last Name' required>";
             $userForm .= "</div>";
 
             $userForm .= "<div class='form-group {$c['group']}' >";
-            $userForm .= "<label for='email'class='{$c['label']}'>Email</label>";
+            $userForm .= "<label for='email'class='{$c['label']}'>Email <span class='text-red-500'>*</span></label>";
             $userForm .= "<input type='email' name='dynamic[email]' id='email' class='form-control {$c['input']}' value='" . e($email) . "' placeholder='Email Address' required>";
             $userForm .= "</div>";
 
