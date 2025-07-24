@@ -35,10 +35,10 @@ class Shortcode
         return $attributes;
     }
 
-    public static function render(string $name, array $attrs = []): string
+    public static function render(string $name, array $attrs = [] ,$class): string
     {
         if (isset(static::$shortcodes[$name])) {
-            return call_user_func(static::$shortcodes[$name], $attrs);
+            return call_user_func(static::$shortcodes[$name], $attrs ,$class);
         }
         return '';
     }
