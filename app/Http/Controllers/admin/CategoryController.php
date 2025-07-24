@@ -37,7 +37,11 @@ class CategoryController extends Controller
                         : '<span class="badge badge-danger">Inactive</span>';
                 })
                 ->editColumn('created_at', function ($category) {
-                    return $category->created_at ? $category->created_at->format('Y-m-d H:i:s') : '-';
+                    return $category->created_at
+                    ? $category->created_at->format(
+                        get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
+                    )
+                    : '-';                
                 })
                 ->editColumn('status', function ($category) {
                     return $category->status == config('constants.status.active')
