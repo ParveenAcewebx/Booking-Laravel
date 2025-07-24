@@ -9,30 +9,13 @@ class FormHelper
     public static function renderDynamicFieldHTML($templateJson, $values = [], $theme = 'bootstrap')
     {
         $fields = is_array($templateJson) ? $templateJson : json_decode($templateJson, true);
-        $countNewSections = count(array_filter($fields, function ($item) {
-            return isset($item['type']) && $item['type'] === 'newsection';
-        }));
-        $chunks = [];
-        $currentChunk = [];
 
-        foreach ($fields as $item) {
-            $currentChunk[] = $item;
-
-            // If we encounter a "newsection", push the current chunk into the steps array and reset it
-            if (isset($item['type']) && $item['type'] === 'newsection') {
-                $chunks[] = $currentChunk;
-                $currentChunk = [];
-            }
-        }
-
-        if (!empty($currentChunk)) {
-            $chunks[] = $currentChunk;
-        }
-
+        
         // Begin the form output
         $html = '';
         $htmlHidden = '';
-
+        $chunks = [];
+        $currentChunk = [];
         if (!is_array($fields)) {
             return '<div class="alert alert-danger">Invalid form template JSON.</div>';
         }
@@ -53,6 +36,7 @@ class FormHelper
                 'radioLabel' => 'form-check-label',
                 'file' => 'form-control',
                 'helpText' => 'form-text text-muted',
+                'button' => 'btn btn-primary', 
             ],
             'tailwind' => [
                 'group' => 'mb-6',
@@ -74,7 +58,24 @@ class FormHelper
 
         $c = $classes[$theme] ?? $classes['bootstrap'];
 
-        // Now we need to handle the creation of the steps
+        if (!empty($c) && isset($c['button']) && $c['button'] != 'btn btn-primary') {
+        $countNewSections = count(array_filter($fields, function ($item) {
+            return isset($item['type']) && $item['type'] === 'newsection';
+        }));
+        foreach ($fields as $item) {
+            $currentChunk[] = $item;
+            if (isset($item['type']) && $item['type'] === 'newsection') {
+                $chunks[] = $currentChunk;
+                $currentChunk = [];
+            }
+        }
+
+        if (!empty($currentChunk)) {
+            $chunks[] = $currentChunk;
+        }
+    }else{
+          $chunks[] = $fields;
+    }
         $stepCount = 1;
         foreach ($chunks as $chunk) {
             // Create HTML for each section
@@ -174,6 +175,7 @@ class FormHelper
                             $lbl = $opt['label'] ?? $val;
                             $isChecked = in_array((string)$val, $valueArr) ? 'checked' : '';
                             $requiredAttr = ($i === 0 && $required) ? 'required' : '';
+                          
                             $html .= "<div class='{$c['checkboxWrapper']}'>
                                     <input type='checkbox' name='{$inputName}[]' value='" . htmlspecialchars($val) . "' class='{$c['checkbox']}' $isChecked $requiredAttr>
                                     <label class='{$c['checkboxLabel']}'>" . htmlspecialchars($lbl) . "</label>
@@ -250,8 +252,8 @@ class FormHelper
             $html .= "</div>";
             $stepCount++;
         }
-
-        $html .= "<div class='form-navigation flex justify-between " . ($countNewSections > 0 ? '' : 'hidden') . "'>
+        if (!empty($c) && isset($c['button']) && $c['button'] != 'btn btn-primary') {
+            $html .= "<div class='form-navigation flex justify-between " . ($countNewSections > 0 ? '' : 'hidden') . "'>
                 <div class='perv_step'>
                     <button type='button' class='previous {$c['button']}' style='display: none;'>Previous</button>
                 </div>
@@ -260,8 +262,10 @@ class FormHelper
                     <button type='submit' class='submit {$c['button']} hidden'>Submit</button>
                 </div>
           </div>";
-
-        $html .= ($countNewSections == '0' ? "<button type='submit' class='submit {$c['button']}'>Submit</button>" : '');
+        }
+    if (!empty($c) && isset($c['button']) && $c['button'] != 'btn btn-primary') {
+            $html .= ($countNewSections == '0' ? "<button type='submit' class='submit {$c['button']}'>Submit</button>" : '');
+    }
         return $htmlHidden . $html;
     }
 }
