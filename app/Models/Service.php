@@ -37,6 +37,6 @@ class Service extends Model
     }
     public function staffAssociations()
     {
-        return $this->hasMany(StaffAssociation::class, 'service_id');
+        return $this->hasMany(StaffServiceAssociation::class, 'service_id');
     }
 }

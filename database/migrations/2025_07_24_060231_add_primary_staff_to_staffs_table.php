@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->boolean('primary_staff')->default(false)->after('email'); // or 'after' any existing column
+        Schema::table('staffs', function (Blueprint $table) {
+            $table->boolean('primary_staff')->default(false)->after('user_id');
         });
     }
 
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('staffs', function (Blueprint $table) {
             $table->dropColumn('primary_staff');
         });
     }

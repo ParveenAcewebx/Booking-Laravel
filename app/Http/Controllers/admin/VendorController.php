@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Staff;
 use App\Models\Vendor;
-use App\Models\VendorAssociation;
+use App\Models\VendorStaffAssociation;
 use App\Models\Service;
-use App\Models\StaffAssociation;
+use App\Models\StaffServiceAssociation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -119,18 +119,15 @@ class VendorController extends Controller
                 $thumbnailPath = $request->file('thumbnail')->store('vendors', 'public');
             }
 
-            $role = '2';
-            $isPrimaryStaff = 1;
-
             $user = User::create([
                 'name'          => $request->username,
                 'email'         => $request->email,
                 'password'      => Hash::make('password'),
-                'primary_staff' => $isPrimaryStaff,
                 'status'        => config('constants.status.active'),
             ]);
 
             $user->assignRole('Staff');
+
             $vendor = Vendor::create([
                 'name'        => $request->username,
                 'email'       => $request->email,
@@ -139,10 +136,13 @@ class VendorController extends Controller
                 'thumbnail'   => $thumbnailPath,
             ]);
             $lastInsertId = $vendor->id;
-
-            VendorAssociation::create([
+            VendorStaffAssociation::create([
                 'vendor_id'   => $lastInsertId,
                 'user_id'     => $user->id,
+            ]);
+            Staff::create([
+                'user_id' => $user->id,
+                'primary_staff' => 1,
             ]);
             return redirect()->route('vendors.list')->with('success', 'Vendor Created Successfully.');
         } catch (\Exception $e) {
@@ -153,19 +153,19 @@ class VendorController extends Controller
     public function edit($id)
     {
         $vendor             = Vendor::findOrFail($id);
-        $vendorAssociation  = VendorAssociation::with('user')->findOrFail($id);
+        $vendorAssociation  = VendorStaffAssociation::with('user')->findOrFail($id);
         $roles              = Role::all();
         $loginId            = session('impersonate_original_user');
         $loginUser          = $loginId ? User::find($loginId) : null;
-        $serviceIds = StaffAssociation::where('staff_member', $id)->pluck('service_id');
-        $allServiceData = Service::whereIn('id', $serviceIds)->get();
-        $assignedRole = $vendor->user?->roles->first();
+        $serviceIds         = StaffServiceAssociation::where('staff_member', $id)->pluck('service_id');
+        $allServiceData     = Service::whereIn('id', $serviceIds)->get();
+        $assignedRole       = $vendor->user?->roles->first();
         if (!$assignedRole) {
             $assignedRole = $roles->firstWhere('name', 'staff');
         }
 
         $selectedRoleId = $assignedRole?->id;
-        return view('admin.vendor.edit', compact('vendor', 'roles', 'loginUser', 'selectedRoleId', 'allServiceData','allServiceData'));
+        return view('admin.vendor.edit', compact('vendor', 'roles', 'loginUser', 'selectedRoleId', 'allServiceData', 'allServiceData'));
     }
 
     public function update(Request $request, Vendor $vendor)
@@ -208,7 +208,7 @@ class VendorController extends Controller
             return response()->json(['success' => false, 'message' => 'Vendor not found.']);
         }
 
-        $association = VendorAssociation::where('vendor_id', $vendorId)->first();
+        $association = VendorStaffAssociation::where('vendor_id', $vendorId)->first();
         if ($association) {
             $user = User::find($association->user_id);
             if ($user) {

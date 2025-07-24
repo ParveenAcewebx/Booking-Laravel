@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('staff_associations', function (Blueprint $table) {
+        Schema::create('staff_service_associations', function (Blueprint $table) {
             $table->id();
             $table->string('staff_member'); // changed from unsignedBigInteger to string
             $table->string('service_id');  // same here

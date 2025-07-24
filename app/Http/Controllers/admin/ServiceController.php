@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Service;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
-use App\Models\StaffAssociation;
+use App\Models\StaffServiceAssociation;
 
 class ServiceController extends Controller
 {
@@ -140,7 +140,7 @@ class ServiceController extends Controller
         $lastServiceId = $service->id;
         $staffMembers = $request->input('staff_member', []);
         foreach ($staffMembers as $staffId) {
-            StaffAssociation::create([
+            StaffServiceAssociation::create([
                 'service_id' => $lastServiceId,
                 'staff_member' => $staffId
             ]);
@@ -150,7 +150,7 @@ class ServiceController extends Controller
 
     public function destroy(Service $service)
     {
-        StaffAssociation::where('service_id', $service->id)->delete();
+        StaffServiceAssociation::where('service_id', $service->id)->delete();
         $service->delete();
         return response()->json(['success' => true]);
     }
@@ -270,13 +270,13 @@ class ServiceController extends Controller
 
         // Handle staff associations
         $newStaffIds = $request->input('staff_member', []);
-        $existingStaffIds = StaffAssociation::where('service_id', $service->id)
+        $existingStaffIds = StaffServiceAssociation::where('service_id', $service->id)
             ->pluck('staff_member')
             ->toArray();
 
         $toAdd = array_diff($newStaffIds, $existingStaffIds);
         foreach ($toAdd as $staffId) {
-            StaffAssociation::create([
+            StaffServiceAssociation::create([
                 'service_id'   => $service->id,
                 'staff_member' => $staffId,
             ]);
@@ -284,7 +284,7 @@ class ServiceController extends Controller
 
         $toDelete = array_diff($existingStaffIds, $newStaffIds);
         if (!empty($toDelete)) {
-            StaffAssociation::where('service_id', $service->id)
+            StaffServiceAssociation::where('service_id', $service->id)
                 ->whereIn('staff_member', $toDelete)
                 ->delete();
         }

@@ -10,9 +10,10 @@ class Staff extends Model
     use HasFactory;
     protected $table = 'staffs';
     protected $fillable = [
-        'staff_id',
+        'user_id',
         'work_hours',
         'days_off',
-        'vendor_id'
+        'vendor_id',
+        'primary_staff'
     ];
 }

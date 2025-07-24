@@ -28,6 +28,7 @@ class UserController extends Controller
             ? session('impersonate_original_user')
             : Cookie::get('impersonate_original_user');
     }
+
     public function index(Request $request)
     {
         $loginId = session('impersonate_original_user');
@@ -38,7 +39,7 @@ class UserController extends Controller
             $isImpersonating = session()->has('impersonate_original_user') || Cookie::get('impersonate_original_user');
             $statusLabels = array_flip(config('constants.status'));
 
-            $query = User::with('roles')->select('users.*'); // select explicitly for joins
+            $query = User::with(['roles', 'staff'])->select('users.*');
 
             return DataTables::of($query)
                 ->addIndexColumn()
@@ -72,8 +73,8 @@ class UserController extends Controller
                     }
 
                     if ($currentUser->can('delete users') && Auth::id() != $row->id) {
-                        if ($row->primary_staff == 1) {
-                            $btn .= '<button type="button" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Please First Delete Vendor" disabled>
+                        if ($row->staff && $row->staff->primary_staff == 1) {
+                            $btn .= '<button type="button" class="btn btn-icon btn-secondary" data-toggle="tooltip" title="Please First Delete Vendor" disabled>
                     <i class="feather icon-trash-2"></i>
                  </button>';
                         } else {

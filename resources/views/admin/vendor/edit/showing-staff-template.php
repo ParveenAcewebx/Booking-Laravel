@@ -4,7 +4,7 @@
             <div class="form-row">
                 <div class="form-group col-md-5">
                     <label class="font-weight-bold">Day(s) Off <span class="text-danger">*</span></label>
-                    <input type="text" name="days_off[]" class="form-control" placeholder="e.g. Diwali, Festival, Leave">
+                    <input type="text" name="select_staff[] " class="form-control" placeholder="">
                 </div>
                 <div class="form-group col-md-5">
                     <label class="font-weight-bold">Date Range <span class="text-danger">*</span></label>

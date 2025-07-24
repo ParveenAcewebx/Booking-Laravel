@@ -8,7 +8,7 @@ use App\Models\Staff;
 use App\Models\Service;
 use App\Models\Vendor;
 use App\Models\VendorAssociation;
-use App\Models\StaffAssociation;
+use App\Models\StaffServiceAssociation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -37,7 +37,7 @@ class StaffController extends Controller
             $currentUser = Auth::user();
             $statusLabels = array_flip(config('constants.status'));
 
-            $query = User::with('roles')->whereHas('roles', function ($q) {
+            $query = User::with(['roles', 'staff'])->whereHas('roles', function ($q) {
                 $q->where('name', 'Staff');
             });
 
@@ -64,8 +64,8 @@ class StaffController extends Controller
                     }
 
                     if ($currentUser->can('delete staffs') && Auth::id() != $row->id) {
-                        if ($row->primary_staff == 1) {
-                            $btn .= '<button type="button" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Please First Delete Vendor" disabled>
+                      if ($row->staff && $row->staff->primary_staff == 1) {
+                            $btn .= '<button type="button" class="btn btn-icon btn-secondary" data-toggle="tooltip" title="Please First Delete Vendor" disabled>
                     <i class="feather icon-trash-2"></i>
                  </button>';
                         } else {
@@ -131,7 +131,7 @@ class StaffController extends Controller
         $submittedServices = $request->input('assigned_services', []);
         if (is_array($submittedServices)) {
             foreach ($submittedServices as $serviceId) {
-                StaffAssociation::create([
+                StaffServiceAssociation::create([
                     'staff_member' => $user->id,
                     'service_id' => $serviceId,
                 ]);
@@ -196,11 +196,11 @@ class StaffController extends Controller
         $weekDays = config('constants.week_days');
         $activeStatus = config('constants.status.active');
 
-        $staffMeta = Staff::where('staff_id', $staff->id)->first();
+        $staffMeta = Staff::where('user_id', $staff->id)->first();
         $vendorData = Vendor::where('status', $activeStatus)->get();
 
         $IsUserPrimaryStaff = $staff->primary_staff;
-        $assignedServices = Service::whereIn('id', StaffAssociation::where('staff_member', $staff->id)->pluck('service_id'))
+        $assignedServices = Service::whereIn('id', StaffServiceAssociation::where('staff_member', $staff->id)->pluck('service_id'))
             ->with('category')
             ->get();
 
@@ -326,7 +326,7 @@ class StaffController extends Controller
             }
         }
 
-        $staffMeta = Staff::firstOrNew(['staff_id' => $staff->id]);
+        $staffMeta = Staff::firstOrNew(['user_id' => $staff->id]);
         $staffMeta->work_hours = json_encode($workingHours);
 
         if (!empty($nestedDayOffs)) {
@@ -347,8 +347,8 @@ class StaffController extends Controller
             if ($user) {
                 $user->delete();
 
-                Staff::where('staff_id', $id)->delete();
-                StaffAssociation::where('staff_member', $id)->delete();
+                Staff::where('user_id', $id)->delete();
+                StaffServiceAssociation::where('staff_member', $id)->delete();
                 return response()->json(['success' => true]);
             }
 

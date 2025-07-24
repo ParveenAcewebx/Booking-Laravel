@@ -20,7 +20,6 @@ class User extends Authenticatable
         'status',
         'phone_number',
         'phone_code',
-        'primary_staff'
     ];
     protected $hidden = [
         'password',
@@ -39,6 +38,11 @@ class User extends Authenticatable
 
     public function vendorAssociations()
     {
-        return $this->hasMany(VendorAssociation::class);
+        return $this->hasMany(VendorStaffAssociation::class);
+    }
+
+    public function staff()
+    {
+        return $this->hasOne(Staff::class, 'user_id', 'id');
     }
 }
