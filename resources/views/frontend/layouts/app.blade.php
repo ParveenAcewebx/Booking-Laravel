@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{'Home'}}</title>
-
+  <title>{{ get_setting('site_title', config('app.name', 'Universal Booking Solution')) }}</title>
+  <link rel="icon" href="{{ get_setting('favicon') ? asset('storage/' . get_setting('favicon')) : asset('assets/images/favicon.ico') }}" type="image/x-icon">
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 

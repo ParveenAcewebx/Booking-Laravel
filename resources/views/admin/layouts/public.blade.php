@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ get_setting('site_title', config('app.name', 'Universal Booking Solution')) }}</title>
     <!-- HTML5 Shim and Respond.js IE11 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 11]>
@@ -19,8 +19,7 @@
     <meta name="keywords" content="">
     <meta name="author" content="Codedthemes" />
     <!-- Favicon icon -->
-    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
-
+    <link rel="icon" href="{{ get_setting('favicon') ? asset('storage/' . get_setting('favicon')) : asset('assets/images/favicon.ico') }}" type="image/x-icon">
     <!-- vendor css -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
 </head>
