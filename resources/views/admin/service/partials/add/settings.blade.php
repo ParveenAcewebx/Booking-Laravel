@@ -13,13 +13,17 @@
     <div class="form-group">
         <label>Minimum Time Required Before Canceling</label>
         <div class="d-flex">
-            <select name="cancelling_unit" class="form-control mr-2 select-user mr-3" id="cancelling_unit">
-                <option value="hours">Hours</option>
-                <option value="days">Days</option>
-            </select>
-            <select name="cancelling_value" class="form-control select-user" id="cancelling_value">
-                <!-- Populated dynamically with JS -->
-            </select>
+            <div class="col-md-6 p-0">
+                <select name="cancelling_unit" class="form-control mr-2 select-user mr-3" id="cancelling_unit">
+                    <option value="hours">Hours</option>
+                    <option value="days">Days</option>
+                </select>
+            </div>
+            <div class="col-md-6 pr-0">
+                <select name="cancelling_value" class="form-control select-user" id="cancelling_value">
+                    <!-- Populated dynamically with JS -->
+                </select>
+            </div>
         </div>
     </div>
 

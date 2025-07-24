@@ -14,6 +14,11 @@ class Vendor extends Model
         'description',
         'thumbnail',
         'status',
+        'stripe_mode',
+        'stripe_test_site_key',
+        'stripe_test_secret_key',
+        'stripe_live_site_key',
+        'stripe_live_secret_key'
     ];
 
     public function user()

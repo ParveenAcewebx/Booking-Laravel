@@ -134,16 +134,24 @@ class VendorController extends Controller
                 'description' => $request->description,
                 'status'      => $request->status ? config('constants.status.active') : config('constants.status.inactive'),
                 'thumbnail'   => $thumbnailPath,
+                'stripe_mode' => $request->stripe_mode,
+                'stripe_test_site_key' => $request->stripe_test_site_key,
+                'stripe_test_secret_key' => $request->stripe_test_secret_key,
+                'stripe_live_site_key' => $request->stripe_live_site_key,
+                'stripe_live_secret_key' => $request->stripe_live_secret_key,
             ]);
             $lastInsertId = $vendor->id;
+
             VendorStaffAssociation::create([
                 'vendor_id'   => $lastInsertId,
                 'user_id'     => $user->id,
             ]);
+
             Staff::create([
                 'user_id' => $user->id,
                 'primary_staff' => 1,
             ]);
+
             return redirect()->route('vendors.list')->with('success', 'Vendor Created Successfully.');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
@@ -179,11 +187,16 @@ class VendorController extends Controller
             'remove_avatar'  => 'nullable|in:0,1',
         ]);
 
-        $status = $request->input('status') ? config('constants.status.active') : config('constants.status.inactive');
-        $vendor->name        = $request->input('username');
-        $vendor->email       = $request->input('email');
-        $vendor->description = $request->input('description');
-        $vendor->status      = $status;
+        $status                             = $request->input('status') ? config('constants.status.active') : config('constants.status.inactive');
+        $vendor->name                       = $request->input('username');
+        $vendor->email                      = $request->input('email');
+        $vendor->description                = $request->input('description');
+        $vendor->status                     = $status;
+        $vendor->stripe_mode                = $request->stripe_mode;
+        $vendor->stripe_test_site_key       = $request->stripe_test_site_key;
+        $vendor->stripe_test_secret_key     = $request->stripe_test_secret_key;
+        $vendor->stripe_live_site_key       = $request->stripe_live_site_key;
+        $vendor->stripe_live_secret_key     = $request->stripe_live_secret_key;
 
         if ($request->hasFile('thumbnail')) {
             if ($vendor->thumbnail && Storage::disk('public')->exists($vendor->thumbnail)) {

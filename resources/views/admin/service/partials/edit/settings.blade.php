@@ -10,15 +10,18 @@
     <div class="form-group">
         <label>Minimum Time Required Before Canceling</label>
         <div class="d-flex">
-            <select name="cancelling_unit" class="form-control mr-2 select-user" id="cancelling_unit">
-                <option value="hours" {{ $service->cancelling_unit == 'hours' ? 'selected' : '' }}>Hours</option>
-                <option value="days" {{ $service->cancelling_unit == 'days' ? 'selected' : '' }}>Days</option>
-            </select>
-
-            <select name="cancelling_value" class="form-control select-user" id="cancelling_value">
-                <!-- Options populated by JS -->
-            </select>
-            <input type="hidden" id="cancel_value" value="{{ $service->cancelling_value }}">
+            <div class="col-md-6 p-0">
+                <select name="cancelling_unit" class="form-control mr-2 select-user" id="cancelling_unit">
+                    <option value="hours" {{ $service->cancelling_unit == 'hours' ? 'selected' : '' }}>Hours</option>
+                    <option value="days" {{ $service->cancelling_unit == 'days' ? 'selected' : '' }}>Days</option>
+                </select>
+            </div>
+            <div class="col-md-6 pr-0">
+                <select name="cancelling_value" class="form-control select-user" id="cancelling_value">
+                    <!-- Options populated by JS -->
+                </select>
+                <input type="hidden" id="cancel_value" value="{{ $service->cancelling_value }}">
+            </div>
         </div>
     </div>
     <div class="form-group">
