@@ -87,8 +87,10 @@ class ServiceController extends Controller
     {
         $data = $request->validate([
             'name'                   => 'required|string|max:255',
+            'duration'               => 'required', 
+            'staff_member'           => 'required',                        
             'description'            => 'nullable|string',
-            'category'               => 'nullable|exists:categories,id',
+            'category'               => 'required|exists:categories,id',
             'thumbnail'              => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:2048',
             'gallery.*'              => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:2048',
             'status'                 => 'required|in:0,1',
@@ -183,6 +185,8 @@ class ServiceController extends Controller
     {
         $request->validate([
             'name'                  => 'required|string|max:255',
+            'duration'              => 'required', 
+            'staff_member'          => 'required', 
             'description'           => 'nullable|string',
             'category'              => 'nullable|exists:categories,id',
             'thumbnail'             => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:2048',

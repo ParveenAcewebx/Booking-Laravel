@@ -223,6 +223,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'nullable|min:6|confirmed',
             'status' => 'required|in:' . config('constants.status.active') . ',' . config('constants.status.inactive'),
+            'phone_number' => 'required'
 
         ]);
 

@@ -26,18 +26,6 @@
             </div>
         </div>
         <!-- [ breadcrumb ] end -->
-
-        <!-- [ Error Messages ] -->
-        @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-        @endif
-
         <!-- [ Main Content ] start -->
         <form action="{{ route('service.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -53,8 +41,16 @@
                                 <!-- Name -->
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label>Name</label>
-                                        <input type="text" name="name" class="form-control" required>
+                                        <label>Name <span class="text-danger">*</span></label>
+                                        <input type="text"
+                                               name="name"
+                                               class="form-control @error('name') is-invalid @enderror"
+                                               value="{{ old('name') }}"
+                                               
+                                               placeholder="Enter service name">
+                                        @error('name')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
 
@@ -63,46 +59,60 @@
                                     <div class="form-group">
                                         <label>Description</label>
                                         <div id="quill-editor" style="height: 200px;"></div>
-                                        <textarea name="description" id="description" class="d-none"></textarea>
+                                        <textarea name="description"
+                                                  id="description"
+                                                  class="d-none @error('description') is-invalid @enderror">{{ old('description') }}</textarea>
+                                        @error('description')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
 
                                 <!-- Duration -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Duration</label>
-                                        <select name="duration" class="form-control select-user">
+                                        <label>Duration <span class="text-danger">*</span></label>
+                                        <select name="duration"
+                                                class="form-control select-user @error('duration') is-invalid @enderror"
+                                                >
                                             <option value="">-- Select Duration --</option>
-                                            @for ($minutes = 30; $minutes <= 1440; $minutes +=30)
+                                            @for ($minutes = 30; $minutes <= 1440; $minutes += 30)
                                                 @php
-                                                $hrs=floor($minutes / 60);
-                                                $mins=$minutes % 60;
-                                                $label='' ;
-                                                if ($hrs> 0) {
-                                                $label .= $hrs . ' hour' . ($hrs > 1 ? 's' : '');
-                                                }
-                                                if ($hrs > 0 && $mins > 0) {
-                                                $label .= ' ';
-                                                }
-                                                if ($mins > 0) {
-                                                $label .= $mins . ' minutes';
-                                                }
+                                                    $hrs = floor($minutes / 60);
+                                                    $mins = $minutes % 60;
+                                                    $label = ($hrs ? $hrs . ' hour' . ($hrs > 1 ? 's' : '') : '') .
+                                                             ($hrs && $mins ? ' ' : '') .
+                                                             ($mins ? $mins . ' minutes' : '');
                                                 @endphp
-                                                <option value="{{ $minutes }}">{{ $label }}</option>
-                                                @endfor
+                                                <option value="{{ $minutes }}"
+                                                    {{ old('duration') == $minutes ? 'selected' : '' }}>
+                                                    {{ $label }}
+                                                </option>
+                                            @endfor
                                         </select>
+                                        @error('duration')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
 
                                 <!-- Staff -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Staff Member</label>
-                                        <select name="staff_member[]" class="form-control select2-mash" multiple required>
+                                        <label>Staff Member <span class="text-danger">*</span></label>
+                                        <select name="staff_member[]"
+                                                class="form-control select2-mash @error('staff_member') is-invalid @enderror"
+                                                multiple >
                                             @foreach($staffUsers as $user)
-                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                                <option value="{{ $user->id }}"
+                                                    {{ collect(old('staff_member'))->contains($user->id) ? 'selected' : '' }}>
+                                                    {{ $user->name }}
+                                                </option>
                                             @endforeach
                                         </select>
+                                        @error('staff_member')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -119,19 +129,29 @@
                         <div class="card-body">
                             <!-- Category -->
                             <div class="form-group">
-                                <label>Category</label>
-                                <select name="category" class="form-control category">
+                                <label>Category <span class="text-danger">*</span></label>
+                                <select name="category"
+                                        class="form-control category @error('category') is-invalid @enderror"
+                                        >
                                     <option value="">-- Select Category --</option>
                                     @foreach($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->category_name }}</option>
+                                        <option value="{{ $category->id }}"
+                                            {{ old('category') == $category->id ? 'selected' : '' }}>
+                                            {{ $category->category_name }}
+                                        </option>
                                     @endforeach
                                 </select>
+                                @error('category')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Status -->
                             <div class="form-group">
                                 <label>Status</label>
-                                <select name="status" class="form-control select-user">
+                                <select name="status"
+                                        class="form-control select-user @error('status') is-invalid @enderror"
+                                        >
                                     <option value="{{ config('constants.status.active') }}"
                                         {{ old('status', 1) == config('constants.status.active') ? 'selected' : '' }}>
                                         Active
@@ -142,7 +162,7 @@
                                     </option>
                                 </select>
                                 @error('status')
-                                <div class="text-danger mt-1">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
 
@@ -154,13 +174,17 @@
                                         <span class="input-group-text">Upload</span>
                                     </div>
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name="thumbnail" id="addAvatarInput" accept=".jpg,.jpeg,.png,.gif">
+                                        <input type="file"
+                                               class="custom-file-input @error('thumbnail') is-invalid @enderror"
+                                               name="thumbnail"
+                                               id="addAvatarInput"
+                                               accept=".jpg,.jpeg,.png,.gif">
                                         <label class="custom-file-label overflow-hidden" for="addAvatarInput">Choose file...</label>
                                     </div>
                                 </div>
                                 <small class="form-text text-muted">Supported types: JPG, JPEG, PNG, GIF.</small>
-                                @error('avatar')
-                                <div class="text-danger mt-1">{{ $message }}</div>
+                                @error('thumbnail')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
 
                                 <!-- Image Preview -->
@@ -175,6 +199,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="text-right mt-0">
                                 <button type="submit" class="btn btn-primary">Save</button>
                             </div>
