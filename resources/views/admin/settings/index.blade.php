@@ -28,11 +28,12 @@
                         <div class="card-body">
                             <!-- Site Title -->
                             <div class="form-group">
-                                <label class="form-label">Site Title</label>
-                                <input type="text" class="form-control" name="site_title" placeholder="Enter Site Title"
-                                    value="{{ old('site_title') ?? $settings['site_title'] ?? '' }}" required>
+                                <label class="form-label font-weight-bold">Site Title <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('site_title') is-invalid @enderror"
+                                    name="site_title" placeholder="Enter Site Title"
+                                    value="{{ old('site_title', $settings['site_title'] ?? '') }}" >
                                 @error('site_title')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
                             <!-- Website Logo -->
@@ -47,10 +48,10 @@
                                         <label class="custom-file-label overflow-hidden" for="websiteLogoInput">Choose file...</label>
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
                                 @error('website_logo')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
+                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
                                 {{-- Preview --}}
                                 <div id="website-logo-preview-container" class="row mt-3 {{ !empty($settings['website_logo']) ? '' : 'd-none' }}">
                                     <div class="col-md-6 position-relative">
@@ -84,11 +85,10 @@
                                         <label class="custom-file-label overflow-hidden" for="faviconInput">Choose file...</label>
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
                                 @error('favicon')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
-
+                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
                                 {{-- Preview --}}
                                 <div id="favicon-preview-container" class="row mt-3 {{ !empty($settings['favicon']) ? '' : 'd-none' }}">
                                     <div class="col-md-6 position-relative">
@@ -126,7 +126,7 @@
                                     @endforeach
                                 </select>
                                 @error('date_format')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
                             <!-- Time Format -->
@@ -159,32 +159,34 @@
                     <div class="card">
                         <h5 class="card-header">Owner Information</h5>
                         <div class="card-body">
-                            <!-- Owner Phone Number -->
+                            <!-- Owner Phone -->
                             <div class="form-group">
-                                <label class="form-label">Owner Phone Number</label>
+                                <label class="form-label font-weight-bold">Owner Phone Number <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <select class="form-control" name="code" style="max-width: 100px;">
+                                    <select class="form-control @error('code') is-invalid @enderror" name="code" style="max-width: 100px;">
                                         @foreach($phoneCountries as $country)
                                             <option value="{{ $country['code'] }}"
-                                                {{ (old('code') ?? $settings['owner_country_code'] ?? '+91') == $country['code'] ? 'selected' : '' }}>
+                                                {{ old('code', $settings['owner_country_code'] ?? '+91') == $country['code'] ? 'selected' : '' }}>
                                                 {{ $country['code'] }}
                                             </option>
                                         @endforeach
                                     </select>
-                                    <input type="text" class="form-control" name="owner_phone_number" placeholder="Enter phone number"
-                                        value="{{ old('owner_phone_number') ?? $settings['owner_phone_number'] ?? '' }}" required>
+                                    <input type="text" class="form-control @error('owner_phone_number') is-invalid @enderror"
+                                        name="owner_phone_number" placeholder="Enter phone number"
+                                        value="{{ old('owner_phone_number', $settings['owner_phone_number'] ?? '') }}" >
                                 </div>
                                 @error('owner_phone_number')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
                             <!-- Owner Email -->
                             <div class="form-group">
-                                <label class="form-label">Owner Email</label>
-                                <input type="email" class="form-control" name="owner_email" placeholder="Enter owner email"
-                                    value="{{ old('owner_email') ?? $settings['owner_email'] ?? '' }}" required>
+                                <label class="form-label font-weight-bold">Owner Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control @error('owner_email') is-invalid @enderror"
+                                    name="owner_email" placeholder="Enter owner email"
+                                    value="{{ old('owner_email', $settings['owner_email'] ?? '') }}">
                                 @error('owner_email')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
