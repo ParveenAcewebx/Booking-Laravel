@@ -39,7 +39,7 @@
                                     <tr>
                                         <th style="display: none;">ID</th> <!-- Hidden column -->
                                         <th>Name</th>
-                                        <th>Description</th>
+                                        <th>Email</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -70,8 +70,8 @@
                     name: 'name'
                 },
                 {
-                    data: 'description',
-                    name: 'description',
+                    data: 'email',
+                    name: 'email',
 
                 },
                 {

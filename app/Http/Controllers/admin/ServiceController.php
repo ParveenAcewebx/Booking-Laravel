@@ -24,7 +24,7 @@ class ServiceController extends Controller
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
-            $services = Service::with('staffAssociations')->get();
+            $services = Service::with(['staffAssociations', 'category'])->get();
 
             return DataTables::of($services)
                 ->addColumn('status', function ($row) {
@@ -34,13 +34,12 @@ class ServiceController extends Controller
                         ? '<span class="badge badge-success">Active</span>'
                         : '<span class="badge badge-danger">Inactive</span>';
                 })
-                ->addColumn('description', function ($row) {
-                    return $row->description;
+                ->addColumn('created_at', function ($row) {
+                    // Use the related category name
+                    return  $row->created_at;
                 })
                 ->addColumn('staff_member', function ($row) {
-                    // Get staff IDs from staff_associations
                     $staffIds = $row->staffAssociations->pluck('staff_member')->toArray();
-                    // Fetch user names
                     $staffNames = User::whereIn('id', $staffIds)->pluck('name')->toArray();
                     return implode(', ', $staffNames);
                 })
@@ -49,8 +48,8 @@ class ServiceController extends Controller
 
                     if (auth()->user()->can('edit services')) {
                         $btn .= '<a href="' . route('service.edit', $row->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit Service">
-                            <i class="fas fa-pencil-alt"></i>
-                        </a> ';
+                        <i class="fas fa-pencil-alt"></i>
+                    </a> ';
                     }
 
                     if (auth()->user()->can('delete services')) {
@@ -67,8 +66,10 @@ class ServiceController extends Controller
                 ->rawColumns(['status', 'action', 'description'])
                 ->make(true);
         }
+
         return view('admin.service.index', compact('loginUser'));
     }
+
 
     public function serviceAdd(Request $request)
     {
@@ -87,8 +88,8 @@ class ServiceController extends Controller
     {
         $data = $request->validate([
             'name'                   => 'required|string|max:255',
-            'duration'               => 'required', 
-            'staff_member'           => 'required',                        
+            'duration'               => 'required',
+            'staff_member'           => 'required',
             'description'            => 'nullable|string',
             'category'               => 'required|exists:categories,id',
             'thumbnail'              => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:2048',
@@ -185,8 +186,8 @@ class ServiceController extends Controller
     {
         $request->validate([
             'name'                  => 'required|string|max:255',
-            'duration'              => 'required', 
-            'staff_member'          => 'required', 
+            'duration'              => 'required',
+            'staff_member'          => 'required',
             'description'           => 'nullable|string',
             'category'              => 'nullable|exists:categories,id',
             'thumbnail'             => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:2048',

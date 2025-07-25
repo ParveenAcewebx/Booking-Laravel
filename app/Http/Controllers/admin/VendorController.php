@@ -40,7 +40,7 @@ class VendorController extends Controller
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
-            $vendors = Vendor::select(['id', 'name', 'description', 'status', 'created_at']);
+            $vendors = Vendor::select(['id', 'name', 'email','description', 'status', 'created_at']);
 
             return DataTables::of($vendors)
                 ->addIndexColumn()
@@ -49,8 +49,8 @@ class VendorController extends Controller
                     return '<td>' . e($row->name) . '</td>';
                 })
 
-                ->editColumn('description', function ($row) {
-                    return $row->description;
+                ->editColumn('email', function ($row) {
+                    return $row->email;
                 })
 
                 ->editColumn('created_at', function ($row) {
@@ -84,7 +84,7 @@ class VendorController extends Controller
 
                     return $btn;
                 })
-                ->rawColumns(['name', 'description', 'status', 'action'])
+                ->rawColumns(['name', 'email', 'status', 'action'])
                 ->make(true);
         }
         return view('admin.vendor.index', compact('loginUser'));
@@ -222,14 +222,12 @@ class VendorController extends Controller
         ));
     }
 
-
     public function getStaffServices($staffId)
     {
         $services = DB::table('staff_service_associations')
             ->join('services', 'services.id', '=', 'staff_service_associations.service_id')
             ->where('staff_service_associations.staff_member', $staffId)
             ->pluck('services.name');
-        // dd($services);
         return response()->json($services);
     }
 
