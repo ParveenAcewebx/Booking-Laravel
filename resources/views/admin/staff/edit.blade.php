@@ -4,7 +4,7 @@
 <section class="pcoded-main-container">
     <div class="pcoded-content">
 
-        <!-- [ breadcrumb ] start -->
+        <!-- Breadcrumb -->
         <div class="page-header">
             <div class="page-block">
                 <div class="row align-items-center">
@@ -21,99 +21,90 @@
                 </div>
             </div>
         </div>
-        <!-- [ breadcrumb ] end -->
-
-        <!-- [ Error Messages ] -->
-        @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-        @endif
-
-        <!-- [ Main Content ] start -->
+        <!-- Form Start -->
         <form action="{{ route('staff.update', $staff->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+
             <div class="row">
                 <!-- Left Column -->
                 <div class="col-md-8">
                     <div class="card">
-                        <div class="card-header">
-                            <h5>Staff Information</h5>
-                        </div>
+                        <div class="card-header"><h5>Staff Information</h5></div>
                         <div class="card-body">
                             <div class="row">
                                 <!-- Name -->
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Name:</label>
-                                        <input type="text" class="form-control" name="name" value="{{ old('name', $staff->name) }}" required>
-                                    </div>
-                                </div>
-
-                                <!-- Description -->
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label>Email:</label>
-                                        <input type="email" class="form-control" name="email" value="{{ old('email', $staff->email) }}" required>
-                                    </div>
-                                </div>
-
-                                {{-- Password --}}
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Password:</label>
-                                        <input type="password" class="form-control" name="password" id="password" placeholder="Enter Password">
-                                    </div>
-                                </div>
-
-                                {{-- Confirm Password --}}
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Confirm Password:</label>
-                                        <input type="password" class="form-control" name="password_confirmation" id="password_confirmation" placeholder="Confirm Password">
-                                        <div id="password-error" class="text-danger mt-1 d-none">Passwords do not match.</div>
-                                    </div>
-                                </div>
-
-                                {{-- Phone Number --}}
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Phone Number</label>
-                                        <div class="input-group">
-                                            <select class="form-control" name="code" style="max-width: 100px;">
-                                                @foreach($phoneCountries as $country)
-                                                <option value="{{ $country['code'] }}"
-                                                    @if(
-                                                    (!old('phone_code', $staff->phone_code ?? null) && $country['code'] == '+91') ||
-                                                    (old('phone_code', $staff->phone_code ?? null) == $country['code'])
-                                                    )
-                                                    selected
-                                                    @endif
-                                                    >
-                                                    {{ $country['code'] }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-
-                                            <input type="text" class="form-control" name="phone_number"
-                                                value="{{ old('phone_number', $staff->phone_number ?? '') }}" required>
-                                        </div>
-                                        @error('phone_number')
-                                        <div class="text-danger">{{ $message }}</div>
+                                        <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                            name="name" value="{{ old('name', $staff->name) }}" >
+                                        @error('name')
+                                            <div class="text-danger mt-1">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
 
+                                <!-- Email -->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Email:</label>
+                                        <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                            name="email" value="{{ old('email', $staff->email) }}" >
+                                        @error('email')
+                                            <div class="text-danger mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Password -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Password:</label>
+                                        <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                            name="password" id="password" placeholder="Enter Password">
+                                        @error('password')
+                                            <div class="text-danger mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Confirm Password -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Confirm Password:</label>
+                                        <input type="password" class="form-control" name="password_confirmation" id="password_confirmation" placeholder="Confirm Password">
+                                    </div>
+                                </div>
+
+                                <!-- Phone -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Phone Number</label>
+                                        <div class="input-group">
+                                            <select class="form-control" name="code" style="max-width: 100px;">
+                                                @foreach($phoneCountries as $country)
+                                                <option value="{{ $country['code'] }}"
+                                                    {{ old('code', $staff->phone_code ?? '+91') == $country['code'] ? 'selected' : '' }}>
+                                                    {{ $country['code'] }}
+                                                </option>
+                                                @endforeach
+                                            </select>
+                                            <input type="text" class="form-control" name="phone_number" placeholder="Phone Number"
+                                                value="{{ old('phone_number', $staff->phone_number) }}" >
+                                        </div>
+                                        @error('phone_number')
+                                            <div class="text-danger mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Role (hidden) -->
                                 @if($roles)
                                 <div class="col-md-6 d-none">
                                     <div class="form-group">
                                         <label>Role:</label>
-                                        <select class="form-control select-user" name="role" required>
+                                        <select class="form-control" name="role" >
                                             <option value="{{ $roles->id }}" selected>{{ $roles->name }}</option>
                                         </select>
                                     </div>
@@ -127,14 +118,12 @@
                 <!-- Right Column -->
                 <div class="col-md-4">
                     <div class="card">
-                        <div class="card-header">
-                            <h5>Settings</h5>
-                        </div>
+                        <div class="card-header"><h5>Settings</h5></div>
                         <div class="card-body">
                             <!-- Status -->
                             <div class="form-group">
-                                <label for="status" class="form-label d-block">Status</label>
-                                <select name="status" id="status" class="form-control select-user">
+                                <label>Status</label>
+                                <select name="status" class="form-control">
                                     <option value="{{ config('constants.status.active') }}"
                                         {{ old('status', $staff->status) == config('constants.status.active') ? 'selected' : '' }}>
                                         Active
@@ -145,118 +134,90 @@
                                     </option>
                                 </select>
                                 @error('status')
-                                <div class="text-danger">{{ $message }}</div>
+                                    <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <!-- Assigned Services -->
-                            <div class="col-md-12 p-0">
-                                <div class="form-group">
-                                    <label class="form-label">Assigned Services</label>
-                                    <select class="form-control select-user" name="assigned_services[]" multiple="multiple" required>
-                                        @foreach($services as $service)
-                                        <option value="{{ $service->id }}"
-                                            {{ collect($assignedServices)->pluck('id')->contains($service->id) ? 'selected' : '' }}>
-                                            {{ $service->name }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="col-md-12 p-0">
-                                <div class="form-group">
-                                    <label class="form-label">Assigned Vendors</label>
-                                    <select class="form-control select-user" name="assigned_vendor" required {{ $IsUserPrimaryStaff == 1 ? 'disabled' : '' }}>
-                                        <option value="">Select Vendor</option> {{-- Default option --}}
-                                        @foreach($vendorData as $vendor)
-                                        <option value="{{ $vendor->id }}"
-                                            {{ (isset($staffMeta) && $vendor->id == $staffMeta->vendor_id) ? 'selected' : '' }}>
-                                            {{ $vendor->name }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-
-                            <!-- Featured Image Upload -->
                             <div class="form-group">
-                                <label class="form-label">Featured Image</label>
+                                <label>Assigned Services</label>
+                                <select class="form-control" name="assigned_services[]" multiple >
+                                    @foreach($services as $service)
+                                    <option value="{{ $service->id }}"
+                                        {{ collect(old('assigned_services', $assignedServices->pluck('id')->toArray()))->contains($service->id) ? 'selected' : '' }}>
+                                        {{ $service->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Assigned Vendor -->
+                            <div class="form-group">
+                                <label>Assigned Vendor</label>
+                                <select class="form-control" name="assigned_vendor" {{ $IsUserPrimaryStaff ? 'disabled' : '' }} >
+                                    <option value="">Select Vendor</option>
+                                    @foreach($vendorData as $vendor)
+                                    <option value="{{ $vendor->id }}"
+                                        {{ old('assigned_vendor', $staffMeta->vendor_id ?? '') == $vendor->id ? 'selected' : '' }}>
+                                        {{ $vendor->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Avatar Upload -->
+                            <div class="form-group">
+                                <label>Featured Image</label>
                                 <div class="input-group mb-1">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">Upload</span>
-                                    </div>
+                                    <div class="input-group-prepend"><span class="input-group-text">Upload</span></div>
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name="avatar" id="avatarInput" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                                        <input type="file" class="custom-file-input" name="avatar" id="avatarInput" accept=".jpg,.jpeg,.png,.gif">
                                         <label class="custom-file-label overflow-hidden" for="avatarInput">Choose file...</label>
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
                                 @error('avatar')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
 
-                                {{-- Avatar Preview --}}
-                                <div id="avatar-preview-container" class="row mt-3 {{ !empty($staff->avatar) ? '' : 'd-none' }}">
-                                    <div class="col-md-6 position-relative">
-                                        <div class="card shadow-sm">
-                                            <img id="avatar-preview"
-                                                src="{{ !empty($staff->avatar) ? asset('storage/' . $staff->avatar) : asset('assets/images/no-image-available.png') }}"
-                                                class="card-img-top img-thumbnail"
-                                                alt="Avatar Preview"
-                                                style="object-fit: cover; height: 120px; width: 100%;">
-                                            <button type="button"
-                                                id="remove-avatar-preview"
-                                                class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
-                                                title="Remove avatar">
-                                                &times;
-                                            </button>
-                                        </div>
-                                    </div>
+                                @if(!empty($staff->avatar))
+                                <div class="mt-3">
+                                    <img src="{{ asset('storage/' . $staff->avatar) }}" alt="Avatar" class="img-thumbnail" style="max-width: 120px;">
+                                    <input type="hidden" name="remove_avatar" id="removeAvatarFlag" value="0">
                                 </div>
-
-                                <input type="hidden" name="remove_avatar" id="removeAvatarFlag" value="0">
+                                @endif
                             </div>
-                            <div class="text-right mt-0">
-                                <button type="submit" class="btn btn-primary savebutton">Update</button>
+
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary">Update</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Tabs Section -->
-            <div class="row">
+            <!-- Tabs -->
+            <div class="row mt-4">
                 <div class="col-md-8">
                     <div class="card">
                         <div class="card-body">
-                            <ul class="nav nav-tabs mb-3" role="tablist">
+                            <ul class="nav nav-tabs mb-3">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#working-days" role="tab">
-                                        <i class="feather icon-clock"></i> Work Hours
-                                    </a>
+                                    <a class="nav-link active" data-toggle="tab" href="#working-days">Work Hours</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#days-off" role="tab">
-                                        <i class="feather icon-calendar"></i> Days Off
-                                    </a>
+                                    <a class="nav-link" data-toggle="tab" href="#days-off">Days Off</a>
                                 </li>
                             </ul>
-
                             <div class="tab-content">
-                                {{-- TAB: WORKING DAYS --}}
                                 @include('admin.staff.partials.edit.working-days')
-
-                                {{-- TAB: DAYS OFF --}}
                                 @include('admin.staff.partials.edit.days-off')
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
         </form>
-        <!-- [ Main Content ] end -->
     </div>
 </section>
 @endsection

@@ -35,8 +35,8 @@ class SettingsController extends Controller
             'owner_phone_number' => 'required|string',
             'owner_email' => 'required|email',
             'site_title' => 'required|string',
-            'website_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif',
-            'favicon' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'website_logo' => 'required|image|mimes:jpeg,png,jpg,gif',
+            'favicon' => 'required|image|mimes:jpeg,png,jpg,gif',
         ]);
 
         $settings = [

@@ -12,231 +12,197 @@
                         </div>
                         <ul class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="feather icon-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="#!">Settings</a></li>
-                            <li class="breadcrumb-item"><a href="#!">Add Settings</a></li>
+                            <li class="breadcrumb-item">Settings</li>
+                            <li class="breadcrumb-item">Add Settings</li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
+
         <form action="{{ route('settings.store') }}" method="POST" enctype="multipart/form-data" class="settings-form">
             @csrf
             <div class="row">
+                <!-- Site Identity -->
                 <div class="col-md-6 col-xl-4">
                     <div class="card">
                         <div class="card-header"><h5>Site Identity</h5></div>
                         <div class="card-body">
                             <!-- Site Title -->
                             <div class="form-group">
-                                <label class="form-label">Site Title</label>
-                                <input type="text" class="form-control" name="site_title" placeholder="Enter Site Title"
-                                    value="{{ old('site_title') ?? $settings['site_title'] ?? '' }}" required>
+                                <label class="form-label font-weight-bold">Site Title <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('site_title') is-invalid @enderror"
+                                    name="site_title" placeholder="Enter Site Title"
+                                    value="{{ old('site_title', $settings['site_title'] ?? '') }}" >
                                 @error('site_title')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
+
                             <!-- Website Logo -->
                             <div class="form-group">
-                                <label class="form-label">Website Logo</label>
+                                <label class="form-label font-weight-bold">Website Logo <span class="text-danger">*</span></label>
                                 <div class="input-group mb-1">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">Upload</span>
-                                    </div>
+                                    <div class="input-group-prepend"><span class="input-group-text">Upload</span></div>
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name="website_logo" id="websiteLogoInput" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
-                                        <label class="custom-file-label overflow-hidden" for="websiteLogoInput">Choose file...</label>
+                                        <input type="file" class="custom-file-input @error('website_logo') is-invalid @enderror" name="website_logo" id="websiteLogoInput" accept="image/*">
+                                        <label class="custom-file-label" for="websiteLogoInput">Choose file...</label>
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
                                 @error('website_logo')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
-                                {{-- Preview --}}
-                                <div id="website-logo-preview-container" class="row mt-3 {{ !empty($settings['website_logo']) ? '' : 'd-none' }}">
-                                    <div class="col-md-6 position-relative">
-                                        <div class="card shadow-sm">
-                                            <img id="website-logo-preview"
-                                                src="{{ !empty($settings['website_logo']) ? asset('storage/' . $settings['website_logo']) : asset('assets/images/no-image-available.png') }}"
-                                                class="card-img-top img-thumbnail"
-                                                alt="Logo Preview"
-                                                style="object-fit: cover; height: 120px; width: 100%;">
-                                            <button type="button"
-                                                id="remove-website-logo-preview"
-                                                class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
-                                                title="Remove website logo"
-                                                onclick="removeImage('website_logo')">
-                                                &times;
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <input type="hidden" name="remove_website_logo" id="removeWebsiteLogoFlag" value="0">
                             </div>
+
+                            <!-- Preview -->
+                            @if (!empty($settings['website_logo']))
+                            <div class="mt-2">
+                                <img src="{{ asset('storage/' . $settings['website_logo']) }}" height="80" alt="Logo">
+                            </div>
+                            @endif
+
+                            <input type="hidden" name="remove_website_logo" id="removeWebsiteLogoFlag" value="0">
+
                             <!-- Favicon -->
                             <div class="form-group">
-                                <label class="form-label">Favicon</label>
+                                <label class="form-label font-weight-bold">Favicon <span class="text-danger">*</span></label>
                                 <div class="input-group mb-1">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">Upload</span>
-                                    </div>
+                                    <div class="input-group-prepend"><span class="input-group-text">Upload</span></div>
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name="favicon" id="faviconInput" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
-                                        <label class="custom-file-label overflow-hidden" for="faviconInput">Choose file...</label>
+                                        <input type="file" class="custom-file-input @error('favicon') is-invalid @enderror" name="favicon" id="faviconInput" accept="image/*">
+                                        <label class="custom-file-label" for="faviconInput">Choose file...</label>
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
                                 @error('favicon')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
+                            </div>
 
-                                {{-- Preview --}}
-                                <div id="favicon-preview-container" class="row mt-3 {{ !empty($settings['favicon']) ? '' : 'd-none' }}">
-                                    <div class="col-md-6 position-relative">
-                                        <div class="card shadow-sm">
-                                            <img id="favicon-preview"
-                                                src="{{ !empty($settings['favicon']) ? asset('storage/' . $settings['favicon']) : asset('assets/images/no-image-available.png') }}"
-                                                class="card-img-top img-thumbnail"
-                                                alt="Favicon Preview"
-                                                style="object-fit: cover; height: 80px; width: 80px;">
-                                            <button type="button"
-                                                id="remove-favicon-preview"
-                                                class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
-                                                title="Remove favicon"
-                                                onclick="removeImage('favicon')">
-                                                &times;
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <input type="hidden" name="remove_favicon" id="removeFaviconFlag" value="0">
-                            </div>                            
+                            @if (!empty($settings['favicon']))
+                            <div class="mt-2">
+                                <img src="{{ asset('storage/' . $settings['favicon']) }}" height="40" alt="Favicon">
+                            </div>
+                            @endif
+
+                            <input type="hidden" name="remove_favicon" id="removeFaviconFlag" value="0">
                         </div>
                     </div>
                 </div>
+
+                <!-- Date & Time -->
                 <div class="col-md-6 col-xl-4">
                     <div class="card">
-                        <h5 class="card-header">Date & Time</h5>
+                        <div class="card-header"><h5>Date & Time</h5></div>
                         <div class="card-body">
                             <!-- Date Format -->
                             <div class="form-group">
-                                <label class="form-label">Date Format</label>
-                                <select name="date_format" class="form-control select-user">
+                                <label class="form-label font-weight-bold">Date Format</label>
+                                <select name="date_format" class="form-control select-user @error('date_format') is-invalid @enderror">
                                     @foreach($dateFormats as $key => $label)
-                                        <option value="{{ $key }}" {{ (old('date_format') ?? $settings['date_format'] ?? '') == $key ? 'selected' : '' }}>{{ $label }}</option>
+                                        <option value="{{ $key }}" {{ old('date_format', $settings['date_format'] ?? '') == $key ? 'selected' : '' }}>{{ $label }}</option>
                                     @endforeach
                                 </select>
                                 @error('date_format')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
+
                             <!-- Time Format -->
                             <div class="form-group">
-                                <label class="form-label">Time Format</label>
-                                <select name="time_format" class="form-control select-user">
-                                    <option value="H:i" {{ (old('time_format') ?? $settings['time_format'] ?? '') == 'H:i' ? 'selected' : '' }}>24-Hour (e.g. 14:30)</option>
-                                    <option value="h:i A" {{ (old('time_format') ?? $settings['time_format'] ?? '') == 'h:i A' ? 'selected' : '' }}>12-Hour (e.g. 02:30 PM)</option>
+                                <label class="form-label font-weight-bold">Time Format</label>
+                                <select name="time_format" class="form-control select-user @error('time_format') is-invalid @enderror">
+                                    <option value="H:i" {{ old('time_format', $settings['time_format'] ?? '') == 'H:i' ? 'selected' : '' }}>24-Hour (14:30)</option>
+                                    <option value="h:i A" {{ old('time_format', $settings['time_format'] ?? '') == 'h:i A' ? 'selected' : '' }}>12-Hour (02:30 PM)</option>
                                 </select>
                                 @error('time_format')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
+
                             <!-- Timezone -->
                             <div class="form-group">
-                                <label class="form-label">Timezone</label>
-                                <select name="timezone" class="form-control select-user">
+                                <label class="form-label font-weight-bold">Timezone</label>
+                                <select name="timezone" class="form-control select-user @error('timezone') is-invalid @enderror">
                                     @foreach($timezones as $timezone)
-                                        <option value="{{ $timezone }}" {{ (old('timezone') ?? $settings['timezone'] ?? '') == $timezone ? 'selected' : '' }}>{{ $timezone }}</option>
+                                        <option value="{{ $timezone }}" {{ old('timezone', $settings['timezone'] ?? '') == $timezone ? 'selected' : '' }}>{{ $timezone }}</option>
                                     @endforeach
                                 </select>
                                 @error('timezone')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Owner Info -->
                 <div class="col-md-6 col-xl-4">
                     <div class="card">
-                        <h5 class="card-header">Owner Information</h5>
+                        <div class="card-header"><h5>Owner Information</h5></div>
                         <div class="card-body">
-                            <!-- Owner Phone Number -->
+                            <!-- Owner Phone -->
                             <div class="form-group">
-                                <label class="form-label">Owner Phone Number</label>
+                                <label class="form-label font-weight-bold">Owner Phone Number <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <select class="form-control" name="code" style="max-width: 100px;">
+                                    <select class="form-control @error('code') is-invalid @enderror" name="code" style="max-width: 100px;">
                                         @foreach($phoneCountries as $country)
                                             <option value="{{ $country['code'] }}"
-                                                {{ (old('code') ?? $settings['owner_country_code'] ?? '+91') == $country['code'] ? 'selected' : '' }}>
+                                                {{ old('code', $settings['owner_country_code'] ?? '+91') == $country['code'] ? 'selected' : '' }}>
                                                 {{ $country['code'] }}
                                             </option>
                                         @endforeach
                                     </select>
-                                    <input type="text" class="form-control" name="owner_phone_number" placeholder="Enter phone number"
-                                        value="{{ old('owner_phone_number') ?? $settings['owner_phone_number'] ?? '' }}" required>
+                                    <input type="text" class="form-control @error('owner_phone_number') is-invalid @enderror"
+                                        name="owner_phone_number" placeholder="Enter phone number"
+                                        value="{{ old('owner_phone_number', $settings['owner_phone_number'] ?? '') }}" >
                                 </div>
                                 @error('owner_phone_number')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
+
                             <!-- Owner Email -->
                             <div class="form-group">
-                                <label class="form-label">Owner Email</label>
-                                <input type="email" class="form-control" name="owner_email" placeholder="Enter owner email"
-                                    value="{{ old('owner_email') ?? $settings['owner_email'] ?? '' }}" required>
+                                <label class="form-label font-weight-bold">Owner Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control @error('owner_email') is-invalid @enderror"
+                                    name="owner_email" placeholder="Enter owner email"
+                                    value="{{ old('owner_email', $settings['owner_email'] ?? '') }}">
                                 @error('owner_email')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Social Media -->
                 <div class="col-md-6 col-xl-4">
                     <div class="card">
-                        <h5 class="card-header">Social Media Links</h5>
+                        <div class="card-header"><h5>Social Media Links</h5></div>
                         <div class="card-body">
-                            <!-- Facebook -->
-                            <label class="form-label">Facebook</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputGroupPrepend"><i class="fab fa-facebook-f"></i></span>
-                                </div>
-                                <input type="text" class="form-control" name="facebook" id="form-label" placeholder="Facebook link or username" aria-describedby="inputGroupPrepend" value="{{ old('facebook') ?? $settings['facebook'] ?? '' }}">
+                            @php
+                                $socials = ['facebook', 'linkedin', 'instagram', 'x_twitter'];
+                            @endphp
+                            @foreach($socials as $social)
+                            <div class="form-group">
+                                <label class="form-label font-weight-bold text-capitalize">{{ str_replace('_', ' ', $social) }}</label>
+                                <input type="text" class="form-control @error($social) is-invalid @enderror"
+                                    name="{{ $social }}" placeholder="{{ ucfirst($social) }} link or username"
+                                    value="{{ old($social, $settings[$social] ?? '') }}">
+                                @error($social)
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
+                                @enderror
                             </div>
-                            <br>
-                            <!-- Linkedin -->
-                            <label class="form-label">LinkedIn</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputGroupPrepend"><i class="fab fa-linkedin-in"></i></span>
-                                </div>
-                                <input type="text" class="form-control" name="linkedin" id="form-label" placeholder="LinkedIn link or username" aria-describedby="inputGroupPrepend" value="{{ old('linkedin') ?? $settings['linkedin'] ?? '' }}">
-                            </div>
-                            <br>
-                            <!-- Instagram -->
-                            <label class="form-label">Instagram</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputGroupPrepend"><i class="fab fa-instagram"></i></span>
-                                </div>
-                                <input type="text" class="form-control" name="instagram" id="form-label" placeholder="Instagram link or username" aria-describedby="inputGroupPrepend" value="{{ old('instagram') ?? $settings['instagram'] ?? '' }}">
-                            </div>
-                            <br>
-                            <!-- X twitter-->
-                            <label class="form-label">X (Twitter)</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputGroupPrepend"><i class="fab fa-twitter"></i></span>
-                                </div>
-                                <input type="text" class="form-control" name="x_twitter" id="form-label" placeholder="X link or username" aria-describedby="inputGroupPrepend" value="{{ old('x_twitter') ?? $settings['x_twitter'] ?? '' }}">
-                            </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
             </div>
+
             <!-- Submit -->
             <div class="text-right settings-btn">
                 <button type="submit" class="btn btn-primary mt-3">Save Settings</button>
-            </div>            
+            </div>
         </form>
     </div>
 </section>
