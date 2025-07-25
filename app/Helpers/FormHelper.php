@@ -37,7 +37,7 @@ class FormHelper
                 'file' => 'form-control',
                 'helpText' => 'form-text text-muted',
                 'button' => 'btn btn-primary', 
-                'hidden'=>'',
+                'hidden'=>'d-none',
             ],
             'tailwind' => [
                 'group' => 'mb-6',

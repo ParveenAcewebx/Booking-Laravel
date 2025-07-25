@@ -754,6 +754,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
 
                         $("#bookingTemplateModal").modal("hide");
+                            const services_short_code_get_staftf = document.querySelector('.get_service_staff');  
+                        services_short_code_get_staftf.addEventListener('change', function() {
+                            var customValue = services_short_code_get_staftf; 
+                            get_services_staff(customValue);
+                        });
+                      
                     } else {
                         alert(data.message || "Failed to load template.");
                     }
@@ -1243,6 +1249,7 @@ $(document).ready(function () {
 
 /* ------------------------ Start Services Thumbnail Function  ---------------------------- */
 
+
 $(document).ready(function () {
     function handleFileInput(fileInputId, previewContainerId, previewImageId, removeButtonId, removeFlagId = null) {
         const fileInput = $(fileInputId);
@@ -1293,17 +1300,23 @@ $(document).ready(function () {
     handleFileInput('#addAvatarInput', '#add-avatar-preview-container', '#add-avatar-preview', '#remove-add-avatar-preview', '#removeAddAvatarFlag');
     handleFileInput('#avatarInput', '#avatar-preview-container', '#avatar-preview', '#remove-avatar-preview', '#removeAvatarFlag');
 });
- const services_short_code_get_staff = document.querySelector('.get_service_staff');  
+/* ------------------------ End Services Thumbnail Function  ---------------------------- */
+
+const services_short_code_get_staff = document.querySelector('.get_service_staff');  
     services_short_code_get_staff.addEventListener('change', function() {
-        var customValue = ''; 
+        var customValue = services_short_code_get_staff; 
         get_services_staff(customValue);
+
     });
-var selectedStaff = document.querySelector('.selected_staff').value;
+var selectedStaff = document.querySelector('.selected_staff');
 if(selectedStaff){
-    get_services_staff(selectedStaff);
+    const services_selected = document.querySelector('.get_service_staff'); 
+    get_services_staff(services_selected);
 }
 function get_services_staff(selectedvalue){
-     var serviceId = services_short_code_get_staff.value;
+     var serviceId = selectedvalue.value;
+     var selectedStaff = document.querySelector('.selected_staff').value;
+     
        $.ajax({
         url: '/get/services/staff', 
         type: 'GET',
@@ -1330,11 +1343,12 @@ function get_services_staff(selectedvalue){
                     option.textContent = staff.name;
                     staffSelect.appendChild(option);
                 });
-                 if (selectedvalue) {
+                 if (selectedStaff) {
                     var options = staffSelect.querySelectorAll('option');
                     options.forEach(function(option) {
                         if (option.value == selectedStaff) {
                             option.selected = true;
+                            
                         }
                     });
                 }
@@ -1352,5 +1366,3 @@ function get_services_staff(selectedvalue){
         }
     });
 }
-
-/* ------------------------ End Services Thumbnail Function  ---------------------------- */
