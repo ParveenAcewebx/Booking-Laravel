@@ -11,6 +11,8 @@ use App\Models\Booking;
 use App\Models\User;
 use App\Helpers\FormHelper;
 use Illuminate\Support\Facades\Storage;
+use App\Models\service;
+use App\Models\StaffServiceAssociation;
 
 class FormController extends Controller
 {
@@ -80,5 +82,22 @@ class FormController extends Controller
         return redirect()
             ->route('form.show', $template->slug)
             ->with('success', 'Form submitted successfully!');
+    }
+function getservicesstaff(Request $request){
+ $serviceId = $request->query('service_id');
+   $associations = StaffServiceAssociation::where('service_id', $serviceId)->get();
+   $staff =[]; 
+    foreach ($associations as $association) {
+        $staffIds = $association->staff_member;
+          $user = User::where('id', $staffIds)->first();  
+         if ($user) {
+            $staff[] = [
+                'id' => $user->id,
+                'name' => $user->name,
+            ];
+        }
+    }
+    return $staff;
+
     }
 }

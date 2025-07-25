@@ -68,19 +68,7 @@
                             <!-- Status -->
                             <div class="row">
                                 <!-- Staff Dropdown -->
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label class="form-label">Staff</label>
-                                        <select class="form-control select-user" name="staff" required>
-                                            <option value="">Select Staff</option>
-                                            @foreach($staffList as $staff)
-                                            <option value="{{ $staff->id }}"
-                                                {{ old('staff', $booking->selected_staff) == $staff->id ? 'selected' : '' }}>
-                                                {{ $staff->name }}
-                                            </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                               
                                 </div>
 
                                 <!-- Booking Date and Time -->

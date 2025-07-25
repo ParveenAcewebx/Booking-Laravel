@@ -122,7 +122,6 @@ class BookingController extends Controller
     public function bookingSave(Request $request)
     {
         $request->validate([
-            'selected_staff' => 'required',
             'booking_datetime' => 'required'
         ]);
 
@@ -153,7 +152,7 @@ class BookingController extends Controller
             'customer_id' => $request->customer_id,
             'booking_datetime' => $request->booking_datetime,
             'booking_data' => json_encode($bookingData),
-            'selected_staff' => $request->selected_staff,
+            'selected_staff' =>'',
         ]);
 
         return $booking
@@ -191,7 +190,6 @@ class BookingController extends Controller
     public function bookingUpdate(Request $request, $id)
     {
         $request->validate([
-            'staff' => 'required',
             'booking_datetime' => 'required',
         ]);
 
@@ -226,8 +224,8 @@ class BookingController extends Controller
             $booking->phone_number = $existingData['phone'];
             $booking->email = $existingData['email'];
         }
-        $selectedStaff = User::find($request->input('staff'));
-        $booking->selected_staff = $selectedStaff?->name ?? '';
+       
+        $booking->selected_staff = '';
 
         $booking->save();
         return redirect()->route('booking.list')->with('success', 'Booking Updated Successfully.');

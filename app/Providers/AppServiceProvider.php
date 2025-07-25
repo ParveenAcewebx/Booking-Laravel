@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Helpers\Shortcode;
 use Illuminate\Support\ServiceProvider;
+use App\Models\service;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,14 +24,42 @@ class AppServiceProvider extends ServiceProvider
         Shortcode::register('hello-world', function () {
             return 'Hello, World!';
         });
+       Shortcode::register('services', function ($shortcodeAttrs, $class) {   
+        $services = Service::all();
+        $selectedService = $shortcodeAttrs['service'] ?? '';  
+        $selectedStaff = $shortcodeAttrs['staff'] ?? '';     
+        $c = $class;
+        $servicesForm  = '';
+        $servicesForm .= "<div class='form-group {$c['group']}'>";
+        $servicesForm .= "<label for='service' class='{$c['label']}'>Select Service <span class='text-red-500'>*</span></label>";
+        $servicesForm .= "<select name='dynamic[service]' class='get_service_staff {$c['select']}' required>";
+        $servicesForm .= '<option>---Select Service---</option>';
+        foreach ($services as $service) {
+            $attributes = $service->getAttributes();
+            $selected = $attributes['id'] == $selectedService ? 'selected' : '';  // Check if the service is selected
+            $servicesForm .= "<option value='{$attributes['id']}' {$selected}>{$attributes['name']}</option>";
+        }
+        $servicesForm .= "</select>";
+        $servicesForm .= "</div>";
+        $servicesForm .= "<div class='form-group {$c['group']} select_service_staff {$c['hidden']}'>";
+        $servicesForm .= "<label for='staff' class='{$c['label']}'>Select Staff <span class='text-red-500'>*</span></label>";
+        $servicesForm.= "<input type='hidden' class='selected_staff' value='".$selectedStaff."'>";
+        $servicesForm .= "<select name='dynamic[staff]' id='service_staff_form' class='{$c['select']} service_staff_form' required>";
+        $servicesForm .= '<option value="">---Select Staff---</option>';
+        
+        $servicesForm .= "</select>";
+        $servicesForm .= "</div>";
+
+        return $servicesForm;
+    });
 
         Shortcode::register('user-information', function ($shortcodeAttrs, $class) {
             $c = $class;
+            // dd($shortcodeAttrs);
             $firstName = $shortcodeAttrs['first_name'] ?? '';
             $lastName  = $shortcodeAttrs['last_name'] ?? '';
             $email     = $shortcodeAttrs['email'] ?? '';
             $phone     = $shortcodeAttrs['phone'] ?? '';
-
             $userForm  = '';
 
             $userForm .= "<div class='form-group {$c['group']}'>";

@@ -77,19 +77,7 @@
                         </div>
                         <div class="card-body">
                             <!-- Staff List -->
-                            <div class="form-group">
-                                <label>Staff List</label>
-                                <select class="form-control select-user" name="selected_staff">
-                                    <option value="">Select Staff</option>
-                                    @foreach($alluser as $user)
-                                    <option value="{{ $user->name }}" data-customer_id="{{ $user->id }}">{{ $user->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('selected_staff')
-                                <div class="error">{{ $message }}</div>
-                                @enderror
-                            </div>
-
+                          
                             <!-- Booking Date/Time -->
                             <div class="form-group mt-3">
                                 <label>Booking Date/Time</label>

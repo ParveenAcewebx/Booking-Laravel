@@ -4,7 +4,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const prevButton = document.querySelector('.previous');
     const nextButtons = document.querySelectorAll('.next');
     const submitButton = document.querySelector('.submit');
-    const form = document.querySelector('form'); // Assuming form is wrapped around the steps
+    const form = document.querySelector('form'); 
+      const services_short_code_get_staff = document.querySelector('.get_service_staff');  
 
     if (steps.length <= 1) {
         // Handle case where there is only 1 step
@@ -173,14 +174,60 @@ document.addEventListener("DOMContentLoaded", function () {
             event.preventDefault(); 
         }
     }
-
-    // Add event listeners for next and previous buttons
     nextButtons.forEach(button => {
         button.addEventListener('click', handleNextButtonClick);
     });
 
-    prevButton.addEventListener('click', handlePreviousButtonClick);
+    function get_services_staff(){
 
-    // Add event listener for submit button
+    var serviceId = services_short_code_get_staff.value;
+       $.ajax({
+        url: '/get/services/staff', 
+        type: 'GET',
+        data: {
+            service_id: serviceId  
+        },
+        dataType: 'json',
+         success: function(response) {
+            var select_service_staff = document.querySelector('.select_service_staff');
+            var staffSelect = document.querySelector('.service_staff_form');
+  
+            staffSelect.innerHTML = '';
+            var defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = '---Select Staff---';
+            staffSelect.appendChild(defaultOption);
+            if (response && response.length > 0) {
+                staffSelect.disabled = false;
+                select_service_staff.classList.remove('hidden');  
+
+                // Add each staff member to the dropdown
+                response.forEach(function(staff) {
+                    var option = document.createElement('option');
+                    option.value = staff.id;
+                    option.textContent = staff.name;
+                    staffSelect.appendChild(option);
+                });
+            } else {
+                // If no staff available, disable dropdown and show a no staff option
+                staffSelect.disabled = true;
+                select_service_staff.classList.add('hidden');
+                
+                var noStaffOption = document.createElement('option');
+                noStaffOption.value = '';
+                noStaffOption.textContent = 'No staff available';
+                staffSelect.appendChild(noStaffOption);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX error:", status, error);
+        }
+    });
+}
+
+    prevButton.addEventListener('click', handlePreviousButtonClick);
     submitButton.addEventListener('click', handleSubmitButtonClick);
+    services_short_code_get_staff.addEventListener('change', get_services_staff);
+
+
 });
