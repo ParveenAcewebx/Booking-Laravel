@@ -148,23 +148,18 @@
                             </div>
                             <!-- Active Services -->
                             <div class="col-md-12 p-0">
-                                <div class="col-md-12 p-0">
                                 <div class="form-group">
                                     <label class="form-label">Assigned Vendors</label>
                                     <select class="form-control select-user" name="assigned_vendor" required>
                                         <option value="" disabled selected>Please Select Vendor</option>
                                         @foreach($vendorData as $vendor)
                                         <option value="{{ $vendor->id }}"
-                                            @if(in_array($vendor->id, old('assigned_vendor', [])))
-                                            selected
-                                            @endif
-                                            >
+                                            {{ old('assigned_vendor') == $vendor->id ? 'selected' : '' }}>
                                             {{ $vendor->name }}
                                         </option>
                                         @endforeach
                                     </select>
-                                </div>  
-                            </div>
+                                </div>
                             </div>
 
                             <!-- Featured Image Upload -->
