@@ -170,7 +170,7 @@
                                     </div>
 
                                     <div id="dayOffRepeater"></div>
-                                    @include('admin.vendor.edit.showing-staff-template')
+                                    @include('admin.vendor.partials.showing-template')
 
                                     <!-- Hidden JSON with staff data -->
                                     <input type="hidden" id="editDayOffData" value='@json($staffAssociation)'>
@@ -183,4 +183,109 @@
         </form>
     </div>
 </section>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    $('.select-user').select2();
+
+    let assignedStaff = @json($preAssignedStaffIds);
+    let selectedStaff = new Set();
+
+    function fetchAndDisplayServices(staffId, $cardBody) {
+        $cardBody.find('.staff-services').remove();
+        if (!staffId) return;
+
+        $.ajax({
+            url: `/admin/vendors/${staffId}/services`,
+            type: 'GET',
+            success: function(services) {
+                if (services.length > 0) {
+                    let listHtml = '<div class="staff-services">';
+                    services.forEach(service => {
+                        listHtml += `<span class="badge badge-service">${service}</span>`;
+                    });
+                    listHtml += '</div>';
+                    $cardBody.append(listHtml);
+                } else {
+                    $cardBody.append('<div class="staff-services text-muted">No services assigned</div>');
+                }
+            }
+        });
+    }
+
+    function attachStaffChangeHandler($select) {
+        $select.on('change', function() {
+            let staffId = $(this).val();
+            let prevId = $select.data('prev');
+
+            if (prevId) selectedStaff.delete(prevId);
+            if (staffId) selectedStaff.add(String(staffId));
+            $select.data('prev', staffId);
+
+            refreshOptions();
+            fetchAndDisplayServices(staffId, $(this).closest('.card-body'));
+        });
+    }
+
+    function attachDeleteHandler($btn) {
+        $btn.on('click', function() {
+            let $row = $(this).closest('.card');
+            let staffId = $row.find('.select-user').val();
+
+            if (staffId) selectedStaff.delete(String(staffId));
+            $row.remove();
+            refreshOptions();
+        });
+    }
+
+    function refreshOptions() {
+        $('.select-user').each(function() {
+            let $this = $(this);
+            let currentVal = $this.val();
+
+            $this.find('option').each(function() {
+                let optionVal = $(this).attr('value');
+                if (selectedStaff.has(String(optionVal)) && optionVal !== currentVal) {
+                    $(this).attr('disabled', true).hide();
+                } else {
+                    $(this).attr('disabled', false).show();
+                }
+            });
+
+            $this.trigger('change.select2');
+        });
+    }
+
+    function appendStaffTemplate(preSelectedId = null) {
+        let template = document.getElementById('staffTemplate').content.cloneNode(true);
+        document.getElementById('dayOffRepeater').appendChild(template);
+
+        let $newSelect = $('#dayOffRepeater').find('.select-user').last();
+        $newSelect.select2();
+
+        if (preSelectedId) {
+            $newSelect.val(String(preSelectedId)).trigger('change.select2');
+            selectedStaff.add(String(preSelectedId));
+        }
+
+        attachStaffChangeHandler($newSelect);
+        attachDeleteHandler($('#dayOffRepeater').find('.delete-row').last());
+        refreshOptions();
+
+        if (preSelectedId) {
+            fetchAndDisplayServices(preSelectedId, $newSelect.closest('.card-body'));
+        }
+    }
+
+    // Auto append preassigned staff
+    if (assignedStaff.length > 0) {
+        assignedStaff.forEach(id => appendStaffTemplate(id));
+    }
+
+    // Add new staff manually
+    document.getElementById('addStaffButton').addEventListener('click', function() {
+        appendStaffTemplate();
+    });
+});
+</script>
+    
 @endsection
