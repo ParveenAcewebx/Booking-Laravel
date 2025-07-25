@@ -40,6 +40,7 @@ Route::get('/admin/shortcodes/list', function () {
 });
 Route::get('/form/{slug}', [FormController::class, 'show'])->name('form.show');
 Route::post('/form/{slug}', [FormController::class, 'store'])->name('form.store');
+Route::get('/get/services/staff', [FormController::class, 'getservicesstaff'])->name('get.services.staff');
 
 // Guest routes (not logged in)
 Route::middleware('guest')->group(function () {
