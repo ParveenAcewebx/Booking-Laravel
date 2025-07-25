@@ -19,6 +19,8 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\DB;
+
 
 class VendorController extends Controller
 {
@@ -161,11 +163,39 @@ class VendorController extends Controller
     public function edit($id)
     {
         $vendor = Vendor::findOrFail($id);
-
-        // Get staff with user relation
         $staffAssociation = Staff::where('vendor_id', $id)
             ->with('user:id,name,email')
             ->get();
+
+        $staffRole = Role::where('name', 'staff')->first();
+
+        // All users with role 'staff'
+        $staffUsers = User::whereHas('roles', function ($query) use ($staffRole) {
+            $query->where('id', $staffRole->id);
+        })->get();
+
+        // User IDs already present in staff table
+        $staffTableUserIds = Staff::pluck('user_id')->toArray();
+
+        // User IDs of staff assigned to current vendor
+        $assignedUserIds = $staffAssociation->pluck('user_id')->toArray();
+
+        // Users with role staff but not in staff table
+        $roleStaffNotInStaffTable = $staffUsers->whereNotIn('id', $staffTableUserIds);
+
+        // Staff users where vendor_id is null
+        $availableStaffUserIds = Staff::whereNull('vendor_id')
+            ->whereIn('user_id', $staffUsers->pluck('id'))
+            ->pluck('user_id')
+            ->toArray();
+
+        $mergedAvailableIds = array_unique(array_merge(
+            $roleStaffNotInStaffTable->pluck('id')->toArray(),
+            $availableStaffUserIds,
+            $assignedUserIds // ADD assigned staff so they also appear in dropdown
+        ));
+
+        $availableStaff = User::whereIn('id', $mergedAvailableIds)->get();
 
         $roles = Role::all();
         $loginId = session('impersonate_original_user');
@@ -177,14 +207,30 @@ class VendorController extends Controller
         $assignedRole = $vendor->user?->roles->first() ?? $roles->firstWhere('name', 'staff');
         $selectedRoleId = $assignedRole?->id;
 
+        // **Pass preassigned IDs separately**
+        $preAssignedStaffIds = $staffAssociation->pluck('user_id')->toArray();
+
         return view('admin.vendor.edit', compact(
             'vendor',
             'roles',
             'loginUser',
             'selectedRoleId',
             'allServiceData',
-            'staffAssociation'
+            'staffAssociation',
+            'availableStaff',
+            'preAssignedStaffIds'
         ));
+    }
+
+
+    public function getStaffServices($staffId)
+    {
+        $services = DB::table('staff_service_associations')
+            ->join('services', 'services.id', '=', 'staff_service_associations.service_id')
+            ->where('staff_service_associations.staff_member', $staffId)
+            ->pluck('services.name');
+        // dd($services);
+        return response()->json($services);
     }
 
     public function update(Request $request, Vendor $vendor)
@@ -209,15 +255,32 @@ class VendorController extends Controller
         $vendor->stripe_live_site_key       = $request->stripe_live_site_key;
         $vendor->stripe_live_secret_key     = $request->stripe_live_secret_key;
 
-        $selectedStaffNames = $request->input('select_staff', []);
+        $selectedStaffIds = $request->input('select_staff', []);
 
-        $selectedStaffIds = User::whereIn('name', $selectedStaffNames)
-            ->pluck('id')
-            ->toArray();
+        // Convert to integers
+        $selectedStaffIds = array_map('intval', $selectedStaffIds);
 
+        // Step 1: Remove vendor_id from staff NOT in request
         Staff::where('vendor_id', $vendor->id)
             ->whereNotIn('user_id', $selectedStaffIds)
             ->update(['vendor_id' => null]);
+
+        // Step 2: Assign vendor_id to selected staff
+        foreach ($selectedStaffIds as $userId) {
+            $staff = Staff::where('user_id', $userId)->first();
+
+            if ($staff) {
+                // Update existing record
+                $staff->vendor_id = $vendor->id;
+                $staff->save();
+            } else {
+                // Create new record
+                Staff::create([
+                    'user_id'   => $userId,
+                    'vendor_id' => $vendor->id,
+                ]);
+            }
+        }
 
 
         if ($request->hasFile('thumbnail')) {
@@ -234,7 +297,6 @@ class VendorController extends Controller
         $vendor->save();
         return redirect()->route('vendors.list')->with('success', 'Vendor Updated Successfully.');
     }
-
 
     public function destroy($vendorId)
     {
