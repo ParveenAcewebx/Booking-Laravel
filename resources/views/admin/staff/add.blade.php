@@ -3,7 +3,6 @@
 @section('content')
 <section class="pcoded-main-container">
     <div class="pcoded-content">
-
         <!-- [ breadcrumb ] start -->
         <div class="page-header">
             <div class="page-block">
@@ -22,18 +21,6 @@
             </div>
         </div>
         <!-- [ breadcrumb ] end -->
-
-        <!-- [ Error Messages ] -->
-        @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-        @endif
-
         <!-- [ Main Content ] start -->
         <form action="{{ route('staff.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -50,54 +37,72 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Name:</label>
-                                        <input type="text" class="form-control" name="name" value="{{ old('name') }}" required>
+                                        <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" >
+                                        @error('name')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
 
-                                <!-- Description -->
+                                <!-- Email -->
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Email:</label>
-                                        <input type="email" class="form-control" name="email" value="{{ old('email') }}" required>
+                                        <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" >
+                                        @error('email')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
 
+                                <!-- Password -->
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Password:</label>
-                                        <input type="password" class="form-control" name="password" value="{{ old('password') }}" required>
+                                        <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" >
+                                        @error('password')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
 
+                                <!-- Confirm Password -->
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Confirm Password:</label>
-                                        <input type="password" class="form-control" name="password_confirmation" value="{{ old('password_confirmation') }}" required>
-                                        <div id="password-error"></div>
+                                        <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" name="password_confirmation" >
+                                        @error('password_confirmation')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
 
+                                <!-- Phone -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label">Phone Number</label>
+                                        <label>Phone Number:</label>
                                         <div class="input-group">
-                                            <select class="form-control" name="code" style="max-width: 100px;" value="{{ old('code') }}">
+                                            <select class="form-control @error('code') is-invalid @enderror" name="code" style="max-width: 100px;">
                                                 @foreach($phoneCountries as $country)
-                                                <option value="{{ $country['code'] }}" {{ $country['code'] == '+91' ? 'selected' : '' }}>
+                                                <option value="{{ $country['code'] }}" {{ old('code', '+91') == $country['code'] ? 'selected' : '' }}>
                                                     {{ $country['code'] }}
                                                 </option>
                                                 @endforeach
                                             </select>
-                                            <input type="text" class="form-control" name="phone_number" placeholder="Enter phone number" value="{{ old('phone_number') }}" required>
+                                            <input type="text" class="form-control @error('phone_number') is-invalid @enderror" name="phone_number" value="{{ old('phone_number') }}"  placeholder="Enter phone number">
                                         </div>
+                                        @error('phone_number')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
 
+                                <!-- Role (Hidden) -->
                                 @if($roles)
                                 <div class="col-md-6 d-none">
                                     <div class="form-group">
                                         <label>Role:</label>
-                                        <select class="form-control select-user" name="role" required>
+                                        <select class="form-control select-user" name="role">
                                             <option value="{{ $roles->id }}" selected>{{ $roles->name }}</option>
                                         </select>
                                     </div>
@@ -118,51 +123,47 @@
                             <!-- Status -->
                             <div class="form-group">
                                 <label>Status</label>
-                                <select name="status" class="form-control select-user">
-                                    <option value="{{ config('constants.status.active') }}"
-                                        {{ old('status', 1) == config('constants.status.active') ? 'selected' : '' }}>
-                                        Active
-                                    </option>
+                                <select name="status" class="form-control select-user @error('status') is-invalid @enderror">
+                                    <option value="{{ config('constants.status.active') }}" {{ old('status', 1) == config('constants.status.active') ? 'selected' : '' }}>Active</option>
                                     <option value="{{ config('constants.status.inactive') }}" {{ old('status', 1) == config('constants.status.inactive') ? 'selected' : '' }}>Inactive</option>
                                 </select>
                                 @error('status')
-                                <div class="text-danger mt-1">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="col-md-12 p-0">
-                                <div class="form-group">
-                                    <label class="form-label">Assigned Services</label>
-                                    <select class="form-control select-user" name="assigned_services[]" multiple="multiple" required>
-                                        @foreach($services as $service)
-                                        <option value="{{ $service->id }}"
-                                            @if(in_array($service->id, old('assigned_services', [])))
-                                            selected
-                                            @endif
-                                            >
-                                            {{ $service->name }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <!-- Active Services -->
-                            <div class="col-md-12 p-0">
-                                <div class="form-group">
-                                    <label class="form-label">Assigned Vendors</label>
-                                    <select class="form-control select-user" name="assigned_vendor" required>
-                                        <option value="" disabled selected>Please Select Vendor</option>
-                                        @foreach($vendorData as $vendor)
-                                        <option value="{{ $vendor->id }}"
-                                            {{ old('assigned_vendor') == $vendor->id ? 'selected' : '' }}>
-                                            {{ $vendor->name }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                            <!-- Assigned Services -->
+                            <div class="form-group">
+                                <label>Assigned Services</label>
+                                <select class="form-control select-user" name="assigned_services[]" multiple >
+                                    @foreach($services as $service)
+                                    <option value="{{ $service->id }}" {{ collect(old('assigned_services'))->contains($service->id) ? 'selected' : '' }}>
+                                        {{ $service->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                                @error('assigned_services')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                             </div>
 
-                            <!-- Featured Image Upload -->
+                            <!-- Assigned Vendor -->
+                            <div class="form-group">
+                                <label>Assigned Vendor</label>
+                                <select class="form-control select-user @error('assigned_vendor') is-invalid @enderror" name="assigned_vendor" >
+                                    <option value="" disabled {{ old('assigned_vendor') ? '' : 'selected' }}>Please Select Vendor</option>
+                                    @foreach($vendorData as $vendor)
+                                    <option value="{{ $vendor->id }}" {{ old('assigned_vendor') == $vendor->id ? 'selected' : '' }}>
+                                        {{ $vendor->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                                @error('assigned_vendor')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Avatar Upload -->
                             <div class="form-group">
                                 <label>Featured Image</label>
                                 <div class="input-group mb-1">
@@ -170,13 +171,13 @@
                                         <span class="input-group-text">Upload</span>
                                     </div>
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name="avatar" id="addAvatarInput" accept=".jpg,.jpeg,.png,.gif">
+                                        <input type="file" class="custom-file-input @error('avatar') is-invalid @enderror" name="avatar" id="addAvatarInput" accept=".jpg,.jpeg,.png,.gif">
                                         <label class="custom-file-label overflow-hidden" for="addAvatarInput">Choose file...</label>
                                     </div>
                                 </div>
                                 <small class="form-text text-muted">Supported types: JPG, JPEG, PNG, GIF.</small>
                                 @error('avatar')
-                                <div class="text-danger mt-1">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
 
                                 <!-- Image Preview -->
@@ -191,6 +192,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="text-right mt-0">
                                 <button type="submit" class="btn btn-primary">Save</button>
                             </div>
@@ -216,14 +218,9 @@
                                     </a>
                                 </li>
                             </ul>
-
                             <div class="tab-content">
-                                {{-- TAB: WORKING DAYS --}}
                                 @include('admin.staff.partials.add.working-days')
-
-                                {{-- TAB: DAYS OFF --}}
                                 @include('admin.staff.partials.add.days-off')
-
                             </div>
                         </div>
                     </div>

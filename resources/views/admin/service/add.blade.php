@@ -26,6 +26,7 @@
             </div>
         </div>
         <!-- [ breadcrumb ] end -->
+
         <!-- [ Main Content ] start -->
         <form action="{{ route('service.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -46,7 +47,6 @@
                                                name="name"
                                                class="form-control @error('name') is-invalid @enderror"
                                                value="{{ old('name') }}"
-                                               
                                                placeholder="Enter service name">
                                         @error('name')
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -58,7 +58,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Description</label>
-                                        <div id="quill-editor" style="height: 200px;"></div>
+                                        <div id="quill-editor" style="height: 200px;">{!! old('description') !!}</div>
                                         <textarea name="description"
                                                   id="description"
                                                   class="d-none @error('description') is-invalid @enderror">{{ old('description') }}</textarea>
@@ -73,8 +73,7 @@
                                     <div class="form-group">
                                         <label>Duration <span class="text-danger">*</span></label>
                                         <select name="duration"
-                                                class="form-control select-user @error('duration') is-invalid @enderror"
-                                                >
+                                                class="form-control select-user @error('duration') is-invalid @enderror">
                                             <option value="">-- Select Duration --</option>
                                             @for ($minutes = 30; $minutes <= 1440; $minutes += 30)
                                                 @php
@@ -102,7 +101,7 @@
                                         <label>Staff Member <span class="text-danger">*</span></label>
                                         <select name="staff_member[]"
                                                 class="form-control select2-mash @error('staff_member') is-invalid @enderror"
-                                                multiple >
+                                                multiple>
                                             @foreach($staffUsers as $user)
                                                 <option value="{{ $user->id }}"
                                                     {{ collect(old('staff_member'))->contains($user->id) ? 'selected' : '' }}>
@@ -131,8 +130,7 @@
                             <div class="form-group">
                                 <label>Category <span class="text-danger">*</span></label>
                                 <select name="category"
-                                        class="form-control category @error('category') is-invalid @enderror"
-                                        >
+                                        class="form-control category @error('category') is-invalid @enderror">
                                     <option value="">-- Select Category --</option>
                                     @foreach($categories as $category)
                                         <option value="{{ $category->id }}"
@@ -150,8 +148,7 @@
                             <div class="form-group">
                                 <label>Status</label>
                                 <select name="status"
-                                        class="form-control select-user @error('status') is-invalid @enderror"
-                                        >
+                                        class="form-control select-user @error('status') is-invalid @enderror">
                                     <option value="{{ config('constants.status.active') }}"
                                         {{ old('status', 1) == config('constants.status.active') ? 'selected' : '' }}>
                                         Active
