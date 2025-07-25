@@ -29,7 +29,7 @@
   <!-- Preline JS -->
   <script src="https://unpkg.com/preline@latest/dist/preline.js"></script>
   <script src="{{asset('assets/js/frontend/custom.js')}}"></script>
-
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <!-- (Optional) Alpine.js for more interactivity -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
