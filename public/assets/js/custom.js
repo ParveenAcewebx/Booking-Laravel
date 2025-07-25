@@ -1294,13 +1294,3 @@ $(document).ready(function () {
     handleFileInput('#avatarInput', '#avatar-preview-container', '#avatar-preview', '#remove-avatar-preview', '#removeAvatarFlag');
 });
 /* ------------------------ End Services Thumbnail Function  ---------------------------- */
-document.getElementById('addStaffButton').addEventListener('click', function () {
-    const template = document.getElementById('staffTemplate');
-    const container = document.getElementById('dayOffRepeater');
-    container.appendChild(template.content.cloneNode(true));
-
-    // Reinitialize date range picker for new inputs (if using plugin)
-    if (typeof initDateRangePicker === 'function') {
-        initDateRangePicker();
-    }
-});

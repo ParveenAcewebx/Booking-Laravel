@@ -154,7 +154,7 @@
                             <ul class="nav nav-tabs mb-3" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link active" data-toggle="tab" href="#stripeAccount" role="tab">
-                                        <i class="fab fa-stripe"></i> Stripe Mode
+                                        <i class="fab fa-stripe"></i> Stripe
                                     </a>
                                 </li>
                             </ul>

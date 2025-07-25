@@ -4,7 +4,7 @@
 <section class="pcoded-main-container">
     <div class="pcoded-content">
 
-        <!-- [ breadcrumb ] start -->
+        <!-- Breadcrumb -->
         <div class="page-header">
             <div class="page-block">
                 <div class="row align-items-center">
@@ -23,9 +23,8 @@
                 </div>
             </div>
         </div>
-        <!-- [ breadcrumb ] end -->
 
-        <!-- [ Main Content ] start -->
+        <!-- Main Content -->
         <form action="{{ route('vendors.update', $vendor->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
@@ -82,7 +81,6 @@
                             <h5>Settings</h5>
                         </div>
                         <div class="card-body">
-
                             <!-- Status -->
                             <div class="form-group">
                                 <label class="form-label">Status</label>
@@ -110,7 +108,7 @@
                                         <label class="custom-file-label overflow-hidden" for="avatarInput">Choose file...</label>
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
+                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, GIF.</small>
                                 @error('thumbnail')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
@@ -123,7 +121,6 @@
                                             <img id="avatar-preview"
                                                 src="{{ !empty($vendor->thumbnail) ? asset('storage/' . $vendor->thumbnail) : asset('assets/images/no-image-available.png') }}"
                                                 class="card-img-top img-thumbnail"
-                                                alt="Avatar Preview"
                                                 style="object-fit: cover; height: 120px; width: 100%;">
                                             <button type="button" id="remove-avatar-preview"
                                                 class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
@@ -133,7 +130,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <input type="hidden" name="remove_avatar" id="removeAvatarFlag" value="0">
                             </div>
 
@@ -151,65 +147,28 @@
                 <div class="col-md-8">
                     <div class="card mt-3">
                         <div class="card-body">
-                            <!-- Nav Tabs -->
+                            <!-- Tabs -->
                             <ul class="nav nav-tabs mb-3" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link active" data-toggle="tab" href="#stripeAccount" role="tab">
-                                        <i class="fab fa-stripe"></i> Stripe Mode
+                                        <i class="fab fa-stripe"></i> Stripe
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#assignServices" role="tab">
+                                    <a class="nav-link" data-toggle="tab" href="#assignStaff" role="tab">
                                         <i class="feather icon-layers"></i> Assign Staff
                                     </a>
                                 </li>
                             </ul>
 
-                            <!-- Tab Content -->
                             <div class="tab-content">
+                                <!-- Stripe Tab -->
                                 <div class="tab-pane fade show active" id="stripeAccount" role="tabpanel">
-                                    <div class="stripe-credentialss mt-3">
-                                        <div class="custom-control custom-checkbox mb-3">
-                                            <input type="checkbox" class="custom-control-input" id="payment__is_live"
-                                                name="stripe_mode" value="1"
-                                                {{ $vendor->stripe_mode == 1 ? 'checked' : '' }}>
-                                            <label class="custom-control-label" for="payment__is_live">Live Mode</label>
-                                        </div>
-
-                                        <div class="stripe-test {{ $vendor->stripe_mode ? 'd-none' : '' }}">
-                                            <div class="form-group">
-                                                <label for="stripe_test_site_key">Test Site Key</label>
-                                                <input type="text" name="stripe_test_site_key" id="stripe_test_site_key"
-                                                    class="form-control"
-                                                    value="{{ old('stripe_test_site_key', $vendor->stripe_test_site_key) }}">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="stripe_test_secret_key">Test Secret Key</label>
-                                                <input type="text" name="stripe_test_secret_key" id="stripe_test_secret_key"
-                                                    class="form-control"
-                                                    value="{{ old('stripe_test_secret_key', $vendor->stripe_test_secret_key) }}">
-                                            </div>
-                                        </div>
-
-                                        <div class="stripe-live {{ $vendor->stripe_mode ? '' : 'd-none' }}">
-                                            <div class="form-group">
-                                                <label for="stripe_live_site_key">Live Site Key</label>
-                                                <input type="text" name="stripe_live_site_key" id="stripe_live_site_key"
-                                                    class="form-control"
-                                                    value="{{ old('stripe_live_site_key', $vendor->stripe_live_site_key) }}">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="stripe_live_secret_key">Live Secret Key</label>
-                                                <input type="text" name="stripe_live_secret_key" id="stripe_live_secret_key"
-                                                    class="form-control"
-                                                    value="{{ old('stripe_live_secret_key', $vendor->stripe_live_secret_key) }}">
-                                            </div>
-                                        </div>
-                                    </div>
+                                    @include('admin.vendor.partials.stripe-credentials')
                                 </div>
 
                                 <!-- Assign Staff Tab -->
-                                <div class="tab-pane fade" id="assignServices" role="tabpanel">
+                                <div class="tab-pane fade" id="assignStaff" role="tabpanel">
                                     <div class="mb-3 d-flex justify-content-between align-items-center">
                                         <h6 class="mb-0 font-weight-bold">Assigned Staff</h6>
                                         <button type="button" class="btn btn-sm btn-primary" id="addStaffButton">
@@ -218,19 +177,120 @@
                                     </div>
 
                                     <div id="dayOffRepeater"></div>
-                                    @include('admin.vendor.edit.showing-staff-template')
-
-                                    <!-- Hidden JSON with staff data -->
-                                    <input type="hidden" id="editDayOffData" value='@json($staffAssociation)'>
+                                    <!-- Staff Template -->
+                                    @include('admin.vendor.partials.showing-template')
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </form>
-        <!-- [ Main Content ] end -->
     </div>
 </section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        $('.select-user').select2();
+
+        let assignedStaff = @json($preAssignedStaffIds);
+        let selectedStaff = new Set();
+
+        function fetchAndDisplayServices(staffId, $cardBody) {
+            $cardBody.find('.staff-services').remove();
+            if (!staffId) return;
+
+            $.ajax({
+                url: `/admin/vendors/${staffId}/services`,
+                type: 'GET',
+                success: function(services) {
+                    if (services.length > 0) {
+                        let listHtml = '<div class="staff-services">';
+                        services.forEach(service => {
+                            listHtml += `<span class="badge badge-service">${service}</span>`;
+                        });
+                        listHtml += '</div>';
+                        $cardBody.append(listHtml);
+                    } else {
+                        $cardBody.append('<div class="staff-services text-muted">No services assigned</div>');
+                    }
+                }
+            });
+        }
+
+        function attachStaffChangeHandler($select) {
+            $select.on('change', function() {
+                let staffId = $(this).val();
+                let prevId = $select.data('prev');
+
+                if (prevId) selectedStaff.delete(prevId);
+                if (staffId) selectedStaff.add(String(staffId));
+                $select.data('prev', staffId);
+
+                refreshOptions();
+                fetchAndDisplayServices(staffId, $(this).closest('.card-body'));
+            });
+        }
+
+        function attachDeleteHandler($btn) {
+            $btn.on('click', function() {
+                let $row = $(this).closest('.card');
+                let staffId = $row.find('.select-user').val();
+
+                if (staffId) selectedStaff.delete(String(staffId));
+                $row.remove();
+                refreshOptions();
+            });
+        }
+
+        function refreshOptions() {
+            $('.select-user').each(function() {
+                let $this = $(this);
+                let currentVal = $this.val();
+
+                $this.find('option').each(function() {
+                    let optionVal = $(this).attr('value');
+                    if (selectedStaff.has(String(optionVal)) && optionVal !== currentVal) {
+                        $(this).attr('disabled', true).hide();
+                    } else {
+                        $(this).attr('disabled', false).show();
+                    }
+                });
+
+                $this.trigger('change.select2');
+            });
+        }
+
+        function appendStaffTemplate(preSelectedId = null) {
+            let template = document.getElementById('staffTemplate').content.cloneNode(true);
+            document.getElementById('dayOffRepeater').appendChild(template);
+
+            let $newSelect = $('#dayOffRepeater').find('.select-user').last();
+            $newSelect.select2();
+
+            if (preSelectedId) {
+                $newSelect.val(String(preSelectedId)).trigger('change.select2');
+                selectedStaff.add(String(preSelectedId));
+            }
+
+            attachStaffChangeHandler($newSelect);
+            attachDeleteHandler($('#dayOffRepeater').find('.delete-row').last());
+            refreshOptions();
+
+            if (preSelectedId) {
+                fetchAndDisplayServices(preSelectedId, $newSelect.closest('.card-body'));
+            }
+        }
+
+        // Auto append preassigned staff
+        if (assignedStaff.length > 0) {
+            assignedStaff.forEach(id => appendStaffTemplate(id));
+        }
+
+        // Add new staff manually
+        document.getElementById('addStaffButton').addEventListener('click', function() {
+            appendStaffTemplate();
+        });
+    });
+</script>
 @endsection
