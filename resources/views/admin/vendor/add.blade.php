@@ -42,10 +42,10 @@
                                 <!-- Name -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label">Name  <span class="text-danger">*</span></label>
+                                        <label class="form-label">Name <span class="text-danger">*</span></label>
                                         <input type="text" name="username" class="form-control @error('username') is-invalid @enderror" placeholder="Name" value="{{ old('username') }}">
                                         @error('username')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -53,10 +53,10 @@
                                 <!-- Email -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label">Email  <span class="text-danger">*</span></label>
+                                        <label class="form-label">Email <span class="text-danger">*</span></label>
                                         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Email" value="{{ old('email') }}">
                                         @error('email')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -68,7 +68,7 @@
                                         <div id="quill-editor" style="height: 200px;">{!! old('description') !!}</div>
                                         <textarea name="description" id="description" class="d-none">{!! old('description') !!}</textarea>
                                         @error('description')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -93,12 +93,13 @@
                                         Active
                                     </option>
                                     <option value="{{ config('constants.status.inactive') }}"
-                                        {{ old('status') == config('constants.status.inactive') ? 'selected' : '' }}>
+                                        {{ old('status', config('constants.status.active')) == config('constants.status.inactive') ? 'selected' : '' }}>
                                         Inactive
                                     </option>
                                 </select>
+
                                 @error('status')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
 
@@ -116,7 +117,7 @@
                                 </div>
                                 <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
                                 @error('thumbnail')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
 
