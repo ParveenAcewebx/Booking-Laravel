@@ -28,23 +28,22 @@
         <form action="{{ route('vendors.update', $vendor->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+
             <div class="row">
-                <!-- Left Column -->
+                <!-- Left -->
                 <div class="col-md-8 order-md-1">
                     <div class="card">
-                        <div class="card-header">
-                            <h5>Vendor Information</h5>
-                        </div>
+                        <div class="card-header"><h5>Vendor Information</h5></div>
                         <div class="card-body">
                             <div class="row">
                                 <!-- Name -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label">Name</label>
-                                        <input type="text" class="form-control" name="username"
-                                            value="{{ old('username', $vendor->name) }}" placeholder="Name" required>
+                                        <label class="form-label">Name <span class="text-danger">*</span></label>
+                                        <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
+                                            value="{{ old('username', $vendor->name) }}">
                                         @error('username')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -52,11 +51,11 @@
                                 <!-- Email -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label">Email</label>
-                                        <input type="email" class="form-control" name="email"
-                                            value="{{ old('email', $vendor->email) }}" placeholder="Email" required>
+                                        <label class="form-label">Email <span class="text-danger">*</span></label>
+                                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                                            value="{{ old('email', $vendor->email) }}">
                                         @error('email')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -67,6 +66,9 @@
                                         <label class="form-label">Description</label>
                                         <div id="quill-editor" style="height: 200px;">{!! old('description', $vendor->description) !!}</div>
                                         <textarea name="description" id="description" class="d-none">{{ old('description', $vendor->description) }}</textarea>
+                                        @error('description')
+                                            <div class="text-danger mt-1">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -74,66 +76,57 @@
                     </div>
                 </div>
 
-                <!-- Right Column -->
+                <!-- Right -->
                 <div class="col-md-4 order-md-2">
                     <div class="card">
-                        <div class="card-header">
-                            <h5>Settings</h5>
-                        </div>
+                        <div class="card-header"><h5>Settings</h5></div>
                         <div class="card-body">
                             <!-- Status -->
                             <div class="form-group">
                                 <label class="form-label">Status</label>
-                                <select name="status" id="status" class="form-control select-user">
-                                    <option value="{{ config('constants.status.active') }}"
-                                        {{ $vendor->status == config('constants.status.active') ? 'selected' : '' }}>Active</option>
-                                    <option value="{{ config('constants.status.inactive') }}"
-                                        {{ $vendor->status == config('constants.status.inactive') ? 'selected' : '' }}>Inactive</option>
+                                <select name="status" class="form-control select-user @error('status') is-invalid @enderror">
+                                    <option value="{{ config('constants.status.active') }}" {{ old('status', $vendor->status) == config('constants.status.active') ? 'selected' : '' }}>Active</option>
+                                    <option value="{{ config('constants.status.inactive') }}" {{ old('status', $vendor->status) == config('constants.status.inactive') ? 'selected' : '' }}>Inactive</option>
                                 </select>
                                 @error('status')
-                                <div class="text-danger mt-1">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <!-- Image Upload -->
+                            <!-- Thumbnail Upload -->
                             <div class="form-group">
                                 <label class="form-label">Featured Image</label>
                                 <div class="input-group mb-1">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">Upload</span>
-                                    </div>
+                                    <div class="input-group-prepend"><span class="input-group-text">Upload</span></div>
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input" name="thumbnail" id="avatarInput"
-                                            accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
-                                        <label class="custom-file-label overflow-hidden" for="avatarInput">Choose file...</label>
+                                            accept=".jpg,.jpeg,.png,.gif,image/*">
+                                        <label class="custom-file-label" for="avatarInput">Choose file...</label>
                                     </div>
                                 </div>
                                 <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, GIF.</small>
                                 @error('thumbnail')
-                                <div class="text-danger mt-1">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
 
                                 <!-- Preview -->
-                                <div id="avatar-preview-container"
-                                    class="row mt-3 {{ !empty($vendor->thumbnail) ? '' : 'd-none' }}">
+                                <div id="avatar-preview-container" class="row mt-3 {{ $vendor->thumbnail ? '' : 'd-none' }}">
                                     <div class="col-md-6 position-relative">
                                         <div class="card shadow-sm">
                                             <img id="avatar-preview"
-                                                src="{{ !empty($vendor->thumbnail) ? asset('storage/' . $vendor->thumbnail) : asset('assets/images/no-image-available.png') }}"
+                                                src="{{ asset('storage/' . $vendor->thumbnail) }}"
                                                 class="card-img-top img-thumbnail"
                                                 style="object-fit: cover; height: 120px; width: 100%;">
                                             <button type="button" id="remove-avatar-preview"
                                                 class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
-                                                title="Remove avatar">
-                                                &times;
-                                            </button>
+                                                title="Remove image">&times;</button>
                                         </div>
                                     </div>
                                 </div>
                                 <input type="hidden" name="remove_avatar" id="removeAvatarFlag" value="0">
                             </div>
 
-                            <!-- Submit Button -->
+                            <!-- Submit -->
                             <div class="text-right mt-0">
                                 <button type="submit" class="btn btn-primary">Update</button>
                             </div>
@@ -142,12 +135,12 @@
                 </div>
             </div>
 
-            <!-- Stripe + Staff Tabs -->
+            <!-- Stripe and Staff Tabs -->
             <div class="row">
                 <div class="col-md-8">
                     <div class="card mt-3">
                         <div class="card-body">
-                            <!-- Tabs -->
+                            <!-- Nav Tabs -->
                             <ul class="nav nav-tabs mb-3" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link active" data-toggle="tab" href="#stripeAccount" role="tab">
@@ -177,8 +170,10 @@
                                     </div>
 
                                     <div id="dayOffRepeater"></div>
-                                    <!-- Staff Template -->
-                                    @include('admin.vendor.partials.showing-template')
+                                    @include('admin.vendor.edit.showing-staff-template')
+
+                                    <!-- Hidden JSON with staff data -->
+                                    <input type="hidden" id="editDayOffData" value='@json($staffAssociation)'>
                                 </div>
                             </div>
                         </div>
@@ -188,109 +183,4 @@
         </form>
     </div>
 </section>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        $('.select-user').select2();
-
-        let assignedStaff = @json($preAssignedStaffIds);
-        let selectedStaff = new Set();
-
-        function fetchAndDisplayServices(staffId, $cardBody) {
-            $cardBody.find('.staff-services').remove();
-            if (!staffId) return;
-
-            $.ajax({
-                url: `/admin/vendors/${staffId}/services`,
-                type: 'GET',
-                success: function(services) {
-                    if (services.length > 0) {
-                        let listHtml = '<div class="staff-services">';
-                        services.forEach(service => {
-                            listHtml += `<span class="badge badge-service">${service}</span>`;
-                        });
-                        listHtml += '</div>';
-                        $cardBody.append(listHtml);
-                    } else {
-                        $cardBody.append('<div class="staff-services text-muted">No services assigned</div>');
-                    }
-                }
-            });
-        }
-
-        function attachStaffChangeHandler($select) {
-            $select.on('change', function() {
-                let staffId = $(this).val();
-                let prevId = $select.data('prev');
-
-                if (prevId) selectedStaff.delete(prevId);
-                if (staffId) selectedStaff.add(String(staffId));
-                $select.data('prev', staffId);
-
-                refreshOptions();
-                fetchAndDisplayServices(staffId, $(this).closest('.card-body'));
-            });
-        }
-
-        function attachDeleteHandler($btn) {
-            $btn.on('click', function() {
-                let $row = $(this).closest('.card');
-                let staffId = $row.find('.select-user').val();
-
-                if (staffId) selectedStaff.delete(String(staffId));
-                $row.remove();
-                refreshOptions();
-            });
-        }
-
-        function refreshOptions() {
-            $('.select-user').each(function() {
-                let $this = $(this);
-                let currentVal = $this.val();
-
-                $this.find('option').each(function() {
-                    let optionVal = $(this).attr('value');
-                    if (selectedStaff.has(String(optionVal)) && optionVal !== currentVal) {
-                        $(this).attr('disabled', true).hide();
-                    } else {
-                        $(this).attr('disabled', false).show();
-                    }
-                });
-
-                $this.trigger('change.select2');
-            });
-        }
-
-        function appendStaffTemplate(preSelectedId = null) {
-            let template = document.getElementById('staffTemplate').content.cloneNode(true);
-            document.getElementById('dayOffRepeater').appendChild(template);
-
-            let $newSelect = $('#dayOffRepeater').find('.select-user').last();
-            $newSelect.select2();
-
-            if (preSelectedId) {
-                $newSelect.val(String(preSelectedId)).trigger('change.select2');
-                selectedStaff.add(String(preSelectedId));
-            }
-
-            attachStaffChangeHandler($newSelect);
-            attachDeleteHandler($('#dayOffRepeater').find('.delete-row').last());
-            refreshOptions();
-
-            if (preSelectedId) {
-                fetchAndDisplayServices(preSelectedId, $newSelect.closest('.card-body'));
-            }
-        }
-
-        // Auto append preassigned staff
-        if (assignedStaff.length > 0) {
-            assignedStaff.forEach(id => appendStaffTemplate(id));
-        }
-
-        // Add new staff manually
-        document.getElementById('addStaffButton').addEventListener('click', function() {
-            appendStaffTemplate();
-        });
-    });
-</script>
 @endsection
