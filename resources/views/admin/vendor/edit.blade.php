@@ -3,8 +3,7 @@
 @section('content')
 <section class="pcoded-main-container">
     <div class="pcoded-content">
-
-        <!-- [ breadcrumb ] start -->
+        <!-- Breadcrumb -->
         <div class="page-header">
             <div class="page-block">
                 <div class="row align-items-center">
@@ -23,29 +22,27 @@
                 </div>
             </div>
         </div>
-        <!-- [ breadcrumb ] end -->
 
-        <!-- [ Main Content ] start -->
+        <!-- Main Content -->
         <form action="{{ route('vendors.update', $vendor->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+
             <div class="row">
-                <!-- Left Column -->
+                <!-- Left -->
                 <div class="col-md-8 order-md-1">
                     <div class="card">
-                        <div class="card-header">
-                            <h5>Vendor Information</h5>
-                        </div>
+                        <div class="card-header"><h5>Vendor Information</h5></div>
                         <div class="card-body">
                             <div class="row">
                                 <!-- Name -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label">Name</label>
-                                        <input type="text" class="form-control" name="username"
-                                            value="{{ old('username', $vendor->name) }}" placeholder="Name" required>
+                                        <label class="form-label">Name  <span class="text-danger">*</span></label>
+                                        <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
+                                            value="{{ old('username', $vendor->name) }}">
                                         @error('username')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -53,11 +50,11 @@
                                 <!-- Email -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label">Email</label>
-                                        <input type="email" class="form-control" name="email"
-                                            value="{{ old('email', $vendor->email) }}" placeholder="Email" required>
+                                        <label class="form-label">Email  <span class="text-danger">*</span></label>
+                                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                                            value="{{ old('email', $vendor->email) }}">
                                         @error('email')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -68,6 +65,9 @@
                                         <label class="form-label">Description</label>
                                         <div id="quill-editor" style="height: 200px;">{!! old('description', $vendor->description) !!}</div>
                                         <textarea name="description" id="description" class="d-none">{{ old('description', $vendor->description) }}</textarea>
+                                        @error('description')
+                                            <div class="text-danger mt-1">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -75,69 +75,58 @@
                     </div>
                 </div>
 
-                <!-- Right Column -->
+                <!-- Right -->
                 <div class="col-md-4 order-md-2">
                     <div class="card">
-                        <div class="card-header">
-                            <h5>Settings</h5>
-                        </div>
+                        <div class="card-header"><h5>Settings</h5></div>
                         <div class="card-body">
-
                             <!-- Status -->
                             <div class="form-group">
                                 <label class="form-label">Status</label>
-                                <select name="status" id="status" class="form-control select-user">
-                                    <option value="{{ config('constants.status.active') }}"
-                                        {{ $vendor->status == config('constants.status.active') ? 'selected' : '' }}>Active</option>
-                                    <option value="{{ config('constants.status.inactive') }}"
-                                        {{ $vendor->status == config('constants.status.inactive') ? 'selected' : '' }}>Inactive</option>
+                                <select name="status" class="form-control select-user @error('status') is-invalid @enderror">
+                                    <option value="{{ config('constants.status.active') }}" {{ old('status', $vendor->status) == config('constants.status.active') ? 'selected' : '' }}>Active</option>
+                                    <option value="{{ config('constants.status.inactive') }}" {{ old('status', $vendor->status) == config('constants.status.inactive') ? 'selected' : '' }}>Inactive</option>
                                 </select>
                                 @error('status')
-                                <div class="text-danger mt-1">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <!-- Image Upload -->
+                            <!-- Thumbnail Upload -->
                             <div class="form-group">
                                 <label class="form-label">Featured Image</label>
                                 <div class="input-group mb-1">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">Upload</span>
-                                    </div>
+                                    <div class="input-group-prepend"><span class="input-group-text">Upload</span></div>
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input" name="thumbnail" id="avatarInput"
-                                            accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
-                                        <label class="custom-file-label overflow-hidden" for="avatarInput">Choose file...</label>
+                                            accept=".jpg,.jpeg,.png,.gif,image/*">
+                                        <label class="custom-file-label" for="avatarInput">Choose file...</label>
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
+                                <small class="form-text text-muted">Supported formats: JPG, PNG, GIF</small>
                                 @error('thumbnail')
-                                <div class="text-danger mt-1">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
 
                                 <!-- Preview -->
-                                <div id="avatar-preview-container"
-                                    class="row mt-3 {{ !empty($vendor->thumbnail) ? '' : 'd-none' }}">
+                                <div id="avatar-preview-container" class="row mt-3 {{ $vendor->thumbnail ? '' : 'd-none' }}">
                                     <div class="col-md-6 position-relative">
                                         <div class="card shadow-sm">
                                             <img id="avatar-preview"
-                                                src="{{ !empty($vendor->thumbnail) ? asset('storage/' . $vendor->thumbnail) : asset('assets/images/no-image-available.png') }}"
+                                                src="{{ asset('storage/' . $vendor->thumbnail) }}"
                                                 class="card-img-top img-thumbnail"
-                                                alt="Avatar Preview"
-                                                style="object-fit: cover; height: 120px; width: 100%;">
+                                                alt="Preview"
+                                                style="object-fit: cover; height: 120px;">
                                             <button type="button" id="remove-avatar-preview"
                                                 class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
-                                                title="Remove avatar">
-                                                &times;
-                                            </button>
+                                                title="Remove image">&times;</button>
                                         </div>
                                     </div>
                                 </div>
-
                                 <input type="hidden" name="remove_avatar" id="removeAvatarFlag" value="0">
                             </div>
 
-                            <!-- Submit Button -->
+                            <!-- Submit -->
                             <div class="text-right mt-0">
                                 <button type="submit" class="btn btn-primary">Update</button>
                             </div>
@@ -146,12 +135,11 @@
                 </div>
             </div>
 
-            <!-- Stripe + Staff Tabs -->
+            <!-- Stripe and Staff Tabs -->
             <div class="row">
                 <div class="col-md-8">
                     <div class="card mt-3">
                         <div class="card-body">
-                            <!-- Nav Tabs -->
                             <ul class="nav nav-tabs mb-3" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link active" data-toggle="tab" href="#stripeAccount" role="tab">
@@ -165,50 +153,43 @@
                                 </li>
                             </ul>
 
-                            <!-- Tab Content -->
                             <div class="tab-content">
+                                <!-- Stripe -->
                                 <div class="tab-pane fade show active" id="stripeAccount" role="tabpanel">
-                                    <div class="stripe-credentialss mt-3">
-                                        <div class="custom-control custom-checkbox mb-3">
-                                            <input type="checkbox" class="custom-control-input" id="payment__is_live"
-                                                name="stripe_mode" value="1"
-                                                {{ $vendor->stripe_mode == 1 ? 'checked' : '' }}>
-                                            <label class="custom-control-label" for="payment__is_live">Live Mode</label>
-                                        </div>
+                                    <div class="form-group custom-control custom-checkbox mb-3">
+                                        <input type="checkbox" class="custom-control-input" id="payment__is_live"
+                                            name="stripe_mode" value="1" {{ old('stripe_mode', $vendor->stripe_mode) ? 'checked' : '' }}>
+                                        <label class="custom-control-label" for="payment__is_live">Live Mode</label>
+                                    </div>
 
-                                        <div class="stripe-test {{ $vendor->stripe_mode ? 'd-none' : '' }}">
-                                            <div class="form-group">
-                                                <label for="stripe_test_site_key">Test Site Key</label>
-                                                <input type="text" name="stripe_test_site_key" id="stripe_test_site_key"
-                                                    class="form-control"
-                                                    value="{{ old('stripe_test_site_key', $vendor->stripe_test_site_key) }}">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="stripe_test_secret_key">Test Secret Key</label>
-                                                <input type="text" name="stripe_test_secret_key" id="stripe_test_secret_key"
-                                                    class="form-control"
-                                                    value="{{ old('stripe_test_secret_key', $vendor->stripe_test_secret_key) }}">
-                                            </div>
+                                    <div class="stripe-test {{ old('stripe_mode', $vendor->stripe_mode) ? 'd-none' : '' }}">
+                                        <div class="form-group">
+                                            <label>Test Site Key</label>
+                                            <input type="text" name="stripe_test_site_key" class="form-control"
+                                                value="{{ old('stripe_test_site_key', $vendor->stripe_test_site_key) }}">
                                         </div>
+                                        <div class="form-group">
+                                            <label>Test Secret Key</label>
+                                            <input type="text" name="stripe_test_secret_key" class="form-control"
+                                                value="{{ old('stripe_test_secret_key', $vendor->stripe_test_secret_key) }}">
+                                        </div>
+                                    </div>
 
-                                        <div class="stripe-live {{ $vendor->stripe_mode ? '' : 'd-none' }}">
-                                            <div class="form-group">
-                                                <label for="stripe_live_site_key">Live Site Key</label>
-                                                <input type="text" name="stripe_live_site_key" id="stripe_live_site_key"
-                                                    class="form-control"
-                                                    value="{{ old('stripe_live_site_key', $vendor->stripe_live_site_key) }}">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="stripe_live_secret_key">Live Secret Key</label>
-                                                <input type="text" name="stripe_live_secret_key" id="stripe_live_secret_key"
-                                                    class="form-control"
-                                                    value="{{ old('stripe_live_secret_key', $vendor->stripe_live_secret_key) }}">
-                                            </div>
+                                    <div class="stripe-live {{ old('stripe_mode', $vendor->stripe_mode) ? '' : 'd-none' }}">
+                                        <div class="form-group">
+                                            <label>Live Site Key</label>
+                                            <input type="text" name="stripe_live_site_key" class="form-control"
+                                                value="{{ old('stripe_live_site_key', $vendor->stripe_live_site_key) }}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Live Secret Key</label>
+                                            <input type="text" name="stripe_live_secret_key" class="form-control"
+                                                value="{{ old('stripe_live_secret_key', $vendor->stripe_live_secret_key) }}">
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Assign Staff Tab -->
+                                <!-- Staff Assignment -->
                                 <div class="tab-pane fade" id="assignServices" role="tabpanel">
                                     <div class="mb-3 d-flex justify-content-between align-items-center">
                                         <h6 class="mb-0 font-weight-bold">Assigned Staff</h6>
@@ -219,18 +200,14 @@
 
                                     <div id="dayOffRepeater"></div>
                                     @include('admin.vendor.edit.showing-staff-template')
-
-                                    <!-- Hidden JSON with staff data -->
                                     <input type="hidden" id="editDayOffData" value='@json($staffAssociation)'>
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </form>
-        <!-- [ Main Content ] end -->
     </div>
 </section>
 @endsection

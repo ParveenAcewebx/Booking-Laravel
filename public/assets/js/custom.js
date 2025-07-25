@@ -1304,3 +1304,5 @@ document.getElementById('addStaffButton').addEventListener('click', function () 
         initDateRangePicker();
     }
 });
+
+
