@@ -1293,4 +1293,64 @@ $(document).ready(function () {
     handleFileInput('#addAvatarInput', '#add-avatar-preview-container', '#add-avatar-preview', '#remove-add-avatar-preview', '#removeAddAvatarFlag');
     handleFileInput('#avatarInput', '#avatar-preview-container', '#avatar-preview', '#remove-avatar-preview', '#removeAvatarFlag');
 });
+ const services_short_code_get_staff = document.querySelector('.get_service_staff');  
+    services_short_code_get_staff.addEventListener('change', function() {
+        var customValue = ''; 
+        get_services_staff(customValue);
+    });
+var selectedStaff = document.querySelector('.selected_staff').value;
+if(selectedStaff){
+    get_services_staff(selectedStaff);
+}
+function get_services_staff(selectedvalue){
+     var serviceId = services_short_code_get_staff.value;
+       $.ajax({
+        url: '/get/services/staff', 
+        type: 'GET',
+        data: {
+            service_id: serviceId  
+        },
+        dataType: 'json',
+         success: function(response) {
+            var select_service_staff = document.querySelector('.select_service_staff');
+            var staffSelect = document.querySelector('.service_staff_form');
+            staffSelect.innerHTML = '';
+            var defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = '---Select Staff---';
+            staffSelect.appendChild(defaultOption);
+            if (response && response.length > 0) {
+                staffSelect.disabled = false;
+                select_service_staff.classList.remove('d-none');  
+
+                // Add each staff member to the dropdown
+                response.forEach(function(staff) {
+                    var option = document.createElement('option');
+                    option.value = staff.id;
+                    option.textContent = staff.name;
+                    staffSelect.appendChild(option);
+                });
+                 if (selectedvalue) {
+                    var options = staffSelect.querySelectorAll('option');
+                    options.forEach(function(option) {
+                        if (option.value == selectedStaff) {
+                            option.selected = true;
+                        }
+                    });
+                }
+            } else {
+                staffSelect.disabled = true;
+                select_service_staff.classList.add('d-none');
+                var noStaffOption = document.createElement('option');
+                noStaffOption.value = '';
+                noStaffOption.textContent = 'No staff available';
+                staffSelect.appendChild(noStaffOption);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX error:", status, error);
+        }
+    });
+}
+
 /* ------------------------ End Services Thumbnail Function  ---------------------------- */

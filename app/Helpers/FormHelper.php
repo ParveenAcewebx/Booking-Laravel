@@ -37,6 +37,7 @@ class FormHelper
                 'file' => 'form-control',
                 'helpText' => 'form-text text-muted',
                 'button' => 'btn btn-primary', 
+                'hidden'=>'',
             ],
             'tailwind' => [
                 'group' => 'mb-6',
@@ -53,6 +54,7 @@ class FormHelper
                 'file' => 'block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-gray-100 file:py-2 file:px-4 file:text-sm file:font-semibold file:text-gray-700 hover:file:bg-gray-200',
                 'helpText' => 'text-gray-500 text-xs mt-1',
                 'button' => 'px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500',
+                'hidden'=>'hidden',
             ]
         ];
 
@@ -77,7 +79,6 @@ class FormHelper
     }
         $stepCount = 1;
         foreach ($chunks as $chunk) {
-            // Create HTML for each section
             $html .= "<div class='step' id='step_$stepCount' style='display: " . ($stepCount === 1 ? 'block' : 'none') . "'>";
             foreach ($chunk as $field) {
                 $type = $field['type'] ?? 'text';
