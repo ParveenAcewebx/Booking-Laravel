@@ -37,10 +37,17 @@
                                 <!-- Name -->
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="name" class="font-weight-bold">Role Name <span class="text-danger">*</span></label>
-                                            <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $role->name ?? '') }}" required>
-                                            @error('name')
-                                            <span class="invalid-feedback d-block">{{ $message }}</span>
+                                        <label for="name" class="form-label font-weight-bold">
+                                            Role Name <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text"
+                                            name="name"
+                                            id="name"
+                                            class="form-control @error('name') is-invalid @enderror"
+                                            value="{{ old('name', $role->name ?? '') }}"
+                                            placeholder="Enter role name">
+                                        @error('name')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                   <div class="form-group mt-4">

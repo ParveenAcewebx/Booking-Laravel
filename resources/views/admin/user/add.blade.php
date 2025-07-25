@@ -38,10 +38,10 @@
                                 <!-- Name -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label">Name</label>
-                                        <input type="text" class="form-control" name="username" value="{{ old('username') }}" placeholder="Name" required>
+                                        <label class="form-label">Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" placeholder="Name">
                                         @error('username')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -49,10 +49,10 @@
                                 <!-- Email -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label">Email</label>
-                                        <input type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="Email" required>
+                                        <label class="form-label">Email <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" placeholder="Email">
                                         @error('email')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -60,10 +60,10 @@
                                 <!-- Password -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label">Password</label>
-                                        <input type="password" class="form-control" name="password" placeholder="Password" required>
+                                        <label class="form-label">Password <span class="text-danger">*</span></label>
+                                        <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" placeholder="Password">
                                         @error('password')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -71,31 +71,31 @@
                                 <!-- Confirm Password -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label">Confirm Password</label>
-                                        <input type="password" class="form-control" name="password_confirmation" placeholder="Confirm Password" required>
+                                        <label class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                                        <input type="password" class="form-control" name="password_confirmation" placeholder="Confirm Password">
                                     </div>
                                 </div>
 
                                 <!-- Phone Number -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="form-label">Phone Number</label>
+                                        <label class="form-label">Phone Number <span class="text-danger">*</span></label>
                                         <div class="input-group">
-                                            <select class="form-control" id="country-select" name="code" style="max-width: 100px;">
+                                            <select class="form-control @error('code') is-invalid @enderror" name="code" style="max-width: 100px;">
                                                 @foreach($phoneCountries as $country)
-                                                <option value="{{ $country['code'] }}"
-                                                    @if((!old('phone_number') && $country['code']=='+91' ) ||
-                                                    (old('phone_number') && Str::startsWith(old('phone_number'), $country['code'])))
-                                                    selected @endif>
-                                                    {{ $country['code'] }}
-                                                </option>
+                                                    <option value="{{ $country['code'] }}"
+                                                        {{ old('code', '+91') == $country['code'] ? 'selected' : '' }}>
+                                                        {{ $country['code'] }}
+                                                    </option>
                                                 @endforeach
                                             </select>
-                                            <input type="text" class="form-control" id="phone_number" name="phone_number"
-                                                placeholder="Enter phone number" value="{{ old('phone_number') }}" required>
+                                            <input type="text" class="form-control @error('phone_number') is-invalid @enderror" name="phone_number" placeholder="Enter phone number" value="{{ old('phone_number') }}">
                                         </div>
+                                        @error('code')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                         @error('phone_number')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -104,15 +104,15 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label">Role</label>
-                                        <select class="form-control select-user" name="role" required>
+                                        <select class="form-control @error('role') is-invalid @enderror select-user" name="role">
                                             @foreach($allRoles as $role)
-                                            <option value="{{ $role->id }}" {{ old('role') == $role->id || $role->name == 'Customer' ? 'selected' : '' }}>
-                                                {{ $role->name }}
-                                            </option>
+                                                <option value="{{ $role->id }}" {{ old('role') == $role->id || $role->name == 'Customer' ? 'selected' : '' }}>
+                                                    {{ $role->name }}
+                                                </option>
                                             @endforeach
                                         </select>
                                         @error('role')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -121,7 +121,7 @@
                     </div>
                 </div>
 
-                <!-- Right Column - Original Avatar Upload -->
+                <!-- Right Column - Settings & Avatar -->
                 <div class="col-md-4 order-md-2">
                     <div class="card">
                         <div class="card-header">
@@ -129,45 +129,46 @@
                         </div>
                         <div class="card-body">
                             <!-- Status -->
-                            <div class="col-md-12 p-0">
-                                <div class="form-group">
-                                    <label class="form-label">Status</label>
-                                    <select name="status" id="status" class="form-control select-user">
-                                        <option value="{{ config('constants.status.active') }}"
-                                            {{ old('status', 1) == config('constants.status.active') ? 'selected' : '' }}>
-                                            Active
-                                        </option>
-                                        <option value="{{ config('constants.status.inactive') }}"
-                                            {{ old('status', 1) == config('constants.status.inactive') ? 'selected' : '' }}>
-                                            Inactive
-                                        </option>
-                                    </select>
-                                    @error('status')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                            <div class="form-group">
+                                <label class="form-label">Status</label>
+                                <select name="status" class="form-control @error('status') is-invalid @enderror select-user">
+                                    <option value="{{ config('constants.status.active') }}"
+                                        {{ old('status', 1) == config('constants.status.active') ? 'selected' : '' }}>
+                                        Active
+                                    </option>
+                                    <option value="{{ config('constants.status.inactive') }}"
+                                        {{ old('status', 1) == config('constants.status.inactive') ? 'selected' : '' }}>
+                                        Inactive
+                                    </option>
+                                </select>
+                                @error('status')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
-                            <div class="form-group col-md-12 p-0">
+
+                            <!-- Avatar Upload -->
+                            <div class="form-group">
                                 <label class="form-label">Featured Image</label>
                                 <div class="input-group mb-1">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Upload</span>
                                     </div>
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name="avatar" id="addAvatarInput" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                                        <input type="file" class="custom-file-input @error('avatar') is-invalid @enderror" name="avatar" id="addAvatarInput" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
                                         <label class="custom-file-label overflow-hidden" for="addAvatarInput">Choose file...</label>
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">
-                                    Supported image types: JPG, JPEG, PNG, or GIF.
-                                </small>
+                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
+                                @error('avatar')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
-                            {{-- Styled Preview Like Thumbnail --}}
+
+                            <!-- Image Preview -->
                             <div id="add-avatar-preview-container" class="row d-none mt-3">
                                 <div class="col-md-6 position-relative">
                                     <div class="card shadow-sm">
                                         <img id="add-avatar-preview" class="card-img-top img-thumbnail" alt="Avatar Preview">
-
                                         <button type="button"
                                             id="remove-add-avatar-preview"
                                             class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
@@ -177,11 +178,9 @@
                                     </div>
                                 </div>
                             </div>
-                            @error('avatar')
-                            <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
+
                             <!-- Submit Button -->
-                            <div class="text-right mt-0">
+                            <div class="text-right mt-3">
                                 <button type="submit" class="btn btn-primary">Submit</button>
                             </div>
                         </div>
@@ -193,3 +192,4 @@
     </div>
 </section>
 @endsection
+

@@ -1294,3 +1294,4 @@ $(document).ready(function () {
     handleFileInput('#avatarInput', '#avatar-preview-container', '#avatar-preview', '#remove-avatar-preview', '#removeAvatarFlag');
 });
 /* ------------------------ End Services Thumbnail Function  ---------------------------- */
+

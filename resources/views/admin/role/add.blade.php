@@ -35,15 +35,18 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <!-- Name -->
                                 <div class="col-md-12">
+                                    <!-- Role Name -->
                                     <div class="form-group">
-                                        <label class="form-label">Role</label>
-                                        <input type="text" name="name" id="name"
+                                        <label class="form-label">Role <span class="text-danger">*</span></label>
+                                        <input type="text"
+                                            name="name"
+                                            id="name"
                                             class="form-control @error('name') is-invalid @enderror"
-                                            value="{{ old('name') }}" required>
+                                            value="{{ old('name') }}"
+                                            placeholder="Enter role name">
                                         @error('name')
-                                        <span class="invalid-feedback d-block">{{ $message }}</span>
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group mt-2 mb-1">
