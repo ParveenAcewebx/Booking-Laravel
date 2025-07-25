@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Setting;
 
 class SettingsController extends Controller
 {
@@ -20,8 +21,8 @@ class SettingsController extends Controller
             'h:i A' => '12-Hour (e.g. 02:30 PM)',
         ];
         $timezones = \DateTimeZone::listIdentifiers();
-        // Load settings as key => value
-        $settings = \App\Models\Setting::pluck('value', 'key')->toArray();
+        $settings = Setting::pluck('value', 'key')->toArray();
+
         return view('admin.settings.index', compact('phoneCountries', 'dateFormats', 'timeFormats', 'timezones', 'settings'));
     }
 
@@ -35,8 +36,8 @@ class SettingsController extends Controller
             'owner_phone_number' => 'required|string',
             'owner_email' => 'required|email',
             'site_title' => 'required|string',
-            'website_logo' => 'required|image|mimes:jpeg,png,jpg,gif',
-            'favicon' => 'required|image|mimes:jpeg,png,jpg,gif',
+            'website_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'favicon' => 'nullable|image|mimes:jpeg,png,jpg,gif',
         ]);
 
         $settings = [
@@ -53,18 +54,31 @@ class SettingsController extends Controller
             'x_twitter' => $request->x_twitter,
         ];
 
+        // Handle logo upload
         if ($request->hasFile('website_logo')) {
             $path = $request->file('website_logo')->store('logos', 'public');
             $settings['website_logo'] = $path;
         }
 
+        // Handle favicon upload
         if ($request->hasFile('favicon')) {
             $path = $request->file('favicon')->store('favicons', 'public');
             $settings['favicon'] = $path;
         }
 
+        // Handle removal of website logo
+        if ($request->remove_website_logo) {
+            $settings['website_logo'] = '';
+        }
+
+        // Handle removal of favicon
+        if ($request->remove_favicon) {
+            $settings['favicon'] = '';
+        }
+
+        // Save each setting
         foreach ($settings as $key => $value) {
-            \App\Models\Setting::updateOrCreate(
+            Setting::updateOrCreate(
                 ['key' => $key],
                 ['value' => $value]
             );
