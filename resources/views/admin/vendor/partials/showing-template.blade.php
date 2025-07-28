@@ -3,7 +3,7 @@
         <div class="card-body position-relative">
             <div class="form-row pt-2">
                 <div class="form-group col-md-5 mb-1">
-                    <label class="font-weight-bold">Staff</label>
+                    <!-- <label class="font-weight-bold">Staff</label> -->
                     <select name="select_staff[]" class="form-control select-user">
                         <option value="">--- Please Select Staff ---</option>
                         @foreach($availableStaff as $staff)
@@ -11,7 +11,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="form-group col-md-5 addServices">
+                <div class="form-group col-md-7 addServices">
                     <!-- Services will load here -->
                 </div>
             </div>
