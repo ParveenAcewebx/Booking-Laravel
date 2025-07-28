@@ -190,8 +190,15 @@ document.addEventListener('DOMContentLoaded', function() {
     let assignedStaff = @json($preAssignedStaffIds);
     let selectedStaff = new Set();
 
-    function fetchAndDisplayServices(staffId, $cardBody) {
-        $cardBody.find('.staff-services').remove();
+    function fetchAndDisplayServices(staffId, cardBody) {
+        cardBody.find('.staff-services').remove();
+        let servicesappend = cardBody.find('.addServices');
+            if (servicesappend.length > 0) {
+                    cardBody = servicesappend ; 
+            }else{
+                    cardBody = cardBody;
+            }
+
         if (!staffId) return;
 
         $.ajax({
@@ -204,9 +211,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         listHtml += `<span class="badge badge-service">${service}</span>`;
                     });
                     listHtml += '</div>';
-                    $cardBody.append(listHtml);
+                    cardBody.append(listHtml);
                 } else {
-                    $cardBody.append('<div class="staff-services text-muted">No services assigned</div>');
+                    cardBody.append('<div class="staff-services text-muted">No services assigned</div>');
                 }
             }
         });
