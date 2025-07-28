@@ -14,6 +14,7 @@ use App\Http\Controllers\frontend\BookingListingController;
 use App\Http\Controllers\admin\StaffController;
 use App\Http\Controllers\admin\VendorController;
 use App\Http\Controllers\admin\SettingsController;
+use App\Http\Controllers\frontend\UserProfileController;
 use App\Helpers\Shortcode;
 
 /*
@@ -53,6 +54,7 @@ Route::middleware('guest')->group(function () {
     Route::get('password/reset/{token}', [UserController::class, 'showResetForm'])->name('password.reset');
     Route::post('password/reset', [UserController::class, 'reset'])->name('password.update');
 });
+
 // Authenticated routes
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('/{id}/switch', [UserController::class, 'switchUser'])->name('user.switch');
@@ -190,4 +192,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/todo', [UserController::class, 'todo'])->name('todo');
     Route::get('/welcome', [UserController::class, 'welcome']);
     Route::get('/userrole', [UserController::class, 'userrole']);
+
 });
+// Front profile 
+Route::get('/profile', [UserProfileController::class, 'userEdit'])->name('Userprofile');
+Route::post('/profile/update', [UserProfileController::class, 'UserUpdate'])->name('ProfileUpdate');

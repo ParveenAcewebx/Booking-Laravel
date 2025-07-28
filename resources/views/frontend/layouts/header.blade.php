@@ -38,15 +38,19 @@
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-95"
         class="absolute right-0 mt-40 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-
+            @auth
         <!-- Dropdown items -->
         <ul class="text-gray-700">
             <!-- Profile Link -->
             <li class="hover:bg-blue-100 rounded-t-lg transition duration-200">
+               @if(auth()->user()->hasRole('Administrator')) 
                 <a href="{{ route('profile') }}" class="block px-4 py-2 text-sm font-medium">Profile</a>
+                @else
+                 <a href="{{ route('Userprofile') }}" class="block px-4 py-2 text-sm font-medium">Profile</a>
+                @endif
             </li>
             
-            @auth
+
           @if(auth()->user()->hasRole('Administrator')) 
           <li class="hover:bg-blue-100 transition duration-200">
               <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm font-medium">Dashboard</a>
