@@ -13,6 +13,12 @@ use App\Helpers\FormHelper;
 use Illuminate\Support\Facades\Storage;
 use App\Models\service;
 use App\Models\StaffServiceAssociation;
+use App\Models\VendorStaffAssociation;
+use App\Models\Vendor;
+use App\Models\Staff;
+
+
+
 
 class FormController extends Controller
 {
@@ -83,10 +89,12 @@ class FormController extends Controller
             ->route('form.show', $template->slug)
             ->with('success', 'Form submitted successfully!');
     }
+
 function getservicesstaff(Request $request){
  $serviceId = $request->query('service_id');
    $associations = StaffServiceAssociation::where('service_id', $serviceId)->get();
    $staff =[]; 
+   $vendor_data =[];
     foreach ($associations as $association) {
         $staffIds = $association->staff_member;
           $user = User::where('id', $staffIds)->first();  
@@ -97,7 +105,22 @@ function getservicesstaff(Request $request){
             ];
         }
     }
-    return $staff;
+    foreach ($staff as $staffid){
+        $user_id= $staffid['id'];
+        $vendorassociations = Staff::where('user_id', $user_id)->get();
+         foreach ($vendorassociations as $vendorassociation) {
+              $vendorIds = $vendorassociation->vendor_id;
+                $vendors = Vendor::where('id', $vendorIds)->get();
+                foreach($vendors as $data ){
+                $vendor_data[]=[
+                    'id'=>$data->id,
+                    'name'=>$data->name,
+                ];
+                }
+        }
+    } 
+   
+    return  $vendor_data;
 
     }
 }

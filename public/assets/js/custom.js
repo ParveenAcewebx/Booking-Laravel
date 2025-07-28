@@ -1308,15 +1308,14 @@ const services_short_code_get_staff = document.querySelector('.get_service_staff
         get_services_staff(customValue);
 
     });
-var selectedStaff = document.querySelector('.selected_staff');
+var selectedStaff = document.querySelector('.selected_vendor');
 if(selectedStaff){
     const services_selected = document.querySelector('.get_service_staff'); 
     get_services_staff(services_selected);
 }
 function get_services_staff(selectedvalue){
      var serviceId = selectedvalue.value;
-     var selectedStaff = document.querySelector('.selected_staff').value;
-     
+     var selectedStaff = document.querySelector('.selected_vendor').value;    
        $.ajax({
         url: '/get/services/staff', 
         type: 'GET',
@@ -1325,12 +1324,12 @@ function get_services_staff(selectedvalue){
         },
         dataType: 'json',
          success: function(response) {
-            var select_service_staff = document.querySelector('.select_service_staff');
-            var staffSelect = document.querySelector('.service_staff_form');
+            var select_service_staff = document.querySelector('.select_service_vendor');
+            var staffSelect = document.querySelector('.service_vendor_form');
             staffSelect.innerHTML = '';
             var defaultOption = document.createElement('option');
             defaultOption.value = '';
-            defaultOption.textContent = '---Select Staff---';
+            defaultOption.textContent = '---Select Vendor---';
             staffSelect.appendChild(defaultOption);
             if (response && response.length > 0) {
                 staffSelect.disabled = false;
@@ -1357,7 +1356,7 @@ function get_services_staff(selectedvalue){
                 select_service_staff.classList.add('d-none');
                 var noStaffOption = document.createElement('option');
                 noStaffOption.value = '';
-                noStaffOption.textContent = 'No staff available';
+                noStaffOption.textContent = 'No Vendor available';
                 staffSelect.appendChild(noStaffOption);
             }
         },
