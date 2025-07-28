@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Helpers\Shortcode;
 use Illuminate\Support\ServiceProvider;
-use App\Models\service;
+use App\Models\Service;
 
 class AppServiceProvider extends ServiceProvider
 {
