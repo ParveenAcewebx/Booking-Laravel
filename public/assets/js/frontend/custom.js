@@ -189,13 +189,13 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         dataType: 'json',
          success: function(response) {
-            var select_service_staff = document.querySelector('.select_service_staff');
-            var staffSelect = document.querySelector('.service_staff_form');
+            var select_service_staff = document.querySelector('.select_service_vendor');
+            var staffSelect = document.querySelector('.service_vendor_form');
   
             staffSelect.innerHTML = '';
             var defaultOption = document.createElement('option');
             defaultOption.value = '';
-            defaultOption.textContent = '---Select Staff---';
+            defaultOption.textContent = '---Select Vendor---';
             staffSelect.appendChild(defaultOption);
             if (response && response.length > 0) {
                 staffSelect.disabled = false;

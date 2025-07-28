@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
        Shortcode::register('services', function ($shortcodeAttrs, $class) {   
         $services = Service::all();
         $selectedService = $shortcodeAttrs['service'] ?? '';  
-        $selectedStaff = $shortcodeAttrs['staff'] ?? '';     
+        $selectedvendor = $shortcodeAttrs['vendor'] ?? '';     
         $c = $class;
         $servicesForm  = '';
         $servicesForm .= "<div class='form-group {$c['group']}'>";
@@ -36,16 +36,18 @@ class AppServiceProvider extends ServiceProvider
         $servicesForm .= '<option>---Select Service---</option>';
         foreach ($services as $service) {
             $attributes = $service->getAttributes();
-            $selected = $attributes['id'] == $selectedService ? 'selected' : '';  // Check if the service is selected
-            $servicesForm .= "<option value='{$attributes['id']}' {$selected}>{$attributes['name']}</option>";
+            if( $attributes['status']=== 1){
+                $selected = $attributes['id'] == $selectedService ? 'selected' : '';  // Check if the service is selected
+                $servicesForm .= "<option value='{$attributes['id']}' {$selected}>{$attributes['name']}</option>";
+            }           
         }
         $servicesForm .= "</select>";
         $servicesForm .= "</div>";
-        $servicesForm .= "<div class='form-group {$c['group']} select_service_staff {$c['hidden']}'>";
-        $servicesForm .= "<label for='staff' class='{$c['label']}'>Select Staff <span class='text-red-500'>*</span></label>";
-        $servicesForm.= "<input type='hidden' class='selected_staff' value='".$selectedStaff."'>";
-        $servicesForm .= "<select name='dynamic[staff]' id='service_staff_form' class='{$c['select']} service_staff_form' required>";
-        $servicesForm .= '<option value="">---Select Staff---</option>';
+        $servicesForm .= "<div class='form-group {$c['group']} select_service_vendor {$c['hidden']}'>";
+        $servicesForm .= "<label for='staff' class='{$c['label']}'>Select Vendor <span class='text-red-500'>*</span></label>";
+        $servicesForm.= "<input type='hidden' class='selected_vendor' value='".$selectedvendor."'>";
+        $servicesForm .= "<select name='dynamic[vendor]' id='service_vendor_form' class='{$c['select']} service_vendor_form' required>";
+        $servicesForm .= '<option value="">---Select Vendor---</option>';
         
         $servicesForm .= "</select>";
         $servicesForm .= "</div>";
