@@ -33,16 +33,31 @@
             </svg>
           </button>
           <!-- Dropdown -->
-          <div x-show="open" @click.away="open = false"
-              x-transition
-              class="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-            <form method="get" action="{{ route('logout') }}">
-              @csrf
-              <button type="submit"
-                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-lg">
-                Logout
-              </button>
-            </form>
+         <div x-show="open" @click.away="open = false" x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-95"
+        class="absolute right-0 mt-40 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+
+        <!-- Dropdown items -->
+        <ul class="text-gray-700">
+            <!-- Profile Link -->
+            <li class="hover:bg-blue-100 rounded-t-lg transition duration-200">
+                <a href="{{ route('profile') }}" class="block px-4 py-2 text-sm font-medium">Profile</a>
+            </li>
+            
+            @auth
+          @if(auth()->user()->hasRole('Administrator')) 
+          <li class="hover:bg-blue-100 transition duration-200">
+              <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm font-medium">Dashboard</a>
+          </li>
+          @endif
+          @endauth            
+            <!-- Logout Link -->
+            <li class="hover:bg-red-100 rounded-b-lg transition duration-200">
+                <a href="{{ route('logout') }}" class="block px-4 py-2 text-sm font-medium text-red-600">Logout</a>
+            </li>
+        </ul>
           </div>
         @else
           <!-- Show Sign in button if guest -->
