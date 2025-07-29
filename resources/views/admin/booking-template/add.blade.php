@@ -26,7 +26,7 @@
 					<div class="row">
 						<div class="col-sm-4">
 							<div class="form-group">
-								<label class="floating-label" for="">Booking Template Name</label>
+								<label class="floating-label" for="">Booking Template Name <span class="text-danger">*</span></label>
 								<div>
 									<input type="text" id="bookingTemplatesname" class="form-control" placeholder="Enter name">
 								</div>
