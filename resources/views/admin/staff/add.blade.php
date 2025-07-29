@@ -36,7 +36,7 @@
                                 <!-- Name -->
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label>Name:</label>
+                                        <label>Name <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" >
                                         @error('name')
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -47,7 +47,7 @@
                                 <!-- Email -->
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label>Email:</label>
+                                        <label>Email <span class="text-danger">*</span></label>
                                         <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" >
                                         @error('email')
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -58,7 +58,7 @@
                                 <!-- Password -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Password:</label>
+                                        <label>Password <span class="text-danger">*</span></label>
                                         <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" >
                                         @error('password')
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -69,7 +69,7 @@
                                 <!-- Confirm Password -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Confirm Password:</label>
+                                        <label>Confirm Password <span class="text-danger">*</span></label>
                                         <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" name="password_confirmation" >
                                         @error('password_confirmation')
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -80,7 +80,7 @@
                                 <!-- Phone -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Phone Number:</label>
+                                        <label>Phone Number <span class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <select class="form-control @error('code') is-invalid @enderror" name="code" style="max-width: 100px;">
                                                 @foreach($phoneCountries as $country)

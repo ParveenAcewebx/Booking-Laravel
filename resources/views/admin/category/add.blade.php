@@ -38,7 +38,7 @@
                                 <!-- Name -->
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="form-label">Category Name</label>
+                                        <label class="form-label">Category Name <span class="text-danger">*</span></label>
                                         <input
                                             type="text"
                                             name="category_name"
@@ -46,7 +46,7 @@
                                             class="form-control @error('category_name') is-invalid @enderror"
                                             placeholder="Enter category name"
                                             value="{{ old('category_name') }}"
-                                            required>
+                                            >
                                         @error('category_name')
                                         <span class="invalid-feedback d-block" id="categoryNameError" role="alert">
                                             <strong>{{ $message }}</strong>

@@ -44,14 +44,14 @@
                                 <!-- Name -->
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="category_name">Category Name</label>
+                                        <label for="category_name">Category Name <span class="text-danger">*</span></label>
                                         <input type="text"
                                             name="category_name"
                                             id="category_name"
                                             class="form-control @error('category_name') is-invalid @enderror"
                                             placeholder="Enter category name"
                                             value="{{ old('category_name', $category->category_name) }}"
-                                            required>
+                                            >
                                         @error('category_name')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
