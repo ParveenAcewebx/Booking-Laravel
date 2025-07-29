@@ -90,37 +90,37 @@ class FormController extends Controller
             ->with('success', 'Form submitted successfully!');
     }
 
-function getservicesstaff(Request $request){
- $serviceId = $request->query('service_id');
-   $associations = StaffServiceAssociation::where('service_id', $serviceId)->get();
-   $staff =[]; 
-   $vendor_data =[];
-    foreach ($associations as $association) {
-        $staffIds = $association->staff_member;
-          $user = User::where('id', $staffIds)->first();  
-         if ($user) {
-            $staff[] = [
-                'id' => $user->id,
-                'name' => $user->name,
-            ];
-        }
-    }
-    foreach ($staff as $staffid){
-        $user_id= $staffid['id'];
-        $vendorassociations = Staff::where('user_id', $user_id)->get();
-         foreach ($vendorassociations as $vendorassociation) {
-              $vendorIds = $vendorassociation->vendor_id;
-                $vendors = Vendor::where('id', $vendorIds)->get();
-                foreach($vendors as $data ){
-                $vendor_data[]=[
-                    'id'=>$data->id,
-                    'name'=>$data->name,
+    function getservicesstaff(Request $request)
+    {
+        $serviceId = $request->query('service_id');
+        $associations = StaffServiceAssociation::where('service_id', $serviceId)->get();
+        $staff = [];
+        $vendor_data = [];
+        foreach ($associations as $association) {
+            $staffIds = $association->staff_member;
+            $user = User::where('id', $staffIds)->first();
+            if ($user) {
+                $staff[] = [
+                    'id' => $user->id,
+                    'name' => $user->name,
                 ];
-                }
+            }
         }
-    } 
-   
-    return  $vendor_data;
+        foreach ($staff as $staffid) {
+            $user_id = $staffid['id'];
+            $vendorassociations = Staff::where('user_id', $user_id)->get();
+            foreach ($vendorassociations as $vendorassociation) {
+                $vendorIds = $vendorassociation->vendor_id;
+                $vendors = Vendor::where('id', $vendorIds)->get();
+                foreach ($vendors as $data) {
+                    $vendor_data[] = [
+                        'id' => $data->id,
+                        'name' => $data->name,
+                    ];
+                }
+            }
+        }
 
+        return  $vendor_data;
     }
 }

@@ -67,10 +67,10 @@ class BookingController extends Controller
                 })
                 ->editColumn('created_at', function ($booking) {
                     return $booking->created_at
-                    ? $booking->created_at->format(
-                        get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
-                    )
-                    : '';
+                        ? $booking->created_at->format(
+                            get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
+                        )
+                        : '';
                 })
                 ->editColumn('status', function ($booking) {
                     return '<span class="badge badge-light-success">Active</span>';
@@ -152,7 +152,7 @@ class BookingController extends Controller
             'customer_id' => $request->customer_id,
             'booking_datetime' => $request->booking_datetime,
             'booking_data' => json_encode($bookingData),
-            'selected_staff' =>'',
+            'selected_staff' => '',
         ]);
 
         return $booking
@@ -224,7 +224,7 @@ class BookingController extends Controller
             $booking->phone_number = $existingData['phone'];
             $booking->email = $existingData['email'];
         }
-       
+
         $booking->selected_staff = '';
 
         $booking->save();

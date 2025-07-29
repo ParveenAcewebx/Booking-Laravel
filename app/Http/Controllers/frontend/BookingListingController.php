@@ -18,8 +18,8 @@ class BookingListingController extends Controller
             ]);
         }
 
-        $userId = Auth::id();           
-        $username = Auth::user()->name; 
+        $userId = Auth::id();
+        $username = Auth::user()->name;
 
         $bookings = BookingTemplate::where('created_by', $username)->get();
 

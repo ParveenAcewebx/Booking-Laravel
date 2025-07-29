@@ -9,5 +9,3 @@ if (!function_exists('get_setting')) {
         return $setting ? $setting->value : $default;
     }
 }
-
-

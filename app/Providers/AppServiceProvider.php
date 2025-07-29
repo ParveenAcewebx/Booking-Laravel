@@ -24,36 +24,36 @@ class AppServiceProvider extends ServiceProvider
         Shortcode::register('hello-world', function () {
             return 'Hello, World!';
         });
-       Shortcode::register('services', function ($shortcodeAttrs, $class) {   
-        $services = Service::all();
-        $selectedService = $shortcodeAttrs['service'] ?? '';  
-        $selectedvendor = $shortcodeAttrs['vendor'] ?? '';     
-        $c = $class;
-        $servicesForm  = '';
-        $servicesForm .= "<div class='form-group {$c['group']}'>";
-        $servicesForm .= "<label for='service' class='{$c['label']}'>Select Service <span class='text-red-500'>*</span></label>";
-        $servicesForm .= "<select name='dynamic[service]' class='get_service_staff {$c['select']}' required>";
-        $servicesForm .= '<option>---Select Service---</option>';
-        foreach ($services as $service) {
-            $attributes = $service->getAttributes();
-            if( $attributes['status']=== 1){
-                $selected = $attributes['id'] == $selectedService ? 'selected' : '';  // Check if the service is selected
-                $servicesForm .= "<option value='{$attributes['id']}' {$selected}>{$attributes['name']}</option>";
-            }           
-        }
-        $servicesForm .= "</select>";
-        $servicesForm .= "</div>";
-        $servicesForm .= "<div class='form-group {$c['group']} select_service_vendor {$c['hidden']}'>";
-        $servicesForm .= "<label for='staff' class='{$c['label']}'>Select Vendor <span class='text-red-500'>*</span></label>";
-        $servicesForm.= "<input type='hidden' class='selected_vendor' value='".$selectedvendor."'>";
-        $servicesForm .= "<select name='dynamic[vendor]' id='service_vendor_form' class='{$c['select']} service_vendor_form' required>";
-        $servicesForm .= '<option value="">---Select Vendor---</option>';
-        
-        $servicesForm .= "</select>";
-        $servicesForm .= "</div>";
+        Shortcode::register('services', function ($shortcodeAttrs, $class) {
+            $services = Service::all();
+            $selectedService = $shortcodeAttrs['service'] ?? '';
+            $selectedvendor = $shortcodeAttrs['vendor'] ?? '';
+            $c = $class;
+            $servicesForm  = '';
+            $servicesForm .= "<div class='form-group {$c['group']}'>";
+            $servicesForm .= "<label for='service' class='{$c['label']}'>Select Service <span class='text-red-500'>*</span></label>";
+            $servicesForm .= "<select name='dynamic[service]' class='get_service_staff {$c['select']}' required>";
+            $servicesForm .= '<option>---Select Service---</option>';
+            foreach ($services as $service) {
+                $attributes = $service->getAttributes();
+                if ($attributes['status'] === 1) {
+                    $selected = $attributes['id'] == $selectedService ? 'selected' : '';  // Check if the service is selected
+                    $servicesForm .= "<option value='{$attributes['id']}' {$selected}>{$attributes['name']}</option>";
+                }
+            }
+            $servicesForm .= "</select>";
+            $servicesForm .= "</div>";
+            $servicesForm .= "<div class='form-group {$c['group']} select_service_vendor {$c['hidden']}'>";
+            $servicesForm .= "<label for='staff' class='{$c['label']}'>Select Vendor <span class='text-red-500'>*</span></label>";
+            $servicesForm .= "<input type='hidden' class='selected_vendor' value='" . $selectedvendor . "'>";
+            $servicesForm .= "<select name='dynamic[vendor]' id='service_vendor_form' class='{$c['select']} service_vendor_form' required>";
+            $servicesForm .= '<option value="">---Select Vendor---</option>';
 
-        return $servicesForm;
-    });
+            $servicesForm .= "</select>";
+            $servicesForm .= "</div>";
+
+            return $servicesForm;
+        });
 
         Shortcode::register('user-information', function ($shortcodeAttrs, $class) {
             $c = $class;

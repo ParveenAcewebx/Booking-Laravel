@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers\admin;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Booking;
@@ -13,11 +15,12 @@ use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use DB; 
-use Carbon\Carbon; 
-use Mail; 
+use DB;
+use Carbon\Carbon;
+use Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cookie;
+
 class DashboardController extends Controller
 {
     protected $allUsers;
@@ -26,8 +29,9 @@ class DashboardController extends Controller
     {
         $this->allUsers = User::all();
     }
-    
-    public function index(){
+
+    public function index()
+    {
         $allusers = $this->allUsers;
         $bookingForms = BookingTemplate::all();
         $services = Service::all();
@@ -36,9 +40,9 @@ class DashboardController extends Controller
         $loginUser = null;
 
         if ($loginId) {
-            $loginUser = User::find($loginId);  
+            $loginUser = User::find($loginId);
         }
         // dd($loginUser);
-        return view('admin.layouts.dashboard', ['allusers' => $allusers,'bookingForms'=>$bookingForms,'bookings'=>$bookings,'loginUser'=>$loginUser,'services'=>$services]);
+        return view('admin.layouts.dashboard', ['allusers' => $allusers, 'bookingForms' => $bookingForms, 'bookings' => $bookings, 'loginUser' => $loginUser, 'services' => $services]);
     }
 }

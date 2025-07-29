@@ -48,10 +48,10 @@ class UserController extends Controller
                 })
                 ->editColumn('created_at', function ($row) {
                     return $row->created_at
-                    ? $row->created_at->format(
-                        get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
-                    )
-                    : '';
+                        ? $row->created_at->format(
+                            get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
+                        )
+                        : '';
                 })
                 ->addColumn('roles', function ($row) {
                     return $row->roles->pluck('name')->map(function ($role) {
