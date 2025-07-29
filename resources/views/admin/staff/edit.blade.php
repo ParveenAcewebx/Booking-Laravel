@@ -141,7 +141,7 @@
                             <!-- Assigned Services -->
                             <div class="form-group">
                                 <label>Assigned Services</label>
-                                <select class="form-control" name="assigned_services[]" multiple >
+                                <select class="form-control select-user" name="assigned_services[]" multiple >
                                     @foreach($services as $service)
                                     <option value="{{ $service->id }}"
                                         {{ collect(old('assigned_services', $assignedServices->pluck('id')->toArray()))->contains($service->id) ? 'selected' : '' }}>
@@ -154,7 +154,7 @@
                             <!-- Assigned Vendor -->
                             <div class="form-group">
                                 <label>Assigned Vendor</label>
-                                <select class="form-control" name="assigned_vendor" {{ $IsUserPrimaryStaff ? 'disabled' : '' }} >
+                                <select class="form-control select-user" name="assigned_vendor" {{ $IsUserPrimaryStaff ? 'disabled' : '' }} >
                                     <option value="">Select Vendor</option>
                                     @foreach($vendorData as $vendor)
                                     <option value="{{ $vendor->id }}"
