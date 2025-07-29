@@ -196,7 +196,7 @@ class ServiceController extends Controller
             'existing_gallery.*'    => 'string',
             'delete_gallery'        => 'nullable|array',
             'delete_gallery.*'      => 'string',
-            'staff_member'          => 'nullable|array',
+            'staff_member'          => 'required|array',
             'staff_member.*'        => 'exists:users,id',
             'status'                => 'required|in:0,1',
             'price'                 => 'nullable|numeric|min:0',
