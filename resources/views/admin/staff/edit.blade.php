@@ -30,7 +30,9 @@
                 <!-- Left Column -->
                 <div class="col-md-8">
                     <div class="card">
-                        <div class="card-header"><h5>Staff Information</h5></div>
+                        <div class="card-header">
+                            <h5>Staff Information</h5>
+                        </div>
                         <div class="card-body">
                             <div class="row">
                                 <!-- Name -->
@@ -38,9 +40,9 @@
                                     <div class="form-group">
                                         <label>Name:</label>
                                         <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                            name="name" value="{{ old('name', $staff->name) }}" >
+                                            name="name" value="{{ old('name', $staff->name) }}">
                                         @error('name')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
+                                        <div class="text-danger mt-1">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -50,9 +52,9 @@
                                     <div class="form-group">
                                         <label>Email:</label>
                                         <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                            name="email" value="{{ old('email', $staff->email) }}" >
+                                            name="email" value="{{ old('email', $staff->email) }}">
                                         @error('email')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
+                                        <div class="text-danger mt-1">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -64,7 +66,7 @@
                                         <input type="password" class="form-control @error('password') is-invalid @enderror"
                                             name="password" id="password" placeholder="Enter Password">
                                         @error('password')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
+                                        <div class="text-danger mt-1">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -91,10 +93,10 @@
                                                 @endforeach
                                             </select>
                                             <input type="text" class="form-control" name="phone_number" placeholder="Phone Number"
-                                                value="{{ old('phone_number', $staff->phone_number) }}" >
+                                                value="{{ old('phone_number', $staff->phone_number) }}">
                                         </div>
                                         @error('phone_number')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
+                                        <div class="text-danger mt-1">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -104,7 +106,7 @@
                                 <div class="col-md-6 d-none">
                                     <div class="form-group">
                                         <label>Role:</label>
-                                        <select class="form-control" name="role" >
+                                        <select class="form-control" name="role">
                                             <option value="{{ $roles->id }}" selected>{{ $roles->name }}</option>
                                         </select>
                                     </div>
@@ -118,7 +120,9 @@
                 <!-- Right Column -->
                 <div class="col-md-4">
                     <div class="card">
-                        <div class="card-header"><h5>Settings</h5></div>
+                        <div class="card-header">
+                            <h5>Settings</h5>
+                        </div>
                         <div class="card-body">
                             <!-- Status -->
                             <div class="form-group">
@@ -134,14 +138,14 @@
                                     </option>
                                 </select>
                                 @error('status')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <!-- Assigned Services -->
                             <div class="form-group">
                                 <label>Assigned Services</label>
-                                <select class="form-control select-user" name="assigned_services[]" multiple >
+                                <select class="form-control select-user" name="assigned_services[]" multiple>
                                     @foreach($services as $service)
                                     <option value="{{ $service->id }}"
                                         {{ collect(old('assigned_services', $assignedServices->pluck('id')->toArray()))->contains($service->id) ? 'selected' : '' }}>
@@ -154,7 +158,7 @@
                             <!-- Assigned Vendor -->
                             <div class="form-group">
                                 <label>Assigned Vendor</label>
-                                <select class="form-control select-user" name="assigned_vendor" {{ $IsUserPrimaryStaff ? 'disabled' : '' }} >
+                                <select class="form-control select-user" name="assigned_vendor" {{ $IsUserPrimaryStaff ? 'disabled' : '' }}>
                                     <option value="">Select Vendor</option>
                                     @foreach($vendorData as $vendor)
                                     <option value="{{ $vendor->id }}"
@@ -169,23 +173,44 @@
                             <div class="form-group">
                                 <label>Featured Image</label>
                                 <div class="input-group mb-1">
-                                    <div class="input-group-prepend"><span class="input-group-text">Upload</span></div>
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Upload</span>
+                                    </div>
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name="avatar" id="avatarInput" accept=".jpg,.jpeg,.png,.gif">
+                                        <input type="file"
+                                            class="custom-file-input"
+                                            name="avatar"
+                                            id="avatarInput"
+                                            accept=".jpg,.jpeg,.png,.gif">
                                         <label class="custom-file-label overflow-hidden" for="avatarInput">Choose file...</label>
                                     </div>
                                 </div>
+
                                 @error('avatar')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
 
-                                @if(!empty($staff->avatar))
-                                <div class="mt-3">
-                                    <img src="{{ asset('storage/' . $staff->avatar) }}" alt="Avatar" class="img-thumbnail" style="max-width: 120px;">
-                                    <input type="hidden" name="remove_avatar" id="removeAvatarFlag" value="0">
+                                {{-- Preview container (shown if avatar exists) --}}
+                                <div id="avatar-preview-container"
+                                    class="row mt-3 {{ $staff->avatar ? '' : 'd-none' }}">
+                                    <div class="col-md-6 position-relative">
+                                        <div class="card shadow-sm">
+                                            <img id="avatar-preview"
+                                                src="{{ $staff->avatar ? asset('storage/' . $staff->avatar) : '' }}"
+                                                class="card-img-top img-thumbnail"
+                                                style="object-fit: cover; height: 120px; width: 100%;">
+                                            <button type="button"
+                                                id="remove-avatar-preview"
+                                                class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
+                                                title="Remove image">&times;</button>
+                                        </div>
+                                    </div>
                                 </div>
-                                @endif
+
+                                {{-- Hidden flag for removal --}}
+                                <input type="hidden" name="remove_avatar" id="removeAvatarFlag" value="0">
                             </div>
+
 
                             <div class="text-right">
                                 <button type="submit" class="btn btn-primary">Update</button>
