@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\admin;
+
 use App\Http\Controllers\Controller;
 use DataTables;
 use Illuminate\Http\Request;
@@ -29,16 +30,16 @@ class BookingTemplateController extends Controller
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
-            $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by','slug']);
+            $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by', 'slug']);
 
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($row) {
-                return $row->created_at
-                ? $row->created_at->format(
-                    get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
-                )
-                : '';
+                    return $row->created_at
+                        ? $row->created_at->format(
+                            get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
+                        )
+                        : '';
                 })
                 ->addColumn('status', function ($row) {
                     return '<span class="badge badge-success">Active</span>';

@@ -10,7 +10,7 @@ class FormHelper
     {
         $fields = is_array($templateJson) ? $templateJson : json_decode($templateJson, true);
 
-        
+
         // Begin the form output
         $html = '';
         $htmlHidden = '';
@@ -36,8 +36,8 @@ class FormHelper
                 'radioLabel' => 'form-check-label',
                 'file' => 'form-control',
                 'helpText' => 'form-text text-muted',
-                'button' => 'btn btn-primary', 
-                'hidden'=>'d-none',
+                'button' => 'btn btn-primary',
+                'hidden' => 'd-none',
             ],
             'tailwind' => [
                 'group' => 'mb-6',
@@ -54,29 +54,29 @@ class FormHelper
                 'file' => 'block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-gray-100 file:py-2 file:px-4 file:text-sm file:font-semibold file:text-gray-700 hover:file:bg-gray-200',
                 'helpText' => 'text-gray-500 text-xs mt-1',
                 'button' => 'px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500',
-                'hidden'=>'hidden',
+                'hidden' => 'hidden',
             ]
         ];
 
         $c = $classes[$theme] ?? $classes['bootstrap'];
 
         if (!empty($c) && isset($c['button']) && $c['button'] != 'btn btn-primary') {
-        $countNewSections = count(array_filter($fields, function ($item) {
-            return isset($item['type']) && $item['type'] === 'newsection';
-        }));
-        foreach ($fields as $item) {
-            $currentChunk[] = $item;
-            if (isset($item['type']) && $item['type'] === 'newsection') {
-                $chunks[] = $currentChunk;
-                $currentChunk = [];
+            $countNewSections = count(array_filter($fields, function ($item) {
+                return isset($item['type']) && $item['type'] === 'newsection';
+            }));
+            foreach ($fields as $item) {
+                $currentChunk[] = $item;
+                if (isset($item['type']) && $item['type'] === 'newsection') {
+                    $chunks[] = $currentChunk;
+                    $currentChunk = [];
+                }
             }
+            if (!empty($currentChunk)) {
+                $chunks[] = $currentChunk;
+            }
+        } else {
+            $chunks[] = $fields;
         }
-        if (!empty($currentChunk)) {
-            $chunks[] = $currentChunk;
-        }
-    }else{
-          $chunks[] = $fields;
-    }
         $stepCount = 1;
         foreach ($chunks as $chunk) {
             $html .= "<div class='step' id='step_$stepCount' style='display: " . ($stepCount === 1 ? 'block' : 'none') . "'>";
@@ -98,34 +98,34 @@ class FormHelper
                 $inputNameAttr = $multiple ? $inputName . '[]' : $inputName;
                 switch ($type) {
                     case 'hidden':
-                      $htmlHidden .= "<input type='hidden' name='$inputName' value='" . htmlspecialchars($value, ENT_QUOTES) . "'>";
-                    break;
+                        $htmlHidden .= "<input type='hidden' name='$inputName' value='" . htmlspecialchars($value, ENT_QUOTES) . "'>";
+                        break;
                     case 'header':
                     case 'paragraph':
                     case 'section':
                     case 'newsection':
-                    $tag = $type === 'header'
-                        ? (in_array($subtype, ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']) ? $subtype : 'h4')
-                        : ($type === 'paragraph' ? (in_array($subtype, ['address', 'p', 'blockquote']) ? $subtype : 'p') : '');
-                    $headingClasses = [
-                        'h1' => 'text-4xl font-bold mb-4',
-                        'h2' => 'text-3xl font-semibold mb-3',
-                        'h3' => 'text-2xl font-medium mb-2',
-                        'h4' => 'text-xl font-normal mb-2',
-                        'h5' => 'text-lg font-light mb-2',
-                        'h6' => 'text-base font-light mb-2',
-                    ];
-                    $headingClass = $headingClasses[$tag] ?? 'text-xl font-medium mb-2'; 
-                    $content = nl2br(htmlspecialchars($label));
-                    $html .= ($type === 'section' || $type === 'newsection')
-                        ? ""
-                        : "<div class='{$c['group']}'><$tag class='$headingClass'>$content</$tag></div>";
+                        $tag = $type === 'header'
+                            ? (in_array($subtype, ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']) ? $subtype : 'h4')
+                            : ($type === 'paragraph' ? (in_array($subtype, ['address', 'p', 'blockquote']) ? $subtype : 'p') : '');
+                        $headingClasses = [
+                            'h1' => 'text-4xl font-bold mb-4',
+                            'h2' => 'text-3xl font-semibold mb-3',
+                            'h3' => 'text-2xl font-medium mb-2',
+                            'h4' => 'text-xl font-normal mb-2',
+                            'h5' => 'text-lg font-light mb-2',
+                            'h6' => 'text-base font-light mb-2',
+                        ];
+                        $headingClass = $headingClasses[$tag] ?? 'text-xl font-medium mb-2';
+                        $content = nl2br(htmlspecialchars($label));
+                        $html .= ($type === 'section' || $type === 'newsection')
+                            ? ""
+                            : "<div class='{$c['group']}'><$tag class='$headingClass'>$content</$tag></div>";
 
                         break;
 
                     case 'file':
                         $html .= "<div class='{$c['group']}'>
-                                <label class='{$c['label']}'>$label ".($required ? ' <span class="text-red-500">*</span>' : '')."</label>
+                                <label class='{$c['label']}'>$label " . ($required ? ' <span class="text-red-500">*</span>' : '') . "</label>
                                 <input type='file' name='$inputNameAttr' class='{$c['file']}' " . ($multiple ? 'multiple' : '') . " $required>";
                         if (!empty($value)) {
                             $files = is_array($value) ? $value : [$value];
@@ -138,7 +138,7 @@ class FormHelper
                         break;
 
                     case 'number':
-                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label ".($required ? ' <span class="text-red-500">*</span>' : ''). "</label>";
+                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label " . ($required ? ' <span class="text-red-500">*</span>' : '') . "</label>";
                         if ($subtype === 'range') {
                             $html .= "<input type='range' name='$inputName' class='{$c['input']}' value='" . htmlspecialchars($value) . "' min='$min' max='$max' step='$step' $required>
                                   <div class='flex justify-between text-gray-500 text-sm'><small>Min: $min</small><small>Max: $max</small></div>";
@@ -152,7 +152,7 @@ class FormHelper
                         $valueArr = $multiple ? (is_array($value) ? $value : (json_decode($value, true) ?: [$value])) : [(string) $value];
                         $optionValues = array_column($options, 'value');
                         $multipleAttr = $multiple ? 'multiple' : '';
-                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label ".($required ? ' <span class="text-red-500">*</span>' : '')."</label>
+                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label " . ($required ? ' <span class="text-red-500">*</span>' : '') . "</label>
                               <select name='$inputNameAttr' class='{$c['select']}'$required >";
                         foreach ($options as $opt) {
                             $val = $opt['value'] ?? '';
@@ -177,20 +177,19 @@ class FormHelper
                     case 'checkbox-group':
                         $valueArr = is_array($value) ? $value : (json_decode($value, true) ?: [$value]);
                         $optionValues = array_column($options, 'value');
-                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label ". ($required ? ' <span class="text-red-500">*</span>' : '') ."</label>";
+                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label " . ($required ? ' <span class="text-red-500">*</span>' : '') . "</label>";
                         foreach ($options as $i => $opt) {
                             $val = $opt['value'] ?? '';
                             $lbl = $opt['label'] ?? $val;
                             $isChecked = in_array((string)$val, $valueArr) ? 'checked' : '';
                             $requiredAttr = ($i === 0 && $required) ? 'required' : '';
-                          
+
                             $html .= "<div class='{$c['checkboxWrapper']}'>
                                     <input type='checkbox' name='{$inputName}[]' value='" . htmlspecialchars($val) . "' class='{$c['checkbox']}' $isChecked $requiredAttr>
-                                    <label class='{$c['checkboxLabel']}'>" . htmlspecialchars($lbl).($required ? ' <span class="text-red-500">*</span>' : ''). "</label>
+                                    <label class='{$c['checkboxLabel']}'>" . htmlspecialchars($lbl) . ($required ? ' <span class="text-red-500">*</span>' : '') . "</label>
                                   
                                     </div>
                                         <p class='checkbox-error-message text-red-500 text-xs mt-1'></p>";
-                                  
                         }
                         if ($other) {
                             $isOtherChecked = in_array('__other__', $valueArr) ? 'checked' : '';
@@ -200,14 +199,14 @@ class FormHelper
                                     <label class='{$c['checkboxLabel']}'>Other</label>
                                   </div>
                                   <input type='text' name='dynamic[{$name}_other][]' class='{$c['input']} mt-1' placeholder='Please specify' value='" . htmlspecialchars($otherVal) . "'>";
-                                }
+                        }
                         $html .= "</div>";
                         break;
 
                     case 'radio-group':
                         $optionValues = array_column($options, 'value');
                         $idBase = uniqid($name . '_');
-                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label ". ($required ? ' <span class="text-red-500">*</span>' : '')."</label>";
+                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label " . ($required ? ' <span class="text-red-500">*</span>' : '') . "</label>";
                         foreach ($options as $i => $opt) {
                             $val = $opt['value'] ?? '';
                             $lbl = $opt['label'] ?? $val;
@@ -236,14 +235,14 @@ class FormHelper
                         break;
 
                     case 'textarea':
-                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label ".($required ? ' <span class="text-red-500">*</span>' : '')."</label>
+                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label " . ($required ? ' <span class="text-red-500">*</span>' : '') . "</label>
                               <textarea name='$inputName' class='{$c['textarea']}' placeholder='" . htmlspecialchars($placeholder) . "' $required>" . htmlspecialchars($value) . "</textarea></div>";
                         break;
 
                     case 'shortcodeblock':
                         $shortcodeValue = $field['value'] ?? '';
                         $class = $c;
-                        $html .= "<div class='{$c['group']}'>" . Shortcode::render(trim($shortcodeValue, '[]'), $values ,$class) . "</div>";
+                        $html .= "<div class='{$c['group']}'>" . Shortcode::render(trim($shortcodeValue, '[]'), $values, $class) . "</div>";
                         break;
 
                     default:
@@ -259,7 +258,7 @@ class FormHelper
                             }
                         }
 
-                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label ".($required ? ' <span class="text-red-500">*</span>' : '')."</label>
+                        $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label " . ($required ? ' <span class="text-red-500">*</span>' : '') . "</label>
                               <input type='$subtype' name='$inputName' class='{$c['input']}' value='" . htmlspecialchars($value) . "' placeholder='" . htmlspecialchars($placeholder) . "' $required>
                               </div>";
                         break;
@@ -279,9 +278,9 @@ class FormHelper
                 </div>
           </div>";
         }
-    if (!empty($c) && isset($c['button']) && $c['button'] != 'btn btn-primary') {
+        if (!empty($c) && isset($c['button']) && $c['button'] != 'btn btn-primary') {
             $html .= ($countNewSections == '0' ? "<button type='submit' class='submit {$c['button']}'>Submit</button>" : '');
-    }
+        }
         return $htmlHidden . $html;
     }
 }

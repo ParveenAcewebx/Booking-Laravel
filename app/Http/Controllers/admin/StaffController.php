@@ -48,10 +48,10 @@ class StaffController extends Controller
                 })
                 ->editColumn('created_at', function ($row) {
                     return $row->created_at
-                    ? $row->created_at->format(
-                        get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
-                    )
-                    : '';
+                        ? $row->created_at->format(
+                            get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
+                        )
+                        : '';
                 })
                 ->addColumn('status', function ($row) use ($statusLabels) {
                     return $row->status == config('constants.status.active')
@@ -68,7 +68,7 @@ class StaffController extends Controller
                     }
 
                     if ($currentUser->can('delete staffs') && Auth::id() != $row->id) {
-                      if ($row->staff && $row->staff->primary_staff == 1) {
+                        if ($row->staff && $row->staff->primary_staff == 1) {
                             $btn .= '<button type="button" class="btn btn-icon btn-secondary" data-toggle="tooltip" title="Please First Delete Vendor" disabled>
                     <i class="feather icon-trash-2"></i>
                  </button>';

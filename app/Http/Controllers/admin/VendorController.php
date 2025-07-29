@@ -40,7 +40,7 @@ class VendorController extends Controller
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
-            $vendors = Vendor::select(['id', 'name', 'email','description', 'status', 'created_at']);
+            $vendors = Vendor::select(['id', 'name', 'email', 'description', 'status', 'created_at']);
 
             return DataTables::of($vendors)
                 ->addIndexColumn()

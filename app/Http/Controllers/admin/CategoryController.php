@@ -38,10 +38,10 @@ class CategoryController extends Controller
                 })
                 ->editColumn('created_at', function ($category) {
                     return $category->created_at
-                    ? $category->created_at->format(
-                        get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
-                    )
-                    : '-';                
+                        ? $category->created_at->format(
+                            get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
+                        )
+                        : '-';
                 })
                 ->editColumn('status', function ($category) {
                     return $category->status == config('constants.status.active')

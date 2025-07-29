@@ -9,6 +9,7 @@ use Spatie\Permission\Models\Permission;
 use App\Models\User;
 use DataTables;
 use Illuminate\Support\Facades\Cookie;
+
 class RoleController extends Controller
 {
     protected $allUsers;
