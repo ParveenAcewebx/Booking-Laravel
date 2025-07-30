@@ -145,8 +145,8 @@ class StaffController extends Controller
         $workingHours = [];
         if ($request->has('working_days')) {
             foreach ($request->working_days as $day => $data) {
-                $start = $data['start'] ?? null;
-                $end = $data['end'] ?? null;
+                $start = $data['start'] ?? '00:00';
+                $end = $data['end'] ?? '00:00';
 
                 $workingHours[$day] = [
                     'start' => $start,
