@@ -272,13 +272,14 @@ class StaffController extends Controller
             'phone_number' => 'required',
         ]);
 
+        // Basic info
         $staff->name = $request->name;
         $staff->email = $request->email;
         $staff->phone_number = $request->phone_number;
         $staff->phone_code = $request->code;
         $staff->status = $request->status ? config('constants.status.active') : config('constants.status.inactive');
 
-        // Avatar upload or removal
+        // Avatar handling
         if ($request->hasFile('avatar')) {
             if ($staff->avatar && Storage::disk('public')->exists($staff->avatar)) {
                 Storage::disk('public')->delete($staff->avatar);
@@ -291,18 +292,22 @@ class StaffController extends Controller
             $staff->avatar = null;
         }
 
+        // Password update
         if ($request->filled('password')) {
             $staff->password = Hash::make($request->password);
         }
 
         $staff->save();
 
+        // Role sync
         $role = Role::findById($request->role, 'web');
         $staff->syncRoles([$role->name]);
 
+        // Sync services
         $submittedServices = $request->input('assigned_services', []);
         $staff->services()->sync($submittedServices);
 
+        // Working hours
         $weekDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
         $workingHours = [];
 
@@ -310,12 +315,12 @@ class StaffController extends Controller
             $data = $request->working_days[$day] ?? [];
             $workingHours[$day] = [
                 'start' => $data['start'] ?? '00:00',
-                'end' => $data['end'] ?? '00:00',
+                'end'   => $data['end'] ?? '00:00',
                 'services' => $submittedServices ?? [],
-
             ];
         }
 
+        // Parse Day Offs
         $dayOffsRaw = $request->input('day_offs', []);
         $nestedDayOffs = [];
 
@@ -337,7 +342,7 @@ class StaffController extends Controller
                     while ($start->lte($end)) {
                         $block[] = [
                             'label' => $label,
-                            'date' => $start->format('F j, Y'),
+                            'date'  => $start->format('F j, Y'),
                         ];
                         $start->addDay();
                     }
@@ -349,17 +354,19 @@ class StaffController extends Controller
             }
         }
 
+        // Save staff meta
         $staffMeta = Staff::firstOrNew(['user_id' => $staff->id]);
         $staffMeta->work_hours = json_encode($workingHours);
 
-        if (!empty($nestedDayOffs)) {
-            $staffMeta->days_off = json_encode($nestedDayOffs);
-        }
+        // Always update days_off (empty = cleared)
+        $staffMeta->days_off = !empty($nestedDayOffs) ? json_encode($nestedDayOffs) : null;
+
         $staffMeta->vendor_id = $request->input('assigned_vendor');
         $staffMeta->save();
 
         return redirect()->route('staff.list')->with('success', 'Staff Updated Successfully!');
     }
+
 
     public function destroy($id)
     {
