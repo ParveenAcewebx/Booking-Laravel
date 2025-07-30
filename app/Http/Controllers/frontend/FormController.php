@@ -90,81 +90,82 @@ class FormController extends Controller
             ->route('form.show', $template->slug)
             ->with('success', 'Form submitted successfully!');
     }
-
-    function getservicesstaff(Request $request)
-    {
-        $serviceId = $request->query('service_id');
-        $associations = StaffServiceAssociation::where('service_id', $serviceId)->get();
-        $staff = [];
-        $vendor_data = [];
-        foreach ($associations as $association) {
-            $staffIds = $association->staff_member;
-            $user = User::where('id', $staffIds)->first();
-            if ($user) {
-                $staff[] = [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                ];
-            }
+ 
+function getservicesstaff(Request $request){
+ $serviceId = $request->query('service_id');
+   $associations = StaffServiceAssociation::where('service_id', $serviceId)->get();
+   $staff =[]; 
+   $vendor_data =[];
+    foreach ($associations as $association) {
+        $staffIds = $association->staff_member;
+          $user = User::where('id', $staffIds)->first();  
+         if ($user) {
+            $staff[] = [
+                'id' => $user->id,
+                'name' => $user->name,
+            ];
         }
-        foreach ($staff as $staffid) {
-            $user_id = $staffid['id'];
-            $vendorassociations = Staff::where('user_id', $user_id)->get();
-            foreach ($vendorassociations as $vendorassociation) {
-                $vendorIds = $vendorassociation->vendor_id;
-                $vendors = Vendor::where('id', $vendorIds)->get();
-                foreach ($vendors as $data) {
-                    $vendor_data[] = [
-                        'id' => $data->id,
-                        'name' => $data->name,
-                    ];
-                }
-            }
-        }
-
-        return  $vendor_data;
     }
-    function getBookingCalender(Request $request)
-    {
-        if ($request) {
-            $workingDates = [];
-            $vendor_id = $request['vendor_id'];
-            $vendoraiations = VendorStaffAssociation::where('vendor_id', $vendor_id)->get();
-            foreach ($vendoraiations as $vendorassociation) {
-                $staffIds = $vendorassociation->user_id;
-                $vendors = Staff::where('user_id', $staffIds)->get();
-                foreach ($vendors as $workingdate) {
-                    $workHours = json_decode($workingdate->work_hours, true);
-                    $workOff = json_decode($workingdate->days_off, true);
-                    $formattedWorkHours = [];
-                    $formatteddayoff = [];
-                    if ($workHours) {
-                        foreach ($workHours as $day => $times) {
-                            $startTime = Carbon::createFromFormat('H:i', $times['start']);
-                            $endTime = Carbon::createFromFormat('H:i', $times['end']);
-                            $formattedWorkHours[$day] = [
-                                'start' => $startTime,
-                                'end' => $endTime
-                            ];
-                        }
-                    }
-                    if ($workOff) {
-                        foreach ($workOff as $days_off) {
-                            $formatteddayoff[] = $days_off;
-                        }
-                    }
-                    $workingDates[] = [
-                        'Working_day' =>  $formattedWorkHours,
-                        'Dayoff' => $formatteddayoff,
-                    ];
+    foreach ($staff as $staffid){
+        $user_id= $staffid['id'];
+        $vendorassociations = Staff::where('user_id', $user_id)->get();
+
+         foreach ($vendorassociations as $vendorassociation) {
+              $vendorIds = $vendorassociation->vendor_id;
+                $vendors = Vendor::where('id', $vendorIds)->get();
+                foreach($vendors as $data ){
+                $vendor_data[]=[
+                    'id'=>$data->id,
+                    'name'=>$data->name,
+                ];
                 }
+        }
+    } 
+   
+    return  $vendor_data;
+
+    }
+    function getBookingCalender(Request $request){
+        if($request){
+            $workingDates = []; 
+            $vendor_id= $request['vendor_id'];
+            $vendoraiations = Staff::where('vendor_id', $vendor_id)->get();
+            foreach ($vendoraiations as $vendorassociation) {
+           $staffIds= $vendorassociation->user_id; 
+              $vendors = Staff::where('user_id', $staffIds)->get();
+              foreach($vendors as $workingdate){
+                $workHours = json_decode($workingdate->work_hours, true);
+                $workOff = json_decode($workingdate->days_off, true);
+                $formattedWorkHours = [];
+                 $formatteddayoff = [];
+                 if($workHours){
+                    foreach ($workHours as $day => $times) {
+                        $startTime = Carbon::createFromFormat('H:i', $times['start']);
+                        $endTime = Carbon::createFromFormat('H:i', $times['end']);
+                        $formattedWorkHours[$day] = [
+                        'start' => $startTime,
+                        'end' => $endTime
+                        ];
+                    }
+                }
+                    if($workOff){
+                        foreach($workOff as $days_off){
+                            $formatteddayoff[]=$days_off;
+                        }
+                    }
+                    $workingDates[]= [
+                        'Working_day'=>  $formattedWorkHours,
+                        'Dayoff'=>$formatteddayoff,
+                    ];
+              }
+              
             }
             return response()->json([
                 'success' => true,
                 'data' => $workingDates
             ]);
         }
-
-        return response()->json(['success' => false, 'message' => 'Invalid request']);
+         
+       return response()->json(['success' => false, 'message' => 'Invalid request']);
     }
 }

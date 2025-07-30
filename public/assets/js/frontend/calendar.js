@@ -238,6 +238,7 @@
             }
         }
 
+        
         // Optional: If you want default calendar without selecting a vendor first
         // new Calendar(); 
     });
