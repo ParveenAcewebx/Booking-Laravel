@@ -195,36 +195,56 @@ class StaffController extends Controller
 
     public function edit(User $staff)
     {
+        // 1. Load basic data
         $roles = Role::where('name', 'Staff')->first();
         $phoneCountries = config('phone_countries');
         $weekDays = config('constants.week_days');
         $activeStatus = config('constants.status.active');
 
+        // 2. Get Staff Meta and related data
         $staffMeta = Staff::where('user_id', $staff->id)->first();
         $vendorData = Vendor::where('status', $activeStatus)->get();
         $IsUserPrimaryStaff = $staffMeta->primary_staff ?? 0;
-        $assignedServices = Service::whereIn('id', StaffServiceAssociation::where('staff_member', $staff->id)->pluck('service_id'))
-            ->with('category')
-            ->get();
+
+        // 3. Get assigned services for this staff
+        $assignedServices = Service::whereIn(
+            'id',
+            StaffServiceAssociation::where('staff_member', $staff->id)->pluck('service_id')
+        )->with('category')->get();
 
         $services = Service::all();
+
+        // 4. If impersonation active, get original user
         $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
 
+        // 5. Prepare Day Off data
         $groupedDayOffs = [];
+
         if (!empty($staffMeta->days_off)) {
             $decoded = json_decode($staffMeta->days_off, true);
-            $flattened = collect($decoded)->flatten(1);
-            $groupedDayOffs = $flattened->groupBy('label')->map(function ($items, $label) {
-                $dates = collect($items)->pluck('date')->sort()->values();
-                $start = $dates->first();
-                $end = $dates->last();
 
-                return [
-                    'label' => $label,
-                    'range' => $start . ' - ' . $end
-                ];
-            })->values()->toArray();
+            $flattened = collect($decoded)->flatten(1);
+
+            $groupedDayOffs = $flattened
+                ->groupBy('label')
+                ->map(function ($items, $label) {
+                    $dates = collect($items)
+                        ->pluck('date')
+                        ->map(fn($date) => \Carbon\Carbon::parse($date)) // ensure Carbon objects
+                        ->sort()
+                        ->values();
+
+                    $start = $dates->first()->format('F j, Y'); // e.g., August 2, 2025
+                    $end = $dates->last()->format('F j, Y');
+
+                    return [
+                        'label' => $label,
+                        'range' => $start . ' - ' . $end,
+                    ];
+                })
+                ->values()
+                ->toArray();
         }
 
         return view('admin.staff.edit', compact(

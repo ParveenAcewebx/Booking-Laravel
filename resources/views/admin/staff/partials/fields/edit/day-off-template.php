@@ -20,58 +20,54 @@
         </div>
     </div>
 </template>
+
 <script>
     let dayOffIndex = 0;
+
+    function initDateRangePicker($input, prefilledRange = '') {
+        $input.daterangepicker({
+            autoUpdateInput: false,
+            locale: { format: 'MMMM D, YYYY' }
+        }).on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(
+                picker.startDate.format('MMMM D, YYYY') + ' - ' +
+                picker.endDate.format('MMMM D, YYYY')
+            );
+        });
+
+        // If prefilled range is passed
+        if (prefilledRange) {
+            const [start, end] = prefilledRange.split(' - ');
+            const picker = $input.data('daterangepicker');
+            picker.setStartDate(start);
+            picker.setEndDate(end);
+            $input.val(prefilledRange);
+        }
+    }
 
     function addDayOffEntry(label = '', range = '') {
         const template = $('#dayOffTemplate').html().replace(/__INDEX__/g, dayOffIndex);
         const $entry = $(template);
+
+        // Append to repeater
         $('#dayOffRepeater').append($entry);
 
-        const labelInput = $entry.find(`input[name="day_offs[${dayOffIndex}][offs]"]`);
-        const dateInput = $entry.find(`input[name="day_offs[${dayOffIndex}][date]"]`);
+        // Set values
+        const $labelInput = $entry.find(`input[name="day_offs[${dayOffIndex}][offs]"]`);
+        const $dateInput = $entry.find(`input[name="day_offs[${dayOffIndex}][date]"]`);
 
-        if (label) labelInput.val(label);
-        if (range) dateInput.val(range);
-
-        dateInput.daterangepicker({
-            autoUpdateInput: false,
-            locale: {
-                format: 'MMMM D, YYYY'
-            }
-        });
-
-        dateInput.on('apply.daterangepicker', function(ev, picker) {
-            $(this).val(picker.startDate.format('MMMM D, YYYY') + ' - ' + picker.endDate.format('MMMM D, YYYY'));
-        });
-
-        if (range) {
-            const [start, end] = range.split(' - ');
-            dateInput.data('daterangepicker').setStartDate(start);
-            dateInput.data('daterangepicker').setEndDate(end);
-            dateInput.val(range);
-        }
+        if (label) $labelInput.val(label);
+        initDateRangePicker($dateInput, range);
 
         dayOffIndex++;
     }
 
+    // Add new entry on button click
     $('#addDayOffBtn').on('click', function() {
-        const template = $('#dayOffTemplate').html().replace(/__INDEX__/g, dayOffIndex);
-        const $entry = $(template);
-
-        $('#dayOffRepeater').append($entry);
-        dayOffIndex++;
-
-        // Initialize date range picker
-        $entry.find('.date-range-picker').daterangepicker({
-            autoUpdateInput: false,
-            locale: {
-                format: 'MMMM D, YYYY'
-            }
-        }).on('apply.daterangepicker', function(ev, picker) {
-            $(this).val(picker.startDate.format('MMMM D, YYYY') + ' - ' + picker.endDate.format('MMMM D, YYYY'));
-        });
+        addDayOffEntry();
     });
+
+    // Preload data from hidden input
     $(function() {
         const raw = $('#editDayOffData').val();
         if (raw) {
