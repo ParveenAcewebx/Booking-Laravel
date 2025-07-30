@@ -8,6 +8,7 @@
   <link rel="icon" href="{{ get_setting('favicon') ? asset('storage/' . get_setting('favicon')) : asset('assets/images/favicon.ico') }}" type="image/x-icon">
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{{ asset('assets/css/frontend/custom.css')}}">
 
   <!-- Tailwind Custom Config -->
   <script>
@@ -30,6 +31,8 @@
   <script src="https://unpkg.com/preline@latest/dist/preline.js"></script>
   <script src="{{asset('assets/js/frontend/custom.js')}}"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="{{asset('assets/js/frontend/calendar.js')}}"></script>
+
   <!-- (Optional) Alpine.js for more interactivity -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>

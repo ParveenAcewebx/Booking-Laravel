@@ -16,6 +16,7 @@ use App\Models\StaffServiceAssociation;
 use App\Models\VendorStaffAssociation;
 use App\Models\Vendor;
 use App\Models\Staff;
+use Carbon\Carbon;
 
 
 
@@ -122,5 +123,48 @@ class FormController extends Controller
         }
 
         return  $vendor_data;
+    }
+    function getBookingCalender(Request $request)
+    {
+        if ($request) {
+            $workingDates = [];
+            $vendor_id = $request['vendor_id'];
+            $vendoraiations = VendorStaffAssociation::where('vendor_id', $vendor_id)->get();
+            foreach ($vendoraiations as $vendorassociation) {
+                $staffIds = $vendorassociation->user_id;
+                $vendors = Staff::where('user_id', $staffIds)->get();
+                foreach ($vendors as $workingdate) {
+                    $workHours = json_decode($workingdate->work_hours, true);
+                    $workOff = json_decode($workingdate->days_off, true);
+                    $formattedWorkHours = [];
+                    $formatteddayoff = [];
+                    if ($workHours) {
+                        foreach ($workHours as $day => $times) {
+                            $startTime = Carbon::createFromFormat('H:i', $times['start']);
+                            $endTime = Carbon::createFromFormat('H:i', $times['end']);
+                            $formattedWorkHours[$day] = [
+                                'start' => $startTime,
+                                'end' => $endTime
+                            ];
+                        }
+                    }
+                    if ($workOff) {
+                        foreach ($workOff as $days_off) {
+                            $formatteddayoff[] = $days_off;
+                        }
+                    }
+                    $workingDates[] = [
+                        'Working_day' =>  $formattedWorkHours,
+                        'Dayoff' => $formatteddayoff,
+                    ];
+                }
+            }
+            return response()->json([
+                'success' => true,
+                'data' => $workingDates
+            ]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Invalid request']);
     }
 }

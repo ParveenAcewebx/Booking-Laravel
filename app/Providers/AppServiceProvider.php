@@ -48,9 +48,90 @@ class AppServiceProvider extends ServiceProvider
             $servicesForm .= "<input type='hidden' class='selected_vendor' value='" . $selectedvendor . "'>";
             $servicesForm .= "<select name='dynamic[vendor]' id='service_vendor_form' class='{$c['select']} service_vendor_form' required>";
             $servicesForm .= '<option value="">---Select Vendor---</option>';
-
             $servicesForm .= "</select>";
             $servicesForm .= "</div>";
+
+            $servicesForm .=  '<div class="calendar-wrap hidden">
+                    <div class="w-full flex items-center justify-between">
+                        <div class="pre-button flex items-center justify-center">
+                            <i class="fa fa-chevron-left"></i>
+                        </div>
+                        <h5 id="month-name" class="text-center mt-[-10px]"></h5>
+                        <div class="next-button flex items-center justify-center">
+                            <i class="fa fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    <table id="calendar" class="table-auto w-full mt-4">
+                        <thead>
+                            <tr>
+                                <th class="px-2 py-1 text-sm font-medium text-center">Sun</th>
+                                <th class="px-2 py-1 text-sm font-medium text-center">Mon</th>
+                                <th class="px-2 py-1 text-sm font-medium text-center">Tue</th>
+                                <th class="px-2 py-1 text-sm font-medium text-center">Wed</th>
+                                <th class="px-2 py-1 text-sm font-medium text-center">Thu</th>
+                                <th class="px-2 py-1 text-sm font-medium text-center">Fri</th>
+                                <th class="px-2 py-1 text-sm font-medium text-center">Sat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <tr>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                </tr>
+                        </tbody>
+                    </table>
+                </div>';
+
 
             return $servicesForm;
         });

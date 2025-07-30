@@ -178,8 +178,7 @@ document.addEventListener("DOMContentLoaded", function () {
         button.addEventListener('click', handleNextButtonClick);
     });
 
-    function get_services_staff(){
-
+function get_services_staff(){
     var serviceId = services_short_code_get_staff.value;
        $.ajax({
         url: '/get/services/staff', 
