@@ -158,7 +158,12 @@
                             <!-- Assigned Vendor -->
                             <div class="form-group">
                                 <label>Assigned Vendor</label>
-                                <select class="form-control select-user" name="assigned_vendor" {{ $IsUserPrimaryStaff ? 'disabled' : '' }}>
+
+                                {{-- Select gets name ONLY when enabled --}}
+                                <select class="form-control select-user"
+                                    id="assignedVendorSelect"
+                                    name="{{ $IsUserPrimaryStaff ? '' : 'assigned_vendor' }}"
+                                    {{ $IsUserPrimaryStaff ? 'disabled' : '' }}>
                                     <option value="">Select Vendor</option>
                                     @foreach($vendorData as $vendor)
                                     <option value="{{ $vendor->id }}"
@@ -167,7 +172,13 @@
                                     </option>
                                     @endforeach
                                 </select>
+
+                                {{-- Hidden field only used when select is disabled --}}
+                                @if($IsUserPrimaryStaff)
+                                <input type="hidden" name="assigned_vendor" value="{{ old('assigned_vendor', $staffMeta->vendor_id ?? '') }}">
+                                @endif
                             </div>
+
 
                             <!-- Avatar Upload -->
                             <div class="form-group">
