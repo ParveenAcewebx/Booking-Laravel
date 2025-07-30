@@ -127,7 +127,7 @@
                             <!-- Status -->
                             <div class="form-group">
                                 <label>Status</label>
-                                <select name="status" class="form-control">
+                                <select name="status" class="form-control select-user">
                                     <option value="{{ config('constants.status.active') }}"
                                         {{ old('status', $staff->status) == config('constants.status.active') ? 'selected' : '' }}>
                                         Active
