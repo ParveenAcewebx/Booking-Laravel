@@ -81,7 +81,7 @@
                                     @enderror
                                 </div>
 
-                                <div class="form-group col-md-6">
+                                <!-- <div class="form-group col-md-6">
                                     <label>Staff Member <span class="text-danger">*</span></label>
                                     <select name="staff_member[]" class="form-control select2-mash @error('staff_member') is-invalid @enderror" multiple >
                                         @php
@@ -96,7 +96,7 @@
                                     @error('staff_member')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
-                                </div>
+                                </div> -->
                             </div>
 
                         </div>

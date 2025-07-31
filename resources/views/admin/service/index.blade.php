@@ -37,7 +37,7 @@
                                     <tr>
                                         <th>ID</th> {{-- Hidden for sorting --}}
                                         <th>Name</th>
-                                        <th>Staff Member</th>
+                                        <!-- <th>Staff Member</th> -->
                                         <th>Created At</th>
                                         <th>Status</th>
                                         <th>Action</th>
@@ -62,7 +62,7 @@
             columns: [
                 { data: 'id', name: 'id', visible: false },
                 { data: 'name', name: 'name' },
-                { data: 'staff_member', name: 'staff_member' },
+                // { data: 'staff_member', name: 'staff_member' },
                 { data: 'created_at', name: 'created_at' },
                 { data: 'status', name: 'status' },
                 { data: 'action', name: 'action', orderable: false, searchable: false }
