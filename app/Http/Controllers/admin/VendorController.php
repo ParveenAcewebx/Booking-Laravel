@@ -199,10 +199,14 @@ class VendorController extends Controller
                 'primary_staff' => 1,
             ]);
 
-            VendorServiceAssociation::create([
-                'vendor_id'   => $lastInsertId,
-                'service_id'  => $request->assigned_service ?: null,
-            ]);
+            if ($request->has('assigned_service') && is_array($request->assigned_service)) {
+                foreach ($request->assigned_service as $serviceId) {
+                    VendorServiceAssociation::create([
+                        'vendor_id'  => $lastInsertId,
+                        'service_id' => $serviceId,
+                    ]);
+                }
+            }
 
 
             $selectedStaffIds = $request->input('select_staff', []);
@@ -240,7 +244,8 @@ class VendorController extends Controller
         $staffAssociation = Staff::where('vendor_id', $id)
             ->with('user:id,name,email')
             ->get();
-        $gsd = VendorServiceAssociation::where('vendor_id', $id)->first();
+        // Multiple service IDs lao
+        $gsd = VendorServiceAssociation::where('vendor_id', $id)->pluck('service_id')->toArray();
         $allService = Service::where('status', config('constants.status.active'))->get();
 
         $staffRole = Role::where('name', 'staff')->first();
@@ -357,13 +362,30 @@ class VendorController extends Controller
                 ]);
             }
         }
-        $assignedServiceId = $request->input('assigned_service');
+        $assignedServices = $request->input('assigned_service', []);
+        $assignedServices = array_map('intval', $assignedServices);
 
-        $vendorService = VendorServiceAssociation::where('vendor_id', $vendor->id)->first();
-        if ($vendorService) {
-            // Update existing
-            $vendorService->service_id = $assignedServiceId;
-            $vendorService->save();
+        // Get Services  Fetch From VendorAssociation
+        $existingServices = VendorServiceAssociation::where('vendor_id', $vendor->id)
+            ->pluck('service_id')
+            ->toArray();
+
+        if (empty($assignedServices)) {
+            VendorServiceAssociation::where('vendor_id', $vendor->id)->delete();
+        } else {
+            $servicesToDelete = array_diff($existingServices, $assignedServices);
+            if (!empty($servicesToDelete)) {
+                VendorServiceAssociation::where('vendor_id', $vendor->id)
+                    ->whereIn('service_id', $servicesToDelete)
+                    ->delete();
+            }
+            $servicesToAdd = array_diff($assignedServices, $existingServices);
+            foreach ($servicesToAdd as $serviceId) {
+                VendorServiceAssociation::create([
+                    'vendor_id'  => $vendor->id,
+                    'service_id' => $serviceId,
+                ]);
+            }
         }
 
         if ($request->hasFile('thumbnail')) {

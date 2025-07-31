@@ -98,19 +98,16 @@
                             </div>
                             <div class="form-group">
                                 <label>Assigned Services</label>
-                                <select class="form-control select-user" name="assigned_service">
-                                    <option value=""
-                                        {{ old('assigned_service', $gsd->service_id ?? '') == '' ? 'selected' : '' }}>
-                                        Please Select Service
-                                    </option>
+                                <select class="form-control select-user" name="assigned_service[]" multiple>
                                     @foreach($allService as $service)
                                     <option value="{{ $service->id }}"
-                                        {{ old('assigned_service', $gsd->service_id ?? '') == $service->id ? 'selected' : '' }}>
+                                        {{ in_array($service->id, old('assigned_service', $gsd ?? [])) ? 'selected' : '' }}>
                                         {{ $service->name }}
                                     </option>
                                     @endforeach
                                 </select>
                             </div>
+
 
                             <!-- Thumbnail Upload -->
                             <div class="form-group">

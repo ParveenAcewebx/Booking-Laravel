@@ -105,8 +105,7 @@
 
                             <div class="form-group">
                                 <label>Assigned Services</label>
-                                <select class="form-control select-user" name="assigned_service">
-                                    <option value="" {{ old('assigned_service') == '' ? 'selected' : '' }}>Please Select Service</option>
+                                <select class="form-control select-user" name="assigned_service[]" multiple>
                                     @foreach($allService as $service)
                                     <option value="{{ $service->id }}" {{ old('assigned_service') == $service->id ? 'selected' : '' }}>
                                         {{ $service->name }}
