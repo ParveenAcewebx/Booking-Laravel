@@ -98,43 +98,41 @@ class VendorController extends Controller
         $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
 
-        // Role: staff
+        // Get Staff role
         $staffRole = Role::where('name', 'staff')->first();
 
-        // All users having staff role
+        // All users with staff role
         $staffUsers = User::whereHas('roles', function ($query) use ($staffRole) {
             $query->where('id', $staffRole->id);
         })->get();
 
-        // All staff records
-        $staffAssociation = Staff::with('user:id,name,email')->get();
-
-        // IDs already present in staff table
+        // IDs present in staff table
         $staffTableUserIds = Staff::pluck('user_id')->toArray();
 
-        // Staff assigned to any vendor (vendor_id is NOT null)
-        $assignedUserIds = $staffAssociation->pluck('user_id')->toArray();
+        // Staff users NOT in staff table (fresh staff)
+        $freshStaffUserIds = $staffUsers->whereNotIn('id', $staffTableUserIds)
+            ->pluck('id')
+            ->toArray();
 
-        // Users with staff role but not in staff table (fresh staff users)
-        $roleStaffNotInStaffTable = $staffUsers->whereNotIn('id', $staffTableUserIds);
-
-        // Staff where vendor_id is NULL (free to assign)
-        $availableStaffUserIds = Staff::whereNull('vendor_id')
+        // Staff whose vendor_id is NULL (free/unassigned staff)
+        $unassignedStaffUserIds = Staff::whereNull('vendor_id')
             ->whereIn('user_id', $staffUsers->pluck('id'))
             ->pluck('user_id')
             ->toArray();
 
-        // Merge free + fresh + assigned (assigned included for edit)
-        $mergedAvailableIds = array_unique(array_merge(
-            $roleStaffNotInStaffTable->pluck('id')->toArray(),
-            $availableStaffUserIds,
-            $assignedUserIds
+        /**
+         * Merge fresh staff + unassigned staff
+         * (Exclude those already assigned to any vendor)
+         */
+        $availableStaffIds = array_unique(array_merge(
+            $freshStaffUserIds,
+            $unassignedStaffUserIds
         ));
 
-        // Users available to assign
-        $availableStaff = User::whereIn('id', $mergedAvailableIds)->get();
+        // Final available staff list
+        $availableStaff = User::whereIn('id', $availableStaffIds)->get();
 
-        // For Add page — no preassigned staff (empty array)
+        // No preassigned staff in Add page
         $preAssignedStaffIds = [];
 
         $allService = Service::where('status', config('constants.status.active'))->get();
@@ -150,7 +148,6 @@ class VendorController extends Controller
             'preAssignedStaffIds'
         ));
     }
-
 
     public function store(Request $request)
     {
@@ -199,7 +196,7 @@ class VendorController extends Controller
 
             Staff::create([
                 'user_id' => $user->id,
-                'primary_staff' => 1,
+                'primary_staff' => 0,
             ]);
 
             VendorServiceAssociation::create([
@@ -209,7 +206,7 @@ class VendorController extends Controller
 
 
             $selectedStaffIds = $request->input('select_staff', []);
-                // Convert to integer values
+            // Convert to integer values
             $selectedStaffIds = array_map('intval', $selectedStaffIds);
 
             foreach ($selectedStaffIds as $userId) {
