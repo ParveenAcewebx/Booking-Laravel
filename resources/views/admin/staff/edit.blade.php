@@ -115,6 +115,22 @@
                             </div>
                         </div>
                     </div>
+                     <div class="card">
+                        <div class="card-body">
+                            <ul class="nav nav-tabs mb-3">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#working-days">Work Hours</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#days-off">Days Off</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                @include('admin.staff.partials.edit.working-days')
+                                @include('admin.staff.partials.edit.days-off')
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Right Column -->
@@ -230,29 +246,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Tabs -->
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <ul class="nav nav-tabs mb-3">
-                                <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#working-days">Work Hours</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#days-off">Days Off</a>
-                                </li>
-                            </ul>
-                            <div class="tab-content">
-                                @include('admin.staff.partials.edit.working-days')
-                                @include('admin.staff.partials.edit.days-off')
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </form>
     </div>
 </section>

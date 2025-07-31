@@ -78,12 +78,11 @@
                                         <input type="datetime-local" class="form-control" name="booking_datetime"
                                             value="{{ old('booking_datetime', $booking->booking_datetime) }}" required>
                                     </div>
+                                  {{-- Save Button for Settings --}}
+                                    <div class="text-right mt-4">
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                    </div>
                                 </div>
-                            </div>
-
-                            {{-- Save Button for Settings --}}
-                            <div class="text-right mt-4">
-                                <button type="submit" class="btn btn-primary">Update</button>
                             </div>
                         </div>
                     </div>

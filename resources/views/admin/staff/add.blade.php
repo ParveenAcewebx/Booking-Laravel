@@ -111,6 +111,26 @@
                             </div>
                         </div>
                     </div>
+                     <div class="card">
+                        <div class="card-body">
+                            <ul class="nav nav-tabs mb-3" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#working-days" role="tab">
+                                        <i class="feather icon-clock"></i> Work Hours
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#days-off" role="tab">
+                                        <i class="feather icon-calendar"></i> Days Off
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                @include('admin.staff.partials.add.working-days')
+                                @include('admin.staff.partials.add.days-off')
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Right Column -->
@@ -195,32 +215,6 @@
 
                             <div class="text-right mt-0">
                                 <button type="submit" class="btn btn-primary">Save</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tabs Section -->
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <ul class="nav nav-tabs mb-3" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#working-days" role="tab">
-                                        <i class="feather icon-clock"></i> Work Hours
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#days-off" role="tab">
-                                        <i class="feather icon-calendar"></i> Days Off
-                                    </a>
-                                </li>
-                            </ul>
-                            <div class="tab-content">
-                                @include('admin.staff.partials.add.working-days')
-                                @include('admin.staff.partials.add.days-off')
                             </div>
                         </div>
                     </div>

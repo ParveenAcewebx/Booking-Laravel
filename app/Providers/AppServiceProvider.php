@@ -51,7 +51,7 @@ class AppServiceProvider extends ServiceProvider
             $servicesForm .= "</select>";
             $servicesForm .= "</div>";
 
-            $servicesForm .=  '<div class="calendar-wrap hidden">
+            $servicesForm .=  '<div class="calendar-wrap hidden d-none">
                     <div class="w-full flex items-center justify-between">
                         <div class="pre-button flex items-center justify-center">
                             <i class="fa fa-chevron-left"></i>
