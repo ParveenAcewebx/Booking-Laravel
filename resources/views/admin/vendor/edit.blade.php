@@ -33,7 +33,9 @@
                 <!-- Left -->
                 <div class="col-md-8 order-md-1">
                     <div class="card">
-                        <div class="card-header"><h5>Vendor Information</h5></div>
+                        <div class="card-header">
+                            <h5>Vendor Information</h5>
+                        </div>
                         <div class="card-body">
                             <div class="row">
                                 <!-- Name -->
@@ -43,7 +45,7 @@
                                         <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
                                             value="{{ old('username', $vendor->name) }}">
                                         @error('username')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -55,7 +57,7 @@
                                         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
                                             value="{{ old('email', $vendor->email) }}">
                                         @error('email')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -67,78 +69,14 @@
                                         <div id="quill-editor" style="height: 200px;">{!! old('description', $vendor->description) !!}</div>
                                         <textarea name="description" id="description" class="d-none">{{ old('description', $vendor->description) }}</textarea>
                                         @error('description')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
+                                        <div class="text-danger mt-1">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Right -->
-                <div class="col-md-4 order-md-2">
                     <div class="card">
-                        <div class="card-header"><h5>Settings</h5></div>
-                        <div class="card-body">
-                            <!-- Status -->
-                            <div class="form-group">
-                                <label class="form-label">Status</label>
-                                <select name="status" class="form-control select-user @error('status') is-invalid @enderror">
-                                    <option value="{{ config('constants.status.active') }}" {{ old('status', $vendor->status) == config('constants.status.active') ? 'selected' : '' }}>Active</option>
-                                    <option value="{{ config('constants.status.inactive') }}" {{ old('status', $vendor->status) == config('constants.status.inactive') ? 'selected' : '' }}>Inactive</option>
-                                </select>
-                                @error('status')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Thumbnail Upload -->
-                            <div class="form-group">
-                                <label class="form-label">Featured Image</label>
-                                <div class="input-group mb-1">
-                                    <div class="input-group-prepend"><span class="input-group-text">Upload</span></div>
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name="thumbnail" id="avatarInput"
-                                            accept=".jpg,.jpeg,.png,.gif,image/*">
-                                        <label class="custom-file-label" for="avatarInput">Choose file...</label>
-                                    </div>
-                                </div>
-                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, GIF.</small>
-                                @error('thumbnail')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
-
-                                <!-- Preview -->
-                                <div id="avatar-preview-container" class="row mt-3 {{ $vendor->thumbnail ? '' : 'd-none' }}">
-                                    <div class="col-md-6 position-relative">
-                                        <div class="card shadow-sm">
-                                            <img id="avatar-preview"
-                                                src="{{ asset('storage/' . $vendor->thumbnail) }}"
-                                                class="card-img-top img-thumbnail"
-                                                style="object-fit: cover; height: 120px; width: 100%;">
-                                            <button type="button" id="remove-avatar-preview"
-                                                class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
-                                                title="Remove image">&times;</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <input type="hidden" name="remove_avatar" id="removeAvatarFlag" value="0">
-                            </div>
-
-                            <!-- Submit -->
-                            <div class="text-right mt-0">
-                                <button type="submit" class="btn btn-primary">Update</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stripe and Staff Tabs -->
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card mt-3">
                         <div class="card-body">
                             <!-- Nav Tabs -->
                             <ul class="nav nav-tabs mb-3" role="tablist">
@@ -175,6 +113,78 @@
                                     <!-- Hidden JSON with staff data -->
                                     <input type="hidden" id="editDayOffData" value='@json($staffAssociation)'>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right -->
+                <div class="col-md-4 order-md-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Status -->
+                            <div class="form-group">
+                                <label class="form-label">Status</label>
+                                <select name="status" class="form-control select-user @error('status') is-invalid @enderror">
+                                    <option value="{{ config('constants.status.active') }}" {{ old('status', $vendor->status) == config('constants.status.active') ? 'selected' : '' }}>Active</option>
+                                    <option value="{{ config('constants.status.inactive') }}" {{ old('status', $vendor->status) == config('constants.status.inactive') ? 'selected' : '' }}>Inactive</option>
+                                </select>
+                                @error('status')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label>Assigned Services</label>
+                                <select class="form-control select-user" name="assigned_service[]" multiple>
+                                    @foreach($allService as $service)
+                                    <option value="{{ $service->id }}"
+                                        {{ in_array($service->id, old('assigned_service', $gsd ?? [])) ? 'selected' : '' }}>
+                                        {{ $service->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+
+                            <!-- Thumbnail Upload -->
+                            <div class="form-group">
+                                <label class="form-label">Featured Image</label>
+                                <div class="input-group mb-1">
+                                    <div class="input-group-prepend"><span class="input-group-text">Upload</span></div>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" name="thumbnail" id="avatarInput"
+                                            accept=".jpg,.jpeg,.png,.gif,image/*">
+                                        <label class="custom-file-label" for="avatarInput">Choose file...</label>
+                                    </div>
+                                </div>
+                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, GIF.</small>
+                                @error('thumbnail')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+
+                                <!-- Preview -->
+                                <div id="avatar-preview-container" class="row mt-3 {{ $vendor->thumbnail ? '' : 'd-none' }}">
+                                    <div class="col-md-6 position-relative">
+                                        <div class="card shadow-sm">
+                                            <img id="avatar-preview"
+                                                src="{{ asset('storage/' . $vendor->thumbnail) }}"
+                                                class="card-img-top img-thumbnail"
+                                                style="object-fit: cover; height: 120px; width: 100%;">
+                                            <button type="button" id="remove-avatar-preview"
+                                                class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
+                                                title="Remove image">&times;</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="remove_avatar" id="removeAvatarFlag" value="0">
+                            </div>
+
+                            <!-- Submit -->
+                            <div class="text-right mt-0">
+                                <button type="submit" class="btn btn-primary">Update</button>
                             </div>
                         </div>
                     </div>
