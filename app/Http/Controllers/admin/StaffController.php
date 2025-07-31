@@ -9,6 +9,7 @@ use App\Models\Service;
 use App\Models\Vendor;
 use App\Models\VendorAssociation;
 use App\Models\StaffServiceAssociation;
+use App\Models\VendorStaffAssociation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -189,6 +190,11 @@ class StaffController extends Controller
             'work_hours' => json_encode($workingHours),
             'days_off' => json_encode($dayOffsGrouped),
         ]);
+
+        VendorStaffAssociation::create([
+             'user_id' => $user->id,
+             'vendor_id' => $request->assigned_vendor ?? 0,
+        ]);
         return redirect()->route('staff.list')->with('success', 'Staff Created Successfully!');
     }
 
@@ -201,7 +207,7 @@ class StaffController extends Controller
         $activeStatus = config('constants.status.active');
 
         // 2. Get Staff Meta and related data
-        $staffMeta = Staff::where('user_id', $staff->id)->first();
+        $staffMeta = VendorStaffAssociation::where('user_id', $staff->id)->first();
         $vendorData = Vendor::where('status', $activeStatus)->get();
         $IsUserPrimaryStaff = $staffMeta->primary_staff ?? 0;
 
@@ -356,12 +362,14 @@ class StaffController extends Controller
         // Save staff meta
         $staffMeta = Staff::firstOrNew(['user_id' => $staff->id]);
         $staffMeta->work_hours = json_encode($workingHours);
-
+        
         // Always update days_off (empty = cleared)
         $staffMeta->days_off = !empty($nestedDayOffs) ? json_encode($nestedDayOffs) : null;
-
-        // $staffMeta->vendor_id = $request->input('assigned_vendor');
+        
         $staffMeta->save();
+        $vendorStaffMeta = VendorStaffAssociation::firstOrNew(['user_id' => $staff->id]);
+        $vendorStaffMeta->vendor_id = $request->input('assigned_vendor');
+        $vendorStaffMeta->save();
 
         return redirect()->route('staff.list')->with('success', 'Staff Updated Successfully!');
     }

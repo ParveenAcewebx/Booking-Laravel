@@ -427,23 +427,39 @@ class VendorController extends Controller
     public function destroy($vendorId)
     {
         $vendor = Vendor::find($vendorId);
+
         if (!$vendor) {
             return response()->json(['success' => false, 'message' => 'Vendor not found.']);
         }
 
-        $association = VendorStaffAssociation::where('vendor_id', $vendorId)->first();
-        if ($association) {
-            $user = User::find($association->user_id);
-            if ($user) {
-                $user->delete();
+        // Delete all staff associations for this vendor
+        $associations = VendorStaffAssociation::where('vendor_id', $vendorId)->get();
+
+        foreach ($associations as $association) {
+            // Check if this user is primary staff
+            $isPrimaryStaff = Staff::where('user_id', $association->user_id)
+                ->where('primary_staff', 1)
+                ->exists();
+
+            // Delete user only if NOT primary staff
+            if (!$isPrimaryStaff) {
+                $user = User::find($association->user_id);
+                if ($user) {
+                    $user->delete();
+                }
             }
+
             $association->delete();
         }
 
+        // Delete vendor thumbnail if exists
         if ($vendor->thumbnail && Storage::disk('public')->exists($vendor->thumbnail)) {
             Storage::disk('public')->delete($vendor->thumbnail);
         }
+
+        // Finally delete vendor
         $vendor->delete();
+
         return response()->json(['success' => true, 'message' => 'Vendor Deleted Successfully.']);
     }
 }
