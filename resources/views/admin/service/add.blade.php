@@ -96,7 +96,7 @@
                                 </div>
 
                                 <!-- Staff -->
-                                <div class="col-md-6">
+                                <!-- <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Staff Member <span class="text-danger">*</span></label>
                                         <select name="staff_member[]"
@@ -113,7 +113,7 @@
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>

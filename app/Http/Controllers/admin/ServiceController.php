@@ -38,11 +38,11 @@ class ServiceController extends Controller
                     // Use the related category name
                     return  $row->created_at;
                 })
-                ->addColumn('staff_member', function ($row) {
-                    $staffIds = $row->staffAssociations->pluck('staff_member')->toArray();
-                    $staffNames = User::whereIn('id', $staffIds)->pluck('name')->toArray();
-                    return implode(', ', $staffNames);
-                })
+                // ->addColumn('staff_member', function ($row) {
+                //     $staffIds = $row->staffAssociations->pluck('staff_member')->toArray();
+                //     $staffNames = User::whereIn('id', $staffIds)->pluck('name')->toArray();
+                //     return implode(', ', $staffNames);
+                // })
                 ->addColumn('action', function ($row) {
                     $btn = '';
 
@@ -89,7 +89,7 @@ class ServiceController extends Controller
         $data = $request->validate([
             'name'                   => 'required|string|max:255',
             'duration'               => 'required',
-            'staff_member'           => 'required',
+            // 'staff_member'           => 'required',
             'description'            => 'nullable|string',
             'category'               => 'required|exists:categories,id',
             'thumbnail'              => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:2048',
@@ -135,7 +135,7 @@ class ServiceController extends Controller
 
         $data['gallery'] = json_encode(array_values($gallery));
 
-        $data['staff_member'] = json_encode($request->input('staff_member', []));
+        // $data['staff_member'] = json_encode($request->input('staff_member', []));
         $data['payment__is_live'] = $request->has('payment__is_live') ? 1 : 0;
         $data['duration'] = $request->duration;
 
