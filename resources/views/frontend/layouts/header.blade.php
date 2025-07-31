@@ -1,19 +1,19 @@
-  <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b dark:bg-neutral-900/80 dark:border-neutral-700">
+  <header class="sticky top-0 z-50 bg-gray-900 backdrop-blur-lg border-b dark:bg-neutral-900/80 dark:border-neutral-700">
     <nav class="max-w-7xl mx-auto flex items-center justify-between p-4 md:px-6">
       <!-- Logo -->
       <a href="{{ route('home') }}" class="flex items-center space-x-3 text-xl font-semibold text-black dark:text-white">
-        <img src="{{ asset('storage/' . get_setting('website_logo')) }}" alt="MyBrand Logo" class="h-8 w-auto">
+        <img src="{{ asset('storage/' . get_setting('website_logo')) }}" alt="MyBrand Logo" class="h-14 w-auto">
       </a>
       <!-- Desktop Menu -->
       <div class="hidden md:flex space-x-6">
         <a href="{{ route('home') }}"
-          class="relative font-medium
-                  {{ request()->routeIs('home') ? 'text-black dark:text-white before:absolute before:bottom-0.5 before:w-full before:h-1 before:bg-yellow-400' : 'text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white' }}">
+          class="relative font-medium text-white
+                {{ request()->routeIs('home') ? 'before:absolute before:-bottom-1.5 before:w-full before:h-1 before:bg-yellow-400' : '' }}">
           Home
         </a>
         <a href="{{ route('booking.listing') }}"
-          class="relative font-medium
-                  {{ request()->routeIs('booking.listing') ? 'text-black dark:text-white before:absolute before:bottom-0.5 before:w-full before:h-1 before:bg-yellow-400' : 'text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white' }}">
+          class="relative font-medium text-white
+                {{ request()->routeIs('booking.listing') ? 'before:absolute before:-bottom-1.5 before:w-full before:h-1 before:bg-yellow-400' : '' }}">
           Bookings
         </a>
       </div>
@@ -25,7 +25,7 @@
               alt="{{ auth()->user()->name }}"
               onerror="this.onerror=null;this.src='{{ asset('assets/images/no-image-available.png') }}';"
               class="h-8 w-8 rounded-full object-cover border border-gray-300">
-            <span class="text-sm font-medium text-gray-800">
+            <span class="text-sm font-medium text-white">
               {{ auth()->user()->name }}
             </span>
             <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
