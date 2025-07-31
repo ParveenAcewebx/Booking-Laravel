@@ -438,15 +438,14 @@ class VendorController extends Controller
         foreach ($associations as $association) {
             // Check if this user is primary staff
             $isPrimaryStaff = Staff::where('user_id', $association->user_id)
-                ->where('primary_staff', 1)
-                ->exists();
+            ->where('primary_staff', 1)
+            ->exists();
+            
 
             // Delete user only if NOT primary staff
-            if (!$isPrimaryStaff) {
-                $user = User::find($association->user_id);
-                if ($user) {
-                    $user->delete();
-                }
+            if ($isPrimaryStaff) {
+                Staff::where('user_id', $association->user_id)->delete();
+                User::where('id', $association->user_id)->delete();
             }
 
             $association->delete();
