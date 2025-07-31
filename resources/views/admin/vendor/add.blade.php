@@ -75,6 +75,68 @@
                             </div>
                         </div>
                     </div>
+                     <div class="card">
+                        <div class="card-body">
+                            <ul class="nav nav-tabs mb-3" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#stripeAccount" role="tab">
+                                        <i class="fab fa-stripe"></i> Stripe
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#assignStaff" role="tab">
+                                        <i class="feather icon-layers"></i> Assign Staff
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="stripeAccount" role="tabpanel">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="payment__is_live" name="stripe_mode" value="1"
+                                                {{ old('stripe_mode') ? 'checked' : '' }}>
+                                            <label class="custom-control-label" for="payment__is_live">Live Mode</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="stripe-test">
+                                        <div class="form-group">
+                                            <label>Test Site Key</label>
+                                            <input type="text" name="stripe_test_site_key" class="form-control" value="{{ old('stripe_test_site_key') }}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Test Secret Key</label>
+                                            <input type="text" name="stripe_test_secret_key" class="form-control" value="{{ old('stripe_test_secret_key') }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="stripe-live d-none">
+                                        <div class="form-group">
+                                            <label>Live Site Key</label>
+                                            <input type="text" name="stripe_live_site_key" class="form-control" value="{{ old('stripe_live_site_key') }}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Live Secret Key</label>
+                                            <input type="text" name="stripe_live_secret_key" class="form-control" value="{{ old('stripe_live_secret_key') }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Assign Staff Tab -->
+                                <div class="tab-pane fade" id="assignStaff" role="tabpanel">
+                                    <div class="mb-3 d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0 font-weight-bold">Assigned Staff</h6>
+                                        <button type="button" class="btn btn-sm btn-primary" id="addStaffButton">
+                                            <i class="feather icon-plus"></i> Add Staff
+                                        </button>
+                                    </div>
+
+                                    <div id="dayOffRepeater"></div>
+                                    @include('admin.vendor.partials.showing-template')
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Right Column -->
@@ -150,74 +212,7 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Stripe Settings -->
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <ul class="nav nav-tabs mb-3" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#stripeAccount" role="tab">
-                                        <i class="fab fa-stripe"></i> Stripe
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#assignStaff" role="tab">
-                                        <i class="feather icon-layers"></i> Assign Staff
-                                    </a>
-                                </li>
-                            </ul>
-
-                            <div class="tab-content">
-                                <div class="tab-pane fade show active" id="stripeAccount" role="tabpanel">
-                                    <div class="form-group">
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="payment__is_live" name="stripe_mode" value="1"
-                                                {{ old('stripe_mode') ? 'checked' : '' }}>
-                                            <label class="custom-control-label" for="payment__is_live">Live Mode</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="stripe-test">
-                                        <div class="form-group">
-                                            <label>Test Site Key</label>
-                                            <input type="text" name="stripe_test_site_key" class="form-control" value="{{ old('stripe_test_site_key') }}">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Test Secret Key</label>
-                                            <input type="text" name="stripe_test_secret_key" class="form-control" value="{{ old('stripe_test_secret_key') }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="stripe-live d-none">
-                                        <div class="form-group">
-                                            <label>Live Site Key</label>
-                                            <input type="text" name="stripe_live_site_key" class="form-control" value="{{ old('stripe_live_site_key') }}">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Live Secret Key</label>
-                                            <input type="text" name="stripe_live_secret_key" class="form-control" value="{{ old('stripe_live_secret_key') }}">
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Assign Staff Tab -->
-                                <div class="tab-pane fade" id="assignStaff" role="tabpanel">
-                                    <div class="mb-3 d-flex justify-content-between align-items-center">
-                                        <h6 class="mb-0 font-weight-bold">Assigned Staff</h6>
-                                        <button type="button" class="btn btn-sm btn-primary" id="addStaffButton">
-                                            <i class="feather icon-plus"></i> Add Staff
-                                        </button>
-                                    </div>
-
-                                    <div id="dayOffRepeater"></div>
-                                    @include('admin.vendor.partials.showing-template')
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    
         </form>
         <!-- [ Main Content ] end -->
 

@@ -9,7 +9,8 @@
   <!-- Tailwind CSS -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="{{ asset('assets/css/frontend/custom.css')}}">
+<link rel="stylesheet" href="{{ asset('assets/css/frontend/custom.css') }}?v={{ time() }}">
+
 
   <!-- Tailwind Custom Config -->
   <script>
@@ -30,9 +31,9 @@
 
   <!-- Preline JS -->
   <script src="https://unpkg.com/preline@latest/dist/preline.js"></script>
-  <script src="{{asset('assets/js/frontend/custom.js')}}"></script>
+<script src="{{ asset('assets/js/frontend/custom.js') }}?v={{ time() }}"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="{{asset('assets/js/frontend/calendar.js')}}"></script>
+<script src="{{ asset('assets/js/frontend/calendar.js') }}?v={{ time() }}"></script>
 
   <!-- (Optional) Alpine.js for more interactivity -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>

@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-rateyo@2.3.0/jquery.rateyo.min.css" />
     <!-- vendor css -->
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap4.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}?v={{ time() }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
@@ -69,7 +69,7 @@
     <script src="{{asset('assets/js/plugins/sweetalert.min.js')}}"></script>
     <script src="{{asset('assets/js/pages/ac-alert.js')}}"></script>
     <script src="{{asset('assets/js/plugins/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('assets/js/custom.js')}}"></script>
+    <script src="{{ asset('assets/js/custom.js') }}?v={{ time() }}"></script>
     <!-- DataTable Js -->
     <script src="{{asset('assets/js/plugins/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('assets/js/plugins/dataTables.bootstrap4.min.js')}}"></script>

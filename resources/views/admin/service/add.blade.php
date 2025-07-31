@@ -117,6 +117,39 @@
                             </div>
                         </div>
                     </div>
+                      <div class="card">
+                        <div class="card-body">
+                            <ul class="nav nav-tabs mb-3" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#pricing-tab" role="tab">
+                                        <i class="feather icon-tag"></i> Pricing
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#gallery-tab" role="tab">
+                                        <i class="feather icon-image"></i> Gallery
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#settings-tab" role="tab">
+                                        <i class="feather icon-settings"></i> Settings
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="pricing-tab" role="tabpanel">
+                                    @include('admin.service.partials.add.pricing')
+                                </div>
+                                <div class="tab-pane fade" id="gallery-tab" role="tabpanel">
+                                    @include('admin.service.partials.add.gallery')
+                                </div>
+                                <div class="tab-pane fade" id="settings-tab" role="tabpanel">
+                                    @include('admin.service.partials.add.settings')
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Right Column -->
@@ -206,43 +239,7 @@
             </div>
 
             <!-- Tabs Section -->
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <ul class="nav nav-tabs mb-3" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#pricing-tab" role="tab">
-                                        <i class="feather icon-tag"></i> Pricing
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#gallery-tab" role="tab">
-                                        <i class="feather icon-image"></i> Gallery
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#settings-tab" role="tab">
-                                        <i class="feather icon-settings"></i> Settings
-                                    </a>
-                                </li>
-                            </ul>
-
-                            <div class="tab-content">
-                                <div class="tab-pane fade show active" id="pricing-tab" role="tabpanel">
-                                    @include('admin.service.partials.add.pricing')
-                                </div>
-                                <div class="tab-pane fade" id="gallery-tab" role="tabpanel">
-                                    @include('admin.service.partials.add.gallery')
-                                </div>
-                                <div class="tab-pane fade" id="settings-tab" role="tabpanel">
-                                    @include('admin.service.partials.add.settings')
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
         </form>
         <!-- [ Main Content ] end -->
     </div>

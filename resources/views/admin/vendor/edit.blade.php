@@ -76,6 +76,46 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <!-- Nav Tabs -->
+                            <ul class="nav nav-tabs mb-3" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#stripeAccount" role="tab">
+                                        <i class="fab fa-stripe"></i> Stripe
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#assignStaff" role="tab">
+                                        <i class="feather icon-layers"></i> Assign Staff
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <!-- Stripe Tab -->
+                                <div class="tab-pane fade show active" id="stripeAccount" role="tabpanel">
+                                    @include('admin.vendor.partials.stripe-credentials')
+                                </div>
+
+                                <!-- Assign Staff Tab -->
+                                <div class="tab-pane fade" id="assignStaff" role="tabpanel">
+                                    <div class="mb-3 d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0 font-weight-bold">Assigned Staff</h6>
+                                        <button type="button" class="btn btn-sm btn-primary" id="addStaffButton">
+                                            <i class="feather icon-plus"></i> Add Staff
+                                        </button>
+                                    </div>
+
+                                    <div id="dayOffRepeater"></div>
+                                    @include('admin.vendor.partials.showing-template')
+
+                                    <!-- Hidden JSON with staff data -->
+                                    <input type="hidden" id="editDayOffData" value='@json($staffAssociation)'>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Right -->
@@ -145,52 +185,6 @@
                             <!-- Submit -->
                             <div class="text-right mt-0">
                                 <button type="submit" class="btn btn-primary">Update</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stripe and Staff Tabs -->
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <!-- Nav Tabs -->
-                            <ul class="nav nav-tabs mb-3" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#stripeAccount" role="tab">
-                                        <i class="fab fa-stripe"></i> Stripe
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#assignStaff" role="tab">
-                                        <i class="feather icon-layers"></i> Assign Staff
-                                    </a>
-                                </li>
-                            </ul>
-
-                            <div class="tab-content">
-                                <!-- Stripe Tab -->
-                                <div class="tab-pane fade show active" id="stripeAccount" role="tabpanel">
-                                    @include('admin.vendor.partials.stripe-credentials')
-                                </div>
-
-                                <!-- Assign Staff Tab -->
-                                <div class="tab-pane fade" id="assignStaff" role="tabpanel">
-                                    <div class="mb-3 d-flex justify-content-between align-items-center">
-                                        <h6 class="mb-0 font-weight-bold">Assigned Staff</h6>
-                                        <button type="button" class="btn btn-sm btn-primary" id="addStaffButton">
-                                            <i class="feather icon-plus"></i> Add Staff
-                                        </button>
-                                    </div>
-
-                                    <div id="dayOffRepeater"></div>
-                                    @include('admin.vendor.partials.showing-template')
-
-                                    <!-- Hidden JSON with staff data -->
-                                    <input type="hidden" id="editDayOffData" value='@json($staffAssociation)'>
-                                </div>
                             </div>
                         </div>
                     </div>
