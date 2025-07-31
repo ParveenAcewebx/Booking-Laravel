@@ -196,7 +196,7 @@ class VendorController extends Controller
 
             Staff::create([
                 'user_id' => $user->id,
-                'primary_staff' => 0,
+                'primary_staff' => 1,
             ]);
 
             VendorServiceAssociation::create([
