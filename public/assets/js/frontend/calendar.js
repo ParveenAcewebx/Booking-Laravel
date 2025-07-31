@@ -19,13 +19,14 @@
                     data: { vendor_id: selectedValue },
                     dataType: 'json',
                     success: function (response) {
-                        console.log('Response:', response);
+                        // console.log('Response:', response);
                         $('.calendar-wrap').removeClass('hidden');
                         if (response.success && response.data) {
                             const workHoursData = response.data[0].Working_day;
                             const daysOffData = response.data[0].Dayoff;
                             const dayOffDates = daysOffData.flat();
-                            new Calendar(workHoursData, dayOffDates);
+                            const workingDays = response.data.map(item => item.Working_day);
+                            new Calendar(workingDays, dayOffDates);
                         }
                     },
                     error: function (xhr, status, error) {
@@ -86,20 +87,23 @@
 
                         // Check if this day is in dayOffDates
                         const isDayOff = this.dayOffDates.some(dayoff => {
+                          
                             const dateObj = new Date(dayoff.date);
                             return dateObj.toDateString() === dayDate.toDateString();
                         });
 
                         // Collect valid working days
                         const validWorkingDays = [];
-                        if (this.workingDays) {
-                            Object.entries(this.workingDays).forEach(([day, time]) => {
-                                if (time.start) {
-                                    const timePart = time.start.split("T")[1].split(".")[0];
+                       if (this.workingDays) {  
+                       this.workingDays.forEach(week => {
+                                Object.entries(week).forEach(([day, time]) => {
+                                    if (time.start) {
+                                    const timePart = time.start.split("T")[1].split(".")[0];  // Extract the time part (HH:MM:SS)
                                     if (timePart !== "00:00:00") {
-                                        validWorkingDays.push(day.toLowerCase());
+                                        validWorkingDays.push(day.toLowerCase());  // Add valid day to the array
                                     }
-                                }
+                                    }
+                                });
                             });
                         }
 
@@ -111,7 +115,6 @@
                             dayCell.style.backgroundColor = "#d3d3d3";
                             dayCell.style.pointerEvents = "none";
                         } else {
-                            // Mark available days
                             if (availableDates) {
                                 dayCell.classList.add("available");
                                 dayCell.style.backgroundColor = "rgb(18 163 46)";
@@ -170,7 +173,6 @@
             // Get session details for the selected date
             getSessionDetails(date) {
                 if (!date) return;
-
                 const pathParts = window.location.pathname.split("/").filter(Boolean);
                 const coach_id = $('#coach_id').val();
                 const type = pathParts[2];

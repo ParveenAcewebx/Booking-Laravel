@@ -131,8 +131,11 @@ function getservicesstaff(Request $request){
             $vendor_id= $request['vendor_id'];
             $vendoraiations = Staff::where('vendor_id', $vendor_id)->get();
             foreach ($vendoraiations as $vendorassociation) {
-           $staffIds= $vendorassociation->user_id; 
-              $vendors = Staff::where('user_id', $staffIds)->get();
+                 $staffIds= $vendorassociation->user_id; 
+                if (is_string($staffIds)) {
+                $staffIds = explode(',', $staffIds);
+                }
+                $vendors = Staff::whereIn('user_id', $staffIds)->get();
               foreach($vendors as $workingdate){
                 $workHours = json_decode($workingdate->work_hours, true);
                 $workOff = json_decode($workingdate->days_off, true);
