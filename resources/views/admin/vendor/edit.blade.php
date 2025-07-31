@@ -33,9 +33,7 @@
                 <!-- Left -->
                 <div class="col-md-8 order-md-1">
                     <div class="card">
-                        <div class="card-header">
-                            <h5>Vendor Information</h5>
-                        </div>
+                        <div class="card-header"><h5>Vendor Information</h5></div>
                         <div class="card-body">
                             <div class="row">
                                 <!-- Name -->
@@ -45,7 +43,7 @@
                                         <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
                                             value="{{ old('username', $vendor->name) }}">
                                         @error('username')
-                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -57,7 +55,7 @@
                                         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
                                             value="{{ old('email', $vendor->email) }}">
                                         @error('email')
-                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -69,14 +67,78 @@
                                         <div id="quill-editor" style="height: 200px;">{!! old('description', $vendor->description) !!}</div>
                                         <textarea name="description" id="description" class="d-none">{{ old('description', $vendor->description) }}</textarea>
                                         @error('description')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                            <div class="text-danger mt-1">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Right -->
+                <div class="col-md-4 order-md-2">
                     <div class="card">
+                        <div class="card-header"><h5>Settings</h5></div>
+                        <div class="card-body">
+                            <!-- Status -->
+                            <div class="form-group">
+                                <label class="form-label">Status</label>
+                                <select name="status" class="form-control select-user @error('status') is-invalid @enderror">
+                                    <option value="{{ config('constants.status.active') }}" {{ old('status', $vendor->status) == config('constants.status.active') ? 'selected' : '' }}>Active</option>
+                                    <option value="{{ config('constants.status.inactive') }}" {{ old('status', $vendor->status) == config('constants.status.inactive') ? 'selected' : '' }}>Inactive</option>
+                                </select>
+                                @error('status')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Thumbnail Upload -->
+                            <div class="form-group">
+                                <label class="form-label">Featured Image</label>
+                                <div class="input-group mb-1">
+                                    <div class="input-group-prepend"><span class="input-group-text">Upload</span></div>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" name="thumbnail" id="avatarInput"
+                                            accept=".jpg,.jpeg,.png,.gif,image/*">
+                                        <label class="custom-file-label" for="avatarInput">Choose file...</label>
+                                    </div>
+                                </div>
+                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, GIF.</small>
+                                @error('thumbnail')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+
+                                <!-- Preview -->
+                                <div id="avatar-preview-container" class="row mt-3 {{ $vendor->thumbnail ? '' : 'd-none' }}">
+                                    <div class="col-md-6 position-relative">
+                                        <div class="card shadow-sm">
+                                            <img id="avatar-preview"
+                                                src="{{ asset('storage/' . $vendor->thumbnail) }}"
+                                                class="card-img-top img-thumbnail"
+                                                style="object-fit: cover; height: 120px; width: 100%;">
+                                            <button type="button" id="remove-avatar-preview"
+                                                class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
+                                                title="Remove image">&times;</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="remove_avatar" id="removeAvatarFlag" value="0">
+                            </div>
+
+                            <!-- Submit -->
+                            <div class="text-right mt-0">
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stripe and Staff Tabs -->
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card mt-3">
                         <div class="card-body">
                             <!-- Nav Tabs -->
                             <ul class="nav nav-tabs mb-3" role="tablist">
@@ -117,192 +179,133 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Right -->
-                <div class="col-md-4 order-md-2">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Settings</h5>
-                        </div>
-                        <div class="card-body">
-                            <!-- Status -->
-                            <div class="form-group">
-                                <label class="form-label">Status</label>
-                                <select name="status" class="form-control select-user @error('status') is-invalid @enderror">
-                                    <option value="{{ config('constants.status.active') }}" {{ old('status', $vendor->status) == config('constants.status.active') ? 'selected' : '' }}>Active</option>
-                                    <option value="{{ config('constants.status.inactive') }}" {{ old('status', $vendor->status) == config('constants.status.inactive') ? 'selected' : '' }}>Inactive</option>
-                                </select>
-                                @error('status')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label>Assigned Services</label>
-                                <select class="form-control select-user" name="assigned_service[]" multiple>
-                                    @foreach($allService as $service)
-                                    <option value="{{ $service->id }}"
-                                        {{ in_array($service->id, old('assigned_service', $gsd ?? [])) ? 'selected' : '' }}>
-                                        {{ $service->name }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-
-                            <!-- Thumbnail Upload -->
-                            <div class="form-group">
-                                <label class="form-label">Featured Image</label>
-                                <div class="input-group mb-1">
-                                    <div class="input-group-prepend"><span class="input-group-text">Upload</span></div>
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name="thumbnail" id="avatarInput"
-                                            accept=".jpg,.jpeg,.png,.gif,image/*">
-                                        <label class="custom-file-label" for="avatarInput">Choose file...</label>
-                                    </div>
-                                </div>
-                                <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, GIF.</small>
-                                @error('thumbnail')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
-
-                                <!-- Preview -->
-                                <div id="avatar-preview-container" class="row mt-3 {{ $vendor->thumbnail ? '' : 'd-none' }}">
-                                    <div class="col-md-6 position-relative">
-                                        <div class="card shadow-sm">
-                                            <img id="avatar-preview"
-                                                src="{{ asset('storage/' . $vendor->thumbnail) }}"
-                                                class="card-img-top img-thumbnail"
-                                                style="object-fit: cover; height: 120px; width: 100%;">
-                                            <button type="button" id="remove-avatar-preview"
-                                                class="btn btn-sm btn-dark text-white position-absolute top-0 end-0 m-1 rounded-pill delete-existing-image"
-                                                title="Remove image">&times;</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <input type="hidden" name="remove_avatar" id="removeAvatarFlag" value="0">
-                            </div>
-
-                            <!-- Submit -->
-                            <div class="text-right mt-0">
-                                <button type="submit" class="btn btn-primary">Update</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </form>
     </div>
 </section>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        $('.select-user').select2();
+document.addEventListener('DOMContentLoaded', function () {
+    $('.select-user').select2();
 
-        let assignedStaff = @json($preAssignedStaffIds);
-        let selectedStaff = new Set();
+    let assignedStaff = @json($preAssignedStaffIds);
+    let selectedStaff = new Set();
 
-        function fetchAndDisplayServices(staffId, cardBody) {
-            cardBody.find('.staff-services').remove();
-            let servicesappend = cardBody.find('.addServices');
-            if (servicesappend.length > 0) {
-                cardBody = servicesappend;
-            } else {
-                cardBody = cardBody;
+    // Toggle delete button if staff is primary
+    function toggleDeleteButton($select) {
+        let isPrimary = $select.find('option:selected').data('primary-staff') == 1;
+        let $deleteBtn = $select.closest('.card').find('.delete-row');
+
+        if (isPrimary) {
+            $deleteBtn.prop('disabled', true).addClass('disabled').hide();
+        } else {
+            $deleteBtn.prop('disabled', false).removeClass('disabled').show();
+        }
+    }
+
+    function fetchAndDisplayServices(staffId, cardBody) {
+        cardBody.find('.staff-services').remove();
+        let servicesappend = cardBody.find('.addServices');
+        cardBody = servicesappend.length > 0 ? servicesappend : cardBody;
+
+        if (!staffId) return;
+
+        $.ajax({
+            url: `/admin/vendors/${staffId}/services`,
+            type: 'GET',
+            success: function (services) {
+                if (services.length > 0) {
+                    let listHtml = '<div class="staff-services">';
+                    services.forEach(service => {
+                        listHtml += `<span class="badge badge-service">${service}</span>`;
+                    });
+                    listHtml += '</div>';
+                    cardBody.append(listHtml);
+                } else {
+                    cardBody.append('<div class="staff-services text-muted">No services assigned</div>');
+                }
             }
+        });
+    }
 
-            if (!staffId) return;
+    function attachStaffChangeHandler($select) {
+        $select.on('change', function () {
+            let staffId = $(this).val();
+            let prevId = $select.data('prev');
 
-            $.ajax({
-                url: `/admin/vendors/${staffId}/services`,
-                type: 'GET',
-                success: function(services) {
-                    if (services.length > 0) {
-                        let listHtml = '<div class="staff-services">';
-                        services.forEach(service => {
-                            listHtml += `<span class="badge badge-service">${service}</span>`;
-                        });
-                        listHtml += '</div>';
-                        cardBody.append(listHtml);
-                    } else {
-                        cardBody.append('<div class="staff-services text-muted">No services assigned</div>');
-                    }
+            if (prevId) selectedStaff.delete(prevId);
+            if (staffId) selectedStaff.add(String(staffId));
+            $select.data('prev', staffId);
+
+            toggleDeleteButton($select); // Disable delete if primary
+            refreshOptions();
+            fetchAndDisplayServices(staffId, $(this).closest('.card-body'));
+        });
+    }
+
+    function attachDeleteHandler($btn) {
+        $btn.on('click', function () {
+            let $row = $(this).closest('.card');
+            let staffId = $row.find('.select-user').val();
+
+            if (staffId) selectedStaff.delete(String(staffId));
+            $row.remove();
+            refreshOptions();
+        });
+    }
+
+    function refreshOptions() {
+        $('.select-user').each(function () {
+            let $this = $(this);
+            let currentVal = $this.val();
+
+            $this.find('option').each(function () {
+                let optionVal = $(this).attr('value');
+                if (selectedStaff.has(String(optionVal)) && optionVal !== currentVal) {
+                    $(this).attr('disabled', true).hide();
+                } else {
+                    $(this).attr('disabled', false).show();
                 }
             });
-        }
 
-        function attachStaffChangeHandler($select) {
-            $select.on('change', function() {
-                let staffId = $(this).val();
-                let prevId = $select.data('prev');
-
-                if (prevId) selectedStaff.delete(prevId);
-                if (staffId) selectedStaff.add(String(staffId));
-                $select.data('prev', staffId);
-
-                refreshOptions();
-                fetchAndDisplayServices(staffId, $(this).closest('.card-body'));
-            });
-        }
-
-        function attachDeleteHandler($btn) {
-            $btn.on('click', function() {
-                let $row = $(this).closest('.card');
-                let staffId = $row.find('.select-user').val();
-
-                if (staffId) selectedStaff.delete(String(staffId));
-                $row.remove();
-                refreshOptions();
-            });
-        }
-
-        function refreshOptions() {
-            $('.select-user').each(function() {
-                let $this = $(this);
-                let currentVal = $this.val();
-
-                $this.find('option').each(function() {
-                    let optionVal = $(this).attr('value');
-                    if (selectedStaff.has(String(optionVal)) && optionVal !== currentVal) {
-                        $(this).attr('disabled', true).hide();
-                    } else {
-                        $(this).attr('disabled', false).show();
-                    }
-                });
-
-                $this.trigger('change.select2');
-            });
-        }
-
-        function appendStaffTemplate(preSelectedId = null) {
-            let template = document.getElementById('staffTemplate').content.cloneNode(true);
-            document.getElementById('dayOffRepeater').appendChild(template);
-
-            let $newSelect = $('#dayOffRepeater').find('.select-user').last();
-            $newSelect.select2();
-
-            if (preSelectedId) {
-                $newSelect.val(String(preSelectedId)).trigger('change.select2');
-                selectedStaff.add(String(preSelectedId));
-            }
-
-            attachStaffChangeHandler($newSelect);
-            attachDeleteHandler($('#dayOffRepeater').find('.delete-row').last());
-            refreshOptions();
-
-            if (preSelectedId) {
-                fetchAndDisplayServices(preSelectedId, $newSelect.closest('.card-body'));
-            }
-        }
-
-        // Auto append preassigned staff
-        if (assignedStaff.length > 0) {
-            assignedStaff.forEach(id => appendStaffTemplate(id));
-        }
-
-        // Add new staff manually
-        document.getElementById('addStaffButton').addEventListener('click', function() {
-            appendStaffTemplate();
+            $this.trigger('change.select2');
         });
-    });
-</script>
+    }
 
+    function appendStaffTemplate(preSelectedId = null) {
+        let template = document.getElementById('staffTemplate').content.cloneNode(true);
+        document.getElementById('dayOffRepeater').appendChild(template);
+
+        let $newSelect = $('#dayOffRepeater').find('.select-user').last();
+        $newSelect.select2();
+
+        if (preSelectedId) {
+            $newSelect.val(String(preSelectedId)).trigger('change.select2');
+            selectedStaff.add(String(preSelectedId));
+        }
+
+        attachStaffChangeHandler($newSelect);
+        attachDeleteHandler($('#dayOffRepeater').find('.delete-row').last());
+        refreshOptions();
+
+        // Check delete button immediately for pre-selected staff
+        toggleDeleteButton($newSelect);
+
+        if (preSelectedId) {
+            fetchAndDisplayServices(preSelectedId, $newSelect.closest('.card-body'));
+        }
+    }
+
+    // Auto append preassigned staff
+    if (assignedStaff.length > 0) {
+        assignedStaff.forEach(id => appendStaffTemplate(id));
+    }
+
+    // Add new staff manually
+    document.getElementById('addStaffButton').addEventListener('click', function () {
+        appendStaffTemplate();
+    });
+});
+
+</script>
+    
 @endsection

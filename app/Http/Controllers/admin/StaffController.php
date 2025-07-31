@@ -188,7 +188,6 @@ class StaffController extends Controller
             'user_id' => $user->id,
             'work_hours' => json_encode($workingHours),
             'days_off' => json_encode($dayOffsGrouped),
-            'vendor_id' => $request->input('assigned_vendor'),
         ]);
         return redirect()->route('staff.list')->with('success', 'Staff Created Successfully!');
     }
@@ -361,7 +360,7 @@ class StaffController extends Controller
         // Always update days_off (empty = cleared)
         $staffMeta->days_off = !empty($nestedDayOffs) ? json_encode($nestedDayOffs) : null;
 
-        $staffMeta->vendor_id = $request->input('assigned_vendor');
+        // $staffMeta->vendor_id = $request->input('assigned_vendor');
         $staffMeta->save();
 
         return redirect()->route('staff.list')->with('success', 'Staff Updated Successfully!');

@@ -106,33 +106,34 @@ class VendorController extends Controller
             $query->where('id', $staffRole->id);
         })->get();
 
-        // IDs present in staff table
-        $staffTableUserIds = Staff::pluck('user_id')->toArray();
-
-        // Staff users NOT in staff table (fresh staff)
+        // IDs present in Staff table
+        $staffTableUserIds = VendorStaffAssociation::pluck('user_id')->toArray();
+        // Staff users NOT in Staff table (fresh staff)
         $freshStaffUserIds = $staffUsers->whereNotIn('id', $staffTableUserIds)
             ->pluck('id')
             ->toArray();
 
-        // Staff whose vendor_id is NULL (free/unassigned staff)
-        $unassignedStaffUserIds = Staff::whereNull('vendor_id')
-            ->whereIn('user_id', $staffUsers->pluck('id'))
+        // Staff already assigned in VendorStaffAssociation (exclude these)
+        $assignedStaffUserIds = VendorStaffAssociation::pluck('user_id')->toArray();
+
+        // Staff whose vendor_id is NULL (free/unassigned staff from Staff table)
+        $unassignedStaffUserIds = Staff::whereIn('user_id', $staffUsers->pluck('id'))
+            ->whereNotIn('user_id', $assignedStaffUserIds) // exclude already linked in association
             ->pluck('user_id')
             ->toArray();
 
         /**
          * Merge fresh staff + unassigned staff
-         * (Exclude those already assigned to any vendor)
+         * Final available staff list
          */
         $availableStaffIds = array_unique(array_merge(
             $freshStaffUserIds,
             $unassignedStaffUserIds
         ));
 
-        // Final available staff list
         $availableStaff = User::whereIn('id', $availableStaffIds)->get();
 
-        // No preassigned staff in Add page
+        // No preassigned staff for Add page
         $preAssignedStaffIds = [];
 
         $allService = Service::where('status', config('constants.status.active'))->get();
@@ -208,7 +209,6 @@ class VendorController extends Controller
                 }
             }
 
-
             $selectedStaffIds = $request->input('select_staff', []);
             // Convert to integer values
             $selectedStaffIds = array_map('intval', $selectedStaffIds);
@@ -217,7 +217,7 @@ class VendorController extends Controller
                 // Skip if blank (in case empty option submitted)
                 if (!$userId) continue;
 
-                $staff = Staff::where('user_id', $userId)->first();
+                $staff = VendorStaffAssociation::where('user_id', $userId)->first();
 
                 if ($staff) {
                     // Update existing record with vendor_id
@@ -225,10 +225,9 @@ class VendorController extends Controller
                     $staff->save();
                 } else {
                     // Create new staff record if doesn't exist
-                    Staff::create([
+                    VendorStaffAssociation::create([
                         'user_id'   => $userId,
                         'vendor_id' => $vendor->id,
-                        'primary_staff' => 1,
                     ]);
                 }
             }
@@ -240,55 +239,78 @@ class VendorController extends Controller
 
     public function edit($id)
     {
+        // Get vendor
         $vendor = Vendor::findOrFail($id);
-        $staffAssociation = Staff::where('vendor_id', $id)
-            ->with('user:id,name,email')
+
+        // Vendor staff associations + user + primary_staff (via relationship)
+        $staffAssociation = VendorStaffAssociation::where('vendor_id', $id)
+            ->with(['user:id,name,email', 'staff:id,user_id,primary_staff'])
             ->get();
-        // Multiple service IDs lao
+
+        // Vendor's service IDs
         $gsd = VendorServiceAssociation::where('vendor_id', $id)->pluck('service_id')->toArray();
+
+        // All active services
         $allService = Service::where('status', config('constants.status.active'))->get();
 
+        // Staff role
         $staffRole = Role::where('name', 'staff')->first();
 
-        // All users with role 'staff'
+        // All users with staff role
         $staffUsers = User::whereHas('roles', function ($query) use ($staffRole) {
             $query->where('id', $staffRole->id);
         })->get();
 
-        // User IDs already present in staff table
+        // Staff table user IDs
         $staffTableUserIds = Staff::pluck('user_id')->toArray();
 
-        // User IDs of staff assigned to current vendor
+        // Pre-assigned staff to this vendor
         $assignedUserIds = $staffAssociation->pluck('user_id')->toArray();
 
-        // Users with role staff but not in staff table
+        // Staff users not in staff table (fresh staff)
         $roleStaffNotInStaffTable = $staffUsers->whereNotIn('id', $staffTableUserIds);
 
-        // Staff users where vendor_id is null
-        $availableStaffUserIds = Staff::whereNull('vendor_id')
+        // Staff whose vendor_id is NULL (free staff from vendor_staff_associations)
+        $vendorFreeStaffIds = VendorStaffAssociation::whereNull('vendor_id')
             ->whereIn('user_id', $staffUsers->pluck('id'))
             ->pluck('user_id')
             ->toArray();
 
+        // Staff who are not in vendor_staff_associations at all (fresh + role=staff)
+        $vendorAssociationUserIds = VendorStaffAssociation::pluck('user_id')->toArray();
+        $freshRoleStaffIds = $staffUsers->pluck('id')
+            ->diff($vendorAssociationUserIds)
+            ->toArray();
+
+        // Merge: preassigned + free + fresh
         $mergedAvailableIds = array_unique(array_merge(
             $roleStaffNotInStaffTable->pluck('id')->toArray(),
-            $availableStaffUserIds,
-            $assignedUserIds // ADD assigned staff so they also appear in dropdown
+            $vendorFreeStaffIds,
+            $freshRoleStaffIds,
+            $assignedUserIds
         ));
 
-        $availableStaff = User::whereIn('id', $mergedAvailableIds)->get();
+        // Fetch available staff list
+        $availableStaff = User::whereIn('id', $mergedAvailableIds)
+            ->with('staff:id,user_id,primary_staff') // include primary_staff flag
+            ->get();
 
+        // Roles list
         $roles = Role::all();
+
+        // Current impersonation info
         $loginId = session('impersonate_original_user');
         $loginUser = $loginId ? User::find($loginId) : null;
 
+        // Vendor-related service associations (if used)
         $serviceIds = StaffServiceAssociation::where('staff_member', $id)->pluck('service_id');
         $allServiceData = Service::whereIn('id', $serviceIds)->get();
 
+        // Assigned role
         $assignedRole = $vendor->user?->roles->first() ?? $roles->firstWhere('name', 'staff');
         $selectedRoleId = $assignedRole?->id;
 
-        // **Pass preassigned IDs separately**
+        // Pre-assigned staff IDs for edit form
         $preAssignedStaffIds = $staffAssociation->pluck('user_id')->toArray();
 
         return view('admin.vendor.edit', compact(
@@ -342,13 +364,12 @@ class VendorController extends Controller
         $selectedStaffIds = array_map('intval', $selectedStaffIds);
 
         // Step 1: Remove vendor_id from staff NOT in request
-        Staff::where('vendor_id', $vendor->id)
+        VendorStaffAssociation::where('vendor_id', $vendor->id)
             ->whereNotIn('user_id', $selectedStaffIds)
-            ->update(['vendor_id' => null]);
-
+            ->delete();
         // Step 2: Assign vendor_id to selected staff
         foreach ($selectedStaffIds as $userId) {
-            $staff = Staff::where('user_id', $userId)->first();
+            $staff = VendorStaffAssociation::where('user_id', $userId)->first();
 
             if ($staff) {
                 // Update existing record
@@ -356,7 +377,7 @@ class VendorController extends Controller
                 $staff->save();
             } else {
                 // Create new record
-                Staff::create([
+                VendorStaffAssociation::create([
                     'user_id'   => $userId,
                     'vendor_id' => $vendor->id,
                 ]);

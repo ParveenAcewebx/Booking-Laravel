@@ -20,4 +20,10 @@ class VendorStaffAssociation extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function staff()
+    {
+        // Link staff table with user_id
+        return $this->hasOne(Staff::class, 'user_id', 'user_id');
+    }
 }

@@ -38,7 +38,7 @@ class User extends Authenticatable
 
     public function vendorAssociations()
     {
-        return $this->hasMany(VendorStaffAssociation::class);
+        return $this->hasMany(VendorStaffAssociation::class, 'user_id');
     }
 
     public function staff()

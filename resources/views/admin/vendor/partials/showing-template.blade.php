@@ -3,11 +3,13 @@
         <div class="card-body position-relative">
             <div class="form-row pt-2">
                 <div class="form-group col-md-5 mb-1">
-                    <!-- <label class="font-weight-bold">Staff</label> -->
                     <select name="select_staff[]" class="form-control select-user">
                         <option value="">--- Please Select Staff ---</option>
                         @foreach($availableStaff as $staff)
-                        <option value="{{ $staff->id }}">{{ $staff->name }}</option>
+                        <option value="{{ $staff->id }}"
+                            data-primary-staff="{{ $staff->staff->primary_staff ?? 0 }}">
+                            {{ $staff->name }}
+                        </option>
                         @endforeach
                     </select>
                 </div>
