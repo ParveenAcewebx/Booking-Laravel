@@ -33,7 +33,9 @@
                 <!-- Left -->
                 <div class="col-md-8 order-md-1">
                     <div class="card">
-                        <div class="card-header"><h5>Vendor Information</h5></div>
+                        <div class="card-header">
+                            <h5>Vendor Information</h5>
+                        </div>
                         <div class="card-body">
                             <div class="row">
                                 <!-- Name -->
@@ -43,7 +45,7 @@
                                         <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
                                             value="{{ old('username', $vendor->name) }}">
                                         @error('username')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -55,7 +57,7 @@
                                         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
                                             value="{{ old('email', $vendor->email) }}">
                                         @error('email')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -67,7 +69,7 @@
                                         <div id="quill-editor" style="height: 200px;">{!! old('description', $vendor->description) !!}</div>
                                         <textarea name="description" id="description" class="d-none">{{ old('description', $vendor->description) }}</textarea>
                                         @error('description')
-                                            <div class="text-danger mt-1">{{ $message }}</div>
+                                        <div class="text-danger mt-1">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -79,7 +81,9 @@
                 <!-- Right -->
                 <div class="col-md-4 order-md-2">
                     <div class="card">
-                        <div class="card-header"><h5>Settings</h5></div>
+                        <div class="card-header">
+                            <h5>Settings</h5>
+                        </div>
                         <div class="card-body">
                             <!-- Status -->
                             <div class="form-group">
@@ -89,8 +93,23 @@
                                     <option value="{{ config('constants.status.inactive') }}" {{ old('status', $vendor->status) == config('constants.status.inactive') ? 'selected' : '' }}>Inactive</option>
                                 </select>
                                 @error('status')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
+                            </div>
+                            <div class="form-group">
+                                <label>Assigned Services</label>
+                                <select class="form-control select-user" name="assigned_service">
+                                    <option value=""
+                                        {{ old('assigned_service', $gsd->service_id ?? '') == '' ? 'selected' : '' }}>
+                                        Please Select Service
+                                    </option>
+                                    @foreach($allService as $service)
+                                    <option value="{{ $service->id }}"
+                                        {{ old('assigned_service', $gsd->service_id ?? '') == $service->id ? 'selected' : '' }}>
+                                        {{ $service->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <!-- Thumbnail Upload -->
@@ -106,7 +125,7 @@
                                 </div>
                                 <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, GIF.</small>
                                 @error('thumbnail')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
 
                                 <!-- Preview -->
@@ -138,7 +157,7 @@
             <!-- Stripe and Staff Tabs -->
             <div class="row">
                 <div class="col-md-8">
-                    <div class="card mt-3">
+                    <div class="card">
                         <div class="card-body">
                             <!-- Nav Tabs -->
                             <ul class="nav nav-tabs mb-3" role="tablist">
@@ -184,115 +203,115 @@
     </div>
 </section>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    $('.select-user').select2();
+    document.addEventListener('DOMContentLoaded', function() {
+        $('.select-user').select2();
 
-    let assignedStaff = @json($preAssignedStaffIds);
-    let selectedStaff = new Set();
+        let assignedStaff = @json($preAssignedStaffIds);
+        let selectedStaff = new Set();
 
-    function fetchAndDisplayServices(staffId, cardBody) {
-        cardBody.find('.staff-services').remove();
-        let servicesappend = cardBody.find('.addServices');
+        function fetchAndDisplayServices(staffId, cardBody) {
+            cardBody.find('.staff-services').remove();
+            let servicesappend = cardBody.find('.addServices');
             if (servicesappend.length > 0) {
-                    cardBody = servicesappend ; 
-            }else{
-                    cardBody = cardBody;
+                cardBody = servicesappend;
+            } else {
+                cardBody = cardBody;
             }
 
-        if (!staffId) return;
+            if (!staffId) return;
 
-        $.ajax({
-            url: `/admin/vendors/${staffId}/services`,
-            type: 'GET',
-            success: function(services) {
-                if (services.length > 0) {
-                    let listHtml = '<div class="staff-services">';
-                    services.forEach(service => {
-                        listHtml += `<span class="badge badge-service">${service}</span>`;
-                    });
-                    listHtml += '</div>';
-                    cardBody.append(listHtml);
-                } else {
-                    cardBody.append('<div class="staff-services text-muted">No services assigned</div>');
-                }
-            }
-        });
-    }
-
-    function attachStaffChangeHandler($select) {
-        $select.on('change', function() {
-            let staffId = $(this).val();
-            let prevId = $select.data('prev');
-
-            if (prevId) selectedStaff.delete(prevId);
-            if (staffId) selectedStaff.add(String(staffId));
-            $select.data('prev', staffId);
-
-            refreshOptions();
-            fetchAndDisplayServices(staffId, $(this).closest('.card-body'));
-        });
-    }
-
-    function attachDeleteHandler($btn) {
-        $btn.on('click', function() {
-            let $row = $(this).closest('.card');
-            let staffId = $row.find('.select-user').val();
-
-            if (staffId) selectedStaff.delete(String(staffId));
-            $row.remove();
-            refreshOptions();
-        });
-    }
-
-    function refreshOptions() {
-        $('.select-user').each(function() {
-            let $this = $(this);
-            let currentVal = $this.val();
-
-            $this.find('option').each(function() {
-                let optionVal = $(this).attr('value');
-                if (selectedStaff.has(String(optionVal)) && optionVal !== currentVal) {
-                    $(this).attr('disabled', true).hide();
-                } else {
-                    $(this).attr('disabled', false).show();
+            $.ajax({
+                url: `/admin/vendors/${staffId}/services`,
+                type: 'GET',
+                success: function(services) {
+                    if (services.length > 0) {
+                        let listHtml = '<div class="staff-services">';
+                        services.forEach(service => {
+                            listHtml += `<span class="badge badge-service">${service}</span>`;
+                        });
+                        listHtml += '</div>';
+                        cardBody.append(listHtml);
+                    } else {
+                        cardBody.append('<div class="staff-services text-muted">No services assigned</div>');
+                    }
                 }
             });
+        }
 
-            $this.trigger('change.select2');
+        function attachStaffChangeHandler($select) {
+            $select.on('change', function() {
+                let staffId = $(this).val();
+                let prevId = $select.data('prev');
+
+                if (prevId) selectedStaff.delete(prevId);
+                if (staffId) selectedStaff.add(String(staffId));
+                $select.data('prev', staffId);
+
+                refreshOptions();
+                fetchAndDisplayServices(staffId, $(this).closest('.card-body'));
+            });
+        }
+
+        function attachDeleteHandler($btn) {
+            $btn.on('click', function() {
+                let $row = $(this).closest('.card');
+                let staffId = $row.find('.select-user').val();
+
+                if (staffId) selectedStaff.delete(String(staffId));
+                $row.remove();
+                refreshOptions();
+            });
+        }
+
+        function refreshOptions() {
+            $('.select-user').each(function() {
+                let $this = $(this);
+                let currentVal = $this.val();
+
+                $this.find('option').each(function() {
+                    let optionVal = $(this).attr('value');
+                    if (selectedStaff.has(String(optionVal)) && optionVal !== currentVal) {
+                        $(this).attr('disabled', true).hide();
+                    } else {
+                        $(this).attr('disabled', false).show();
+                    }
+                });
+
+                $this.trigger('change.select2');
+            });
+        }
+
+        function appendStaffTemplate(preSelectedId = null) {
+            let template = document.getElementById('staffTemplate').content.cloneNode(true);
+            document.getElementById('dayOffRepeater').appendChild(template);
+
+            let $newSelect = $('#dayOffRepeater').find('.select-user').last();
+            $newSelect.select2();
+
+            if (preSelectedId) {
+                $newSelect.val(String(preSelectedId)).trigger('change.select2');
+                selectedStaff.add(String(preSelectedId));
+            }
+
+            attachStaffChangeHandler($newSelect);
+            attachDeleteHandler($('#dayOffRepeater').find('.delete-row').last());
+            refreshOptions();
+
+            if (preSelectedId) {
+                fetchAndDisplayServices(preSelectedId, $newSelect.closest('.card-body'));
+            }
+        }
+
+        // Auto append preassigned staff
+        if (assignedStaff.length > 0) {
+            assignedStaff.forEach(id => appendStaffTemplate(id));
+        }
+
+        // Add new staff manually
+        document.getElementById('addStaffButton').addEventListener('click', function() {
+            appendStaffTemplate();
         });
-    }
-
-    function appendStaffTemplate(preSelectedId = null) {
-        let template = document.getElementById('staffTemplate').content.cloneNode(true);
-        document.getElementById('dayOffRepeater').appendChild(template);
-
-        let $newSelect = $('#dayOffRepeater').find('.select-user').last();
-        $newSelect.select2();
-
-        if (preSelectedId) {
-            $newSelect.val(String(preSelectedId)).trigger('change.select2');
-            selectedStaff.add(String(preSelectedId));
-        }
-
-        attachStaffChangeHandler($newSelect);
-        attachDeleteHandler($('#dayOffRepeater').find('.delete-row').last());
-        refreshOptions();
-
-        if (preSelectedId) {
-            fetchAndDisplayServices(preSelectedId, $newSelect.closest('.card-body'));
-        }
-    }
-
-    // Auto append preassigned staff
-    if (assignedStaff.length > 0) {
-        assignedStaff.forEach(id => appendStaffTemplate(id));
-    }
-
-    // Add new staff manually
-    document.getElementById('addStaffButton').addEventListener('click', function() {
-        appendStaffTemplate();
     });
-});
 </script>
-    
+
 @endsection

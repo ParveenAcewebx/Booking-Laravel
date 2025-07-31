@@ -103,6 +103,18 @@
                                 @enderror
                             </div>
 
+                            <div class="form-group">
+                                <label>Assigned Services</label>
+                                <select class="form-control select-user" name="assigned_service">
+                                    <option value="" {{ old('assigned_service') == '' ? 'selected' : '' }}>Please Select Service</option>
+                                    @foreach($allService as $service)
+                                    <option value="{{ $service->id }}" {{ old('assigned_service') == $service->id ? 'selected' : '' }}>
+                                        {{ $service->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
                             <!-- Featured Image -->
                             <div class="form-group">
                                 <label class="form-label">Featured Image</label>
@@ -143,7 +155,7 @@
             <!-- Stripe Settings -->
             <div class="row">
                 <div class="col-md-8">
-                    <div class="card mt-3">
+                    <div class="card">
                         <div class="card-body">
                             <ul class="nav nav-tabs mb-3" role="tablist">
                                 <li class="nav-item">

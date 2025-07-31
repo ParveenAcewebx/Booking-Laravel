@@ -8,6 +8,7 @@ use App\Models\Staff;
 use App\Models\Vendor;
 use App\Models\VendorStaffAssociation;
 use App\Models\Service;
+use App\Models\VendorServiceAssociation;
 use App\Models\StaffServiceAssociation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -100,9 +101,9 @@ class VendorController extends Controller
         if ($loginId) {
             $loginUser = User::find($loginId);
         }
-
+        $allService = Service::where('status', config('constants.status.active'))->get();
         $roles = Role::select('id', 'name')->get();
-        return view('admin.vendor.add', compact('roles', 'allusers', 'originalUserId', 'loginUser'));
+        return view('admin.vendor.add', compact('roles', 'allusers', 'originalUserId', 'loginUser', 'allService'));
     }
 
     public function store(Request $request)
@@ -110,10 +111,11 @@ class VendorController extends Controller
         $request->validate([
             'username'    => 'required|string|max:255',
             'email'       => 'required|email|unique:users,email',
-            'status'      => 'required|boolean',
             'description' => 'nullable|string',
+            'assigned_service'  => 'nullable|exists:services,id',
             'thumbnail'   => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
 
         try {
             $thumbnailPath = null;
@@ -142,6 +144,7 @@ class VendorController extends Controller
                 'stripe_live_site_key' => $request->stripe_live_site_key,
                 'stripe_live_secret_key' => $request->stripe_live_secret_key,
             ]);
+
             $lastInsertId = $vendor->id;
 
             VendorStaffAssociation::create([
@@ -154,6 +157,10 @@ class VendorController extends Controller
                 'primary_staff' => 1,
             ]);
 
+            VendorServiceAssociation::create([
+                'vendor_id'   => $lastInsertId,
+                'service_id'  => $request->assigned_service ?: null,
+            ]);
             return redirect()->route('vendors.list')->with('success', 'Vendor Created Successfully.');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
@@ -166,6 +173,8 @@ class VendorController extends Controller
         $staffAssociation = Staff::where('vendor_id', $id)
             ->with('user:id,name,email')
             ->get();
+        $gsd = VendorServiceAssociation::where('vendor_id', $id)->first();
+        $allService = Service::where('status', config('constants.status.active'))->get();
 
         $staffRole = Role::where('name', 'staff')->first();
 
@@ -218,7 +227,9 @@ class VendorController extends Controller
             'allServiceData',
             'staffAssociation',
             'availableStaff',
-            'preAssignedStaffIds'
+            'preAssignedStaffIds',
+            'gsd',
+            'allService'
         ));
     }
 
@@ -279,7 +290,14 @@ class VendorController extends Controller
                 ]);
             }
         }
+        $assignedServiceId = $request->input('assigned_service');
 
+        $vendorService = VendorServiceAssociation::where('vendor_id', $vendor->id)->first();
+        if ($vendorService) {
+            // Update existing
+            $vendorService->service_id = $assignedServiceId;
+            $vendorService->save();
+        }
 
         if ($request->hasFile('thumbnail')) {
             if ($vendor->thumbnail && Storage::disk('public')->exists($vendor->thumbnail)) {
