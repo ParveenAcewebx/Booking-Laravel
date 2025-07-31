@@ -8,10 +8,24 @@
     const availableDates = typeof availabledatesArray !== 'undefined' ? availabledatesArray : [];
 
     $(document).ready(function () {
-        // Event listener when vendor is selected
-        $('#service_vendor_form').on('change', function () {
-            let selectedValue = $(this).val();
 
+        // Function to reset the calendar's HTML
+        function resetCalendar() {
+            const calendar = document.getElementById('calendar');
+            if (calendar) {
+                const days = calendar.querySelectorAll('td');
+                days.forEach(dayCell => {
+                    dayCell.innerHTML = '';
+                    dayCell.classList.remove('available', 'disabled', 'selected');
+                    dayCell.style.backgroundColor = '';
+                    dayCell.style.pointerEvents = '';
+                });
+            }
+        }
+
+        // Vendor selection event listener
+        $('.service_vendor_form').on('change', function () {
+            let selectedValue = $(this).val();
             if (selectedValue) {
                 $.ajax({
                     url: '/get/vendor/get_booking_calender',
@@ -19,13 +33,14 @@
                     data: { vendor_id: selectedValue },
                     dataType: 'json',
                     success: function (response) {
-                        // console.log('Response:', response);
                         $('.calendar-wrap').removeClass('hidden');
-                        if (response.success && response.data) {
-                            const workHoursData = response.data[0].Working_day;
-                            const daysOffData = response.data[0].Dayoff;
+                        if (response.success && response.data && response.data[0]) {
+                            const vendorData = response.data[0];
+                            const workHoursData = vendorData.Working_day || [];
+                            const daysOffData = vendorData.Dayoff || [];
                             const dayOffDates = daysOffData.flat();
                             const workingDays = response.data.map(item => item.Working_day);
+                            resetCalendar();
                             new Calendar(workingDays, dayOffDates);
                         }
                     },
@@ -87,21 +102,20 @@
 
                         // Check if this day is in dayOffDates
                         const isDayOff = this.dayOffDates.some(dayoff => {
-                          
                             const dateObj = new Date(dayoff.date);
                             return dateObj.toDateString() === dayDate.toDateString();
                         });
 
                         // Collect valid working days
                         const validWorkingDays = [];
-                       if (this.workingDays) {  
-                       this.workingDays.forEach(week => {
+                        if (this.workingDays) {
+                            this.workingDays.forEach(week => {
                                 Object.entries(week).forEach(([day, time]) => {
                                     if (time.start) {
-                                    const timePart = time.start.split("T")[1].split(".")[0];  // Extract the time part (HH:MM:SS)
-                                    if (timePart !== "00:00:00") {
-                                        validWorkingDays.push(day.toLowerCase());  // Add valid day to the array
-                                    }
+                                        const timePart = time.start.split("T")[1].split(".")[0];  // Extract the time part (HH:MM:SS)
+                                        if (timePart !== "00:00:00") {
+                                            validWorkingDays.push(day.toLowerCase());  // Add valid day to the array
+                                        }
                                     }
                                 });
                             });
@@ -239,10 +253,6 @@
                 });
             }
         }
-
-        
-        // Optional: If you want default calendar without selecting a vendor first
-        // new Calendar(); 
     });
 
 })(jQuery);
