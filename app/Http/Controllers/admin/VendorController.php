@@ -96,15 +96,61 @@ class VendorController extends Controller
         $allusers = $this->allUsers;
         $originalUserId = $this->originalUserId;
         $loginId = session('impersonate_original_user');
-        $loginUser = null;
+        $loginUser = $loginId ? User::find($loginId) : null;
 
-        if ($loginId) {
-            $loginUser = User::find($loginId);
-        }
+        // Role: staff
+        $staffRole = Role::where('name', 'staff')->first();
+
+        // All users having staff role
+        $staffUsers = User::whereHas('roles', function ($query) use ($staffRole) {
+            $query->where('id', $staffRole->id);
+        })->get();
+
+        // All staff records
+        $staffAssociation = Staff::with('user:id,name,email')->get();
+
+        // IDs already present in staff table
+        $staffTableUserIds = Staff::pluck('user_id')->toArray();
+
+        // Staff assigned to any vendor (vendor_id is NOT null)
+        $assignedUserIds = $staffAssociation->pluck('user_id')->toArray();
+
+        // Users with staff role but not in staff table (fresh staff users)
+        $roleStaffNotInStaffTable = $staffUsers->whereNotIn('id', $staffTableUserIds);
+
+        // Staff where vendor_id is NULL (free to assign)
+        $availableStaffUserIds = Staff::whereNull('vendor_id')
+            ->whereIn('user_id', $staffUsers->pluck('id'))
+            ->pluck('user_id')
+            ->toArray();
+
+        // Merge free + fresh + assigned (assigned included for edit)
+        $mergedAvailableIds = array_unique(array_merge(
+            $roleStaffNotInStaffTable->pluck('id')->toArray(),
+            $availableStaffUserIds,
+            $assignedUserIds
+        ));
+
+        // Users available to assign
+        $availableStaff = User::whereIn('id', $mergedAvailableIds)->get();
+
+        // For Add page — no preassigned staff (empty array)
+        $preAssignedStaffIds = [];
+
         $allService = Service::where('status', config('constants.status.active'))->get();
         $roles = Role::select('id', 'name')->get();
-        return view('admin.vendor.add', compact('roles', 'allusers', 'originalUserId', 'loginUser', 'allService'));
+
+        return view('admin.vendor.add', compact(
+            'roles',
+            'allusers',
+            'originalUserId',
+            'loginUser',
+            'allService',
+            'availableStaff',
+            'preAssignedStaffIds'
+        ));
     }
+
 
     public function store(Request $request)
     {
@@ -115,7 +161,6 @@ class VendorController extends Controller
             'assigned_service'  => 'nullable|exists:services,id',
             'thumbnail'   => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-
 
         try {
             $thumbnailPath = null;
@@ -161,6 +206,31 @@ class VendorController extends Controller
                 'vendor_id'   => $lastInsertId,
                 'service_id'  => $request->assigned_service ?: null,
             ]);
+
+
+            $selectedStaffIds = $request->input('select_staff', []);
+                // Convert to integer values
+            $selectedStaffIds = array_map('intval', $selectedStaffIds);
+
+            foreach ($selectedStaffIds as $userId) {
+                // Skip if blank (in case empty option submitted)
+                if (!$userId) continue;
+
+                $staff = Staff::where('user_id', $userId)->first();
+
+                if ($staff) {
+                    // Update existing record with vendor_id
+                    $staff->vendor_id = $vendor->id;
+                    $staff->save();
+                } else {
+                    // Create new staff record if doesn't exist
+                    Staff::create([
+                        'user_id'   => $userId,
+                        'vendor_id' => $vendor->id,
+                        'primary_staff' => 1,
+                    ]);
+                }
+            }
             return redirect()->route('vendors.list')->with('success', 'Vendor Created Successfully.');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());

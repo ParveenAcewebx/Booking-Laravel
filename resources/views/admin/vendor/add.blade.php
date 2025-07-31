@@ -163,6 +163,11 @@
                                         <i class="fab fa-stripe"></i> Stripe
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#assignStaff" role="tab">
+                                        <i class="feather icon-layers"></i> Assign Staff
+                                    </a>
+                                </li>
                             </ul>
 
                             <div class="tab-content">
@@ -197,6 +202,18 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!-- Assign Staff Tab -->
+                                <div class="tab-pane fade" id="assignStaff" role="tabpanel">
+                                    <div class="mb-3 d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0 font-weight-bold">Assigned Staff</h6>
+                                        <button type="button" class="btn btn-sm btn-primary" id="addStaffButton">
+                                            <i class="feather icon-plus"></i> Add Staff
+                                        </button>
+                                    </div>
+
+                                    <div id="dayOffRepeater"></div>
+                                    @include('admin.vendor.partials.showing-template')
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -207,4 +224,109 @@
 
     </div>
 </section>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        $('.select-user').select2();
+
+        let assignedStaff = @json($preAssignedStaffIds);
+        let selectedStaff = new Set();
+
+        function fetchAndDisplayServices(staffId, cardBody) {
+            cardBody.find('.staff-services').remove();
+            let servicesappend = cardBody.find('.addServices');
+            if (!staffId) return;
+
+            $.ajax({
+                url: `/admin/vendors/${staffId}/services`,
+                type: 'GET',
+                success: function(services) {
+                    if (services.length > 0) {
+                        let listHtml = '<div class="staff-services">';
+                        services.forEach(service => {
+                            listHtml += `<span class="badge badge-service">${service}</span>`;
+                        });
+                        listHtml += '</div>';
+                        servicesappend.append(listHtml);
+                    } else {
+                        servicesappend.append('<div class="staff-services text-muted">No services assigned</div>');
+                    }
+                }
+            });
+        }
+
+        function attachStaffChangeHandler($select) {
+            $select.on('change', function() {
+                let staffId = $(this).val();
+                let prevId = $select.data('prev');
+
+                if (prevId) selectedStaff.delete(prevId);
+                if (staffId) selectedStaff.add(String(staffId));
+                $select.data('prev', staffId);
+
+                refreshOptions();
+                fetchAndDisplayServices(staffId, $(this).closest('.card-body'));
+            });
+        }
+
+        function attachDeleteHandler($btn) {
+            $btn.on('click', function() {
+                let $row = $(this).closest('.card');
+                let staffId = $row.find('.select-user').val();
+
+                if (staffId) selectedStaff.delete(String(staffId));
+                $row.remove();
+                refreshOptions();
+            });
+        }
+
+        function refreshOptions() {
+            $('.select-user').each(function() {
+                let $this = $(this);
+                let currentVal = $this.val();
+
+                $this.find('option').each(function() {
+                    let optionVal = $(this).attr('value');
+                    if (selectedStaff.has(String(optionVal)) && optionVal !== currentVal) {
+                        $(this).attr('disabled', true).hide();
+                    } else {
+                        $(this).attr('disabled', false).show();
+                    }
+                });
+
+                $this.trigger('change.select2');
+            });
+        }
+
+        function appendStaffTemplate(preSelectedId = null) {
+            let template = document.getElementById('staffTemplate').content.cloneNode(true);
+            document.getElementById('dayOffRepeater').appendChild(template);
+
+            let $newSelect = $('#dayOffRepeater').find('.select-user').last();
+            $newSelect.select2();
+
+            if (preSelectedId) {
+                $newSelect.val(String(preSelectedId)).trigger('change.select2');
+                selectedStaff.add(String(preSelectedId));
+            }
+
+            attachStaffChangeHandler($newSelect);
+            attachDeleteHandler($('#dayOffRepeater').find('.delete-row').last());
+            refreshOptions();
+
+            if (preSelectedId) {
+                fetchAndDisplayServices(preSelectedId, $newSelect.closest('.card-body'));
+            }
+        }
+
+        // Auto append preassigned staff (for edit)
+        if (assignedStaff.length > 0) {
+            assignedStaff.forEach(id => appendStaffTemplate(id));
+        }
+
+        // Add new staff manually
+        document.getElementById('addStaffButton').addEventListener('click', function() {
+            appendStaffTemplate();
+        });
+    });
+</script>
 @endsection
