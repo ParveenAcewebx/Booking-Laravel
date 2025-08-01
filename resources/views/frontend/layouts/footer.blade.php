@@ -6,7 +6,15 @@
             <div class="col-span-full lg:col-span-1">
 
                 <a href="/" class="flex items-center space-x-3 text-xl font-semibold text-black dark:text-white">
-                    <img src="{{ asset('storage/' . get_setting('website_logo')) }}" alt="MyBrand Logo" class="w-auto">
+                    @php
+                        $logo = get_setting('website_logo');
+                        $logoStoragePath = 'public/' . $logo; // Adjust if necessary
+                    @endphp
+                    @if ($logo && Storage::exists($logoStoragePath))
+                        <img src="{{ asset('storage/' . $logo) }}" alt="MyBrand Logo" class="w-auto">
+                    @else
+                        <img src="{{ asset('assets/images/no-image-available.png') }}" alt="No Image" class="w-auto">
+                    @endif
                 </a>
             </div>
             <!-- End Col -->

@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             RoleHasPermissionsTable::class,
             UsersTable::class,
             ModelHasRolesTable::class,
+            SettingsTableSeeder::class
         ]);
     }
 
