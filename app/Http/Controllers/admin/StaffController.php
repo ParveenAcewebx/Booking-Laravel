@@ -30,67 +30,90 @@ class StaffController extends Controller
         $this->allUsers = User::all();
     }
 
-    public function index(Request $request)
-    {
-        $loginId = session('impersonate_original_user');
-        $loginUser = $loginId ? User::find($loginId) : null;
+  public function index(Request $request)
+{
+    $loginId = session('impersonate_original_user');
+    $loginUser = $loginId ? User::find($loginId) : null;
 
-        if ($request->ajax()) {
-            $currentUser = Auth::user();
-            $statusLabels = array_flip(config('constants.status'));
+    if ($request->ajax()) {
+        $currentUser = Auth::user();
 
-            $query = User::with(['roles', 'staff'])->whereHas('roles', function ($q) {
+        // Fetch staff users
+        $query = User::with(['roles', 'staff.services'])
+            ->whereHas('roles', function ($q) {
                 $q->where('name', 'Staff');
             });
 
-            return DataTables::of($query)
-                ->addIndexColumn()
-                ->addColumn('name', function ($row) {
-                    return '<h6 class="m-b-0">' . e($row->name) . '</h6><p class="m-b-0">' . e($row->email) . '</p>';
-                })
-                ->editColumn('created_at', function ($row) {
-                    return $row->created_at
-                        ? $row->created_at->format(
-                            get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
-                        )
-                        : '';
-                })
-                ->addColumn('status', function ($row) use ($statusLabels) {
-                    return $row->status == config('constants.status.active')
-                        ? '<span class="badge badge-success">Active</span>'
-                        : '<span class="badge badge-danger">Inactive</span>';
-                })
-                ->addColumn('action', function ($row) use ($currentUser) {
-                    $btn = '';
+        return DataTables::of($query)
+            ->addIndexColumn()
 
-                    if ($currentUser->can('edit staffs')) {
-                        $btn .= '<a href="' . route('staff.edit', [$row->id]) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit User">
-                            <i class="fas fa-pencil-alt"></i>
-                        </a> ';
-                    }
+            // Name column
+            ->addColumn('name', function ($row) {
+                return '<h6 class="m-b-0">' . e($row->name) . '</h6><p class="m-b-0">' . e($row->email) . '</p>';
+            })
 
-                    if ($currentUser->can('delete staffs') && Auth::id() != $row->id) {
-                        if ($row->staff && $row->staff->primary_staff == 1) {
-                            $btn .= '<button type="button" class="btn btn-icon btn-secondary" data-toggle="tooltip" title="Please First Delete Vendor" disabled>
-                    <i class="feather icon-trash-2"></i>
-                 </button>';
-                        } else {
-                            $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">
-                            ' . csrf_field() . '
-                            <input type="hidden" name="_method" value="DELETE">
-                            <button type="button" onclick="return deleteUser(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete User">
-                                <i class="feather icon-trash-2"></i>
-                            </button>
-                        </form>';
-                        }
+            // Services column using accessor
+            ->addColumn('services', function ($row) {
+                if (!$row->staff || empty($row->staff->service_names)) {
+                    return '<span class="badge badge-secondary">No Services</span>';
+                }
+
+                return collect($row->staff->service_names)->map(function ($name) {
+                    return '<span class="badge badge-info mr-1">' . e($name) . '</span>';
+                })->implode(' ');
+            })
+
+            // Created at
+            ->editColumn('created_at', function ($row) {
+                return $row->created_at
+                    ? $row->created_at->format(
+                        get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
+                    )
+                    : '';
+            })
+
+            // Status badge
+            ->addColumn('status', function ($row) {
+                return $row->status == config('constants.status.active')
+                    ? '<span class="badge badge-success">Active</span>'
+                    : '<span class="badge badge-danger">Inactive</span>';
+            })
+
+            // Actions
+            ->addColumn('action', function ($row) use ($currentUser) {
+                $btn = '';
+
+                if ($currentUser->can('edit staffs')) {
+                    $btn .= '<a href="' . route('staff.edit', [$row->id]) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit User">
+                                <i class="fas fa-pencil-alt"></i>
+                             </a> ';
+                }
+
+                if ($currentUser->can('delete staffs') && Auth::id() != $row->id) {
+                    if ($row->staff && $row->staff->primary_staff == 1) {
+                        $btn .= '<button type="button" class="btn btn-icon btn-secondary" title="Please First Delete Vendor" disabled>
+                                    <i class="feather icon-trash-2"></i>
+                                 </button>';
+                    } else {
+                        $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">
+                                    ' . csrf_field() . '
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="button" onclick="return deleteUser(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete User">
+                                        <i class="feather icon-trash-2"></i>
+                                    </button>
+                                </form>';
                     }
-                    return $btn;
-                })
-                ->rawColumns(['name', 'status', 'action'])
-                ->make(true);
-        }
-        return view('admin.staff.index', compact('loginUser'));
+                }
+
+                return $btn;
+            })
+
+            ->rawColumns(['name', 'services', 'status', 'action'])
+            ->make(true);
     }
+
+    return view('admin.staff.index', compact('loginUser'));
+}
 
     public function add()
     {

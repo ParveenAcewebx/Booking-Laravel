@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        <!-- Users Table -->
+        <!-- Staff Table -->
         <div class="row">
             <div class="col-lg-12">
                 <div class="card user-profile-list">
@@ -36,8 +36,9 @@
                             <table class="table table-striped nowrap" id="users-table" width="100%">
                                 <thead>
                                     <tr>
-                                        <th style="display: none;">ID</th> <!-- Hidden column -->
+                                        <th style="display:none;">ID</th>
                                         <th>Name</th>
+                                        <th>Services</th>
                                         <th>Created Date</th>
                                         <th>Status</th>
                                         <th>Actions</th>
@@ -50,7 +51,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
@@ -64,10 +64,16 @@
                     data: 'id',
                     name: 'users.id',
                     visible: false
-                }, // hidden ID
+                },
                 {
                     data: 'name',
                     name: 'users.name'
+                },
+                {
+                    data: 'services',
+                    name: 'services',
+                    orderable: false,
+                    searchable: false
                 },
                 {
                     data: 'created_at',
@@ -88,12 +94,9 @@
             ],
             order: [
                 [0, 'desc']
-            ], // Sort by hidden ID DESC
-            lengthMenu: [
-                [10, 25, 50, 100],
-                [10, 25, 50, 100]
             ]
         });
+
         toastr.options = {
             "closeButton": true,
             "progressBar": true,
@@ -101,21 +104,13 @@
             "positionClass": "toast-top-right"
         };
 
-        // Toastr messages from session
-        @if(session('success'))
-        toastr.success("{{ session('success') }}");
+        @if(session('success')) toastr.success("{{ session('success') }}");
         @endif
-
-        @if(session('error'))
-        toastr.error("{{ session('error') }}");
+        @if(session('error')) toastr.error("{{ session('error') }}");
         @endif
-
-        @if(session('info'))
-        toastr.info("{{ session('info') }}");
+        @if(session('info')) toastr.info("{{ session('info') }}");
         @endif
-
-        @if(session('warning'))
-        toastr.warning("{{ session('warning') }}");
+        @if(session('warning')) toastr.warning("{{ session('warning') }}");
         @endif
     });
 </script>

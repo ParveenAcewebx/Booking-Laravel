@@ -41,36 +41,48 @@ class VendorController extends Controller
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
-            $vendors = Vendor::select(['id', 'name', 'email', 'description', 'status', 'created_at']);
+            // Load vendors with services relationship
+            $vendors = Vendor::with('services')->select(['id', 'name', 'email', 'status', 'created_at']);
 
             return DataTables::of($vendors)
                 ->addIndexColumn()
 
+                // Vendor Name
                 ->editColumn('name', function ($row) {
-                    return '<td>' . e($row->name) . '</td>';
+                    return e($row->name);
                 })
 
+                // Email
                 ->editColumn('email', function ($row) {
-                    return $row->email;
+                    return e($row->email);
                 })
 
-                ->editColumn('created_at', function ($row) {
-                    return $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : '';
+                // Services column (badges)
+                ->addColumn('services', function ($row) {
+                    // if (empty($row->service_names)) {
+                    //     return '<span class="badge badge-secondary">No Services</span>';
+                    // }
+
+                    return collect($row->service_names)->map(function ($name) {
+                        return '<span class="badge badge-info mr-1">' . e($name) . '</span>';
+                    })->implode(' ');
                 })
 
+                // Status column
                 ->editColumn('status', function ($row) {
                     return $row->status
                         ? '<span class="badge badge-success">Active</span>'
                         : '<span class="badge badge-danger">Inactive</span>';
                 })
 
+                // Actions column
                 ->addColumn('action', function ($row) {
                     $btn = '';
 
                     if (auth()->user()->can('edit vendors')) {
                         $btn .= '<a href="' . route('vendors.edit', $row->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit Vendor">
-            <i class="fas fa-pencil-alt"></i>
-        </a> ';
+                                <i class="fas fa-pencil-alt"></i>
+                             </a> ';
                     }
 
                     if (auth()->user()->can('delete vendors')) {
@@ -85,9 +97,11 @@ class VendorController extends Controller
 
                     return $btn;
                 })
-                ->rawColumns(['name', 'email', 'status', 'action'])
+
+                ->rawColumns(['services', 'status', 'action'])
                 ->make(true);
         }
+
         return view('admin.vendor.index', compact('loginUser'));
     }
 

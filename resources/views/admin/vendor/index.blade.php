@@ -14,7 +14,6 @@
                             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="feather icon-home"></i></a></li>
                             <li class="breadcrumb-item"><a href="{{ route('vendors.list') }}">Vendors</a></li>
                             <li class="breadcrumb-item"><a href="{{ route('vendors.list') }}">All Vendors</a></li>
-
                         </ul>
                     </div>
                     <div class="col-md-2">
@@ -37,9 +36,10 @@
                             <table class="table table-striped nowrap" id="vendors-table" width="100%">
                                 <thead>
                                     <tr>
-                                        <th style="display: none;">ID</th> <!-- Hidden column -->
+                                        <th style="display: none;">ID</th>
                                         <th>Name</th>
                                         <th>Email</th>
+                                        <th>Services</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -60,53 +60,28 @@
             processing: true,
             serverSide: true,
             ajax: "{{ route('vendors.list') }}",
-            columns: [{
-                    data: 'id',
-                    name: 'id',
-                    visible: false
-                }, // ✅ Fixed line
-                {
-                    data: 'name',
-                    name: 'name'
-                },
-                {
-                    data: 'email',
-                    name: 'email',
-
-                },
-                {
-                    data: 'status',
-                    name: 'status',
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false,
-                    searchable: false
-                }
+            columns: [
+                { data: 'id', name: 'id', visible: false },
+                { data: 'name', name: 'name' },
+                { data: 'email', name: 'email' },
+                { data: 'services', name: 'services', orderable: false, searchable: false },
+                { data: 'status', name: 'status', orderable: false, searchable: false },
+                { data: 'action', name: 'action', orderable: false, searchable: false }
             ],
-            order: [
-                [0, 'desc']
-            ]
+            order: [[0, 'desc']]
         });
 
         toastr.options = {
-            "closeButton": true,
-            "progressBar": true,
-            "timeOut": "4000",
-            "positionClass": "toast-top-right"
+            closeButton: true,
+            progressBar: true,
+            timeOut: 4000,
+            positionClass: "toast-top-right"
         };
 
-        @if(session('success')) toastr.success("{{ session('success') }}");
-        @endif
-        @if(session('error')) toastr.error("{{ session('error') }}");
-        @endif
-        @if(session('info')) toastr.info("{{ session('info') }}");
-        @endif
-        @if(session('warning')) toastr.warning("{{ session('warning') }}");
-        @endif
+        @if(session('success')) toastr.success("{{ session('success') }}"); @endif
+        @if(session('error')) toastr.error("{{ session('error') }}"); @endif
+        @if(session('info')) toastr.info("{{ session('info') }}"); @endif
+        @if(session('warning')) toastr.warning("{{ session('warning') }}"); @endif
     });
 </script>
 @endsection

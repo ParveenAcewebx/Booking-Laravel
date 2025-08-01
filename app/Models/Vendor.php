@@ -25,4 +25,13 @@ class Vendor extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+     public function services()
+    {
+        return $this->belongsToMany(Service::class, 'vendor_service_associations', 'vendor_id', 'service_id');
+    }
+
+    public function getServiceNamesAttribute()
+    {
+        return $this->services->pluck('name')->toArray();
+    }
 }
