@@ -84,7 +84,7 @@
             <div class="col-xl-8">
                 <div class="card table-card">
                     <div class="card-header">
-                        <h5>Users</h5>
+                        <h5>Recent Users</h5>
                         <div class="card-header-right">
                             <div class="btn-group card-option">
                                 <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

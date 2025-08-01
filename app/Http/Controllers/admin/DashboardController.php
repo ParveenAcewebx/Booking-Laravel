@@ -32,7 +32,7 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $allusers = $this->allUsers;
+        $allusers = User::orderBy('created_at', 'desc')->take(5)->get();
         $bookingForms = BookingTemplate::all();
         $services = Service::all();
         $bookings = Booking::all();
@@ -42,7 +42,14 @@ class DashboardController extends Controller
         if ($loginId) {
             $loginUser = User::find($loginId);
         }
-        // dd($loginUser);
-        return view('admin.layouts.dashboard', ['allusers' => $allusers, 'bookingForms' => $bookingForms, 'bookings' => $bookings, 'loginUser' => $loginUser, 'services' => $services]);
+
+        return view('admin.layouts.dashboard', [
+            'allusers' => $allusers,
+            'bookingForms' => $bookingForms,
+            'bookings' => $bookings,
+            'loginUser' => $loginUser,
+            'services' => $services
+        ]);
     }
+
 }
