@@ -210,7 +210,8 @@ class StaffController extends Controller
         $staffMeta = VendorStaffAssociation::where('user_id', $staff->id)->first();
         $vendorData = Vendor::where('status', $activeStatus)->get();
         $IsUserPrimaryStaff = $staffMeta->primary_staff ?? 0;
-
+        $staffMetas = Staff::where('user_id', $staff->id)->first();
+        // dd($staffMetas);
         // 3. Get assigned services for this staff
         $assignedServices = Service::whereIn(
             'id',
@@ -226,8 +227,8 @@ class StaffController extends Controller
         // 5. Prepare Day Off data
         $groupedDayOffs = [];
 
-        if (!empty($staffMeta->days_off)) {
-            $decoded = json_decode($staffMeta->days_off, true);
+        if (!empty($staffMetas->days_off)) {
+            $decoded = json_decode($staffMetas->days_off, true);
 
             $flattened = collect($decoded)->flatten(1);
 
@@ -251,7 +252,7 @@ class StaffController extends Controller
                 ->values()
                 ->toArray();
         }
-
+        $workingHours = json_decode($staffMetas->work_hours ?? '{}', true);
         return view('admin.staff.edit', compact(
             'staff',
             'roles',
@@ -263,7 +264,8 @@ class StaffController extends Controller
             'staffMeta',
             'groupedDayOffs',
             'IsUserPrimaryStaff',
-            'vendorData'
+            'vendorData',
+            'workingHours'
         ));
     }
 
