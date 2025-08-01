@@ -368,7 +368,7 @@ class StaffController extends Controller
         
         $staffMeta->save();
         $vendorStaffMeta = VendorStaffAssociation::firstOrNew(['user_id' => $staff->id]);
-        $vendorStaffMeta->vendor_id = $request->input('assigned_vendor');
+        $vendorStaffMeta->vendor_id = $request->input('assigned_vendor') ?? 0;
         $vendorStaffMeta->save();
 
         return redirect()->route('staff.list')->with('success', 'Staff Updated Successfully!');
