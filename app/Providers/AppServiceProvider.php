@@ -21,9 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Shortcode::register('hello-world', function () {
-            return 'Hello, World!';
-        });
+        
         Shortcode::register('services', function ($shortcodeAttrs, $class) {
             $services = Service::all();
             if ($services->isEmpty()) {
