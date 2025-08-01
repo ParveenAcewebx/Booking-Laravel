@@ -39,7 +39,7 @@ class StaffController extends Controller
         $currentUser = Auth::user();
 
         // Fetch staff users
-        $query = User::with(['roles', 'staff.services'])
+        $query = User::with(['roles', 'services'])
             ->whereHas('roles', function ($q) {
                 $q->where('name', 'Staff');
             });
@@ -54,12 +54,12 @@ class StaffController extends Controller
 
             // Services column using accessor
             ->addColumn('services', function ($row) {
-                if (!$row->staff || empty($row->staff->service_names)) {
-                    return '<span class="badge badge-secondary">No Services</span>';
+                if (!$row->services || empty($row->services)) {
+                    return '<span class="badge badge-secondary">'.$row->services.'</span>';
                 }
 
-                return collect($row->staff->service_names)->map(function ($name) {
-                    return '<span class="badge badge-info mr-1">' . e($name) . '</span>';
+                return collect($row->services)->map(function ($service) {
+                    return '<span class="badge badge-info mr-1">' . e($service->name) . '</span>';
                 })->implode(' ');
             })
 

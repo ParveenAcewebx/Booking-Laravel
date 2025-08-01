@@ -27,7 +27,7 @@ class Staff extends Model
     // Correct pivot relation
     public function services()
     {
-        return $this->belongsToMany(Service::class, 'staff_service_associations', 'staff_member', 'service_id');
+        return $this->hasMany(StaffServiceAssociation::class, 'service_id', 'id');
     }
 
 
