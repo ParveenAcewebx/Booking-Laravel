@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
         
         Shortcode::register('services', function ($shortcodeAttrs, $class) {
             $services = Service::all();
-            if ($services->isEmpty()) {
+            if ($services->isEmpty() ||$services->every(function($service) { return $service->status !== 1; })){
              return "";
             }
             $selectedService = $shortcodeAttrs['service'] ?? '';
