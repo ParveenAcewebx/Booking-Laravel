@@ -195,27 +195,54 @@
 </section>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // Initialize Select2 globally
     $('.select-user').select2();
 
-    let assignedStaff = @json($preAssignedStaffIds);
-    let selectedStaff = new Set();
+    let assignedStaff = @json($preAssignedStaffIds ?? []); // pre-assigned staff IDs
+    let selectedStaff = new Set(); // track selected to avoid duplicates
 
-    // Toggle delete button if staff is primary
-    function toggleDeleteButton($select) {
+    /**
+     * Toggle delete button + Select2 readonly state based on primary
+     */
+    function toggleDeleteAndReadonly($select) {
         let isPrimary = $select.find('option:selected').data('primary-staff') == 1;
         let $deleteBtn = $select.closest('.card').find('.delete-row');
 
         if (isPrimary) {
+            // Hide delete button
             $deleteBtn.prop('disabled', true).addClass('disabled').hide();
+
+            // Disable Select2
+            $select.prop('disabled', true).trigger('change.select2');
+
+            // Add hidden input for value since disabled won't submit
+            if (!$select.next('input[type=hidden][name="select_staff[]"]').length) {
+                $('<input>', {
+                    type: 'hidden',
+                    name: 'select_staff[]',
+                    value: $select.val()
+                }).insertAfter($select);
+            }
+
         } else {
+            // Show delete button
             $deleteBtn.prop('disabled', false).removeClass('disabled').show();
+
+            // Enable Select2
+            $select.prop('disabled', false).trigger('change.select2');
+
+            // Remove hidden input if exists
+            $select.next('input[type=hidden][name="select_staff[]"]').remove();
         }
     }
 
+    /**
+     * Fetch assigned services for staff and display badges
+     */
     function fetchAndDisplayServices(staffId, cardBody) {
         cardBody.find('.staff-services').remove();
-        let servicesappend = cardBody.find('.addServices');
-        cardBody = servicesappend.length > 0 ? servicesappend : cardBody;
+        let servicesAppend = cardBody.find('.addServices');
+        cardBody = servicesAppend.length > 0 ? servicesAppend : cardBody;
 
         if (!staffId) return;
 
@@ -237,32 +264,56 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    /**
+     * Attach change handler to staff select
+     */
     function attachStaffChangeHandler($select) {
         $select.on('change', function () {
             let staffId = $(this).val();
             let prevId = $select.data('prev');
 
+            // Remove previous ID from selected set
             if (prevId) selectedStaff.delete(prevId);
+
+            // Add new ID
             if (staffId) selectedStaff.add(String(staffId));
+
+            // Save for next time
             $select.data('prev', staffId);
 
-            toggleDeleteButton($select); // Disable delete if primary
+            // Handle primary + delete logic
+            toggleDeleteAndReadonly($select);
+
+            // Refresh other selects to avoid duplicates
             refreshOptions();
+
+            // Fetch services for this staff
             fetchAndDisplayServices(staffId, $(this).closest('.card-body'));
         });
     }
 
+    /**
+     * Attach delete button handler
+     */
     function attachDeleteHandler($btn) {
         $btn.on('click', function () {
             let $row = $(this).closest('.card');
             let staffId = $row.find('.select-user').val();
 
+            // Remove staff from selected set
             if (staffId) selectedStaff.delete(String(staffId));
+
+            // Remove card
             $row.remove();
+
+            // Refresh other selects
             refreshOptions();
         });
     }
 
+    /**
+     * Refresh options to prevent duplicate selection
+     */
     function refreshOptions() {
         $('.select-user').each(function () {
             let $this = $(this);
@@ -281,41 +332,52 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    /**
+     * Append staff card template
+     */
     function appendStaffTemplate(preSelectedId = null) {
         let template = document.getElementById('staffTemplate').content.cloneNode(true);
         document.getElementById('dayOffRepeater').appendChild(template);
 
+        // Init Select2 for new element
         let $newSelect = $('#dayOffRepeater').find('.select-user').last();
         $newSelect.select2();
 
+        // If preselected staff
         if (preSelectedId) {
             $newSelect.val(String(preSelectedId)).trigger('change.select2');
             selectedStaff.add(String(preSelectedId));
         }
 
+        // Attach handlers
         attachStaffChangeHandler($newSelect);
         attachDeleteHandler($('#dayOffRepeater').find('.delete-row').last());
-        refreshOptions();
 
-        // Check delete button immediately for pre-selected staff
-        toggleDeleteButton($newSelect);
+        // Handle primary staff immediately
+        toggleDeleteAndReadonly($newSelect);
 
+        // Fetch services if preselected
         if (preSelectedId) {
             fetchAndDisplayServices(preSelectedId, $newSelect.closest('.card-body'));
         }
+
+        // Refresh duplicates
+        refreshOptions();
     }
 
-    // Auto append preassigned staff
+    /**
+     * Initialize preassigned staff
+     */
     if (assignedStaff.length > 0) {
         assignedStaff.forEach(id => appendStaffTemplate(id));
     }
 
-    // Add new staff manually
+    /**
+     * Add staff button
+     */
     document.getElementById('addStaffButton').addEventListener('click', function () {
         appendStaffTemplate();
     });
 });
-
 </script>
-    
 @endsection
