@@ -187,7 +187,6 @@ class ServiceController extends Controller
         $request->validate([
             'name'                  => 'required|string|max:255',
             'duration'              => 'required',
-            'staff_member'          => 'required',
             'description'           => 'nullable|string',
             'category'              => 'nullable|exists:categories,id',
             'thumbnail'             => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:2048',
@@ -196,8 +195,6 @@ class ServiceController extends Controller
             'existing_gallery.*'    => 'string',
             'delete_gallery'        => 'nullable|array',
             'delete_gallery.*'      => 'string',
-            'staff_member'          => 'required|array',
-            'staff_member.*'        => 'exists:users,id',
             'status'                => 'required|in:0,1',
             'price'                 => 'nullable|numeric|min:0',
             'currency'              => 'nullable|string|max:5',
@@ -215,7 +212,6 @@ class ServiceController extends Controller
         ]);
 
         $service = Service::findOrFail($id);
-
         // Fill base fields
         $service->fill([
             'name'                  => $request->name,
