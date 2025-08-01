@@ -212,6 +212,8 @@ class VendorController extends Controller
                 'primary_staff' => 1,
             ]);
 
+
+            // dd($request->assigned_service);
             if ($request->has('assigned_service') && is_array($request->assigned_service)) {
                 foreach ($request->assigned_service as $serviceId) {
                     VendorServiceAssociation::create([
@@ -219,10 +221,17 @@ class VendorController extends Controller
                         'service_id' => $serviceId,
                     ]);
                 }
+                StaffServiceAssociation::create([
+                    'staff_member'  => $user->id,
+                    'service_id' => $serviceId,
+                ]);
             }
 
             $selectedStaffIds = $request->input('select_staff', []);
             // Convert to integer values
+            $selectedStaffIds = array_filter($selectedStaffIds, function ($id) {
+                return !empty($id) && intval($id) > 0;
+            });
             $selectedStaffIds = array_map('intval', $selectedStaffIds);
 
             foreach ($selectedStaffIds as $userId) {
@@ -251,50 +260,50 @@ class VendorController extends Controller
 
     public function edit($id)
     {
-        // Get vendor
+        // 1. Get vendor
         $vendor = Vendor::findOrFail($id);
 
-        // Vendor staff associations + user + primary_staff (via relationship)
+        // 2. Vendor staff associations (with user + primary flag)
         $staffAssociation = VendorStaffAssociation::where('vendor_id', $id)
             ->with(['user:id,name,email', 'staff:id,user_id,primary_staff'])
             ->get();
 
-        // Vendor's service IDs
+        // 3. Vendor's assigned services
         $gsd = VendorServiceAssociation::where('vendor_id', $id)->pluck('service_id')->toArray();
 
-        // All active services
+        // 4. All active services
         $allService = Service::where('status', config('constants.status.active'))->get();
 
-        // Staff role
+        // 5. Staff role
         $staffRole = Role::where('name', 'staff')->first();
 
-        // All users with staff role
+        // 6. All users with staff role
         $staffUsers = User::whereHas('roles', function ($query) use ($staffRole) {
             $query->where('id', $staffRole->id);
         })->get();
 
-        // Staff table user IDs
+        // 7. Staff table user IDs
         $staffTableUserIds = Staff::pluck('user_id')->toArray();
 
-        // Pre-assigned staff to this vendor
+        // 8. Pre-assigned staff to this vendor
         $assignedUserIds = $staffAssociation->pluck('user_id')->toArray();
 
-        // Staff users not in staff table (fresh staff)
+        // 9. Staff users not in staff table (fresh staff)
         $roleStaffNotInStaffTable = $staffUsers->whereNotIn('id', $staffTableUserIds);
 
-        // Staff whose vendor_id is NULL (free staff from vendor_staff_associations)
+        // 10. Staff free from vendor_staff_associations (vendor_id NULL)
         $vendorFreeStaffIds = VendorStaffAssociation::whereNull('vendor_id')
             ->whereIn('user_id', $staffUsers->pluck('id'))
             ->pluck('user_id')
             ->toArray();
 
-        // Staff who are not in vendor_staff_associations at all (fresh + role=staff)
+        // 11. Staff who are not in vendor_staff_associations at all (fresh + role=staff)
         $vendorAssociationUserIds = VendorStaffAssociation::pluck('user_id')->toArray();
         $freshRoleStaffIds = $staffUsers->pluck('id')
             ->diff($vendorAssociationUserIds)
             ->toArray();
 
-        // Merge: preassigned + free + fresh
+        // 12. Merge: preassigned + free + fresh
         $mergedAvailableIds = array_unique(array_merge(
             $roleStaffNotInStaffTable->pluck('id')->toArray(),
             $vendorFreeStaffIds,
@@ -302,42 +311,28 @@ class VendorController extends Controller
             $assignedUserIds
         ));
 
-        // Fetch available staff list
+        // 13. Fetch available staff list
         $availableStaff = User::whereIn('id', $mergedAvailableIds)
-            ->with('staff:id,user_id,primary_staff') // include primary_staff flag
+            ->with('staff:id,user_id,primary_staff')
             ->get();
 
-        // Roles list
-        $roles = Role::all();
+        // 14. Determine current primary staff (for switch dropdown preselect)
+        $currentPrimary = $staffAssociation->firstWhere('staff.primary_staff', 1);
 
-        // Current impersonation info
-        $loginId = session('impersonate_original_user');
-        $loginUser = $loginId ? User::find($loginId) : null;
-
-        // Vendor-related service associations (if used)
-        $serviceIds = StaffServiceAssociation::where('staff_member', $id)->pluck('service_id');
-        $allServiceData = Service::whereIn('id', $serviceIds)->get();
-
-        // Assigned role
-        $assignedRole = $vendor->user?->roles->first() ?? $roles->firstWhere('name', 'staff');
-        $selectedRoleId = $assignedRole?->id;
-
-        // Pre-assigned staff IDs for edit form
+        // 15. Pre-assigned staff IDs for edit form
         $preAssignedStaffIds = $staffAssociation->pluck('user_id')->toArray();
 
         return view('admin.vendor.edit', compact(
             'vendor',
-            'roles',
-            'loginUser',
-            'selectedRoleId',
-            'allServiceData',
             'staffAssociation',
             'availableStaff',
             'preAssignedStaffIds',
+            'currentPrimary',
             'gsd',
             'allService'
         ));
     }
+
 
     public function getStaffServices($staffId)
     {
@@ -359,46 +354,110 @@ class VendorController extends Controller
             'remove_avatar'  => 'nullable|in:0,1',
         ]);
 
-        $status                             = $request->input('status') ? config('constants.status.active') : config('constants.status.inactive');
-        $vendor->name                       = $request->input('username');
-        $vendor->email                      = $request->input('email');
-        $vendor->description                = $request->input('description');
-        $vendor->status                     = $status;
-        $vendor->stripe_mode                = $request->stripe_mode;
-        $vendor->stripe_test_site_key       = $request->stripe_test_site_key;
-        $vendor->stripe_test_secret_key     = $request->stripe_test_secret_key;
-        $vendor->stripe_live_site_key       = $request->stripe_live_site_key;
-        $vendor->stripe_live_secret_key     = $request->stripe_live_secret_key;
+        // --- Update vendor basic fields ---
+        $status = $request->input('status') ? config('constants.status.active') : config('constants.status.inactive');
+        $vendor->name                   = $request->input('username');
+        $vendor->email                  = $request->input('email');
+        $vendor->description            = $request->input('description');
+        $vendor->status                 = $status;
+        $vendor->stripe_mode            = $request->stripe_mode;
+        $vendor->stripe_test_site_key   = $request->stripe_test_site_key;
+        $vendor->stripe_test_secret_key = $request->stripe_test_secret_key;
+        $vendor->stripe_live_site_key   = $request->stripe_live_site_key;
+        $vendor->stripe_live_secret_key = $request->stripe_live_secret_key;
 
+        // ====================================================
+        // Primary Staff Handling
+        // ====================================================
+        $newPrimaryStaffId = $request->input('primary_staff');
+
+        if ($newPrimaryStaffId) {
+            // Get current primary staff for this vendor
+            $currentPrimary = Staff::where('primary_staff', 1)
+                ->whereIn('user_id', VendorStaffAssociation::where('vendor_id', $vendor->id)->pluck('user_id'))
+                ->first();
+
+            // If different, switch primary
+            if (!$currentPrimary || $currentPrimary->user_id != $newPrimaryStaffId) {
+                // Remove primary flag from old primary staff
+                if ($currentPrimary) {
+                    $currentPrimary->primary_staff = 0;
+                    $currentPrimary->save();
+                }
+
+                // Assign primary to the new staff
+                $newPrimaryStaff = Staff::where('user_id', $newPrimaryStaffId)->first();
+
+                if ($newPrimaryStaff) {
+                    // Update if exists
+                    $newPrimaryStaff->primary_staff = 1;
+                    $newPrimaryStaff->save();
+                } else {
+                    // Create with default work hours if doesn't exist
+                    $defaultWorkHours = [
+                        'monday'    => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+                        'tuesday'   => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+                        'wednesday' => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+                        'thursday'  => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+                        'friday'    => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+                        'saturday'  => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+                        'sunday'    => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+                    ];
+
+                    Staff::create([
+                        'user_id'       => $newPrimaryStaffId,
+                        'work_hours'    => json_encode($defaultWorkHours),
+                        'days_off'      => json_encode([]),
+                        'primary_staff' => 1,
+                    ]);
+                }
+
+                // Ensure primary staff is linked to vendor in VendorStaffAssociation
+                $linkExists = VendorStaffAssociation::where('vendor_id', $vendor->id)
+                    ->where('user_id', $newPrimaryStaffId)
+                    ->exists();
+
+                if (!$linkExists) {
+                    VendorStaffAssociation::create([
+                        'vendor_id' => $vendor->id,
+                        'user_id'   => $newPrimaryStaffId,
+                    ]);
+                }
+            }
+        }
+
+        // ====================================================
+        // Vendor Staff Association
+        // ====================================================
         $selectedStaffIds = $request->input('select_staff', []);
-
-        // Convert to integers
+        $selectedStaffIds = array_filter($selectedStaffIds, fn($id) => !empty($id) && intval($id) > 0);
         $selectedStaffIds = array_map('intval', $selectedStaffIds);
 
-        // Step 1: Remove vendor_id from staff NOT in request
+        // Remove associations not in request
         VendorStaffAssociation::where('vendor_id', $vendor->id)
             ->whereNotIn('user_id', $selectedStaffIds)
             ->delete();
-        // Step 2: Assign vendor_id to selected staff
-        foreach ($selectedStaffIds as $userId) {
-            $staff = VendorStaffAssociation::where('user_id', $userId)->first();
 
-            if ($staff) {
-                // Update existing record
-                $staff->vendor_id = $vendor->id;
-                $staff->save();
+        // Assign selected staff to vendor
+        foreach ($selectedStaffIds as $userId) {
+            $staffAssoc = VendorStaffAssociation::where('user_id', $userId)->first();
+            if ($staffAssoc) {
+                $staffAssoc->vendor_id = $vendor->id;
+                $staffAssoc->save();
             } else {
-                // Create new record
                 VendorStaffAssociation::create([
                     'user_id'   => $userId,
                     'vendor_id' => $vendor->id,
                 ]);
             }
         }
+
+        // ====================================================
+        // Vendor Service Association
+        // ====================================================
         $assignedServices = $request->input('assigned_service', []);
         $assignedServices = array_map('intval', $assignedServices);
 
-        // Get Services  Fetch From VendorAssociation
         $existingServices = VendorServiceAssociation::where('vendor_id', $vendor->id)
             ->pluck('service_id')
             ->toArray();
@@ -412,6 +471,7 @@ class VendorController extends Controller
                     ->whereIn('service_id', $servicesToDelete)
                     ->delete();
             }
+
             $servicesToAdd = array_diff($assignedServices, $existingServices);
             foreach ($servicesToAdd as $serviceId) {
                 VendorServiceAssociation::create([
@@ -421,6 +481,9 @@ class VendorController extends Controller
             }
         }
 
+        // ====================================================
+        // Handle Thumbnail Upload/Remove
+        // ====================================================
         if ($request->hasFile('thumbnail')) {
             if ($vendor->thumbnail && Storage::disk('public')->exists($vendor->thumbnail)) {
                 Storage::disk('public')->delete($vendor->thumbnail);
@@ -432,9 +495,12 @@ class VendorController extends Controller
             }
             $vendor->thumbnail = null;
         }
+
         $vendor->save();
+
         return redirect()->route('vendors.list')->with('success', 'Vendor Updated Successfully.');
     }
+
 
     public function destroy($vendorId)
     {
