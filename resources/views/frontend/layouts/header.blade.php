@@ -2,7 +2,16 @@
     <nav class="max-w-7xl mx-auto flex items-center justify-between p-4 md:px-6">
       <!-- Logo -->
       <a href="{{ route('home') }}" class="flex items-center space-x-3 text-xl font-semibold text-black dark:text-white">
-        <img src="{{ asset('storage/' . get_setting('website_logo')) }}" alt="MyBrand Logo" class="h-14 w-auto">
+        @php
+            $logo = get_setting('website_logo');
+            $logoStoragePath = 'public/' . $logo; // Ensure this matches your disk config
+        @endphp
+
+        @if ($logo && Storage::exists($logoStoragePath))
+            <img src="{{ asset('storage/' . $logo) }}" alt="MyBrand Logo" class="h-14 w-auto">
+        @else
+            <img src="{{ asset('assets/images/no-image-available.png') }}" alt="No Image" class="h-14 w-auto">
+        @endif
       </a>
       <!-- Desktop Menu -->
       <div class="hidden md:flex space-x-6">

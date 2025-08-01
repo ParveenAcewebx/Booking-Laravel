@@ -3,7 +3,16 @@
     <div class="m-header">
         <a class="mobile-menu" id="mobile-collapse" href="#!"><span></span></a>
         <a href="#!" class="b-brand">
-            <img src="{{ asset('storage/' . get_setting('website_logo')) }}" alt="MyBrand Logo" class="img-fluid" style="max-width: 60%; margin: 0 auto;">
+            @php
+                $logoPath = 'storage/' . get_setting('website_logo');
+                $logoStoragePath = 'public/' . get_setting('website_logo'); // adjust if necessary
+            @endphp
+
+            @if (get_setting('website_logo') && Storage::exists($logoStoragePath))
+                <img src="{{ asset($logoPath) }}" alt="MyBrand Logo" class="img-fluid" style="max-width: 60%; margin: 0 auto;">
+            @else
+                <img src="{{ asset('assets/images/no-image-available.png') }}" alt="No Image" class="img-fluid" style="max-width: 30%; margin: 0 auto;">
+            @endif
         </a>
         <a href="#!" class="mob-toggler">
             <i class="feather icon-more-vertical"></i>
