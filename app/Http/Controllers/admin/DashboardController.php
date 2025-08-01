@@ -32,6 +32,7 @@ class DashboardController extends Controller
 
     public function index()
     {
+        $countUsers = $this->allUsers;
         $allusers = User::orderBy('created_at', 'desc')->take(5)->get();
         $bookingForms = BookingTemplate::all();
         $services = Service::all();
@@ -44,6 +45,7 @@ class DashboardController extends Controller
         }
 
         return view('admin.layouts.dashboard', [
+            'totalUsers' => $countUsers,
             'allusers' => $allusers,
             'bookingForms' => $bookingForms,
             'bookings' => $bookings,

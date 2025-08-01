@@ -30,7 +30,7 @@
                             <div class="bg-white dash-card dashboard-card-hover">
                                 <div class="card-body">
                                     <h6 class="text-dark m-b-5">Total Users</h6>
-                                    <h4 class="text-dark mb-0">{{ count($allusers) }}</h4>
+                                    <h4 class="text-dark mb-0">{{ count($totalUsers) }}</h4>
                                 </div>
                             </div>
                         </a>
