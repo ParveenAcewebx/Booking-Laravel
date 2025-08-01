@@ -19,6 +19,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class StaffController extends Controller
 {
@@ -192,8 +193,8 @@ class StaffController extends Controller
         ]);
 
         VendorStaffAssociation::create([
-             'user_id' => $user->id,
-             'vendor_id' => $request->assigned_vendor ?? 0,
+            'user_id' => $user->id,
+            'vendor_id' => $request->assigned_vendor ?? 0,
         ]);
         return redirect()->route('staff.list')->with('success', 'Staff Created Successfully!');
     }
@@ -210,7 +211,7 @@ class StaffController extends Controller
         $staffMeta = VendorStaffAssociation::where('user_id', $staff->id)->first();
         $vendorData = Vendor::where('status', $activeStatus)->get();
         $IsUserPrimaryStaff = $staffMeta->primary_staff ?? 0;
-        $staffMetas = Staff::where('user_id', $staff->id)->first();
+        $staffDetails  = Staff::where('user_id', $staff->id)->first();
         // dd($staffMetas);
         // 3. Get assigned services for this staff
         $assignedServices = Service::whereIn(
@@ -227,8 +228,8 @@ class StaffController extends Controller
         // 5. Prepare Day Off data
         $groupedDayOffs = [];
 
-        if (!empty($staffMetas->days_off)) {
-            $decoded = json_decode($staffMetas->days_off, true);
+        if (!empty($staffDetails->days_off)) {
+            $decoded = json_decode($staffDetails->days_off, true);
 
             $flattened = collect($decoded)->flatten(1);
 
@@ -253,6 +254,19 @@ class StaffController extends Controller
                 ->toArray();
         }
         $workingHours = json_decode($staffMetas->work_hours ?? '{}', true);
+        $workingHours = json_decode($staffDetails->work_hours ?? '{}', true);
+
+        // Ensure all weekdays exist in array
+        foreach ($weekDays as $day) {
+            $slug = Str::slug($day);
+            if (!isset($workingHours[$slug])) {
+                $workingHours[$slug] = [
+                    'start' => '00:00',
+                    'end' => '00:00',
+                    'services' => []
+                ];
+            }
+        }
         return view('admin.staff.edit', compact(
             'staff',
             'roles',
@@ -364,10 +378,10 @@ class StaffController extends Controller
         // Save staff meta
         $staffMeta = Staff::firstOrNew(['user_id' => $staff->id]);
         $staffMeta->work_hours = json_encode($workingHours);
-        
+
         // Always update days_off (empty = cleared)
         $staffMeta->days_off = !empty($nestedDayOffs) ? json_encode($nestedDayOffs) : null;
-        
+
         $staffMeta->save();
         $vendorStaffMeta = VendorStaffAssociation::firstOrNew(['user_id' => $staff->id]);
         $vendorStaffMeta->vendor_id = $request->input('assigned_vendor') ?? 0;
