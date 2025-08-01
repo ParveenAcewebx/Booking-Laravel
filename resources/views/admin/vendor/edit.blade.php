@@ -155,7 +155,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Assigned Services</label>
-                                <select class="form-control select-user" name="assigned_service[]" multiple>
+                                <select class="form-control select-service" name="assigned_service[]" multiple>
                                     @foreach($allService as $service)
                                     <option value="{{ $service->id }}"
                                         {{ in_array($service->id, old('assigned_service', $gsd ?? [])) ? 'selected' : '' }}>
@@ -213,6 +213,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     $('.select-user').select2();
+    // $('.select-service').select2();
 
     let assignedStaff = @json($preAssignedStaffIds ?? []); // preassigned IDs
     let selectedStaff = new Set();

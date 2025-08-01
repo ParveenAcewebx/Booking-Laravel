@@ -1187,7 +1187,9 @@ $(function () {
         { selector: ".select2-mash", placeholder: "Select an option" },
         { selector: ".currency", placeholder: "Select Currency" },
         { selector: ".select-user" },
-        { selector: ".select-users" }
+        { selector: ".select-users" },
+        { selector: ".select-service" }
+        
     ];
 
     select2Fields.forEach((field) => {
