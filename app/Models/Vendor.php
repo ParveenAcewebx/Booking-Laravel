@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
 class Vendor extends Model
 {
     use HasFactory;
@@ -26,8 +25,4 @@ class Vendor extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function associations()
-    {
-        return $this->hasMany(VendorAssociation::class);
-    }
 }

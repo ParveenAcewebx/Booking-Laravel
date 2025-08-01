@@ -97,15 +97,12 @@ class FormController extends Controller
         $vendor_data = [];
         if ($request) {
             $serviceId = $request->query('service_id');
-            $vendorIds = VendorServiceAssociation::where('service_id', $serviceId)->pluck('vendor_id');
-            foreach ($vendorIds as $vendorID) {
-                $vendors = Vendor::where('id', $vendorID)->get();
-                foreach ($vendors as $data) {
+            $vendorIds = VendorServiceAssociation::where('service_id', $serviceId)->with('vendor')->get();
+            foreach ($vendorIds as $vendor) {
                     $vendor_data[] = [
-                        'id' => $data->id,
-                        'name' => $data->name,
+                        'id' =>$vendor->vendor->id,
+                        'name' => $vendor->vendor->name,
                     ];
-                }
             }
         }
         return $vendor_data;
@@ -115,19 +112,14 @@ class FormController extends Controller
         if ($request) {
             $workingDates = [];
             $vendor_id = $request['vendor_id'];
-            $vendoraiations = Staff::where('vendor_id', $vendor_id)->get();
-            foreach ($vendoraiations as $vendorassociation) {
-                $staffIds = $vendorassociation->user_id;
-                if (is_string($staffIds)) {
-                    $staffIds = explode(',', $staffIds);
-                }
-                $vendors = Staff::whereIn('user_id', $staffIds)->get();
-                foreach ($vendors as $workingdate) {
-                    $workHours = json_decode($workingdate->work_hours, true);
-                    $workOff = json_decode($workingdate->days_off, true);
+            $vendoraiationsstaff = VendorStaffAssociation::where('vendor_id', $vendor_id)->with('staff')->get();
+            if ($vendoraiationsstaff->isNotEmpty()) {
+                 $workingDates = $vendoraiationsstaff->map(function($association) {
                     $formattedWorkHours = [];
-                    $formatteddayoff = [];
-                    if ($workHours) {
+                    $formattedDayOff = [];
+                    $workHours = json_decode($association->staff->work_hours, true);
+                    $workOff = json_decode($association->staff->days_off, true);       
+                    if($workHours){
                         foreach ($workHours as $day => $times) {
                             $startTime = Carbon::createFromFormat('H:i', $times['start']);
                             $endTime = Carbon::createFromFormat('H:i', $times['end']);
@@ -137,23 +129,23 @@ class FormController extends Controller
                             ];
                         }
                     }
-                    if ($workOff) {
-                        foreach ($workOff as $days_off) {
-                            $formatteddayoff[] = $days_off;
-                        }
-                    }
-                    $workingDates[] = [
-                        'Working_day' =>  $formattedWorkHours,
-                        'Dayoff' => $formatteddayoff,
-                    ];
-                }
-            }
-            return response()->json([
+                     if($workOff){
+                            $formattedDayOff = collect($workOff)->map(function($daysOff) {
+                            return $daysOff;  
+                            });
+                     }
+                    return [
+                    'Working_day' => $formattedWorkHours,
+                    'Dayoff' => $formattedDayOff,
+                ];
+            })->toArray();
+              
+               return response()->json([
                 'success' => true,
                 'data' => $workingDates
             ]);
         }
-
-        return response()->json(['success' => false, 'message' => 'Invalid request']);
+    }
+        return response()->json(['success' => false, 'message' => 'Invalid request']);      
     }
 }

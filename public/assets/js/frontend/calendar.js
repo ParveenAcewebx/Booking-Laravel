@@ -44,10 +44,6 @@
                             new Calendar(workingDays, dayOffDates);
                         }
                     },
-                    error: function (xhr, status, error) {
-                        console.error('AJAX Error:', error);
-                        alert('There was an error fetching the staff details. Please try again later.');
-                    }
                 });
             }
         });
