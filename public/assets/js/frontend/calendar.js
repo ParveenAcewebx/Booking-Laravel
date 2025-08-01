@@ -35,13 +35,10 @@
                     success: function (response) {
                         $('.calendar-wrap').removeClass('hidden');
                         if (response.success && response.data && response.data[0]) {
-                            const vendorData = response.data[0];
-                            const workHoursData = vendorData.Working_day || [];
-                            const daysOffData = vendorData.Dayoff || [];
-                            const dayOffDates = daysOffData.flat();
-                            const workingDays = response.data.map(item => item.Working_day);
-                            resetCalendar();
-                            new Calendar(workingDays, dayOffDates);
+                            const workondayoff= response.data;
+                              const workingDays = response.data.map(item => item.Working_day);
+                                resetCalendar();
+                            new Calendar(workingDays,workondayoff);
                         }
                     },
                 });
@@ -50,9 +47,9 @@
 
         // Calendar Class
         class Calendar {
-            constructor(workingDays, dayOffDates) {
+            constructor(workingDays,workondayoff) {
                 this.workingDays = workingDays;
-                this.dayOffDates = dayOffDates;
+                this.workOnoff = workondayoff;
                 this.draw();
                 this.addNavigationListeners();
                 this.addDayClickListener();
@@ -96,30 +93,54 @@
                         const dayDate = new Date(year, month, dayNum);
                         dayCell.innerHTML = dayNum;
 
-                        // Check if this day is in dayOffDates
-                        const isDayOff = this.dayOffDates.some(dayoff => {
-                            const dateObj = new Date(dayoff.date);
-                            return dateObj.toDateString() === dayDate.toDateString();
-                        });
-
+                        
                         // Collect valid working days
                         const validWorkingDays = [];
                         if (this.workingDays) {
                             this.workingDays.forEach(week => {
                                 Object.entries(week).forEach(([day, time]) => {
                                     if (time.start) {
-                                        const timePart = time.start.split("T")[1].split(".")[0];  // Extract the time part (HH:MM:SS)
+                                        const timePart = time.start.split("T")[1].split(".")[0]; 
                                         if (timePart !== "00:00:00") {
-                                            validWorkingDays.push(day.toLowerCase());  // Add valid day to the array
+                                            validWorkingDays.push(day.toLowerCase());  
                                         }
                                     }
                                 });
                             });
                         }
+                        // Collect valid working days and check if working time is not "00:00:00"
+                        const dayOffData = [];
+                       if (this.workOnoff) {
+                           this.workOnoff.forEach(items => {
+                                 const workingDay = items.Working_day;
+                                 const dayoffDates = items.Dayoff;     
+                                Object.entries(workingDay).forEach(([day, time]) => {
+                                    if (time.start) {
+                                        const timePart = time.start.split("T")[1].split(".")[0];
+                                        if (timePart !== "00:00:00") {
+                                                dayoffDates.forEach(dayoff => {
+                                                    const dayOfdates = dayoff.flat();
+                                                     dayOffData.push(dayOfdates); 
+                                            });
+                                         }
+                                    }
+                                });
+                            });
+                        }
 
+                 // **Check if the selected day is a day off**
+                        const isDayOff = dayOffData.some(dayoff => {    
+                            let ofdates = []; 
+                                dayoff.forEach(dayoof => {
+                                ofdates.push(dayoof.date); 
+                            });
+                            return ofdates.some(date => {
+                                const dateObj = new Date(date); 
+                                return dateObj.toDateString() === dayDate.toDateString();
+                                });
+                        });
                         const dayName = dayDate.toLocaleString('en-us', { weekday: 'long' }).toLowerCase();
-
-                        // Disable past days, day-offs, or non-working days
+                        
                         if (dayDate < currentDate || isDayOff || !validWorkingDays.includes(dayName)) {
                             dayCell.classList.add("disabled");
                             dayCell.style.backgroundColor = "#d3d3d3";
