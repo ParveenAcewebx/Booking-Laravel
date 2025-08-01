@@ -210,9 +210,8 @@ class StaffController extends Controller
         // 2. Get Staff Meta and related data
         $staffMeta = VendorStaffAssociation::where('user_id', $staff->id)->first();
         $vendorData = Vendor::where('status', $activeStatus)->get();
-        $IsUserPrimaryStaff = $staffMeta->primary_staff ?? 0;
         $staffDetails  = Staff::where('user_id', $staff->id)->first();
-        // dd($staffMetas);
+        $IsUserPrimaryStaff = $staffDetails->primary_staff ?? 0;
         // 3. Get assigned services for this staff
         $assignedServices = Service::whereIn(
             'id',

@@ -15,6 +15,7 @@ use App\Models\Service;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
 use App\Models\StaffServiceAssociation;
+use App\Models\VendorServiceAssociation;
 
 class ServiceController extends Controller
 {
@@ -154,6 +155,8 @@ class ServiceController extends Controller
     public function destroy(Service $service)
     {
         StaffServiceAssociation::where('service_id', $service->id)->delete();
+        VendorServiceAssociation::where('service_id', $service->id)->delete();
+
         $service->delete();
         return response()->json(['success' => true]);
     }
