@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\form;
+use App\Models\Staff;
 use Illuminate\Http\Request;
 use DataTables;
 use Illuminate\Support\Facades\Auth;
@@ -198,6 +199,9 @@ class UserController extends Controller
             $currentRole = $roles[0]->id;
         }
 
+        $primaryStaff = Staff::where('user_id', $id)
+        ->where('primary_staff', 1)
+        ->first();
         return view('admin.user.edit', [
             'user' => $user,
             'allRoles' => Role::where('status', 1)->get(),
@@ -205,7 +209,8 @@ class UserController extends Controller
             'currentRole' => $currentRole,
             'originalUserId' => $originalUserId,
             'phoneCountries' => $phoneCountries,
-            'loginUser' => $loginUser
+            'loginUser' => $loginUser,
+            'primaryStaff' => $primaryStaff
         ]);
     }
 
@@ -258,7 +263,7 @@ class UserController extends Controller
                 'password' => bcrypt($request->password)
             ]);
         }
-
+        // dd($request->role);
         $userRole = Role::find($request->role);
         $user->roles()->sync([$userRole->id]);
 
