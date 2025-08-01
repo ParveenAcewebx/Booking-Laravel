@@ -195,8 +195,20 @@ class VendorController extends Controller
                 'user_id'     => $user->id,
             ]);
 
+            $defaultWorkHours = [
+                'monday'    => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+                'tuesday'   => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+                'wednesday' => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+                'thursday'  => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+                'friday'    => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+                'saturday'  => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+                'sunday'    => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+            ];
+
             Staff::create([
-                'user_id' => $user->id,
+                'user_id'       => $user->id,
+                'work_hours'    => json_encode($defaultWorkHours),
+                'days_off'      => json_encode([]),
                 'primary_staff' => 1,
             ]);
 
@@ -438,9 +450,9 @@ class VendorController extends Controller
         foreach ($associations as $association) {
             // Check if this user is primary staff
             $isPrimaryStaff = Staff::where('user_id', $association->user_id)
-            ->where('primary_staff', 1)
-            ->exists();
-            
+                ->where('primary_staff', 1)
+                ->exists();
+
 
             // Delete user only if NOT primary staff
             if ($isPrimaryStaff) {
