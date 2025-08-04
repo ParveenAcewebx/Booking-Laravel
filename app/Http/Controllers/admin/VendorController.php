@@ -411,19 +411,9 @@ class VendorController extends Controller
             $staffAssoc = VendorStaffAssociation::where('user_id', $userId)->first();
             $staffNotExsits = Staff::where('user_id', $userId)->first();
             if (!$staffNotExsits) {
-                $defaultWorkHours = [
-                    'monday'    => ['start' => '00:00', 'end' => '00:00', 'services' => []],
-                    'tuesday'   => ['start' => '00:00', 'end' => '00:00', 'services' => []],
-                    'wednesday' => ['start' => '00:00', 'end' => '00:00', 'services' => []],
-                    'thursday'  => ['start' => '00:00', 'end' => '00:00', 'services' => []],
-                    'friday'    => ['start' => '00:00', 'end' => '00:00', 'services' => []],
-                    'saturday'  => ['start' => '00:00', 'end' => '00:00', 'services' => []],
-                    'sunday'    => ['start' => '00:00', 'end' => '00:00', 'services' => []],
-                ];
-
                 Staff::create([
                     'user_id'       => $userId,
-                    'work_hours'    => json_encode($defaultWorkHours),
+                    'work_hours'    => json_encode(config('constants.defaultWorkHours')),
                     'days_off'      => json_encode([]),
                     'primary_staff' => 0,
                 ]);
