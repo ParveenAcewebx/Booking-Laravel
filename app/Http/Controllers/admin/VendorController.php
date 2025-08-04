@@ -234,11 +234,12 @@ class VendorController extends Controller
                         'vendor_id'  => $lastInsertId,
                         'service_id' => $serviceId,
                     ]);
-                    StaffServiceAssociation::create([
-                        'staff_member'  => $user->id,
-                        'service_id' => $serviceId,
-                    ]);
+                     StaffServiceAssociation::create([
+                    'staff_member'  => $user->id,
+                    'service_id' => $serviceId,
+                ]);
                 }
+               
             }
 
             $selectedStaffIds = $request->input('select_staff', []);

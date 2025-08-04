@@ -30,90 +30,90 @@ class StaffController extends Controller
         $this->allUsers = User::all();
     }
 
-  public function index(Request $request)
-{
-    $loginId = session('impersonate_original_user');
-    $loginUser = $loginId ? User::find($loginId) : null;
+    public function index(Request $request)
+    {
+        $loginId = session('impersonate_original_user');
+        $loginUser = $loginId ? User::find($loginId) : null;
 
-    if ($request->ajax()) {
-        $currentUser = Auth::user();
+        if ($request->ajax()) {
+            $currentUser = Auth::user();
 
-        // Fetch staff users
-        $query = User::with(['roles', 'services'])
-            ->whereHas('roles', function ($q) {
-                $q->where('name', 'Staff');
-            });
+            // Fetch staff users
+            $query = User::with(['roles', 'services'])
+                ->whereHas('roles', function ($q) {
+                    $q->where('name', 'Staff');
+                });
 
-        return DataTables::of($query)
-            ->addIndexColumn()
+            return DataTables::of($query)
+                ->addIndexColumn()
 
-            // Name column
-            ->addColumn('name', function ($row) {
-                return '<h6 class="m-b-0">' . e($row->name) . '</h6><p class="m-b-0">' . e($row->email) . '</p>';
-            })
+                // Name column
+                ->addColumn('name', function ($row) {
+                    return '<h6 class="m-b-0">' . e($row->name) . '</h6><p class="m-b-0">' . e($row->email) . '</p>';
+                })
 
-            // Services column using accessor
-            ->addColumn('services', function ($row) {
-                if (!$row->services || empty($row->services)) {
-                    return '<span class="badge badge-secondary">'.$row->services.'</span>';
-                }
+                // Services column using accessor
+                ->addColumn('services', function ($row) {
+                    if (!$row->services || empty($row->services)) {
+                        return '<span class="badge badge-secondary">' . $row->services . '</span>';
+                    }
 
-                return collect($row->services)->map(function ($service) {
-                    return '<span class="badge badge-info mr-1">' . e($service->name) . '</span>';
-                })->implode(' ');
-            })
+                    return collect($row->services)->map(function ($service) {
+                        return '<span class="badge badge-info mr-1">' . e($service->name) . '</span>';
+                    })->implode(' ');
+                })
 
-            // Created at
-            ->editColumn('created_at', function ($row) {
-                return $row->created_at
-                    ? $row->created_at->format(
-                        get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
-                    )
-                    : '';
-            })
+                // Created at
+                ->editColumn('created_at', function ($row) {
+                    return $row->created_at
+                        ? $row->created_at->format(
+                            get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
+                        )
+                        : '';
+                })
 
-            // Status badge
-            ->addColumn('status', function ($row) {
-                return $row->status == config('constants.status.active')
-                    ? '<span class="badge badge-success">Active</span>'
-                    : '<span class="badge badge-danger">Inactive</span>';
-            })
+                // Status badge
+                ->addColumn('status', function ($row) {
+                    return $row->status == config('constants.status.active')
+                        ? '<span class="badge badge-success">Active</span>'
+                        : '<span class="badge badge-danger">Inactive</span>';
+                })
 
-            // Actions
-            ->addColumn('action', function ($row) use ($currentUser) {
-                $btn = '';
+                // Actions
+                ->addColumn('action', function ($row) use ($currentUser) {
+                    $btn = '';
 
-                if ($currentUser->can('edit staffs')) {
-                    $btn .= '<a href="' . route('staff.edit', [$row->id]) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit User">
+                    if ($currentUser->can('edit staffs')) {
+                        $btn .= '<a href="' . route('staff.edit', [$row->id]) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit User">
                                 <i class="fas fa-pencil-alt"></i>
                              </a> ';
-                }
+                    }
 
-                if ($currentUser->can('delete staffs') && Auth::id() != $row->id) {
-                    if ($row->staff && $row->staff->primary_staff == 1) {
-                        $btn .= '<button type="button" class="btn btn-icon btn-secondary" title="Please First Delete Vendor" disabled>
+                    if ($currentUser->can('delete staffs') && Auth::id() != $row->id) {
+                        if ($row->staff && $row->staff->primary_staff == 1) {
+                            $btn .= '<button type="button" class="btn btn-icon btn-secondary" title="Please First Delete Vendor" disabled>
                                     <i class="feather icon-trash-2"></i>
                                  </button>';
-                    } else {
-                        $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">
+                        } else {
+                            $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">
                                     ' . csrf_field() . '
                                     <input type="hidden" name="_method" value="DELETE">
                                     <button type="button" onclick="return deleteUser(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete User">
                                         <i class="feather icon-trash-2"></i>
                                     </button>
                                 </form>';
+                        }
                     }
-                }
 
-                return $btn;
-            })
+                    return $btn;
+                })
 
-            ->rawColumns(['name', 'services', 'status', 'action'])
-            ->make(true);
+                ->rawColumns(['name', 'services', 'status', 'action'])
+                ->make(true);
+        }
+
+        return view('admin.staff.index', compact('loginUser'));
     }
-
-    return view('admin.staff.index', compact('loginUser'));
-}
 
     public function add()
     {
@@ -214,11 +214,12 @@ class StaffController extends Controller
             'work_hours' => json_encode($workingHours),
             'days_off' => json_encode($dayOffsGrouped),
         ]);
-
-        VendorStaffAssociation::create([
-            'user_id' => $user->id,
-            'vendor_id' => $request->assigned_vendor ?? 0,
-        ]);
+        if ($request->has('assigned_vendor')) {
+            VendorStaffAssociation::create([
+                'user_id'   => $user->id,
+                'vendor_id' => $request->assigned_vendor,
+            ]);
+        }
         return redirect()->route('staff.list')->with('success', 'Staff Created Successfully!');
     }
 
@@ -403,12 +404,12 @@ class StaffController extends Controller
 
         // Always update days_off (empty = cleared)
         $staffMeta->days_off = !empty($nestedDayOffs) ? json_encode($nestedDayOffs) : null;
-
         $staffMeta->save();
-        $vendorStaffMeta = VendorStaffAssociation::firstOrNew(['user_id' => $staff->id]);
-        $vendorStaffMeta->vendor_id = $request->input('assigned_vendor') ?? 0;
-        $vendorStaffMeta->save();
-
+        if ($request->filled('assigned_vendor')) {
+            $vendorStaffMeta = VendorStaffAssociation::firstOrNew(['user_id' => $staff->id]);
+            $vendorStaffMeta->vendor_id = $request->input('assigned_vendor');
+            $vendorStaffMeta->save();
+        }
         return redirect()->route('staff.list')->with('success', 'Staff Updated Successfully!');
     }
 
