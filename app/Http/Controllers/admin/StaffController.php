@@ -37,8 +37,6 @@ class StaffController extends Controller
 
         if ($request->ajax()) {
             $currentUser = Auth::user();
-
-            // Fetch staff users
             $query = User::with(['roles', 'services'])
                 ->whereHas('roles', function ($q) {
                     $q->where('name', 'Staff');
@@ -46,24 +44,17 @@ class StaffController extends Controller
 
             return DataTables::of($query)
                 ->addIndexColumn()
-
-                // Name column
                 ->addColumn('name', function ($row) {
                     return '<h6 class="m-b-0">' . e($row->name) . '</h6><p class="m-b-0">' . e($row->email) . '</p>';
                 })
-
-                // Services column using accessor
                 ->addColumn('services', function ($row) {
                     if (!$row->services || empty($row->services)) {
                         return '<span class="badge badge-secondary">' . $row->services . '</span>';
                     }
-
                     return collect($row->services)->map(function ($service) {
                         return '<span class="badge badge-info mr-1">' . e($service->name) . '</span>';
                     })->implode(' ');
                 })
-
-                // Created at
                 ->editColumn('created_at', function ($row) {
                     return $row->created_at
                         ? $row->created_at->format(
@@ -71,15 +62,11 @@ class StaffController extends Controller
                         )
                         : '';
                 })
-
-                // Status badge
                 ->addColumn('status', function ($row) {
                     return $row->status == config('constants.status.active')
                         ? '<span class="badge badge-success">Active</span>'
                         : '<span class="badge badge-danger">Inactive</span>';
                 })
-
-                // Actions
                 ->addColumn('action', function ($row) use ($currentUser) {
                     $btn = '';
 
@@ -104,14 +91,11 @@ class StaffController extends Controller
                                 </form>';
                         }
                     }
-
                     return $btn;
                 })
-
                 ->rawColumns(['name', 'services', 'status', 'action'])
                 ->make(true);
         }
-
         return view('admin.staff.index', compact('loginUser'));
     }
 
@@ -214,6 +198,7 @@ class StaffController extends Controller
             'work_hours' => json_encode($workingHours),
             'days_off' => json_encode($dayOffsGrouped),
         ]);
+
         if ($request->has('assigned_vendor')) {
             VendorStaffAssociation::create([
                 'user_id'   => $user->id,
@@ -234,6 +219,7 @@ class StaffController extends Controller
         $vendorData = Vendor::where('status', $activeStatus)->get();
         $staffDetails  = Staff::where('user_id', $staff->id)->first();
         $IsUserPrimaryStaff = $staffDetails->primary_staff ?? 0;
+
         // 3. Get assigned services for this staff
         $assignedServices = Service::whereIn(
             'id',
@@ -241,12 +227,10 @@ class StaffController extends Controller
         )->with('category')->get();
 
         $services = Service::all();
-
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
         $groupedDayOffs = [];
-
         if (!empty($staffDetails->days_off)) {
             $decoded = json_decode($staffDetails->days_off, true);
             $flattened = collect($decoded)->flatten(1);
@@ -258,10 +242,8 @@ class StaffController extends Controller
                         ->map(fn($date) => \Carbon\Carbon::parse($date)) // ensure Carbon objects
                         ->sort()
                         ->values();
-
                     $start = $dates->first()->format('F j, Y'); // e.g., August 2, 2025
                     $end = $dates->last()->format('F j, Y');
-
                     return [
                         'label' => $label,
                         'range' => $start . ' - ' . $end,
@@ -309,14 +291,12 @@ class StaffController extends Controller
             'phone_number' => 'required',
         ]);
 
-        // Basic info
         $staff->name = $request->name;
         $staff->email = $request->email;
         $staff->phone_number = $request->phone_number;
         $staff->phone_code = $request->code;
         $staff->status = $request->status ? config('constants.status.active') : config('constants.status.inactive');
 
-        // Avatar handling
         if ($request->hasFile('avatar')) {
             if ($staff->avatar && Storage::disk('public')->exists($staff->avatar)) {
                 Storage::disk('public')->delete($staff->avatar);
@@ -407,16 +387,13 @@ class StaffController extends Controller
     {
         $user = User::find($id);
         $authuser_id = Auth::user()->id;
-
         if ($authuser_id != $id) {
             if ($user) {
                 $user->delete();
-
                 Staff::where('user_id', $id)->delete();
                 StaffServiceAssociation::where('staff_member', $id)->delete();
                 return response()->json(['success' => true]);
             }
-
             return response()->json(['success' => false, 'message' => 'User not found.']);
         } else {
             return response()->json(['success' => 'login', 'message' => 'Cannot delete logged-in user.']);

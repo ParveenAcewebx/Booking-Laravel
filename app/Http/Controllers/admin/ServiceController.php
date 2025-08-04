@@ -131,15 +131,15 @@ class ServiceController extends Controller
         $data['payment__is_live'] = $request->has('payment__is_live') ? 1 : 0;
         $data['duration'] = $request->duration;
 
-        $service = Service::create($data);
-        $lastServiceId = $service->id;
-        $staffMembers = $request->input('staff_member', []);
-        foreach ($staffMembers as $staffId) {
-            StaffServiceAssociation::create([
-                'service_id' => $lastServiceId,
-                'staff_member' => $staffId
-            ]);
-        }
+        Service::create($data);
+        // $lastServiceId = $service->id;
+        // $staffMembers = $request->input('staff_member', []);
+        // foreach ($staffMembers as $staffId) {
+        //     StaffServiceAssociation::create([
+        //         'service_id' => $lastServiceId,
+        //         'staff_member' => $staffId
+        //     ]);
+        // }
         return redirect()->route('service.list')->with('success', 'Service Created Successfully');
     }
 
@@ -250,7 +250,6 @@ class ServiceController extends Controller
         foreach ($deletedGallery as $deletedPath) {
             Storage::disk('public')->delete($deletedPath);
         }
-
         $finalGallery = array_diff($existingGallery, $deletedGallery);
 
         // Upload new images
@@ -263,25 +262,23 @@ class ServiceController extends Controller
         $service->save();
 
         // Handle staff associations
-        $newStaffIds = $request->input('staff_member', []);
-        $existingStaffIds = StaffServiceAssociation::where('service_id', $service->id)
-            ->pluck('staff_member')
-            ->toArray();
+        // $newStaffIds = $request->input('staff_member', []);
+        // $existingStaffIds = $service->getAssignedStaffIds();
 
-        $toAdd = array_diff($newStaffIds, $existingStaffIds);
-        foreach ($toAdd as $staffId) {
-            StaffServiceAssociation::create([
-                'service_id'   => $service->id,
-                'staff_member' => $staffId,
-            ]);
-        }
+        // $toAdd = array_diff($newStaffIds, $existingStaffIds);
+        // foreach ($toAdd as $staffId) {
+        //     StaffServiceAssociation::create([
+        //         'service_id'   => $service->id,
+        //         'staff_member' => $staffId,
+        //     ]);
+        // }
 
-        $toDelete = array_diff($existingStaffIds, $newStaffIds);
-        if (!empty($toDelete)) {
-            StaffServiceAssociation::where('service_id', $service->id)
-                ->whereIn('staff_member', $toDelete)
-                ->delete();
-        }
+        // $toDelete = array_diff($existingStaffIds, $newStaffIds);
+        // if (!empty($toDelete)) {
+        //     StaffServiceAssociation::where('service_id', $service->id)
+        //         ->whereIn('staff_member', $toDelete)
+        //         ->delete();
+        // }
         return redirect()->route('service.list')->with('success', 'Service Updated Successfully!');
     }
 }

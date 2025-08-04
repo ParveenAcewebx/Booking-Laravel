@@ -24,12 +24,10 @@ class Staff extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    // Correct pivot relation
     public function services()
     {
         return $this->hasMany(StaffServiceAssociation::class, 'service_id', 'id');
     }
-
 
     public function getServiceNamesAttribute()
     {
