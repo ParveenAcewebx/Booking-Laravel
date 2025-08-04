@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+
 class Vendor extends Model
 {
     use HasFactory;
@@ -25,9 +26,9 @@ class Vendor extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-     public function services()
+    public function services()
     {
-        return $this->belongsToMany(Service::class, 'vendor_service_associations', 'vendor_id', 'service_id');
+        return $this->hasMany(VendorServiceAssociation::class, 'vendor_id', 'id');
     }
 
     public function getServiceNamesAttribute()

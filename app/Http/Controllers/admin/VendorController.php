@@ -41,48 +41,38 @@ class VendorController extends Controller
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
-            // Load vendors with services relationship
-            $vendors = Vendor::with('services')->select(['id', 'name', 'email', 'status', 'created_at']);
+            // Load vendors with pivot + nested service relation
+            $vendors = Vendor::with('services.service')->select(['id', 'name', 'email', 'status', 'created_at']);
 
             return DataTables::of($vendors)
                 ->addIndexColumn()
-
-                // Vendor Name
                 ->editColumn('name', function ($row) {
                     return e($row->name);
                 })
-
-                // Email
                 ->editColumn('email', function ($row) {
                     return e($row->email);
                 })
-
-                // Services column (badges)
                 ->addColumn('services', function ($row) {
-                    // if (empty($row->service_names)) {
-                    //     return '<span class="badge badge-secondary">No Services</span>';
-                    // }
+                    if ($row->services->isEmpty()) {
+                        return '<span class="badge badge-secondary">No Services</span>';
+                    }
 
-                    return collect($row->service_names)->map(function ($name) {
-                        return '<span class="badge badge-info mr-1">' . e($name) . '</span>';
+                    return $row->services->map(function ($assoc) {
+                        return '<span class="badge badge-info mr-1">' . e(optional($assoc->service)->name) . '</span>';
                     })->implode(' ');
                 })
-
-                // Status column
                 ->editColumn('status', function ($row) {
                     return $row->status
                         ? '<span class="badge badge-success">Active</span>'
                         : '<span class="badge badge-danger">Inactive</span>';
                 })
-
-                // Actions column
                 ->addColumn('action', function ($row) {
                     $btn = '';
 
                     if (auth()->user()->can('edit vendors')) {
                         $btn .= '<a href="' . route('vendors.edit', $row->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit Vendor">
-                                <i class="fas fa-pencil-alt"></i>
-                             </a> ';
+                            <i class="fas fa-pencil-alt"></i>
+                         </a> ';
                     }
 
                     if (auth()->user()->can('delete vendors')) {
@@ -226,20 +216,17 @@ class VendorController extends Controller
                 'primary_staff' => 1,
             ]);
 
-
-            // dd($request->assigned_service);
             if ($request->has('assigned_service') && is_array($request->assigned_service)) {
                 foreach ($request->assigned_service as $serviceId) {
                     VendorServiceAssociation::create([
                         'vendor_id'  => $lastInsertId,
                         'service_id' => $serviceId,
                     ]);
-                     StaffServiceAssociation::create([
-                    'staff_member'  => $user->id,
-                    'service_id' => $serviceId,
-                ]);
+                    StaffServiceAssociation::create([
+                        'staff_member'  => $user->id,
+                        'service_id' => $serviceId,
+                    ]);
                 }
-               
             }
 
             $selectedStaffIds = $request->input('select_staff', []);
@@ -275,7 +262,6 @@ class VendorController extends Controller
 
     public function edit($id)
     {
-        // 1. Get vendor
         $vendor = Vendor::findOrFail($id);
 
         // 2. Vendor staff associations (with user + primary flag)
@@ -285,19 +271,13 @@ class VendorController extends Controller
 
         // 3. Vendor's assigned services
         $gsd = VendorServiceAssociation::where('vendor_id', $id)->pluck('service_id')->toArray();
-
-        // 4. All active services
         $allService = Service::where('status', config('constants.status.active'))->get();
-
-        // 5. Staff role
         $staffRole = Role::where('name', 'staff')->first();
 
         // 6. All users with staff role
         $staffUsers = User::whereHas('roles', function ($query) use ($staffRole) {
             $query->where('id', $staffRole->id);
         })->get();
-
-        // 7. Staff table user IDs
         $staffTableUserIds = Staff::pluck('user_id')->toArray();
 
         // 8. Pre-assigned staff to this vendor

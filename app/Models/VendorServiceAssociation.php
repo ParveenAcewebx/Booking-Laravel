@@ -11,8 +11,12 @@ class VendorServiceAssociation extends Model
     use HasFactory;
     protected $fillable = ['vendor_id', 'service_id'];
 
-   public function vendor()
+    public function vendor()
     {
-    return $this->belongsTo(Vendor::class, 'vendor_id');
+        return $this->belongsTo(Vendor::class, 'vendor_id');
+    }
+    public function service()
+    {
+        return $this->belongsTo(Service::class, 'service_id');
     }
 }
