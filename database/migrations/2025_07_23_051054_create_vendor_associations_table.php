@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('vendor_staff_associations', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('vendor_id');
+            $table->unsignedBigInteger('vendor_id')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
         });
