@@ -234,11 +234,11 @@ class VendorController extends Controller
                         'vendor_id'  => $lastInsertId,
                         'service_id' => $serviceId,
                     ]);
+                    StaffServiceAssociation::create([
+                        'staff_member'  => $user->id,
+                        'service_id' => $serviceId,
+                    ]);
                 }
-                StaffServiceAssociation::create([
-                    'staff_member'  => $user->id,
-                    'service_id' => $serviceId,
-                ]);
             }
 
             $selectedStaffIds = $request->input('select_staff', []);
@@ -350,8 +350,7 @@ class VendorController extends Controller
 
     public function getStaffServices($staffId)
     {
-        $services = DB::table('staff_service_associations')
-            ->join('services', 'services.id', '=', 'staff_service_associations.service_id')
+        $services = StaffServiceAssociation::join('services', 'services.id', '=', 'staff_service_associations.service_id')
             ->where('staff_service_associations.staff_member', $staffId)
             ->pluck('services.name');
         return response()->json($services);
