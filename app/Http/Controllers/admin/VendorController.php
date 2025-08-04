@@ -26,23 +26,19 @@ use Illuminate\Support\Facades\DB;
 class VendorController extends Controller
 {
     protected $allUsers;
-    protected $originalUserId;
     public function __construct()
     {
         $this->allUsers = User::all();
-        $this->originalUserId = session()->has('impersonate_original_user')
-            ? session('impersonate_original_user')
-            : Cookie::get('impersonate_original_user');
     }
 
     public function index(Request $request)
     {
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
             // Load vendors with pivot + nested service relation
-            $vendors = Vendor::with('services.service')->select(['id', 'name', 'email', 'status', 'created_at']);
+            $vendors = Vendor::with('services')->select(['id', 'name', 'email', 'status', 'created_at']);
 
             return DataTables::of($vendors)
                 ->addIndexColumn()
@@ -98,14 +94,11 @@ class VendorController extends Controller
     public function add()
     {
         $allusers = $this->allUsers;
-        $originalUserId = $this->originalUserId;
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
-        // Get Staff role
         $staffRole = Role::where('name', 'staff')->first();
 
-        // All users with staff role
         $staffUsers = User::whereHas('roles', function ($query) use ($staffRole) {
             $query->where('id', $staffRole->id);
         })->get();
@@ -146,7 +139,6 @@ class VendorController extends Controller
         return view('admin.vendor.add', compact(
             'roles',
             'allusers',
-            'originalUserId',
             'loginUser',
             'allService',
             'availableStaff',
@@ -178,7 +170,6 @@ class VendorController extends Controller
             ]);
 
             $user->assignRole('Staff');
-
             $vendor = Vendor::create([
                 'name'        => $request->username,
                 'email'       => $request->email,
@@ -193,7 +184,6 @@ class VendorController extends Controller
             ]);
 
             $lastInsertId = $vendor->id;
-
             VendorStaffAssociation::create([
                 'vendor_id'   => $lastInsertId,
                 'user_id'     => $user->id,
@@ -262,6 +252,10 @@ class VendorController extends Controller
 
     public function edit($id)
     {
+
+        $loginId = getOriginalUserId();
+        $loginUser = $loginId ? User::find($loginId) : null;
+
         $vendor = Vendor::findOrFail($id);
 
         // 2. Vendor staff associations (with user + primary flag)
@@ -324,10 +318,10 @@ class VendorController extends Controller
             'preAssignedStaffIds',
             'currentPrimary',
             'gsd',
-            'allService'
+            'allService',
+            'loginUser'
         ));
     }
-
 
     public function getStaffServices($staffId)
     {

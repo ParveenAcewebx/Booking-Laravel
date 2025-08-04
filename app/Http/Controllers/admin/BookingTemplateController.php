@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\BookingTemplate;
@@ -26,7 +26,7 @@ class BookingTemplateController extends Controller
 
     public function index(Request $request)
     {
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
@@ -128,7 +128,7 @@ class BookingTemplateController extends Controller
     {
         $allusers  = $this->allUsers;
         $template = BookingTemplate::find($id);
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = null;
 
         if ($loginId) {
@@ -140,7 +140,7 @@ class BookingTemplateController extends Controller
     public function templateAdd()
     {
         $allusers  = $this->allUsers;
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = null;
 
         if ($loginId) {

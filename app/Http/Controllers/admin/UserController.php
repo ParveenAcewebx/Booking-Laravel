@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\form;
 use App\Models\Staff;
 use Illuminate\Http\Request;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Spatie\Permission\Models\Role;
@@ -21,18 +21,14 @@ use Illuminate\Support\Facades\Storage;
 class UserController extends Controller
 {
     protected $allUsers;
-    protected $originalUserId;
     public function __construct()
     {
         $this->allUsers = User::all();
-        $this->originalUserId = session()->has('impersonate_original_user')
-            ? session('impersonate_original_user')
-            : Cookie::get('impersonate_original_user');
     }
 
     public function index(Request $request)
     {
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
@@ -124,8 +120,7 @@ class UserController extends Controller
     {
         $allRoles = Role::where('status', 1)->get();
         $allusers = $this->allUsers;
-        $originalUserId = $this->originalUserId;
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $phoneCountries = config('phone_countries');
         $loginUser = null;
 
@@ -133,7 +128,7 @@ class UserController extends Controller
             $loginUser = User::find($loginId);
         }
 
-        return view('admin.user.add', compact('allRoles', 'allusers', 'originalUserId', 'loginUser', 'phoneCountries'));
+        return view('admin.user.add', compact('allRoles', 'allusers', 'loginUser', 'phoneCountries'));
     }
 
     public function userSave(Request $request)
@@ -187,8 +182,7 @@ class UserController extends Controller
         $currentRole = null;
 
         $allusers =  $this->allUsers;
-        $originalUserId = $this->originalUserId;
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = null;
 
         if ($loginId) {
@@ -207,7 +201,6 @@ class UserController extends Controller
             'allRoles' => Role::where('status', 1)->get(),
             'allusers' => $allusers,
             'currentRole' => $currentRole,
-            'originalUserId' => $originalUserId,
             'phoneCountries' => $phoneCountries,
             'loginUser' => $loginUser,
             'primaryStaff' => $primaryStaff

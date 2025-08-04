@@ -7,18 +7,16 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Cookie;
 
 class RoleController extends Controller
 {
     protected $allUsers;
-    protected $originalUserId;
 
     public function __construct()
     {
         $this->allUsers = User::all();
-        $this->originalUserId = session('impersonate_original_user') ?? Cookie::get('impersonate_original_user');
     }
 
     protected function syncPermissionsFromConfig()
@@ -37,7 +35,7 @@ class RoleController extends Controller
 
     public function index(Request $request)
     {
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
         if ($request->ajax()) {
             $roles = Role::with(['permissions', 'users'])->select('id', 'name', 'status');
@@ -85,7 +83,6 @@ class RoleController extends Controller
                                         </button>
                                     </form>';
                         } else {
-                            // optional: show disabled button with tooltip
                             $btn .= '<button type="button" class="btn btn-icon btn-secondary" data-toggle="tooltip" title="Cannot delete: role assigned to users" disabled>
                                         <i class="feather icon-trash-2"></i>
                                     </button>';
@@ -105,7 +102,7 @@ class RoleController extends Controller
         $this->syncPermissionsFromConfig();
         $roleGroups = config('constants.role_groups');
         $permissions = Permission::all();
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
         return view('admin.role.add', compact('roleGroups', 'permissions', 'loginUser'));
@@ -141,7 +138,7 @@ class RoleController extends Controller
         $this->syncPermissionsFromConfig();
 
         $role = Role::findOrFail($id);
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
         $rolePermissions = $role->permissions->pluck('name')->toArray();
         $roleGroups = config('constants.role_groups');

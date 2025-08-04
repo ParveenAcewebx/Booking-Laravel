@@ -32,7 +32,7 @@ class StaffController extends Controller
 
     public function index(Request $request)
     {
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
@@ -124,7 +124,7 @@ class StaffController extends Controller
         $weekDays = config('constants.week_days');
         $phoneCountries = config('phone_countries');
         $services = Service::where('status', $activeStatus)->get();
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
         return view('admin.staff.add', compact('roles', 'services', 'staffUsers', 'phoneCountries', 'weekDays', 'loginUser', 'vendorData'));
     }
@@ -225,13 +225,11 @@ class StaffController extends Controller
 
     public function edit(User $staff)
     {
-        // 1. Load basic data
         $roles = Role::where('name', 'Staff')->first();
         $phoneCountries = config('phone_countries');
         $weekDays = config('constants.week_days');
         $activeStatus = config('constants.status.active');
 
-        // 2. Get Staff Meta and related data
         $staffMeta = VendorStaffAssociation::where('user_id', $staff->id)->first();
         $vendorData = Vendor::where('status', $activeStatus)->get();
         $staffDetails  = Staff::where('user_id', $staff->id)->first();
@@ -244,18 +242,14 @@ class StaffController extends Controller
 
         $services = Service::all();
 
-        // 4. If impersonation active, get original user
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
-        // 5. Prepare Day Off data
         $groupedDayOffs = [];
 
         if (!empty($staffDetails->days_off)) {
             $decoded = json_decode($staffDetails->days_off, true);
-
             $flattened = collect($decoded)->flatten(1);
-
             $groupedDayOffs = $flattened
                 ->groupBy('label')
                 ->map(function ($items, $label) {
@@ -277,7 +271,6 @@ class StaffController extends Controller
                 ->toArray();
         }
         $workingHours = json_decode($staffMetas->work_hours ?? '{}', true);
-        $workingHours = json_decode($staffDetails->work_hours ?? '{}', true);
 
         // Ensure all weekdays exist in array
         foreach ($weekDays as $day) {
@@ -336,18 +329,14 @@ class StaffController extends Controller
             $staff->avatar = null;
         }
 
-        // Password update
         if ($request->filled('password')) {
             $staff->password = Hash::make($request->password);
         }
 
         $staff->save();
-
-        // Role sync
         $role = Role::findById($request->role, 'web');
         $staff->syncRoles([$role->name]);
 
-        // Sync services
         $submittedServices = $request->input('assigned_services', []);
         $staff->services()->sync($submittedServices);
 

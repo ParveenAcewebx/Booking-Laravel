@@ -19,9 +19,6 @@ use App\Models\Vendor;
 use App\Models\Staff;
 use Carbon\Carbon;
 
-
-
-
 class FormController extends Controller
 {
     public function show(Request $request, $slug)

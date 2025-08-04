@@ -14,18 +14,15 @@ use App\Models\User;
 class CategoryController extends Controller
 {
     protected $allUsers;
-    protected $originalUserId;
     public function __construct()
     {
         $this->allUsers = User::all();
-        $this->originalUserId = session('impersonate_original_user') ?? Cookie::get('impersonate_original_user');
     }
     public function index(Request $request)
     {
 
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
-        $loginId = session('impersonate_original_user');
         if ($request->ajax()) {
             $categories = Category::select('id', 'category_name', 'status', 'created_at', 'slug');
 
@@ -79,7 +76,7 @@ class CategoryController extends Controller
 
     public function create()
     {
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
         return view('admin.category.add', compact('loginUser'));
     }
@@ -108,7 +105,7 @@ class CategoryController extends Controller
 
     public function edit(Category $category)
     {
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
         return view('admin.category.edit', compact('category', 'loginUser'));
     }

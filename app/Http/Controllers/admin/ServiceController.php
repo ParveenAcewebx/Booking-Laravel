@@ -21,7 +21,7 @@ class ServiceController extends Controller
 {
     public function index(Request $request)
     {
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
@@ -36,14 +36,8 @@ class ServiceController extends Controller
                         : '<span class="badge badge-danger">Inactive</span>';
                 })
                 ->addColumn('created_at', function ($row) {
-                    // Use the related category name
                     return  $row->created_at;
                 })
-                // ->addColumn('staff_member', function ($row) {
-                //     $staffIds = $row->staffAssociations->pluck('staff_member')->toArray();
-                //     $staffNames = User::whereIn('id', $staffIds)->pluck('name')->toArray();
-                //     return implode(', ', $staffNames);
-                // })
                 ->addColumn('action', function ($row) {
                     $btn = '';
 
@@ -79,7 +73,7 @@ class ServiceController extends Controller
         $defaultStatus = config('constants.status');
         $currencies = config('constants.currencies');
         $appointmentStats = config('constants.appointment_status');
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
         return view('admin.service.add', compact('categories', 'staffUsers', 'defaultStatus', 'currencies', 'appointmentStats', 'loginUser'));
@@ -90,7 +84,6 @@ class ServiceController extends Controller
         $data = $request->validate([
             'name'                   => 'required|string|max:255',
             'duration'               => 'required',
-            // 'staff_member'           => 'required',
             'description'            => 'nullable|string',
             'category'               => 'required|exists:categories,id',
             'thumbnail'              => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:2048',
@@ -135,8 +128,6 @@ class ServiceController extends Controller
         }
 
         $data['gallery'] = json_encode(array_values($gallery));
-
-        // $data['staff_member'] = json_encode($request->input('staff_member', []));
         $data['payment__is_live'] = $request->has('payment__is_live') ? 1 : 0;
         $data['duration'] = $request->duration;
 
@@ -168,9 +159,8 @@ class ServiceController extends Controller
         $currencies = config('constants.currencies');
         $appointmentStats = config('constants.appointment_status');
         $statuses = config('constants.status');
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
-
         $associatedStaffIds = $service->staffAssociations()->pluck('staff_member')->toArray();
 
         return view('admin.service.edit', compact(

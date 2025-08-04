@@ -4,12 +4,17 @@ namespace App\Http\Controllers\admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Setting;
+use App\Models\User;
 
 class SettingsController extends Controller
 {
     public function index()
     {
+        $loginId = getOriginalUserId(); 
+        $loginUser = $loginId ? User::find($loginId) : null;
+
         $phoneCountries = config('phone_countries');
         $dateFormats = [
             'd-m-Y' => 'DD-MM-YYYY',
@@ -23,7 +28,7 @@ class SettingsController extends Controller
         $timezones = \DateTimeZone::listIdentifiers();
         $settings = Setting::pluck('value', 'key')->toArray();
 
-        return view('admin.settings.index', compact('phoneCountries', 'dateFormats', 'timeFormats', 'timezones', 'settings'));
+        return view('admin.settings.index', compact('phoneCountries', 'dateFormats', 'timeFormats', 'timezones', 'settings','loginUser'));
     }
 
     public function store(Request $request)

@@ -19,7 +19,7 @@ use Illuminate\Validation\ValidationException;
 use DB;
 use Carbon\Carbon;
 use Mail;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cookie;
 
@@ -33,7 +33,7 @@ class BookingController extends Controller
 
     public function index(Request $request)
     {
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
@@ -108,7 +108,7 @@ class BookingController extends Controller
     {
         $alltemplates = BookingTemplate::all();
         $allusers = $this->allUsers;
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
         return view('admin.booking.add', [
@@ -175,7 +175,7 @@ class BookingController extends Controller
         $selectedStaffUser = User::where('name', $booking->selected_staff)->first();
         $booking->selected_staff = $selectedStaffUser?->id;
 
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
         return view('admin.booking.edit', [

@@ -37,7 +37,7 @@ class DashboardController extends Controller
         $bookingForms = BookingTemplate::all();
         $services = Service::all();
         $bookings = Booking::all();
-        $loginId = session('impersonate_original_user');
+        $loginId = getOriginalUserId();
         $loginUser = null;
 
         if ($loginId) {
