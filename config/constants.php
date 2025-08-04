@@ -5,6 +5,15 @@ return [
         'active' => 1,
         'inactive' => 0,
     ],
+    'defaultWorkHours' => [
+        'monday'    => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+        'tuesday'   => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+        'wednesday' => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+        'thursday'  => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+        'friday'    => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+        'saturday'  => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+        'sunday'    => ['start' => '00:00', 'end' => '00:00', 'services' => []],
+    ],
     'appointment_status' => [
         'approved' => 1,
         'pending' => 0,
