@@ -93,6 +93,7 @@ class StaffController extends Controller
                     }
                     return $btn;
                 })
+
                 ->rawColumns(['name', 'services', 'status', 'action'])
                 ->make(true);
         }
@@ -198,7 +199,6 @@ class StaffController extends Controller
             'work_hours' => json_encode($workingHours),
             'days_off' => json_encode($dayOffsGrouped),
         ]);
-
         if ($request->has('assigned_vendor')) {
             VendorStaffAssociation::create([
                 'user_id'   => $user->id,
@@ -219,7 +219,6 @@ class StaffController extends Controller
         $vendorData = Vendor::where('status', $activeStatus)->get();
         $staffDetails  = Staff::where('user_id', $staff->id)->first();
         $IsUserPrimaryStaff = $staffDetails->primary_staff ?? 0;
-
         // 3. Get assigned services for this staff
         $assignedServices = Service::whereIn(
             'id',
@@ -227,13 +226,19 @@ class StaffController extends Controller
         )->with('category')->get();
 
         $services = Service::all();
+
+        // 4. If impersonation active, get original user
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
+        // 5. Prepare Day Off data
         $groupedDayOffs = [];
+
         if (!empty($staffDetails->days_off)) {
             $decoded = json_decode($staffDetails->days_off, true);
+
             $flattened = collect($decoded)->flatten(1);
+
             $groupedDayOffs = $flattened
                 ->groupBy('label')
                 ->map(function ($items, $label) {
@@ -242,8 +247,10 @@ class StaffController extends Controller
                         ->map(fn($date) => \Carbon\Carbon::parse($date)) // ensure Carbon objects
                         ->sort()
                         ->values();
+
                     $start = $dates->first()->format('F j, Y'); // e.g., August 2, 2025
                     $end = $dates->last()->format('F j, Y');
+
                     return [
                         'label' => $label,
                         'range' => $start . ' - ' . $end,
@@ -252,7 +259,7 @@ class StaffController extends Controller
                 ->values()
                 ->toArray();
         }
-        $workingHours = json_decode($staffMetas->work_hours ?? '{}', true);
+        $workingHours = json_decode($staffDetails->work_hours ?? '{}', true);
 
         // Ensure all weekdays exist in array
         foreach ($weekDays as $day) {
@@ -297,6 +304,7 @@ class StaffController extends Controller
         $staff->phone_code = $request->code;
         $staff->status = $request->status ? config('constants.status.active') : config('constants.status.inactive');
 
+        // Avatar handling
         if ($request->hasFile('avatar')) {
             if ($staff->avatar && Storage::disk('public')->exists($staff->avatar)) {
                 Storage::disk('public')->delete($staff->avatar);
@@ -309,6 +317,7 @@ class StaffController extends Controller
             $staff->avatar = null;
         }
 
+        // Password update
         if ($request->filled('password')) {
             $staff->password = Hash::make($request->password);
         }
@@ -316,11 +325,8 @@ class StaffController extends Controller
         $staff->save();
         $role = Role::findById($request->role, 'web');
         $staff->syncRoles([$role->name]);
-
         $submittedServices = $request->input('assigned_services', []);
         $staff->services()->sync($submittedServices);
-
-        // Working hours
         $weekDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
         $workingHours = [];
 
@@ -373,6 +379,7 @@ class StaffController extends Controller
 
         // Always update days_off (empty = cleared)
         $staffMeta->days_off = !empty($nestedDayOffs) ? json_encode($nestedDayOffs) : null;
+
         $staffMeta->save();
         if ($request->filled('assigned_vendor')) {
             $vendorStaffMeta = VendorStaffAssociation::firstOrNew(['user_id' => $staff->id]);
@@ -387,13 +394,16 @@ class StaffController extends Controller
     {
         $user = User::find($id);
         $authuser_id = Auth::user()->id;
+
         if ($authuser_id != $id) {
             if ($user) {
                 $user->delete();
+
                 Staff::where('user_id', $id)->delete();
                 StaffServiceAssociation::where('staff_member', $id)->delete();
                 return response()->json(['success' => true]);
             }
+
             return response()->json(['success' => false, 'message' => 'User not found.']);
         } else {
             return response()->json(['success' => 'login', 'message' => 'Cannot delete logged-in user.']);

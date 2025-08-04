@@ -128,15 +128,88 @@
                             });
                         }
 
-                 // **Check if the selected day is a day off**
-                        const isDayOff = dayOffData.some(dayoff => {    
-                            let ofdates = []; 
+              // **Check if the selected day is a day off**
+                        const isDayOff = dayOffData.some(dayoff => {   
+
+                            let leaveapproved; 
+                                let ofdates = []; 
                                 dayoff.forEach(dayoof => {
                                 ofdates.push(dayoof.date); 
                             });
                             return ofdates.some(date => {
-                                const dateObj = new Date(date); 
-                                return dateObj.toDateString() === dayDate.toDateString();
+                                leaveapproved = true;
+                                const dateObj = new Date(date);     
+                           
+                               if(dateObj.toDateString() === dayDate.toDateString()){
+                                const dayNameFull = dateObj.toLocaleString('en-us', { weekday: 'long' }).toLowerCase();
+                                if (this.workOnoff) {
+                                    this.workOnoff.forEach(items => {
+                                          const workingDay = items.Working_day;
+                                          const dayoffDates = items.Dayoff;
+                                          if(dayoffDates){
+                                            const minDayoffArray =  this.workOnoff.reduce((minArr, currentArr) => {
+                                                const currentDayoffDatesCount = currentArr.Dayoff.flat().length;
+                                                const minDayoffDatesCount = minArr.Dayoff.flat().length;
+                                                return currentDayoffDatesCount < minDayoffDatesCount ? currentArr : minArr;
+                                            });
+                                            if (minDayoffArray){
+                                            const dayof = minDayoffArray.Dayoff.flat();
+                                          if(dayof && dayof.length > 0) {
+                                                leaveapproved = false;
+                                            const sortedDayoff = dayof.sort((a, b) => new Date(a.date) - new Date(b.date));
+                                            const startDate = sortedDayoff[0].date;
+                                            const endDate = sortedDayoff[sortedDayoff.length - 1].date;
+                                            const formattedDate = new Date(dateObj).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric'});    
+                                            if (formattedDate >= startDate && formattedDate <= endDate) {
+                                                leaveapproved = true;
+                                            }
+                                            } 
+                                         }
+                                        }else{
+                                            leaveapproved= false;
+                                        }
+                                                
+                      
+                                         Object.entries(workingDay).forEach(([day, time]) => {
+                                             if (time.start) {
+                                                 const timePart = time.start.split("T")[1].split(".")[0];
+                                                 if (timePart !== "00:00:00") {
+                                                         dayoffDates.forEach(dayoff => {
+                                                             const dayOfdates = dayoff.flat();
+                                                             const excludedDateStrings = dayOfdates.map(item => item.date);
+                                                             const filteredWorkOnoff = this.workOnoff.filter(items => {
+                                                                const allDayoffDatesFormatted = items.Dayoff.flat().map(obj =>
+                                                                    new Date(obj.date).toLocaleDateString('en-US', {
+                                                                        year: 'numeric',
+                                                                        month: 'long',
+                                                                        day: 'numeric'
+                                                                    })
+                                                                );
+                                                                return !allDayoffDatesFormatted.some(date => excludedDateStrings.includes(date));
+                                                            });
+                                                            filteredWorkOnoff.forEach(filteredItems => {
+                                                               const workingDays = filteredItems.Working_day;
+                                                                if (workingDays.hasOwnProperty(dayNameFull)) {
+                                                                        const dayData = workingDays[dayNameFull];
+                                                                        if (dayData.start) {
+                                                                         const timePart = dayData.start.split("T")[1].split(".")[0]; 
+                                                                           if (timePart !== "00:00:00") {
+                                                                               leaveapproved= false;
+                                                                           }
+                                                                        }
+                                                                };
+                                                            });
+                                                     });
+                                                  }
+                                             }
+                                         });
+                                     });
+                                 }
+                               
+                                return leaveapproved; 
+                               }else{
+                                return false ;
+                               }
                                 });
                         });
                         const dayName = dayDate.toLocaleString('en-us', { weekday: 'long' }).toLowerCase();
