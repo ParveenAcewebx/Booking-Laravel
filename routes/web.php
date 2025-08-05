@@ -43,6 +43,8 @@ Route::get('/form/{slug}', [FormController::class, 'show'])->name('form.show');
 Route::post('/form/{slug}', [FormController::class, 'store'])->name('form.store');
 Route::get('/get/services/staff', [FormController::class, 'getservicesstaff'])->name('get.services.staff');
 Route::get('/get/vendor/get_booking_calender', [FormController::class, 'getBookingCalender'])->name('service.vendor.calender');
+Route::get('/get/slotbooked', [FormController::class, 'getBookingSlot'])->name('service.slotbooked');
+
 
 // Guest routes (not logged in)
 Route::middleware('guest')->group(function () {

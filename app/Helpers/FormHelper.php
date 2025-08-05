@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Helpers\Shortcode;
+use App\Models\Service;
 
 class FormHelper
 {
@@ -257,7 +258,6 @@ class FormHelper
                                 };
                             }
                         }
-
                         $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label " . ($required ? ' <span class="text-red-500">*</span>' : '') . "</label>
                               <input type='$subtype' name='$inputName' class='{$c['input']}' value='" . htmlspecialchars($value) . "' placeholder='" . htmlspecialchars($placeholder) . "' $required>
                               </div>";
@@ -279,8 +279,47 @@ class FormHelper
           </div>";
         }
         if (!empty($c) && isset($c['button']) && $c['button'] != 'btn btn-primary') {
-            $html .= ($countNewSections == '0' ? "<button type='submit' class='submit {$c['button']}'>Submit</button>" : '');
+            $services = Service::where('status', 1)->get();
+
+            if ($services->count() > 0) {
+                // Show Submit Button
+                $html .= "<button type='submit' class='submit {$c['button']}'>Submit</button>";
+            } else {
+                // Show Empty State Card
+                if ($theme === 'tailwind') {
+                    // Tailwind version
+                    $html .= '
+            <div class="max-w-md mx-auto bg-white rounded-xl p-6 text-center dark:bg-neutral-800 dark:border-neutral-700">
+                <div class="flex flex-col items-center">
+                    <div class="bg-blue-100 p-4 rounded-full mb-4">
+                        <svg class="w-16 h-16 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2zM15 11l-6 6m0-6l6 6"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-gray-800 dark:text-white mb-2">Oops...</h3>
+                    <p class="text-gray-500 dark:text-gray-400">
+                        It seems like there are no services created at this moment.
+                    </p>
+                </div>
+            </div>';
+                } else {
+                    // Bootstrap (Mash Able) version
+                    $html .= '
+            <div class="card text-center shadow-sm border">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="feather icon-calendar f-40 text-primary"></i>
+                    </div>
+                    <h5 class="card-title mb-2">Oops...</h5>
+                    <p class="text-muted mb-0">
+                        It seems like there are no services created at this moment.
+                    </p>
+                </div>
+            </div>';
+                }
+            }
         }
+
         return $htmlHidden . $html;
     }
 }

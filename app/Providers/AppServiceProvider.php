@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Helpers\Shortcode;
 use Illuminate\Support\ServiceProvider;
 use App\Models\Service;
+use Illuminate\Support\Facades\Artisan;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,11 +22,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        
+
+        if (app()->environment('local')) {
+           Artisan::call('optimize:clear');
+
+        }
         Shortcode::register('services', function ($shortcodeAttrs, $class) {
             $services = Service::all();
-            if ($services->isEmpty() ||$services->every(function($service) { return $service->status !== 1; })){
-             return "";
+            if ($services->isEmpty() || $services->every(function ($service) {
+                return $service->status !== 1;
+            })) {
+                return "";
             }
             $selectedService = $shortcodeAttrs['service'] ?? '';
             $selectedvendor = $shortcodeAttrs['vendor'] ?? '';
@@ -131,6 +138,9 @@ class AppServiceProvider extends ServiceProvider
                                 </tr>
                         </tbody>
                     </table>
+                    <div class="availibility p-4 border border-gray-300 shadow-md rounded-lg hidden">
+                    <div class="timings"></div>
+                    </div>
                 </div>';
 
 

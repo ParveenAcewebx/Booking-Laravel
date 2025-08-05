@@ -33,12 +33,13 @@
                     data: { vendor_id: selectedValue },
                     dataType: 'json',
                     success: function (response) {
+                        console.log('Calendar Response' + response)
                         $('.calendar-wrap').removeClass('hidden');
                         if (response.success && response.data && response.data[0]) {
-                            const workondayoff= response.data;
-                              const workingDays = response.data.map(item => item.Working_day);
-                                resetCalendar();
-                            new Calendar(workingDays,workondayoff);
+                            const workondayoff = response.data;
+                            const workingDays = response.data.map(item => item.Working_day);
+                            resetCalendar();
+                            new Calendar(workingDays, workondayoff);
                         }
                     },
                 });
@@ -47,7 +48,7 @@
 
         // Calendar Class
         class Calendar {
-            constructor(workingDays,workondayoff) {
+            constructor(workingDays, workondayoff) {
                 this.workingDays = workingDays;
                 this.workOnoff = workondayoff;
                 this.draw();
@@ -93,16 +94,16 @@
                         const dayDate = new Date(year, month, dayNum);
                         dayCell.innerHTML = dayNum;
 
-                        
+
                         // Collect valid working days
                         const validWorkingDays = [];
                         if (this.workingDays) {
                             this.workingDays.forEach(week => {
                                 Object.entries(week).forEach(([day, time]) => {
                                     if (time.start) {
-                                        const timePart = time.start.split("T")[1].split(".")[0]; 
+                                        const timePart = time.start.split("T")[1].split(".")[0];
                                         if (timePart !== "00:00:00") {
-                                            validWorkingDays.push(day.toLowerCase());  
+                                            validWorkingDays.push(day.toLowerCase());
                                         }
                                     }
                                 });
@@ -110,74 +111,74 @@
                         }
                         // Collect valid working days and check if working time is not "00:00:00"
                         const dayOffData = [];
-                       if (this.workOnoff) {
-                           this.workOnoff.forEach(items => {
-                                 const workingDay = items.Working_day;
-                                 const dayoffDates = items.Dayoff;     
+                        if (this.workOnoff) {
+                            this.workOnoff.forEach(items => {
+                                const workingDay = items.Working_day;
+                                const dayoffDates = items.Dayoff;
                                 Object.entries(workingDay).forEach(([day, time]) => {
                                     if (time.start) {
                                         const timePart = time.start.split("T")[1].split(".")[0];
                                         if (timePart !== "00:00:00") {
-                                                dayoffDates.forEach(dayoff => {
-                                                    const dayOfdates = dayoff.flat();
-                                                     dayOffData.push(dayOfdates); 
+                                            dayoffDates.forEach(dayoff => {
+                                                const dayOfdates = dayoff.flat();
+                                                dayOffData.push(dayOfdates);
                                             });
-                                         }
+                                        }
                                     }
                                 });
                             });
                         }
 
-              // **Check if the selected day is a day off**
-                        const isDayOff = dayOffData.some(dayoff => {   
+                        // **Check if the selected day is a day off**
+                        const isDayOff = dayOffData.some(dayoff => {
 
-                            let leaveapproved; 
-                                let ofdates = []; 
-                                dayoff.forEach(dayoof => {
-                                ofdates.push(dayoof.date); 
+                            let leaveapproved;
+                            let ofdates = [];
+                            dayoff.forEach(dayoof => {
+                                ofdates.push(dayoof.date);
                             });
                             return ofdates.some(date => {
                                 leaveapproved = true;
-                                const dateObj = new Date(date);     
-                           
-                               if(dateObj.toDateString() === dayDate.toDateString()){
-                                const dayNameFull = dateObj.toLocaleString('en-us', { weekday: 'long' }).toLowerCase();
-                                if (this.workOnoff) {
-                                    this.workOnoff.forEach(items => {
-                                          const workingDay = items.Working_day;
-                                          const dayoffDates = items.Dayoff;
-                                          if(dayoffDates){
-                                            const minDayoffArray =  this.workOnoff.reduce((minArr, currentArr) => {
-                                                const currentDayoffDatesCount = currentArr.Dayoff.flat().length;
-                                                const minDayoffDatesCount = minArr.Dayoff.flat().length;
-                                                return currentDayoffDatesCount < minDayoffDatesCount ? currentArr : minArr;
-                                            });
-                                            if (minDayoffArray){
-                                            const dayof = minDayoffArray.Dayoff.flat();
-                                          if(dayof && dayof.length > 0) {
+                                const dateObj = new Date(date);
+
+                                if (dateObj.toDateString() === dayDate.toDateString()) {
+                                    const dayNameFull = dateObj.toLocaleString('en-us', { weekday: 'long' }).toLowerCase();
+                                    if (this.workOnoff) {
+                                        this.workOnoff.forEach(items => {
+                                            const workingDay = items.Working_day;
+                                            const dayoffDates = items.Dayoff;
+                                            if (dayoffDates) {
+                                                const minDayoffArray = this.workOnoff.reduce((minArr, currentArr) => {
+                                                    const currentDayoffDatesCount = currentArr.Dayoff.flat().length;
+                                                    const minDayoffDatesCount = minArr.Dayoff.flat().length;
+                                                    return currentDayoffDatesCount < minDayoffDatesCount ? currentArr : minArr;
+                                                });
+                                                if (minDayoffArray) {
+                                                    const dayof = minDayoffArray.Dayoff.flat();
+                                                    if (dayof && dayof.length > 0) {
+                                                        leaveapproved = false;
+                                                        const sortedDayoff = dayof.sort((a, b) => new Date(a.date) - new Date(b.date));
+                                                        const startDate = sortedDayoff[0].date;
+                                                        const endDate = sortedDayoff[sortedDayoff.length - 1].date;
+                                                        const formattedDate = new Date(dateObj).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                                                        if (formattedDate >= startDate && formattedDate <= endDate) {
+                                                            leaveapproved = true;
+                                                        }
+                                                    }
+                                                }
+                                            } else {
                                                 leaveapproved = false;
-                                            const sortedDayoff = dayof.sort((a, b) => new Date(a.date) - new Date(b.date));
-                                            const startDate = sortedDayoff[0].date;
-                                            const endDate = sortedDayoff[sortedDayoff.length - 1].date;
-                                            const formattedDate = new Date(dateObj).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric'});    
-                                            if (formattedDate >= startDate && formattedDate <= endDate) {
-                                                leaveapproved = true;
                                             }
-                                            } 
-                                         }
-                                        }else{
-                                            leaveapproved= false;
-                                        }
-                                                
-                      
-                                         Object.entries(workingDay).forEach(([day, time]) => {
-                                             if (time.start) {
-                                                 const timePart = time.start.split("T")[1].split(".")[0];
-                                                 if (timePart !== "00:00:00") {
-                                                         dayoffDates.forEach(dayoff => {
-                                                             const dayOfdates = dayoff.flat();
-                                                             const excludedDateStrings = dayOfdates.map(item => item.date);
-                                                             const filteredWorkOnoff = this.workOnoff.filter(items => {
+
+
+                                            Object.entries(workingDay).forEach(([day, time]) => {
+                                                if (time.start) {
+                                                    const timePart = time.start.split("T")[1].split(".")[0];
+                                                    if (timePart !== "00:00:00") {
+                                                        dayoffDates.forEach(dayoff => {
+                                                            const dayOfdates = dayoff.flat();
+                                                            const excludedDateStrings = dayOfdates.map(item => item.date);
+                                                            const filteredWorkOnoff = this.workOnoff.filter(items => {
                                                                 const allDayoffDatesFormatted = items.Dayoff.flat().map(obj =>
                                                                     new Date(obj.date).toLocaleDateString('en-US', {
                                                                         year: 'numeric',
@@ -188,32 +189,32 @@
                                                                 return !allDayoffDatesFormatted.some(date => excludedDateStrings.includes(date));
                                                             });
                                                             filteredWorkOnoff.forEach(filteredItems => {
-                                                               const workingDays = filteredItems.Working_day;
+                                                                const workingDays = filteredItems.Working_day;
                                                                 if (workingDays.hasOwnProperty(dayNameFull)) {
-                                                                        const dayData = workingDays[dayNameFull];
-                                                                        if (dayData.start) {
-                                                                         const timePart = dayData.start.split("T")[1].split(".")[0]; 
-                                                                           if (timePart !== "00:00:00") {
-                                                                               leaveapproved= false;
-                                                                           }
+                                                                    const dayData = workingDays[dayNameFull];
+                                                                    if (dayData.start) {
+                                                                        const timePart = dayData.start.split("T")[1].split(".")[0];
+                                                                        if (timePart !== "00:00:00") {
+                                                                            leaveapproved = false;
                                                                         }
+                                                                    }
                                                                 };
                                                             });
-                                                     });
-                                                  }
-                                             }
-                                         });
-                                     });
-                                 }
-                               
-                                return leaveapproved; 
-                               }else{
-                                return false ;
-                               }
-                                });
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                        });
+                                    }
+
+                                    return leaveapproved;
+                                } else {
+                                    return false;
+                                }
+                            });
                         });
                         const dayName = dayDate.toLocaleString('en-us', { weekday: 'long' }).toLowerCase();
-                        
+
                         if (dayDate < currentDate || isDayOff || !validWorkingDays.includes(dayName)) {
                             dayCell.classList.add("disabled");
                             dayCell.style.backgroundColor = "#d3d3d3";
@@ -271,67 +272,77 @@
                 document.querySelector('.selected')?.classList.remove('selected');
                 dayElem.classList.add('selected');
 
-                this.getSessionDetails(selectedDate);
+                this.BookeAslot(selectedDate);
             }
 
             // Get session details for the selected date
-            getSessionDetails(date) {
+            BookeAslot(date) {
                 if (!date) return;
-                const pathParts = window.location.pathname.split("/").filter(Boolean);
-                const coach_id = $('#coach_id').val();
-                const type = pathParts[2];
-                const coaching_program_id = pathParts[1];
-                const baselink = pathParts[0];
 
+                const serviceId = document.querySelector('.get_service_staff').value;
+                console.log('serviceId' + serviceId);
+                const vendorId = document.querySelector('.service_vendor_form').value;
+                console.log('vendorId' + vendorId);
                 $.ajax({
-                    url: '/get/session_details',
+                    url: '/get/slotbooked',
                     method: 'GET',
                     data: {
-                        date,
-                        sessiontype: type,
-                        coaching_program_id,
-                        coach_id
+                        dates: date,
+                        serviceid: serviceId,
+                        vendorid: vendorId,
                     },
                     success: function (response) {
-                        let sessionsHTML = '';
+                        console.log('success response' + response);
 
-                        if (baselink === 'book-training' && response[date]) {
-                            const sessions = response[date];
+                        let sessionsHTML = '';
+                        if (response) {
+                            $('.availibility').removeClass('hidden');
+                            const dates = response.date;
 
                             sessionsHTML += `
                                 <div class="date-section mb-3">
-                                    <h5 class="date-header">${date}</h5>
+                                    <h5 class="date-header">${dates}</h5>
                                     <div class="timings">
                                         <div id="myButton" class="slot">`;
 
-                            sessions.forEach(session => {
-                                sessionsHTML += `
-                                    <div class="slot-box" data-session-id="${session.sessin_detail_id}" 
-                                         data-time="${session.time}" data-price="${session.price}" 
-                                         data-from-time="${session.from_time}" data-to-time="${session.to_time}" 
-                                         data-slots-left="${session.slots_left}">
-                                    <span><i class="fa fa-clock-o"></i> ${session.time}</span>
-                                    <span class="gbtn">${session.slots_left} Slot left</span>
-                                    <span class="gbtn">Price: ${session.price}</span>
+                            // sessions.forEach(session => {
+                            //     sessionsHTML += `
+                            //         <div class="slot-box" data-session-id="${session.sessin_detail_id}" 
+                            //              data-time="${session.time}" data-price="${session.price}" 
+                            //              data-from-time="${session.from_time}" data-to-time="${session.to_time}" 
+                            //              data-slots-left="${response.slots_left}">
+                            //         <span><i class="fa fa-clock-o"></i> ${session.time}</span>
+                            //         <span class="gbtn">${session.slotleft} Slot left</span>
+                            //         <span class="gbtn">Price: ${session.price}</span>
+                            //     </div>`;
+                            // });
+
+                            sessionsHTML += `
+                                    <div class="slot-box border border-[#eaeaec] p-[10px] rounded-[8px] bg-gray-100 shadow-md text-center w-1/3" data-session-id="" 
+                                         data-time="" data-price="${response.price}" 
+                                         data-from-time="" data-to-time="" 
+                                         data-slots-left="${response.slots_left}">
+                                    <p><i class="fa fa-clock-o"></i> </p>
+                                    <p class="gbtn">${response.slotleft} Slot left</p>
+                                    <p class="gbtn">Price: ${response.price}</p>
                                 </div>`;
-                            });
+
 
                             sessionsHTML += `</div>`;
 
-                            sessions.forEach(session => {
-                                sessionsHTML += `
-                                    <ul class="select_slot">
-                                        <li class="select-and-continue" data-session-id="${session.sessin_detail_id}" data-time="${session.time}" data-price="${session.price}" data-from-time="${session.from_time}" data-to-time="${session.to_time}" data-slots-left="${session.slots_left}" data-date="${date}" data-action="continue">Select and continue</li>
-                                        <li class="select-and-add-another-time" data-session-id="${session.sessin_detail_id}" data-time="${session.time}" data-price="${session.price}" data-from-time="${session.from_time}" data-to-time="${session.to_time}" data-slots-left="${session.slots_left}" data-date="${date}" data-action="add-another-time">Select and add another time</li>`;
-                                if (!session.session_type) {
-                                    sessionsHTML += `<li data-bs-target="#recurring" data-session-id="${session.sessin_detail_id}" data-time="${session.time}" data-price="${session.price}" data-from-time="${session.from_time}" data-to-time="${session.to_time}" data-slots-left="${session.slots_left}" data-date="${date}" data-session-day-name="${session.session_day_name}" data-session-day="${session.session_day}" data-session-date-count="${session.session_date_count}" data-bs-toggle="modal">Select and make recurring</li>`;
-                                }
-                                sessionsHTML += `</ul>`;
-                            });
+                            // sessions.forEach(session => {
+                            //     sessionsHTML += `
+                            //         <ul class="select_slot">
+                            //             <li class="select-and-continue" data-session-id="${session.sessin_detail_id}" data-time="${session.time}" data-price="${session.price}" data-from-time="${session.from_time}" data-to-time="${session.to_time}" data-slots-left="${session.slots_left}" data-date="${date}" data-action="continue">Select and continue</li>
+                            //             <li class="select-and-add-another-time" data-session-id="${session.sessin_detail_id}" data-time="${session.time}" data-price="${session.price}" data-from-time="${session.from_time}" data-to-time="${session.to_time}" data-slots-left="${session.slots_left}" data-date="${date}" data-action="add-another-time">Select and add another time</li>`;
+                            //     if (!session.session_type) {
+                            //         sessionsHTML += `<li data-bs-target="#recurring" data-session-id="${session.sessin_detail_id}" data-time="${session.time}" data-price="${session.price}" data-from-time="${session.from_time}" data-to-time="${session.to_time}" data-slots-left="${session.slots_left}" data-date="${date}" data-session-day-name="${session.session_day_name}" data-session-day="${session.session_day}" data-session-date-count="${session.session_date_count}" data-bs-toggle="modal">Select and make recurring</li>`;
+                            //     }
+                            //     sessionsHTML += `</ul>`;
+                            // });
 
                             sessionsHTML += `</div></div>`;
                         }
-
                         const availabilityDiv = document.querySelector('.availibility .timings');
                         if (availabilityDiv) {
                             availabilityDiv.innerHTML = sessionsHTML;
