@@ -75,7 +75,7 @@
                             </div>
                         </div>
                     </div>
-                     <div class="card">
+                    <div class="card">
                         <div class="card-body">
                             <ul class="nav nav-tabs mb-3" role="tablist">
                                 <li class="nav-item">
@@ -212,115 +212,155 @@
                     </div>
                 </div>
             </div>
-    
+
         </form>
         <!-- [ Main Content ] end -->
 
     </div>
 </section>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        $('.select-user').select2();
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            $('.select-user').select2();
 
-        let assignedStaff = @json($preAssignedStaffIds);
-        let selectedStaff = new Set();
+            let assignedStaff = @json($preAssignedStaffIds);
+            let selectedStaff = new Set();
 
-        function fetchAndDisplayServices(staffId, cardBody) {
-            cardBody.find('.staff-services').remove();
-            let servicesappend = cardBody.find('.addServices');
-            if (!staffId) return;
+            function fetchAndDisplayServices(staffId, cardBody) {
+                cardBody.find('.staff-services').remove();
+                let servicesappend = cardBody.find('.addServices');
+                if (!staffId) return;
 
-            $.ajax({
-                url: `/admin/vendors/${staffId}/services`,
-                type: 'GET',
-                success: function(services) {
-                    if (services.length > 0) {
-                        let listHtml = '<div class="staff-services">';
-                        services.forEach(service => {
-                            listHtml += `<span class="badge badge-service">${service}</span>`;
-                        });
-                        listHtml += '</div>';
-                        servicesappend.append(listHtml);
-                    } else {
-                        servicesappend.append('<div class="staff-services text-muted">No services assigned</div>');
-                    }
-                }
-            });
-        }
-
-        function attachStaffChangeHandler($select) {
-            $select.on('change', function() {
-                let staffId = $(this).val();
-                let prevId = $select.data('prev');
-
-                if (prevId) selectedStaff.delete(prevId);
-                if (staffId) selectedStaff.add(String(staffId));
-                $select.data('prev', staffId);
-
-                refreshOptions();
-                fetchAndDisplayServices(staffId, $(this).closest('.card-body'));
-            });
-        }
-
-        function attachDeleteHandler($btn) {
-            $btn.on('click', function() {
-                let $row = $(this).closest('.card');
-                let staffId = $row.find('.select-user').val();
-
-                if (staffId) selectedStaff.delete(String(staffId));
-                $row.remove();
-                refreshOptions();
-            });
-        }
-
-        function refreshOptions() {
-            $('.select-user').each(function() {
-                let $this = $(this);
-                let currentVal = $this.val();
-
-                $this.find('option').each(function() {
-                    let optionVal = $(this).attr('value');
-                    if (selectedStaff.has(String(optionVal)) && optionVal !== currentVal) {
-                        $(this).attr('disabled', true).hide();
-                    } else {
-                        $(this).attr('disabled', false).show();
+                $.ajax({
+                    url: `/admin/vendors/${staffId}/services`,
+                    type: 'GET',
+                    success: function(services) {
+                        if (services.length > 0) {
+                            let listHtml = '<div class="staff-services">';
+                            services.forEach(service => {
+                                listHtml += `<span class="badge badge-service">${service}</span>`;
+                            });
+                            listHtml += '</div>';
+                            servicesappend.append(listHtml);
+                        } else {
+                            servicesappend.append('<div class="staff-services text-muted">No services assigned</div>');
+                        }
                     }
                 });
+            }
 
-                $this.trigger('change.select2');
+            function attachStaffChangeHandler($select) {
+                $select.on('change', function() {
+                    let staffId = $(this).val();
+                    let prevId = $select.data('prev');
+
+                    if (prevId) selectedStaff.delete(prevId);
+                    if (staffId) selectedStaff.add(String(staffId));
+                    $select.data('prev', staffId);
+
+                    refreshOptions();
+                    fetchAndDisplayServices(staffId, $(this).closest('.card-body'));
+                });
+            }
+
+            function attachDeleteHandler($btn) {
+                $btn.on('click', function() {
+                    let $row = $(this).closest('.card');
+                    let staffId = $row.find('.select-user').val();
+
+                    if (staffId) selectedStaff.delete(String(staffId));
+                    $row.remove();
+                    refreshOptions();
+                    $('.staff_not_found_outer').remove();
+                });
+            }
+
+            function refreshOptions() {
+                $('.select-user').each(function() {
+                    let $this = $(this);
+                    let currentVal = $this.val();
+
+                    $this.find('option').each(function() {
+                        let optionVal = $(this).attr('value');
+                        if (selectedStaff.has(String(optionVal)) && optionVal !== currentVal) {
+                            $(this).attr('disabled', true).hide();
+                        } else {
+                            $(this).attr('disabled', false).show();
+                        }
+                    });
+
+                    $this.trigger('change.select2');
+                });
+            }
+
+            function appendStaffTemplate(preSelectedId = null) {
+                let template = document.getElementById('staffTemplate').content.cloneNode(true);
+                document.getElementById('dayOffRepeater').appendChild(template);
+                let $newSelect = $('#dayOffRepeater').find('.select-user').last();
+                $newSelect.select2();
+
+                if (preSelectedId) {
+                    $newSelect.val(String(preSelectedId)).trigger('change.select2');
+                    selectedStaff.add(String(preSelectedId));
+                }
+
+                attachStaffChangeHandler($newSelect);
+                attachDeleteHandler($('#dayOffRepeater').find('.delete-row').last());
+                refreshOptions();
+
+                if (preSelectedId) {
+                    fetchAndDisplayServices(preSelectedId, $newSelect.closest('.card-body'));
+                }
+            }
+
+            function checkstaffablableornot() {
+                let selectElement = $('#dayOffRepeater').find('.select-user');
+                if (selectElement.hasClass('select-user')) {
+                    let appendhasOptions;
+                    selectElement.each(function() {
+                        let selectElement = $(this);
+                        let options = selectElement.find('option');
+                        let hasOptions = options.filter(function() {
+                            return $(this).val() && !$(this).prop('disabled');
+                        }).length > 1;
+                        appendhasOptions = hasOptions
+                    });
+
+                    if (appendhasOptions) {
+                        appendStaffTemplate();
+                    } else {
+                        $('.staff_not_found_outer').remove();
+                        if (!$('.staff_not_found').length) {
+                            $('#dayOffRepeater').append(`
+                            <div class="card border shadow-sm day-off-entry mb-3 staff_not_found_outer">
+                                <div class="card-body position-relative">
+                                    <div class="form-row pt-2">
+                                        <div class="form-group col-md-12 mb-1">
+                                            <div class="form-group col-md-12 mb-2 mt-2 staff_not_found">
+                                                No staff available, Please add a new one first 
+                                                <a href="{{ route('staff.list') }}" class="text-center">Add Staff</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            `);
+                        }
+                    }
+
+                } else {
+                    let staff_not_found_outer = $('#dayOffRepeater').find('.staff_not_found_outer');
+                    if (staff_not_found_outer.hasClass('staff_not_found_outer')) {
+                        $('.staff_not_found_outer').remove();
+                        $('#dayOffRepeater .card.border.shadow-sm.day-off-entry.mb-3').remove();
+                    }
+                    appendStaffTemplate();
+                }
+            }
+
+            // Add new staff manually
+            document.getElementById('addStaffButton').addEventListener('click', function() {
+                checkstaffablableornot();
             });
-        }
-
-        function appendStaffTemplate(preSelectedId = null) {
-            let template = document.getElementById('staffTemplate').content.cloneNode(true);
-            document.getElementById('dayOffRepeater').appendChild(template);
-
-            let $newSelect = $('#dayOffRepeater').find('.select-user').last();
-            $newSelect.select2();
-
-            if (preSelectedId) {
-                $newSelect.val(String(preSelectedId)).trigger('change.select2');
-                selectedStaff.add(String(preSelectedId));
-            }
-
-            attachStaffChangeHandler($newSelect);
-            attachDeleteHandler($('#dayOffRepeater').find('.delete-row').last());
-            refreshOptions();
-
-            if (preSelectedId) {
-                fetchAndDisplayServices(preSelectedId, $newSelect.closest('.card-body'));
-            }
-        }
-
-        // Auto append preassigned staff (for edit)
-        if (assignedStaff.length > 0) {
-            assignedStaff.forEach(id => appendStaffTemplate(id));
-        }
-
-        // Add new staff manually
-        document.getElementById('addStaffButton').addEventListener('click', function() {
-            appendStaffTemplate();
         });
-    });
-</script>
+    </script>
 @endsection

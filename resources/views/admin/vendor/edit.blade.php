@@ -306,6 +306,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (staffId) selectedStaff.delete(String(staffId));
             $row.remove();
             refreshOptions();
+             $('.staff_not_found_outer').remove();
         });
     }
 
@@ -355,10 +356,52 @@ document.addEventListener('DOMContentLoaded', function () {
     if (assignedStaff.length > 0) {
         assignedStaff.forEach(id => appendStaffTemplate(id));
     }
+        function checkstaffablableornot(){
+                let selectElement = $('#dayOffRepeater').find('.select-user');
+                if (selectElement.hasClass('select-user')) {
+                    let appendhasOptions;
+                    selectElement.each(function() {
+                        let selectElement = $(this);
+                        let options = selectElement.find('option');
+                        let hasOptions = options.filter(function() {
+                        return $(this).val() && !$(this).prop('disabled');
+                        }).length > 1;
+                           appendhasOptions = hasOptions
+                    });
+                     if (appendhasOptions) {
+                                appendStaffTemplate();
+                        } else{
+                               $('.staff_not_found_outer').remove();
+                        if (!$('.staff_not_found').length) {
+                        $('#dayOffRepeater').append(`
+                        <div class="card border shadow-sm day-off-entry mb-3 staff_not_found_outer">
+                            <div class="card-body position-relative">
+                                <div class="form-row pt-2">
+                                    <div class="form-group col-md-12 mb-1">
+                                        <div class="form-group col-md-12 mb-2 mt-2 staff_not_found">
+                                            No staff available, Please add a new one first 
+                                            <a href="{{ route('staff.list') }}" class="text-center">Add Staff</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        `);
+                }
 
+                        }
+                }else{        
+                    let staff_not_found_outer = $('#dayOffRepeater').find('.staff_not_found_outer');
+                     if (staff_not_found_outer.hasClass('staff_not_found_outer')) {
+                        $('.staff_not_found_outer').remove();
+                        $('#dayOffRepeater .card.border.shadow-sm.day-off-entry.mb-3').remove();
+                     }
+                    appendStaffTemplate();
+                }
+            }
     // Add staff button
     document.getElementById('addStaffButton').addEventListener('click', function () {
-        appendStaffTemplate();
+        checkstaffablableornot();
     });
 });
 </script>
