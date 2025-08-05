@@ -1188,7 +1188,8 @@ $(function () {
         { selector: ".currency", placeholder: "Select Currency" },
         { selector: ".select-user" },
         { selector: ".select-users" },
-        { selector: ".select-service" }
+        { selector: ".select-service" },
+        { selector: ".select-status" }
         
     ];
 

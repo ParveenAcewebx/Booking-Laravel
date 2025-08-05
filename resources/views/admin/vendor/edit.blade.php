@@ -145,7 +145,7 @@
                             <!-- Status -->
                             <div class="form-group">
                                 <label class="form-label">Status</label>
-                                <select name="status" class="form-control select-user @error('status') is-invalid @enderror">
+                                <select name="status" class="form-control select-status @error('status') is-invalid @enderror">
                                     <option value="{{ config('constants.status.active') }}" {{ old('status', $vendor->status) == config('constants.status.active') ? 'selected' : '' }}>Active</option>
                                     <option value="{{ config('constants.status.inactive') }}" {{ old('status', $vendor->status) == config('constants.status.inactive') ? 'selected' : '' }}>Inactive</option>
                                 </select>

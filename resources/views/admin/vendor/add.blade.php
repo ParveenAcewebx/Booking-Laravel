@@ -149,7 +149,7 @@
                             <!-- Status -->
                             <div class="form-group">
                                 <label class="form-label">Status</label>
-                                <select name="status" id="status" class="form-control select-user @error('status') is-invalid @enderror">
+                                <select name="status" id="status" class="form-control select-status @error('status') is-invalid @enderror">
                                     <option value="{{ config('constants.status.active') }}"
                                         {{ old('status', config('constants.status.active')) == config('constants.status.active') ? 'selected' : '' }}>
                                         Active
@@ -167,7 +167,7 @@
 
                             <div class="form-group">
                                 <label>Assigned Services</label>
-                                <select class="form-control select-user" name="assigned_service[]" multiple>
+                                <select class="form-control select-service" name="assigned_service[]" multiple>
                                     @foreach($allService as $service)
                                     <option value="{{ $service->id }}" {{ old('assigned_service') == $service->id ? 'selected' : '' }}>
                                         {{ $service->name }}
