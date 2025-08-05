@@ -160,6 +160,7 @@ class FormController extends Controller
 
             $service        = Service::where('id', $serviceId)->first();
             $servicePrice   = $service ? $service->price : null;
+            $serviceDuration   = $service ? $service->duration : null;
 
             $vendorAssociations         = VendorStaffAssociation::where('vendor_id', $vendorId)->with('staff')->get();
             // dd($vendorAssociations);
@@ -204,6 +205,7 @@ class FormController extends Controller
                 'date' => $formattedDate,
                 'price' => $servicePrice,
                 'slotleft' => $vendorAssociationsCount,
+                'duration' => $serviceDuration,
                 // 'staffdata'=>$isAvailable,
                 // 'staffdata' => $staff->work_start_time,
                 // 'staffend'=>$staff->work_end_time,
