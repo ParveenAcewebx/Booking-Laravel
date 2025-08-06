@@ -283,7 +283,7 @@ class FormHelper
 
             if ($services->count() > 0) {
                 // Show Submit Button
-                $html .= "<button type='submit' class='submit {$c['button']}'>Submit</button>";
+            $html .= ($countNewSections == '0' ? "<button type='submit' class='submit {$c['button']}'>Submit</button>" : '');
             } else {
                 // Show Empty State Card
                 if ($theme === 'tailwind') {
@@ -319,7 +319,7 @@ class FormHelper
                 }
             }
         }
-
         return $htmlHidden . $html;
+
     }
 }
