@@ -22,11 +22,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-
-        if (app()->environment('local')) {
-           Artisan::call('optimize:clear');
-
-        }
         Shortcode::register('services', function ($shortcodeAttrs, $class) {
             $services = Service::all();
             if ($services->isEmpty() || $services->every(function ($service) {
