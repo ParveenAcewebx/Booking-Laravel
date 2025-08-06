@@ -256,10 +256,11 @@ $phoneCountries = config('phone_countries');
 
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
-        
+    
         $phoneCountries = config('phone_countries');
         $vendor = Vendor::findOrFail($id);
 
+        $getUserDetails = User::where('email',$vendor->email)->first();
         // 2. Vendor staff associations (with user + primary flag)
         $staffAssociation = VendorStaffAssociation::where('vendor_id', $id)
             ->with(['user:id,name,email', 'staff:id,user_id,primary_staff'])
@@ -311,7 +312,7 @@ $phoneCountries = config('phone_countries');
 
         // 15. Pre-assigned staff IDs for edit form
         $preAssignedStaffIds = $staffAssociation->pluck('user_id')->toArray();
-        $firstStaff = $availableStaff->first();
+        // $firstStaff = $availableStaff->first();
  
         return view('admin.vendor.edit', compact(
             'vendor',
@@ -323,7 +324,7 @@ $phoneCountries = config('phone_countries');
             'allService',
             'loginUser',
             'phoneCountries',
-            'firstStaff'
+            'getUserDetails'
         ));
     }
 

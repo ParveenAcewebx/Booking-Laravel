@@ -81,12 +81,12 @@
                                             <select class="form-control @error('code') is-invalid @enderror" name="code" style="max-width: 100px;">
                                                 @foreach($phoneCountries as $country)
                                                 <option value="{{ $country['code'] }}"
-                                                    {{ old('code', $firstStaff->phone_code ?? '+91') == $country['code'] ? 'selected' : '' }}>
+                                                    {{ old('code', $getUserDetails->phone_code ?? '+91') == $country['code'] ? 'selected' : '' }}>
                                                     {{ $country['code'] }}
                                                 </option>
                                                 @endforeach
                                             </select>
-                                            <input type="text" class="form-control @error('phone_number') is-invalid @enderror" name="phone_number" placeholder="Enter phone number" value="{{ old('phone_number', $firstStaff->phone_number ?? null) }}">
+                                            <input type="text" class="form-control @error('phone_number') is-invalid @enderror" name="phone_number" placeholder="Enter phone number" value="{{ old('phone_number', $getUserDetails->phone_number ?? null) }}">
                                         </div>
                                         @error('code')
                                         <div class="invalid-feedback">{{ $message }}</div>
