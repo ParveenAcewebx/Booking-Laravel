@@ -97,7 +97,7 @@ class VendorController extends Controller
         $allusers = $this->allUsers;
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
-$phoneCountries = config('phone_countries');
+        $phoneCountries = config('phone_countries');
         $staffRole = Role::where('name', 'staff')->first();
 
         $staffUsers = User::whereHas('roles', function ($query) use ($staffRole) {
@@ -156,10 +156,11 @@ $phoneCountries = config('phone_countries');
             'description' => 'nullable|string',
             'assigned_service'  => 'nullable|exists:services,id',
             'thumbnail'   => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'phone_number' => 'required',
         ]);
 
         try {
-               $randomPassword = Str::random(4) . rand(0, 9) . Str::random(2) . '!@#$%^&*()_+'[rand(0, 11)] . Str::random(2);
+            $randomPassword = Str::random(4) . rand(0, 9) . Str::random(2) . '!@#$%^&*()_+'[rand(0, 11)] . Str::random(2);
             $thumbnailPath = null;
             if ($request->hasFile('thumbnail')) {
                 $thumbnailPath = $request->file('thumbnail')->store('vendors', 'public');
@@ -173,13 +174,13 @@ $phoneCountries = config('phone_countries');
                 'phone_number'  => $request->phone_number,
                 'status'        => config('constants.status.active'),
             ]);
-                // try {        
-                //     Mail::to($user->email)->send(view('admin.vendor.partials.email', compact('user', 'randomPassword')));
-                //     \Log::info('Email sent successfully to ' . $user->email);
-                // } catch (\Exception $e) {
-                //     \Log::error('Failed to send email to ' . $user->email . ': ' . $e->getMessage());
-                //     return back()->withInput()->with('error', 'Email sending failed: ' . $e->getMessage());
-                // }
+            // try {        
+            //     Mail::to($user->email)->send(view('admin.vendor.partials.email', compact('user', 'randomPassword')));
+            //     \Log::info('Email sent successfully to ' . $user->email);
+            // } catch (\Exception $e) {
+            //     \Log::error('Failed to send email to ' . $user->email . ': ' . $e->getMessage());
+            //     return back()->withInput()->with('error', 'Email sending failed: ' . $e->getMessage());
+            // }
             $user->assignRole('Staff');
             $vendor = Vendor::create([
                 'name'        => $request->username,
@@ -256,11 +257,11 @@ $phoneCountries = config('phone_countries');
 
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
-    
+
         $phoneCountries = config('phone_countries');
         $vendor = Vendor::findOrFail($id);
 
-        $getUserDetails = User::where('email',$vendor->email)->first();
+        $getUserDetails = User::where('email', $vendor->email)->first();
         // 2. Vendor staff associations (with user + primary flag)
         $staffAssociation = VendorStaffAssociation::where('vendor_id', $id)
             ->with(['user:id,name,email', 'staff:id,user_id,primary_staff'])
@@ -306,14 +307,14 @@ $phoneCountries = config('phone_countries');
         $availableStaff = User::whereIn('id', $mergedAvailableIds)
             ->with('staff:id,user_id,primary_staff')
             ->get();
-            // dd($availableStaff);
+        // dd($availableStaff);
         // 14. Determine current primary staff (for switch dropdown preselect)
         $currentPrimary = $staffAssociation->firstWhere('staff.primary_staff', 1);
 
         // 15. Pre-assigned staff IDs for edit form
         $preAssignedStaffIds = $staffAssociation->pluck('user_id')->toArray();
         // $firstStaff = $availableStaff->first();
- 
+
         return view('admin.vendor.edit', compact(
             'vendor',
             'staffAssociation',
@@ -365,22 +366,22 @@ $phoneCountries = config('phone_countries');
         // Primary Staff Handling
         // ====================================================
         if (!empty($phone_number) || !empty($code)) {
-                $loginId = VendorStaffAssociation::where('vendor_id', $vendor->id)->pluck('user_id');
-                if ($loginId->isNotEmpty()) {
-                    $loginUser = User::find($loginId->first());
-                    if ($loginUser) {
-                        $dataToUpdate = [];
+            $loginId = VendorStaffAssociation::where('vendor_id', $vendor->id)->pluck('user_id');
+            if ($loginId->isNotEmpty()) {
+                $loginUser = User::find($loginId->first());
+                if ($loginUser) {
+                    $dataToUpdate = [];
 
-                        if (!empty($phone_number)) {
-                            $dataToUpdate['phone_number'] = $phone_number;
-                        }
+                    if (!empty($phone_number)) {
+                        $dataToUpdate['phone_number'] = $phone_number;
+                    }
 
-                        if (!empty($code)) {
-                            $dataToUpdate['phone_code'] = $code;
-                        }
-                        $loginUser->update($dataToUpdate); 
+                    if (!empty($code)) {
+                        $dataToUpdate['phone_code'] = $code;
+                    }
+                    $loginUser->update($dataToUpdate);
                 }
-            } 
+            }
         }
 
 

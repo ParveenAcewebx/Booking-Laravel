@@ -94,7 +94,7 @@ class FormController extends Controller
         if ($request) {
             $serviceId = $request->query('service_id');
             $vendorIds = VendorServiceAssociation::where('service_id', $serviceId)->with('vendor')->get();
-            
+
             foreach ($vendorIds as $vendor) {
                 if ($vendor->vendor->status === 1) {
                     $vendor_data[] = [
@@ -152,64 +152,65 @@ class FormController extends Controller
     public function getBookingSlot(Request $request)
     {
         if ($request) {
-            $date           = $request['dates'];
-            $formattedDate  = Carbon::createFromFormat('Y-m-d', $date)->format('F j, Y');
-            $weekday        = Carbon::createFromFormat('Y-m-d', $date)->format('l');
-            $serviceId      = $request['serviceid'];
-            $vendorId       = $request['vendorid'];
-            $currentuserid  = auth()->id();
-
-            $service        = Service::where('id', $serviceId)->first();
-            $servicePrice   = $service ? $service->price : null;
-            $serviceDuration   = $service ? $service->duration : null;
-
-            $vendorAssociations         = VendorStaffAssociation::where('vendor_id', $vendorId)->with('staff')->get();
-            // dd($vendorAssociations);
-            $vendorAssociationsCount    = $vendorAssociations->isNotEmpty() ? $vendorAssociations->count() : 0;
+            $date = $request['dates'];
+            $formattedDate = Carbon::createFromFormat('Y-m-d', $date)->format('F j, Y');
+            $weekday = Carbon::createFromFormat('Y-m-d', $date)->format('l');
+            $weekday = strtolower($weekday);  // Convert to lowercase to match keys in work hours
+            $serviceId = $request['serviceid'];
+            $vendorId = $request['vendorid'];
+            $currentuserid = auth()->id();
+            $service = Service::where('id', $serviceId)->first();
+            $servicePrice = $service ? $service->price : null;
+            $serviceDuration = $service ? $service->duration : null;
+            $vendorAssociations = VendorStaffAssociation::where('vendor_id', $vendorId)->with('staff')->get();
+            $vendorAssociationsCount = '';
             if ($vendorAssociations) {
-                $staffAvailability      = $vendorAssociations->map(function ($association) use ($formattedDate, $weekday) {
+                $staffAvailability = $vendorAssociations->map(function ($association) use ($formattedDate, $weekday, $serviceDuration) {
                     $staff = $association->staff;
                     $daysOff = json_decode($staff->days_off, true);
                     $workHours = json_decode($staff->work_hours, true);
-                    $isAvailable = !collect($daysOff)->contains(function ($dayOff) use ($formattedDate) {
-                        foreach ($dayOff as $data) {
-                            if (isset($data['date']) && $data['date'] === $formattedDate) {
-
-                                return true;
-                            } else {
-
-                                return false;
+                    if (isset($workHours[$weekday])) {
+                        $startTime = $workHours[$weekday]['start'];
+                        $endTime = $workHours[$weekday]['end'];
+                        $start = Carbon::createFromFormat('H:i', $startTime);
+                        $end = Carbon::createFromFormat('H:i', $endTime);
+                        $totalAvailableMinutes = $start->diffInMinutes($end);
+                        $isAvailable = !collect($daysOff)->contains(function ($dayOff) use ($formattedDate) {
+                            foreach ($dayOff as $data) {
+                                if (isset($data['date']) && $data['date'] === $formattedDate) {
+                                    return true;
+                                }
                             }
+                            return false;
+                        });
+                        if ($isAvailable && $totalAvailableMinutes >= $serviceDuration) {
+                            $slots = [];
+                            $slotStartTime = clone $start;
+                            while ($slotStartTime->diffInMinutes($end) >= $serviceDuration) {
+                                $slotEndTime = clone $slotStartTime;
+                                $slotEndTime->addMinutes($serviceDuration);
+                                $slots[] = [
+                                    'start_time' => $slotStartTime->format('H:i'),
+                                    'end_time' => $slotEndTime->format('H:i'),
+                                ];
+                                $slotStartTime = $slotEndTime;
+                            }
+                            $staff->slots = $slots;
+                            return $staff;
                         }
-                    });
-
-                    // if ($isAvailable && isset($workHours[$weekday])) {
-                    //     $staffWorkHours = $workHours[$weekday];
-                    //     $staff->work_start_time = $staffWorkHours['start'];
-                    //     $staff->work_end_time = $staffWorkHours['end'];
-                    // } else {
-                    //     $staff->work_start_time = null;
-                    //     $staff->work_end_time = null;
-                    // }
-
-                    // // Set the availability and work hours for the staff
-                    // $staff->isAvailable = $isAvailable;
-                    // return $staff;
-                });
+                    }
+                    return null;
+                })->filter();
+                $vendorAssociationsCount = $staffAvailability->flatMap(function ($staff) {
+                    return $staff ? $staff->slots : [];
+                })->count();
             }
-
-            // Filter available staff
-            // $availableStaff = $staffAvailability->filter(function ($staff) {
-            //     return $staff->isAvailable;
-            // });
             return response()->json([
                 'date' => $formattedDate,
                 'price' => $servicePrice,
                 'slotleft' => $vendorAssociationsCount,
                 'duration' => $serviceDuration,
-                // 'staffdata'=>$isAvailable,
-                // 'staffdata' => $staff->work_start_time,
-                // 'staffend'=>$staff->work_end_time,
+                'staffdata' => $staffAvailability->values()->toArray(),  // If you want to return staff details
             ]);
         }
     }
