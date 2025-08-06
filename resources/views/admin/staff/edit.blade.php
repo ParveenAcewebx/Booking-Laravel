@@ -48,7 +48,7 @@
                                 </div>
 
                                 <!-- Email -->
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Email:</label>
                                         <input type="email" class="form-control @error('email') is-invalid @enderror"
@@ -58,7 +58,26 @@
                                         @enderror
                                     </div>
                                 </div>
-
+<div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Phone Number</label>
+                                        <div class="input-group">
+                                            <select class="form-control" name="code" style="max-width: 100px;">
+                                                @foreach($phoneCountries as $country)
+                                                <option value="{{ $country['code'] }}"
+                                                    {{ old('code', $staff->phone_code ?? '+91') == $country['code'] ? 'selected' : '' }}>
+                                                    {{ $country['code'] }}
+                                                </option>
+                                                @endforeach
+                                            </select>
+                                            <input type="text" class="form-control" name="phone_number" placeholder="Phone Number"
+                                                value="{{ old('phone_number', $staff->phone_number) }}">
+                                        </div>
+                                        @error('phone_number')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
                                 <!-- Password -->
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -80,26 +99,7 @@
                                 </div>
 
                                 <!-- Phone -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Phone Number</label>
-                                        <div class="input-group">
-                                            <select class="form-control" name="code" style="max-width: 100px;">
-                                                @foreach($phoneCountries as $country)
-                                                <option value="{{ $country['code'] }}"
-                                                    {{ old('code', $staff->phone_code ?? '+91') == $country['code'] ? 'selected' : '' }}>
-                                                    {{ $country['code'] }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                            <input type="text" class="form-control" name="phone_number" placeholder="Phone Number"
-                                                value="{{ old('phone_number', $staff->phone_number) }}">
-                                        </div>
-                                        @error('phone_number')
-                                        <div class="text-danger mt-1">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
+                                
 
                                 <!-- Role (hidden) -->
                                 @if($roles)
