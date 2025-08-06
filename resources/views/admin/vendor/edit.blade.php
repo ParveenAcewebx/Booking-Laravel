@@ -139,6 +139,7 @@
                                     <input type="hidden" id="editDayOffData" value='@json($staffAssociation)'>
 
                                     <!-- Switch Primary Staff Section -->
+                                    @if(count($availableStaff->whereIn('id', $preAssignedStaffIds)) > 1)
                                     <div class="col-md-5 mt-4 p-0">
                                         <h6 class="font-weight-bold">Switch Primary Staff</h6>
                                         <div class="form-group">
@@ -153,6 +154,7 @@
                                             </select>
                                         </div>
                                     </div>
+                                    @endif
 
                                 </div>
                             </div>
