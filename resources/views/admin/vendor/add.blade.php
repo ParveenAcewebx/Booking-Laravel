@@ -383,6 +383,10 @@
             document.getElementById('addStaffButton').addEventListener('click', function() {
                 checkstaffablableornot();
             });
+            setTimeout(function() {
+                document.getElementById('addStaffButton').click();
+            }, 1000);
         });
+
     </script>
 @endsection
