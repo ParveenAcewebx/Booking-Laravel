@@ -82,10 +82,10 @@ class StaffController extends Controller
                                     <i class="feather icon-trash-2"></i>
                                  </button>';
                         } else {
-                            $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">
+                            $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteStaff-' . $row->id . '">
                                     ' . csrf_field() . '
                                     <input type="hidden" name="_method" value="DELETE">
-                                    <button type="button" onclick="return deleteUser(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete User">
+                                    <button type="button" onclick="return deleteStaff(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Staff">
                                         <i class="feather icon-trash-2"></i>
                                     </button>
                                 </form>';

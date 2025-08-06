@@ -37,46 +37,23 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" >
+                                        <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}">
                                         @error('name')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
 
                                 <!-- Email -->
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Email <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" >
+                                        <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}">
                                         @error('email')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
-
-                                <!-- Password -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Password <span class="text-danger">*</span></label>
-                                        <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" >
-                                        @error('password')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <!-- Confirm Password -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Confirm Password <span class="text-danger">*</span></label>
-                                        <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" name="password_confirmation" >
-                                        @error('password_confirmation')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
                                 <!-- Phone -->
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -89,10 +66,32 @@
                                                 </option>
                                                 @endforeach
                                             </select>
-                                            <input type="text" class="form-control @error('phone_number') is-invalid @enderror" name="phone_number" value="{{ old('phone_number') }}"  placeholder="Enter phone number">
+                                            <input type="text" class="form-control @error('phone_number') is-invalid @enderror" name="phone_number" value="{{ old('phone_number') }}" placeholder="Enter phone number">
                                         </div>
                                         @error('phone_number')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Password -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Password <span class="text-danger">*</span></label>
+                                        <input type="password" class="form-control @error('password') is-invalid @enderror" name="password">
+                                        @error('password')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Confirm Password -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Confirm Password <span class="text-danger">*</span></label>
+                                        <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" name="password_confirmation">
+                                        @error('password_confirmation')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -111,7 +110,7 @@
                             </div>
                         </div>
                     </div>
-                     <div class="card">
+                    <div class="card">
                         <div class="card-body">
                             <ul class="nav nav-tabs mb-3" role="tablist">
                                 <li class="nav-item">
@@ -148,14 +147,14 @@
                                     <option value="{{ config('constants.status.inactive') }}" {{ old('status', 1) == config('constants.status.inactive') ? 'selected' : '' }}>Inactive</option>
                                 </select>
                                 @error('status')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <!-- Assigned Services -->
                             <div class="form-group">
                                 <label>Assigned Services</label>
-                                <select class="form-control select-user" name="assigned_services[]" multiple >
+                                <select class="form-control select-user" name="assigned_services[]" multiple>
                                     @foreach($services as $service)
                                     <option value="{{ $service->id }}" {{ collect(old('assigned_services'))->contains($service->id) ? 'selected' : '' }}>
                                         {{ $service->name }}
@@ -163,14 +162,14 @@
                                     @endforeach
                                 </select>
                                 @error('assigned_services')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <!-- Assigned Vendor -->
                             <div class="form-group">
                                 <label>Assigned Vendor</label>
-                                <select class="form-control select-user @error('assigned_vendor') is-invalid @enderror" name="assigned_vendor" >
+                                <select class="form-control select-user @error('assigned_vendor') is-invalid @enderror" name="assigned_vendor">
                                     <option value="" disabled {{ old('assigned_vendor') ? '' : 'selected' }}>Please Select Vendor</option>
                                     @foreach($vendorData as $vendor)
                                     <option value="{{ $vendor->id }}" {{ old('assigned_vendor') == $vendor->id ? 'selected' : '' }}>
@@ -179,7 +178,7 @@
                                     @endforeach
                                 </select>
                                 @error('assigned_vendor')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
 
@@ -197,7 +196,7 @@
                                 </div>
                                 <small class="form-text text-muted">Supported types: JPG, JPEG, PNG, GIF.</small>
                                 @error('avatar')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
 
                                 <!-- Image Preview -->

@@ -10,7 +10,7 @@ use App\Models\Booking;
 use App\Models\User;
 use App\Helpers\FormHelper;
 use Illuminate\Support\Facades\Storage;
-use App\Models\service;
+use App\Models\Service;
 use App\Models\StaffServiceAssociation;
 use App\Models\VendorStaffAssociation;
 use App\Models\VendorServiceAssociation;
@@ -94,6 +94,7 @@ class FormController extends Controller
         if ($request) {
             $serviceId = $request->query('service_id');
             $vendorIds = VendorServiceAssociation::where('service_id', $serviceId)->with('vendor')->get();
+            
             foreach ($vendorIds as $vendor) {
                 if ($vendor->vendor->status === 1) {
                     $vendor_data[] = [

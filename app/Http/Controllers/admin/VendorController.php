@@ -21,6 +21,8 @@ use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 
 
 class VendorController extends Controller
@@ -35,7 +37,6 @@ class VendorController extends Controller
     {
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
-
         if ($request->ajax()) {
             // Load vendors with pivot + nested service relation
             $vendors = Vendor::with('services')->select(['id', 'name', 'email', 'status', 'created_at']);
@@ -96,7 +97,7 @@ class VendorController extends Controller
         $allusers = $this->allUsers;
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
-
+$phoneCountries = config('phone_countries');
         $staffRole = Role::where('name', 'staff')->first();
 
         $staffUsers = User::whereHas('roles', function ($query) use ($staffRole) {
@@ -142,7 +143,8 @@ class VendorController extends Controller
             'loginUser',
             'allService',
             'availableStaff',
-            'preAssignedStaffIds'
+            'preAssignedStaffIds',
+            'phoneCountries'
         ));
     }
 
@@ -157,6 +159,7 @@ class VendorController extends Controller
         ]);
 
         try {
+               $randomPassword = Str::random(4) . rand(0, 9) . Str::random(2) . '!@#$%^&*()_+'[rand(0, 11)] . Str::random(2);
             $thumbnailPath = null;
             if ($request->hasFile('thumbnail')) {
                 $thumbnailPath = $request->file('thumbnail')->store('vendors', 'public');
@@ -165,10 +168,18 @@ class VendorController extends Controller
             $user = User::create([
                 'name'          => $request->username,
                 'email'         => $request->email,
-                'password'      => Hash::make('password'),
+                'password'      => Hash::make($randomPassword),
+                'phone_code'    => $request->code,
+                'phone_number'  => $request->phone_number,
                 'status'        => config('constants.status.active'),
             ]);
-
+                // try {        
+                //     Mail::to($user->email)->send(view('admin.vendor.partials.email', compact('user', 'randomPassword')));
+                //     \Log::info('Email sent successfully to ' . $user->email);
+                // } catch (\Exception $e) {
+                //     \Log::error('Failed to send email to ' . $user->email . ': ' . $e->getMessage());
+                //     return back()->withInput()->with('error', 'Email sending failed: ' . $e->getMessage());
+                // }
             $user->assignRole('Staff');
             $vendor = Vendor::create([
                 'name'        => $request->username,
@@ -245,14 +256,14 @@ class VendorController extends Controller
 
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
-
+        
+        $phoneCountries = config('phone_countries');
         $vendor = Vendor::findOrFail($id);
 
         // 2. Vendor staff associations (with user + primary flag)
         $staffAssociation = VendorStaffAssociation::where('vendor_id', $id)
             ->with(['user:id,name,email', 'staff:id,user_id,primary_staff'])
             ->get();
-
         // 3. Vendor's assigned services
         $gsd = VendorServiceAssociation::where('vendor_id', $id)->pluck('service_id')->toArray();
         $allService = Service::where('status', config('constants.status.active'))->get();
@@ -294,13 +305,14 @@ class VendorController extends Controller
         $availableStaff = User::whereIn('id', $mergedAvailableIds)
             ->with('staff:id,user_id,primary_staff')
             ->get();
-
+            // dd($availableStaff);
         // 14. Determine current primary staff (for switch dropdown preselect)
         $currentPrimary = $staffAssociation->firstWhere('staff.primary_staff', 1);
 
         // 15. Pre-assigned staff IDs for edit form
         $preAssignedStaffIds = $staffAssociation->pluck('user_id')->toArray();
-
+        $firstStaff = $availableStaff->first();
+ 
         return view('admin.vendor.edit', compact(
             'vendor',
             'staffAssociation',
@@ -309,7 +321,9 @@ class VendorController extends Controller
             'currentPrimary',
             'gsd',
             'allService',
-            'loginUser'
+            'loginUser',
+            'phoneCountries',
+            'firstStaff'
         ));
     }
 
@@ -337,6 +351,8 @@ class VendorController extends Controller
         $vendor->name                   = $request->input('username');
         $vendor->email                  = $request->input('email');
         $vendor->description            = $request->input('description');
+        $phone_number                   = $request->input('phone_number');
+        $code                           = $request->input('code');
         $vendor->status                 = $status;
         $vendor->stripe_mode            = $request->stripe_mode;
         $vendor->stripe_test_site_key   = $request->stripe_test_site_key;
@@ -347,6 +363,26 @@ class VendorController extends Controller
         // ====================================================
         // Primary Staff Handling
         // ====================================================
+        if (!empty($phone_number) || !empty($code)) {
+                $loginId = VendorStaffAssociation::where('vendor_id', $vendor->id)->pluck('user_id');
+                if ($loginId->isNotEmpty()) {
+                    $loginUser = User::find($loginId->first());
+                    if ($loginUser) {
+                        $dataToUpdate = [];
+
+                        if (!empty($phone_number)) {
+                            $dataToUpdate['phone_number'] = $phone_number;
+                        }
+
+                        if (!empty($code)) {
+                            $dataToUpdate['phone_code'] = $code;
+                        }
+                        $loginUser->update($dataToUpdate); 
+                }
+            } 
+        }
+
+
         $newPrimaryStaffId = $request->input('primary_staff');
 
         if ($newPrimaryStaffId) {

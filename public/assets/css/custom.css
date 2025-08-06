@@ -7,7 +7,7 @@
     right: 0;
     top: -5rem;
 }
-
+.swal-modal{width:500px !important;}
 .submit-user {
     background: none;
     border: none;

@@ -30,7 +30,7 @@ class BookingTemplateController extends Controller
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
-            $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by', 'slug']);
+            $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by', 'slug'])->with('user');
 
             return DataTables::of($query)
                 ->addIndexColumn()
@@ -45,7 +45,7 @@ class BookingTemplateController extends Controller
                     return '<span class="badge badge-success">Active</span>';
                 })
                 ->addColumn('created_by', function ($row) {
-                    return $row->created_by ?? '';
+                    return $row->user->name ?? '';
                 })
                 ->addColumn('action', function ($row) {
                     $btn = '';
@@ -100,7 +100,7 @@ class BookingTemplateController extends Controller
                 $template = BookingTemplate::create([
                     'data' => json_encode($data),
                     'template_name' => $templatename,
-                    'created_by' => auth()->user()->name ?? 'NULL'
+                    'created_by' => auth()->user()->id ?? 'NULL'
                 ]);
                 session()->flash('success', "Booking Template Added Successfully.");
             }
@@ -108,7 +108,7 @@ class BookingTemplateController extends Controller
             $template = BookingTemplate::create([
                 'data' => json_encode($data),
                 'template_name' => $templatename,
-                'created_by' => auth()->user()->name ?? 'NULL',
+                'created_by' => auth()->user()->id ?? 'NULL',
                 'slug' => Str::uuid(),
             ]);
             session()->flash('success', "Booking Template Added Successfully.");

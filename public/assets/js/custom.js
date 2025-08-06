@@ -15,7 +15,7 @@ function deleteTemplate(id) {
     event.preventDefault();
     swal({
         title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this imaginary file!",
+        text: "Once deleted, you will not be able to recover this booking template!",
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -61,7 +61,7 @@ function deleteUser(id) {
     event.preventDefault();
     swal({
         title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this imaginary file!",
+        text: "Once deleted, you will not be able to recover this user!",
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -106,6 +106,57 @@ function deleteUser(id) {
         }
     });
 }
+
+function deleteStaff(id) {
+    event.preventDefault();
+    swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this staff!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            var user = document.getElementById("deleteStaff-" + id);
+            var userData = new FormData(user);
+            fetch(user.action, {
+                method: "DELETE",
+                body: userData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success === true) {
+                        swal("Staff Deleted Successfully.", {
+                            icon: "success",
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else if (data.success === "login") {
+                        swal("That user is currently logged in.", {
+                            icon: "error",
+                        });
+                    } else {
+                        swal("There was an error!", {
+                            icon: "error",
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    swal("There was an error processing your request.", {
+                        icon: "error",
+                    });
+                });
+        }
+    });
+}
+
 // Booking delete alert
 function deleteBooking(id) {
     event.preventDefault();
@@ -203,7 +254,7 @@ function deleteRole(id) {
 
     swal({
         title: "Are you sure?",
-        text: "Once deleted, this role and its permissions will be gone forever!",
+        text: "Once deleted, you will not be able to recover this role!",
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -248,12 +299,14 @@ function deleteRole(id) {
         }
     });
 }
+
+
 function deleteCategory(id) {
     event.preventDefault();
 
     swal({
         title: "Are you sure?",
-        text: "Once deleted, this category data will be gone!",
+        text: "Once deleted, you will not be able to recover this category!",
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -293,13 +346,14 @@ function deleteCategory(id) {
         }
     });
 }
+
 // Service Delete Confirmation Alert
 function deleteService(id, event) {
     event.preventDefault(); // Stop default form behavior
 
     swal({
         title: "Are you sure?",
-        text: "Once deleted, this service data will be gone!.",
+        text: "Once deleted, you will not be able to recover this service!",
         icon: "warning",
         buttons: true,
         dangerMode: true,

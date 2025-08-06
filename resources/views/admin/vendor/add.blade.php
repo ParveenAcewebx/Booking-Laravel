@@ -40,7 +40,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <!-- Name -->
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="form-label">Name <span class="text-danger">*</span></label>
                                         <input type="text" name="username" class="form-control @error('username') is-invalid @enderror" placeholder="Name" value="{{ old('username') }}">
@@ -49,18 +49,6 @@
                                         @enderror
                                     </div>
                                 </div>
-
-                                <!-- Email -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Email <span class="text-danger">*</span></label>
-                                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Email" value="{{ old('email') }}">
-                                        @error('email')
-                                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
                                 <!-- Description -->
                                 <div class="col-md-12">
                                     <div class="form-group">
@@ -72,6 +60,39 @@
                                         @enderror
                                     </div>
                                 </div>
+                                  <!-- Email -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Email <span class="text-danger">*</span></label>
+                                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Email" value="{{ old('email') }}">
+                                        @error('email')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                  <!-- Phone no -->
+                                 <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Phone Number <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <select class="form-control @error('code') is-invalid @enderror" name="code" style="max-width: 100px;">
+                                                @foreach($phoneCountries as $country)
+                                                    <option value="{{ $country['code'] }}"
+                                                        {{ old('code', '+91') == $country['code'] ? 'selected' : '' }}>
+                                                        {{ $country['code'] }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <input type="text" class="form-control @error('phone_number') is-invalid @enderror" name="phone_number" placeholder="Enter phone number" value="{{ old('phone_number') }}">
+                                        </div>
+                                        @error('code')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                        @error('phone_number')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -79,19 +100,20 @@
                         <div class="card-body">
                             <ul class="nav nav-tabs mb-3" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#stripeAccount" role="tab">
-                                        <i class="fab fa-stripe"></i> Stripe
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#assignStaff" role="tab">
+                                    <a class="nav-link active" data-toggle="tab" href="#assignStaff" role="tab">
                                         <i class="feather icon-layers"></i> Assign Staff
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#stripeAccount" role="tab">
+                                        <i class="fab fa-stripe"></i> Stripe
+                                    </a>
+                                </li>
+                                
                             </ul>
 
                             <div class="tab-content">
-                                <div class="tab-pane fade show active" id="stripeAccount" role="tabpanel">
+                                <div class="tab-pane fade show" id="stripeAccount" role="tabpanel">
                                     <div class="form-group">
                                         <div class="custom-control custom-checkbox">
                                             <input type="checkbox" class="custom-control-input" id="payment__is_live" name="stripe_mode" value="1"
@@ -123,7 +145,7 @@
                                     </div>
                                 </div>
                                 <!-- Assign Staff Tab -->
-                                <div class="tab-pane fade" id="assignStaff" role="tabpanel">
+                                <div class="tab-pane show active" id="assignStaff" role="tabpanel">
                                     <div class="mb-3 d-flex justify-content-between align-items-center">
                                         <h6 class="mb-0 font-weight-bold">Assigned Staff</h6>
                                         <button type="button" class="btn btn-sm btn-primary" id="addStaffButton">
