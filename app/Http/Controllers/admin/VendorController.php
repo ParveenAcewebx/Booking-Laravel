@@ -346,6 +346,7 @@ class VendorController extends Controller
             'status'         => 'required|boolean',
             'thumbnail'      => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'remove_avatar'  => 'nullable|in:0,1',
+            'phone_number' => 'required',
         ]);
 
         // --- Update vendor basic fields ---

@@ -58,7 +58,7 @@
                                         @enderror
                                     </div>
                                 </div>
-<div class="col-md-6">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Phone Number</label>
                                         <div class="input-group">
@@ -99,7 +99,7 @@
                                 </div>
 
                                 <!-- Phone -->
-                                
+
 
                                 <!-- Role (hidden) -->
                                 @if($roles)
@@ -115,7 +115,7 @@
                             </div>
                         </div>
                     </div>
-                     <div class="card">
+                    <div class="card">
                         <div class="card-body">
                             <ul class="nav nav-tabs mb-3">
                                 <li class="nav-item">
