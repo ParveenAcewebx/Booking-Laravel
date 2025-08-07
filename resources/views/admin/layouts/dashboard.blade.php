@@ -23,6 +23,7 @@
         <!-- [ Main Content ] start -->
         <div class="row">
             <!-- View Chart Start-->
+               @can('view users')
             <div class="col-xl-3 col-md-6">
                 <div class="card flat-card">
                     <div class="row-table">
@@ -34,10 +35,11 @@
                                 </div>
                             </div>
                         </a>
-
                     </div>
                 </div>
             </div>
+            @endcan
+            @can('view bookings')
             <div class="col-xl-3 col-md-6">
                 <div class="card flat-card">
                     <div class="row-table">
@@ -52,6 +54,8 @@
                     </div>
                 </div>
             </div>
+            @endcan
+            @can('view templates')
             <div class="col-xl-3 col-md-12">
                 <div class="card flat-card">
                     <div class="row-table">
@@ -66,7 +70,8 @@
                     </div>
                 </div>
             </div>
-
+            @endcan
+            @can('view services')
             <div class="col-xl-3 col-md-12">
                 <div class="card flat-card">
                     <div class="row-table">
@@ -81,6 +86,8 @@
                     </div>
                 </div>
             </div>
+            @endcan
+              @can('view users')
             <div class="col-xl-8">
                 <div class="card table-card">
                     <div class="card-header">
@@ -195,6 +202,7 @@
                     </div>
                 </div>
             </div>
+               @endcan
             <div class="col-xl-4">
                 <div class="user-card-body card">
                     <div class="card-body">
