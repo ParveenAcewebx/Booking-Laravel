@@ -163,30 +163,38 @@ class FormController extends Controller
             $servicePrice = $service ? $service->price : null;
             $serviceDuration = $service ? $service->duration : null;
             $vendorAssociations = VendorStaffAssociation::where('vendor_id', $vendorId)->with('staff')->get();
-            // return $vendorAssociations;
-            $vendorAssociationsCount = '';
+
+            $vendorAssociationsCount = 0;
+
             if ($vendorAssociations) {
                 $staffAvailability = $vendorAssociations->map(function ($association) use ($formattedDate, $weekday, $serviceDuration) {
                     $staff = $association->staff;
                     $daysOff = json_decode($staff->days_off, true);
                     $workHours = json_decode($staff->work_hours, true);
+
+                    // Check if the staff member has work hours on the requested weekday
                     if (isset($workHours[$weekday])) {
                         $startTime = $workHours[$weekday]['start'];
                         $endTime = $workHours[$weekday]['end'];
                         $start = Carbon::createFromFormat('H:i', $startTime);
                         $end = Carbon::createFromFormat('H:i', $endTime);
                         $totalAvailableMinutes = $start->diffInMinutes($end);
+
+                        // Check if the staff is on leave for the requested date
                         $isAvailable = !collect($daysOff)->contains(function ($dayOff) use ($formattedDate) {
                             foreach ($dayOff as $data) {
                                 if (isset($data['date']) && $data['date'] === $formattedDate) {
-                                    return true;
+                                    return true;  // Staff is on leave, so not available
                                 }
                             }
-                            return false;
+                            return false;  // Staff is available for this date
                         });
+
+                        // If the staff member is available and has enough time for the service duration
                         if ($isAvailable && $totalAvailableMinutes >= $serviceDuration) {
                             $slots = [];
                             $slotStartTime = clone $start;
+
                             while ($slotStartTime->diffInMinutes($end) >= $serviceDuration) {
                                 $slotEndTime = clone $slotStartTime;
                                 $slotEndTime->addMinutes($serviceDuration);
@@ -196,16 +204,22 @@ class FormController extends Controller
                                 ];
                                 $slotStartTime = $slotEndTime;
                             }
+
+                            // Add the available slots to the staff object
                             $staff->slots = $slots;
                             return $staff;
                         }
                     }
-                    return null;
-                })->filter();
+                    return null; // If the staff member is not available, return null
+                })->filter(); // Remove any null entries
+
+                // Count the available slots across all staff members
                 $vendorAssociationsCount = $staffAvailability->flatMap(function ($staff) {
                     return $staff ? $staff->slots : [];
                 })->count();
             }
+
+            // Return the final response
             return response()->json([
                 'date' => $formattedDate,
                 'price' => $servicePrice,
@@ -214,5 +228,5 @@ class FormController extends Controller
                 'staffdata' => $staffAvailability->values()->toArray(),  // If you want to return staff details
             ]);
         }
-    } 
+    }
 }
