@@ -53,12 +53,12 @@ return [
             'roles' => ['view bookings', 'create bookings', 'edit bookings', 'delete bookings']
         ],
         'services' => [
-            'name' => "Booking Services",
+            'name' => "Services",
             'slug' => 'services',
             'roles' => ['view services', 'create services', 'edit services', 'delete services']
         ],
         'categories' => [
-            'name' => "Categories",
+            'name' => "Service Categories",
             'slug' => 'categories',
             'roles' => ['view categories', 'create categories', 'edit categories', 'delete categories']
         ],

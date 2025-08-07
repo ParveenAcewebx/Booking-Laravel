@@ -163,6 +163,7 @@ class FormController extends Controller
             $servicePrice = $service ? $service->price : null;
             $serviceDuration = $service ? $service->duration : null;
             $vendorAssociations = VendorStaffAssociation::where('vendor_id', $vendorId)->with('staff')->get();
+            return $vendorAssociations;
             $vendorAssociationsCount = '';
             if ($vendorAssociations) {
                 $staffAvailability = $vendorAssociations->map(function ($association) use ($formattedDate, $weekday, $serviceDuration) {
@@ -205,13 +206,13 @@ class FormController extends Controller
                     return $staff ? $staff->slots : [];
                 })->count();
             }
-            return response()->json([
-                'date' => $formattedDate,
-                'price' => $servicePrice,
-                'slotleft' => $vendorAssociationsCount,
-                'duration' => $serviceDuration,
-                'staffdata' => $staffAvailability->values()->toArray(),  // If you want to return staff details
-            ]);
+            // return response()->json([
+            //     'date' => $formattedDate,
+            //     'price' => $servicePrice,
+            //     'slotleft' => $vendorAssociationsCount,
+            //     'duration' => $serviceDuration,
+            //     'staffdata' => $staffAvailability->values()->toArray(),  // If you want to return staff details
+            // ]);
         }
-    }
+    } 
 }

@@ -133,7 +133,7 @@ class AppServiceProvider extends ServiceProvider
                                 </tr>
                         </tbody>
                     </table>
-                    <div class="availibility p-4 border border-gray-300 shadow-md rounded-lg hidden">
+                    <div class="availibility p-4 m-2 border border-gray-300 shadow-md rounded-lg hidden">
                     <div class="timings"></div>
                     </div>
                 </div>';

@@ -292,13 +292,14 @@
                         vendorid: vendorId,
                     },
                     success: function (response) {
-                        console.log('success response' + response);
+                        
+                        console.log('success response' + JSON.stringify(response));
 
                         let sessionsHTML = '';
                         if (response) {
                             $('.availibility').removeClass('hidden');
                             const dates = response.date;
-
+                            const slotsCount = response.slots_left;
                             sessionsHTML += `
                                 <div class="date-section mb-3">
                                     <h5 class="date-header">${dates}</h5>
@@ -354,19 +355,19 @@
                 });
             }
         }
-        
+
     });
     function formatDuration(minutes) {
         console.log(minutes);
-    const hrs = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    let label = '';
+        const hrs = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        let label = '';
 
-    if (hrs > 0) label += hrs + ' hour' + (hrs > 1 ? 's' : '');
-    if (hrs > 0 && mins > 0) label += ' ';
-    if (mins > 0) label += mins + ' minutes';
+        if (hrs > 0) label += hrs + ' hour' + (hrs > 1 ? 's' : '');
+        if (hrs > 0 && mins > 0) label += ' ';
+        if (mins > 0) label += mins + ' minutes';
 
-    return label;
-}
+        return label;
+    }
 
 })(jQuery);
