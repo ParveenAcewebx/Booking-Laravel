@@ -59,7 +59,7 @@ Route::middleware('guest')->group(function () {
 });
 
 // Authenticated routes
-Route::prefix('admin')->middleware('auth')->group(function () {
+Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(function () {
     Route::post('/{id}/switch', [UserController::class, 'switchUser'])->name('user.switch');
     Route::post('/switch-back', [UserController::class, 'switchBack'])->name('user.switch.back');
     Route::get('/booking/load-template-html/{id}', [BookingController::class, 'loadTemplateHTML']);
@@ -191,11 +191,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('/user/{id}/update', [UserController::class, 'userUpdate'])->name('user.update');
     // General routes (dashboard, logout, etc.)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/logout', [UserController::class, 'logout'])->name('logout');
     Route::get('/todo', [UserController::class, 'todo'])->name('todo');
     Route::get('/welcome', [UserController::class, 'welcome']);
     Route::get('/userrole', [UserController::class, 'userrole']);
 });
 // Front profile 
+Route::get('/logout', [UserController::class, 'logout'])->name('logout');
+
 Route::get('/profile', [UserProfileController::class, 'userEdit'])->name('Userprofile');
 Route::post('/profile/update', [UserProfileController::class, 'UserUpdate'])->name('ProfileUpdate');
