@@ -53,7 +53,7 @@ return [
             'roles' => ['view bookings', 'create bookings', 'edit bookings', 'delete bookings']
         ],
         'services' => [
-            'name' => "Services",
+            'name' => "Booking Services",
             'slug' => 'services',
             'roles' => ['view services', 'create services', 'edit services', 'delete services']
         ],
