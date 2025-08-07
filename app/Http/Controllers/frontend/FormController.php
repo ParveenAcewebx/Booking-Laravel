@@ -152,80 +152,77 @@ class FormController extends Controller
     public function getBookingSlot(Request $request)
     {
         if ($request) {
-            $date = $request['dates'];
+
+            $date = $request->input('dates');
             $formattedDate = Carbon::createFromFormat('Y-m-d', $date)->format('F j, Y');
-            $weekday = Carbon::createFromFormat('Y-m-d', $date)->format('l');
-            $weekday = strtolower($weekday);  // Convert to lowercase to match keys in work hours
-            $serviceId = $request['serviceid'];
-            $vendorId = $request['vendorid'];
-            $currentuserid = auth()->id();
-            $service = Service::where('id', $serviceId)->first();
-            $servicePrice = $service ? $service->price : null;
-            $serviceDuration = $service ? $service->duration : null;
-            $vendorAssociations = VendorStaffAssociation::where('vendor_id', $vendorId)->with('staff')->get();
+            $weekday = strtolower(Carbon::createFromFormat('Y-m-d', $date)->format('l'));
 
-            $vendorAssociationsCount = 0;
-
-            if ($vendorAssociations) {
-                $staffAvailability = $vendorAssociations->map(function ($association) use ($formattedDate, $weekday, $serviceDuration) {
-                    $staff = $association->staff;
-                    $daysOff = json_decode($staff->days_off, true);
-                    $workHours = json_decode($staff->work_hours, true);
-
-                    // Check if the staff member has work hours on the requested weekday
-                    if (isset($workHours[$weekday])) {
-                        $startTime = $workHours[$weekday]['start'];
-                        $endTime = $workHours[$weekday]['end'];
-                        $start = Carbon::createFromFormat('H:i', $startTime);
-                        $end = Carbon::createFromFormat('H:i', $endTime);
-                        $totalAvailableMinutes = $start->diffInMinutes($end);
-
-                        // Check if the staff is on leave for the requested date
-                        $isAvailable = !collect($daysOff)->contains(function ($dayOff) use ($formattedDate) {
-                            foreach ($dayOff as $data) {
-                                if (isset($data['date']) && $data['date'] === $formattedDate) {
-                                    return true;  // Staff is on leave, so not available
-                                }
-                            }
-                            return false;  // Staff is available for this date
-                        });
-
-                        // If the staff member is available and has enough time for the service duration
-                        if ($isAvailable && $totalAvailableMinutes >= $serviceDuration) {
-                            $slots = [];
-                            $slotStartTime = clone $start;
-
-                            while ($slotStartTime->diffInMinutes($end) >= $serviceDuration) {
-                                $slotEndTime = clone $slotStartTime;
-                                $slotEndTime->addMinutes($serviceDuration);
-                                $slots[] = [
-                                    'start_time' => $slotStartTime->format('H:i'),
-                                    'end_time' => $slotEndTime->format('H:i'),
-                                ];
-                                $slotStartTime = $slotEndTime;
-                            }
-
-                            // Add the available slots to the staff object
-                            $staff->slots = $slots;
-                            return $staff;
-                        }
-                    }
-                    return null; // If the staff member is not available, return null
-                })->filter(); // Remove any null entries
-
-                // Count the available slots across all staff members
-                $vendorAssociationsCount = $staffAvailability->flatMap(function ($staff) {
-                    return $staff ? $staff->slots : [];
-                })->count();
+            $service = Service::find($request->serviceid);
+            if (!$service) {
+                return response()->json(['error' => 'Service not found.'], 404);
             }
 
-            // Return the final response
+            $serviceDuration = $service->duration;
+            $servicePrice = $service->price;
+
+            $vendorAssociations = VendorStaffAssociation::with('staff')
+                ->where('vendor_id', $request->vendorid)
+                ->get();
+
+            $staffAvailability = collect();
+
+            foreach ($vendorAssociations as $association) {
+                $staff = $association->staff;
+
+                if (!$staff) continue;
+
+                $daysOff = json_decode($staff->days_off ?? '[]', true);
+                $workHours = json_decode($staff->work_hours ?? '[]', true);
+
+                if (!isset($workHours[$weekday])) continue;
+
+                $startTime = $workHours[$weekday]['start'] ?? null;
+                $endTime = $workHours[$weekday]['end'] ?? null;
+
+                if (!$startTime || !$endTime || $startTime === '00:00' && $endTime === '00:00') continue;
+
+                $start = Carbon::createFromFormat('H:i', $startTime);
+                $end = Carbon::createFromFormat('H:i', $endTime);
+                $totalAvailableMinutes = $start->diffInMinutes($end);
+
+                $isOnLeave = collect($daysOff)->flatten(1)->contains(function ($dayOff) use ($formattedDate) {
+                    return isset($dayOff['date']) && $dayOff['date'] === $formattedDate;
+                });
+
+                if ($isOnLeave || $totalAvailableMinutes < $serviceDuration) continue;
+
+                $slots = [];
+                $slotStartTime = clone $start;
+
+                while ($slotStartTime->diffInMinutes($end) >= $serviceDuration) {
+                    $slotEndTime = clone $slotStartTime;
+                    $slotEndTime->addMinutes($serviceDuration);
+                    $slots[] = [
+                        'start_time' => $slotStartTime->format('H:i'),
+                        'end_time'   => $slotEndTime->format('H:i'),
+                    ];
+                    $slotStartTime = $slotEndTime;
+                }
+
+                $staff->slots = $slots;
+                $staffAvailability->push($staff);
+            }
+
+            $totalSlotCount = $staffAvailability->flatMap(function ($staff) {
+                return $staff->slots ?? [];
+            })->count();
+
             return response()->json([
-                'date' => $formattedDate,
-                'price' => $servicePrice,
-                'slotleft' => $vendorAssociationsCount,
-                'duration' => $serviceDuration,
-                'staffdata' => $staffAvailability->values()->toArray(),  // If you want to return staff details
+                'date'      => $formattedDate,
+                'price'     => $servicePrice,
+                'slotleft'  => $totalSlotCount,
+                'duration'  => $serviceDuration,
+                'staffdata' => $staffAvailability->values()->toArray(),
             ]);
         }
     }

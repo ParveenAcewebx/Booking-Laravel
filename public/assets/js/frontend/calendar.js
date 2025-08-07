@@ -306,63 +306,47 @@
                         vendorid: vendorId,
                     },
                     success: function (response) {
-
-                        console.log('success response' + JSON.stringify(response));
+                        console.log('success response', response);
 
                         let sessionsHTML = '';
                         if (response) {
                             $('.availibility').removeClass('hidden');
-                            const dates = response.date;
-                            const slotsCount = response.slots_left;
-                            sessionsHTML += `
-                                <div class="date-section mb-3">
-                                    <h5 class="date-header">${dates}</h5>
-                                    <div class="timings">
-                                        <div id="myButton" class="slot">`;
-
-                            // sessions.forEach(session => {
-                            //     sessionsHTML += `
-                            //         <div class="slot-box" data-session-id="${session.sessin_detail_id}" 
-                            //              data-time="${session.time}" data-price="${session.price}" 
-                            //              data-from-time="${session.from_time}" data-to-time="${session.to_time}" 
-                            //              data-slots-left="${response.slots_left}">
-                            //         <span><i class="fa fa-clock-o"></i> ${session.time}</span>
-                            //         <span class="gbtn">${session.slotleft} Slot left</span>
-                            //         <span class="gbtn">Price: ${session.price}</span>
-                            //     </div>`;
-                            // });
+                            const date = response.date;
 
                             sessionsHTML += `
-                                    <div class="slot-box border border-[#eaeaec] p-[10px] rounded-[8px] bg-gray-100 shadow-md text-center w-1/3" data-session-id="" 
-                                         data-time="" data-price="${response.price}" 
-                                         data-from-time="" data-to-time="" 
-                                         data-slots-left="${response.slots_left}">
-                                    <p><i class="fa fa-clock-o"></i> </p>
-                                    <p class="gbtn">${response.slotleft} Slot left</p>
-                                    <p class="gbtn">Duration time:${formatDuration(response.duration)}</p>
-                                </div>`;
+        <div class="date-section mb-3">
+            <h5 class="date-header text-lg font-semibold mb-2">${date}</h5>
+            <div class="overflow-x-auto scrollbar-thin" style="scrollbar-width: thin;">
+                <div class="flex gap-4 pb-2 w-max min-w-full" style="-ms-overflow-style: none; scrollbar-width: thin;">
+        `;
 
+                            response.staffdata.forEach((staff, index) => {
+                                const firstSlot = staff.slots[0];
+                                const lastSlot = staff.slots[staff.slots.length - 1];
 
-                            sessionsHTML += `</div>`;
+                                if (firstSlot && lastSlot) {
+                                    sessionsHTML += `
+                    <div class="min-w-[170px] bg-white border border-gray-300 rounded-lg p-4 shadow-sm">
+                        <p class="text-sm mb-1 font-medium text-gray-700">${firstSlot.start_time} - ${lastSlot.end_time}</p>
+                        <p class="text-sm text-gray-600">Slots: ${staff.slots.length}</p>
+                        <p class="text-sm text-gray-600">Duration: ${formatDuration(response.duration)}</p>
+                        <p class="text-sm text-gray-600">Price: ₹${response.price}</p>
+                    </div>`;
+                                }
+                            });
 
-                            // sessions.forEach(session => {
-                            //     sessionsHTML += `
-                            //         <ul class="select_slot">
-                            //             <li class="select-and-continue" data-session-id="${session.sessin_detail_id}" data-time="${session.time}" data-price="${session.price}" data-from-time="${session.from_time}" data-to-time="${session.to_time}" data-slots-left="${session.slots_left}" data-date="${date}" data-action="continue">Select and continue</li>
-                            //             <li class="select-and-add-another-time" data-session-id="${session.sessin_detail_id}" data-time="${session.time}" data-price="${session.price}" data-from-time="${session.from_time}" data-to-time="${session.to_time}" data-slots-left="${session.slots_left}" data-date="${date}" data-action="add-another-time">Select and add another time</li>`;
-                            //     if (!session.session_type) {
-                            //         sessionsHTML += `<li data-bs-target="#recurring" data-session-id="${session.sessin_detail_id}" data-time="${session.time}" data-price="${session.price}" data-from-time="${session.from_time}" data-to-time="${session.to_time}" data-slots-left="${session.slots_left}" data-date="${date}" data-session-day-name="${session.session_day_name}" data-session-day="${session.session_day}" data-session-date-count="${session.session_date_count}" data-bs-toggle="modal">Select and make recurring</li>`;
-                            //     }
-                            //     sessionsHTML += `</ul>`;
-                            // });
-
-                            sessionsHTML += `</div></div>`;
+                            sessionsHTML += `
+                </div>
+            </div>
+        </div>`;
                         }
-                        const availabilityDiv = document.querySelector('.availibility .timings');
+
+                        const availabilityDiv = document.querySelector('.availibility');
                         if (availabilityDiv) {
                             availabilityDiv.innerHTML = sessionsHTML;
                         }
-                    },
+                    }
+                    ,
                     error: function () {
                         alert('Error fetching session details');
                     }
