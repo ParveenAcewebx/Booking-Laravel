@@ -151,79 +151,93 @@ class FormController extends Controller
 
     public function getBookingSlot(Request $request)
     {
-        if ($request) {
-
-            $date = $request->input('dates');
-            $formattedDate = Carbon::createFromFormat('Y-m-d', $date)->format('F j, Y');
-            $weekday = strtolower(Carbon::createFromFormat('Y-m-d', $date)->format('l'));
-
-            $service = Service::find($request->serviceid);
-            if (!$service) {
-                return response()->json(['error' => 'Service not found.'], 404);
-            }
-
-            $serviceDuration = $service->duration;
-            $servicePrice = $service->price;
-
-            $vendorAssociations = VendorStaffAssociation::with('staff')
-                ->where('vendor_id', $request->vendorid)
-                ->get();
-
-            $staffAvailability = collect();
-
-            foreach ($vendorAssociations as $association) {
-                $staff = $association->staff;
-
-                if (!$staff) continue;
-
-                $daysOff = json_decode($staff->days_off ?? '[]', true);
-                $workHours = json_decode($staff->work_hours ?? '[]', true);
-
-                if (!isset($workHours[$weekday])) continue;
-
-                $startTime = $workHours[$weekday]['start'] ?? null;
-                $endTime = $workHours[$weekday]['end'] ?? null;
-
-                if (!$startTime || !$endTime || $startTime === '00:00' && $endTime === '00:00') continue;
-
-                $start = Carbon::createFromFormat('H:i', $startTime);
-                $end = Carbon::createFromFormat('H:i', $endTime);
-                $totalAvailableMinutes = $start->diffInMinutes($end);
-
-                $isOnLeave = collect($daysOff)->flatten(1)->contains(function ($dayOff) use ($formattedDate) {
-                    return isset($dayOff['date']) && $dayOff['date'] === $formattedDate;
-                });
-
-                if ($isOnLeave || $totalAvailableMinutes < $serviceDuration) continue;
-
-                $slots = [];
-                $slotStartTime = clone $start;
-
-                while ($slotStartTime->diffInMinutes($end) >= $serviceDuration) {
-                    $slotEndTime = clone $slotStartTime;
-                    $slotEndTime->addMinutes($serviceDuration);
-                    $slots[] = [
-                        'start_time' => $slotStartTime->format('H:i'),
-                        'end_time'   => $slotEndTime->format('H:i'),
-                    ];
-                    $slotStartTime = $slotEndTime;
-                }
-
-                $staff->slots = $slots;
-                $staffAvailability->push($staff);
-            }
-
-            $totalSlotCount = $staffAvailability->flatMap(function ($staff) {
-                return $staff->slots ?? [];
-            })->count();
-
-            return response()->json([
-                'date'      => $formattedDate,
-                'price'     => $servicePrice,
-                'slotleft'  => $totalSlotCount,
-                'duration'  => $serviceDuration,
-                'staffdata' => $staffAvailability->values()->toArray(),
-            ]);
+        if (!$request) {
+            return response()->json(['error' => 'Invalid request.'], 400);
         }
+
+        $date = $request->input('dates');
+        $formattedDate = Carbon::createFromFormat('Y-m-d', $date)->format('F j, Y');
+        $weekday = strtolower(Carbon::createFromFormat('Y-m-d', $date)->format('l'));
+
+        $service = Service::find($request->serviceid);
+        if (!$service) {
+            return response()->json(['error' => 'Service not found.'], 404);
+        }
+
+        $serviceDuration = $service->duration;
+        $servicePrice = $service->price ?? 0;
+        $serviceCurrency = $service->currency;
+
+        $vendorAssociations = VendorStaffAssociation::with('staff')
+            ->where('vendor_id', $request->vendorid)
+            ->get();
+
+        $staffAvailability = collect();
+
+        foreach ($vendorAssociations as $association) {
+            $staff = $association->staff;
+
+            if (!$staff) continue;
+
+            $daysOff = json_decode($staff->days_off ?? '[]', true);
+            $workHours = json_decode($staff->work_hours ?? '[]', true);
+
+            if (!isset($workHours[$weekday])) continue;
+
+            $startTime = $workHours[$weekday]['start'] ?? null;
+            $endTime = $workHours[$weekday]['end'] ?? null;
+
+            if (!$startTime || !$endTime || ($startTime === '00:00' && $endTime === '00:00')) continue;
+
+            $start = Carbon::createFromFormat('H:i', $startTime);
+            $end = Carbon::createFromFormat('H:i', $endTime);
+            $totalAvailableMinutes = $start->diffInMinutes($end);
+
+            // Skip if on leave
+            $isOnLeave = collect($daysOff)->flatten(1)->contains(function ($dayOff) use ($formattedDate) {
+                return isset($dayOff['date']) && $dayOff['date'] === $formattedDate;
+            });
+
+            if ($isOnLeave || $totalAvailableMinutes < $serviceDuration) continue;
+
+            $slots = [];
+            $slotStartTime = clone $start;
+
+            while ($slotStartTime->diffInMinutes($end) >= $serviceDuration) {
+                $slotEndTime = clone $slotStartTime;
+                $slotEndTime->addMinutes($serviceDuration);
+
+                $slots[] = [
+                    'start_time' => $slotStartTime->format('H:i'),
+                    'end_time'   => $slotEndTime->format('H:i'),
+                ];
+
+                $slotStartTime = $slotEndTime;
+            }
+
+            $firstSlot = reset($slots);
+            $lastSlot = end($slots);
+
+            $staff->slots = $slots;
+            $staff->full_time = $formattedDate . ' ' . $firstSlot['start_time'] . ' - ' . $lastSlot['end_time'];
+            $staff->day_start = $start->format('H:i'); // ⬅️ For showing work hours start
+            $staff->day_end = $end->format('H:i');     // ⬅️ For showing work hours end
+
+            $staffAvailability->push($staff);
+        }
+
+        $totalSlotCount = $staffAvailability->flatMap(function ($staff) {
+            return $staff->slots ?? [];
+        })->count();
+
+        return response()->json([
+            'date'      => $formattedDate,
+            'price'     => $servicePrice,
+            'serviceCurrency'     => $serviceCurrency,
+            'price'     => $servicePrice,
+            'slotleft'  => $totalSlotCount,
+            'duration'  => $serviceDuration,
+            'staffdata' => $staffAvailability->values()->toArray(),
+        ]);
     }
 }

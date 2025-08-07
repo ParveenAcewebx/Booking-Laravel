@@ -309,15 +309,15 @@
                         console.log('success response', response);
 
                         let sessionsHTML = '';
-                        if (response) {
+                        if (response && response.staffdata.length > 0) {
                             $('.availibility').removeClass('hidden');
                             const date = response.date;
 
                             sessionsHTML += `
-        <div class="date-section mb-3">
-            <h5 class="date-header text-lg font-semibold mb-2">${date}</h5>
-            <div class="overflow-x-auto scrollbar-thin" style="scrollbar-width: thin;">
-                <div class="flex gap-4 pb-2 w-max min-w-full" style="-ms-overflow-style: none; scrollbar-width: thin;">
+            <div class="date-section mb-3">
+                <h5 class="date-header text-lg font-semibold mb-2">${date}</h5>
+                <div class="overflow-x-auto scrollbar-thin" style="scrollbar-width: thin;">
+                    <div class="flex gap-4 pb-2 w-max min-w-full" style="-ms-overflow-style: none; scrollbar-width: thin;">
         `;
 
                             response.staffdata.forEach((staff, index) => {
@@ -327,18 +327,21 @@
                                 if (firstSlot && lastSlot) {
                                     sessionsHTML += `
                     <div class="min-w-[170px] bg-white border border-gray-300 rounded-lg p-4 shadow-sm">
-                        <p class="text-sm mb-1 font-medium text-gray-700">${firstSlot.start_time} - ${lastSlot.end_time}</p>
+                        <input type="hidden" name="staff_id" value="${staff.id}">
+                        <p class="text-sm mb-1 font-medium text-gray-700">${staff.day_start} - ${staff.day_end}</p>
                         <p class="text-sm text-gray-600">Slots: ${staff.slots.length}</p>
                         <p class="text-sm text-gray-600">Duration: ${formatDuration(response.duration)}</p>
-                        <p class="text-sm text-gray-600">Price: ₹${response.price}</p>
+                        <p class="text-sm text-gray-600">Price: ${response.serviceCurrency} ${response.price}</p>
                     </div>`;
                                 }
                             });
 
                             sessionsHTML += `
+                    </div>
                 </div>
-            </div>
-        </div>`;
+            </div>`;
+                        } else {
+                            sessionsHTML = `<p class="text-sm text-red-500">No available slots found for this date.</p>`;
                         }
 
                         const availabilityDiv = document.querySelector('.availibility');
@@ -367,5 +370,4 @@
 
         return label;
     }
-
 })(jQuery);
