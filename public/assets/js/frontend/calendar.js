@@ -26,24 +26,38 @@
         // Vendor selection event listener
         $('.service_vendor_form').on('change', function () {
             let selectedValue = $(this).val();
-            if (selectedValue) {
-                $.ajax({
-                    url: '/get/vendor/get_booking_calender',
-                    type: 'GET',
-                    data: { vendor_id: selectedValue },
-                    dataType: 'json',
-                    success: function (response) {
-                        console.log('Calendar Response' + response)
-                        $('.calendar-wrap').removeClass('hidden');
-                        if (response.success && response.data && response.data[0]) {
-                            const workondayoff = response.data;
-                            const workingDays = response.data.map(item => item.Working_day);
-                            resetCalendar();
-                            new Calendar(workingDays, workondayoff);
-                        }
-                    },
-                });
+            if (selectedValue === "") {
+                selectedValue = 0;
+            } else {
+                selectedValue = selectedValue;
             }
+            console.log('selectedValue', selectedValue);
+            $.ajax({
+                url: '/get/vendor/get_booking_calender',
+                type: 'GET',
+                data: { vendor_id: selectedValue },
+                dataType: 'json',
+                success: function (response) {
+                    console.log('Calendar Response' + JSON.stringify(response))
+                    $('.calendar-wrap').removeClass('hidden');
+                    if (response.success === true && response.data && response.data[0]) {
+                        const workondayoff = response.data;
+                        const workingDays = response.data.map(item => item.Working_day);
+                        resetCalendar();
+                        new Calendar(workingDays, workondayoff);
+                    } else {
+                        const workondayoff = 0;
+                        const workingDays = 0;
+
+                        // Reset the calendar before initializing it
+                        resetCalendar();
+
+                        // Initialize the calendar with the working days and days off
+                        new Calendar(workingDays, workondayoff);
+
+                    }
+                },
+            });
         });
 
         // Calendar Class
@@ -292,7 +306,7 @@
                         vendorid: vendorId,
                     },
                     success: function (response) {
-                        
+
                         console.log('success response' + JSON.stringify(response));
 
                         let sessionsHTML = '';
