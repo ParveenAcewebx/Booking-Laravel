@@ -90,7 +90,7 @@ class ServiceController extends Controller
             'gallery.*'              => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:2048',
             'status'                 => 'required|in:0,1',
             'price'                  => 'nullable|numeric',
-            'currency'               => 'nullable|string|max:5',
+            // 'currency'               => 'nullable|string|max:5',
             'appointment_status'     => 'nullable|in:0,1',
             'cancelling_unit'        => 'required|in:hours,days',
             'cancelling_value'       => 'required|integer',
@@ -126,10 +126,11 @@ class ServiceController extends Controller
                 $gallery[] = $file->store('galleries', 'public');
             }
         }
-
+        // currency
         $data['gallery'] = json_encode(array_values($gallery));
         $data['payment__is_live'] = $request->has('payment__is_live') ? 1 : 0;
         $data['duration'] = $request->duration;
+        $data['currency'] = $request->currency;
 
         Service::create($data);
         // $lastServiceId = $service->id;

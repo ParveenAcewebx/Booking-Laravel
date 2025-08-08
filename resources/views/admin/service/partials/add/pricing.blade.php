@@ -3,7 +3,7 @@
         <label>Currency</label>
         <select name="currency" class="form-control select-user">
             @foreach($currencies as $code => $currency)
-                <option value="{{ $code }}">{{ $code }}</option>
+                <option value="{{ $currency['symbol'] }}">{{ $code }}</option>
             @endforeach
         </select>
     </div>
