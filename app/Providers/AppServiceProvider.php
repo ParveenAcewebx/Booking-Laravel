@@ -24,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Shortcode::register('services', function ($shortcodeAttrs, $class) {
             $services = Service::all();
+             $c = $class;
             if ($services->isEmpty() || $services->every(function ($service) {
                 return $service->status !== 1;
             })) {
@@ -136,11 +137,18 @@ class AppServiceProvider extends ServiceProvider
                     <div class="availibility p-4 m-2 border border-gray-300 shadow-md rounded-lg hidden">
                     <div class="timings"></div>
                     </div>
-                </div>
-                <button type="button" class="remove-all-slots hidden bg-red-600 text-white p-2 float-right m-3 rounded mt-3">
-                    Remove All
-                </button>
-                <div class="slot-list-wrapper space-y-2">
+                </div>';
+                if ($c['hidden'] === 'd-none') {
+                    $servicesForm .= '<div class="d-flex justify-content-end"><button type="button" class="remove-all-slots text-white p-2 m-1 bg-danger border-danger d-none">
+                        Remove All
+                    </button></div>';
+                } else {
+                    $servicesForm .= '<button type="button" class="remove-all-slots hidden bg-red-600 text-white p-2 float-right m-3 rounded mt-3">
+                        Remove All
+                    </button>';
+                }
+            
+               $servicesForm .='<div class="slot-list-wrapper space-y-2">
                 <!-- slot items go here -->
             </div>';
             return $servicesForm;

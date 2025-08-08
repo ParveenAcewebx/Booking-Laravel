@@ -335,6 +335,7 @@
                                 data-price="${price}"
                                 data-start="${staff.day_start}"
                                 data-end="${staff.day_end}"
+                                data-id="${staff.id}"
                             >
                                 <input type="hidden" name="staff_id" value="${staff.id}">
                                 <p class="text-sm mb-1 font-medium text-gray-700">${staff.day_start} - ${staff.day_end}</p>
@@ -357,7 +358,7 @@
                         }
 
                         $('.availibility').html(sessionsHTML);
-                        bindSlotClickEvent(); // ✨ Important
+                        bindSlotClickEvent();
                     },
                     error: function () {
                         alert('Error fetching session details');
@@ -386,12 +387,12 @@
                 const price = $(this).data('price');
                 const start = $(this).data('start');
                 const end = $(this).data('end');
-
-                AppendSlotBoxOnce(date, price, start, end);
+                const id = $(this).data('id');
+                AppendSlotBoxOnce(date, price, start, end,id);
             });
         }
 
-        function AppendSlotBoxOnce(date, price, start, end) {
+        function AppendSlotBoxOnce(date, price, start, end,id) {
             const $wrapper = $('.slot-list-wrapper');
             const uniqueKey = `${date}-${start}-${end}`;
             const exists = $wrapper.find(`[data-slot="${uniqueKey}"]`).length;
@@ -402,15 +403,14 @@
             <div class="slot-item flex justify-between items-center gap-4 border border-gray-300 rounded-md p-3 bg-white shadow-sm text-sm w-full sm:w-full" data-slot="${uniqueKey}">
                 <div class="font-medium text-gray-800 flex-1">
                     <div>${date}</div>
+                    <input type='hidden' name='staff_id' value = '${id}'>
                     <div class="text-xs text-gray-500">${start} → ${end}</div>
                 </div>
                 <div class="text-green-600 font-semibold whitespace-nowrap">${price}</div>
-                <div class="text-red-500 font-bold cursor-pointer remove-slot ml-auto">&#10006;</div>
-            </div>
-        `;
+                <div class="text-red-500 cursor-pointer remove-slot ml-auto">&#10006;</div>
+            </div>`;
                 $wrapper.append(slotHTML);
             }
-
             toggleRemoveAllButton();
         }
 

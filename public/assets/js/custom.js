@@ -1644,11 +1644,13 @@ function get_services_staff(selectedvalue){
 
                         let sessionsHTML = '';
                         if (response && response.staffdata.length > 0) {
+                             const formattedDate = response.date;
+                             const price = `${response.serviceCurrency} ${response.price}`;
                             $('.availibility').removeClass('d-none');
                             const date = response.date;
 
                             sessionsHTML += `<div class="date-section mb-3">
-                                  <h5 class="date-header text-lg font-semibold mb-2">${date}</h5>
+                                  <h5 class="date-header text-lg font-semibold mb-2">${formattedDate}</h5>
                                     <div class="d-flex gap-4 pb-2 overflow-auto mx-auto max-w-800px" style="scrollbar-width: thin;">
                                     <div class="d-flex gap-4 pb-2 w-max min-w-full" style="-ms-overflow-style: none; scrollbar-width: thin;">`;
 
@@ -1658,7 +1660,11 @@ function get_services_staff(selectedvalue){
 
                                 if (firstSlot && lastSlot) {
                                     sessionsHTML += `
-                                <div class="shadow-lg rounded-lg p-2 bg-white border border-gray-300 m-2"style="min-width: 170px; max-width: 100%;">
+                                <div class="rounded-lg p-2 bg-white border border-gray-300 m-2 slot-card"style="min-width: 170px; max-width: 100%;" 
+                                data-date="${formattedDate}" 
+                                data-price="${price}"
+                                data-start="${staff.day_start}"
+                                data-end="${staff.day_end}">
                                     <input type="hidden" name="staff_id" value="${staff.id}">
                                     <p class="text-sm mb-1 font-medium text-gray-700">${staff.day_start} - ${staff.day_end}</p>
                                     <p class="text-sm text-gray-600 m-0">Slots: ${staff.slots.length}</p>
@@ -1675,11 +1681,9 @@ function get_services_staff(selectedvalue){
                         } else {
                             sessionsHTML = `<p class="text-sm text-red-500">No available slots found for this date.</p>`;
                         }
-
-                        const availabilityDiv = document.querySelector('.availibility');
-                        if (availabilityDiv) {
-                            availabilityDiv.innerHTML = sessionsHTML;
-                        }
+                        
+                        $('.availibility').html(sessionsHTML);
+                        bindSlotClickEvent();
                     }
                     ,
                     error: function () {
@@ -1700,4 +1704,54 @@ function get_services_staff(selectedvalue){
 
         return label;
     }
+    function bindSlotClickEvent() {
+            $('.slot-card').off('click').on('click', function () {
+                const date = $(this).data('date');
+                const price = $(this).data('price');
+                const start = $(this).data('start');
+                const end = $(this).data('end');
+
+                AppendSlotBoxOnce(date, price, start, end);
+            });
+        }
+          function AppendSlotBoxOnce(date, price, start, end) {
+            const $wrapper = $('.slot-list-wrapper');
+            const uniqueKey = `${date}-${start}-${end}`;
+            const exists = $wrapper.find(`[data-slot="${uniqueKey}"]`).length;
+
+            if (!exists) {
+                $('.remove-all-slots').removeClass('d-none');
+                const slotHTML = `
+            <div class="slot-item d-flex align-items-center justify-content-between gap-4 border border-gray-300 rounded-md p-3 bg-white shadow-sm text-sm w-full sm:w-full" data-slot="${uniqueKey}">
+            <div class="d-flex w-100 justify-content-between align-items-center mr-2">    
+            <div class="font-medium text-gray-800 flex-1">
+                    <div>${date}</div>
+                    <div class="text-xs text-gray-500">${start} → ${end}</div>
+                </div>
+                <div class="text-success font-semibold whitespace-nowrap">${price}</div>
+                </div>
+                <div class="text-danger font-bold cursor-pointer remove-slot ml-auto">&#10006;</div>
+            </div>
+        `;
+                $wrapper.append(slotHTML);
+            }
+
+            toggleRemoveAllButton();
+        }
+
+        function toggleRemoveAllButton() {
+            const hasSlots = $('.slot-list-wrapper .slot-item').length > 0;
+            $('.remove-all-slots').toggleClass('d-none', !hasSlots);
+        }
+
+        $(document).on('click', '.remove-slot', function () {
+            $(this).closest('.slot-item').remove();
+            toggleRemoveAllButton();
+        });
+
+        // Remove all slots
+        $(document).on('click', '.remove-all-slots', function () {
+            $('.slot-list-wrapper').empty();
+            toggleRemoveAllButton(); // ✅ Call this again after clearing
+        });
 }

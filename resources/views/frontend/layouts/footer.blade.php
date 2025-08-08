@@ -7,13 +7,13 @@
 
                 <a href="/" class="flex items-center space-x-3 text-xl font-semibold text-black dark:text-white">
                     @php
-                        $logo = get_setting('website_logo');
-                        $logoStoragePath = 'public/' . $logo; // Adjust if necessary
+                    $logo = get_setting('website_logo');
+                    $logoStoragePath = 'public/' . $logo; // Adjust if necessary
                     @endphp
                     @if ($logo && Storage::exists($logoStoragePath))
-                        <img src="{{ asset('storage/' . $logo) }}" alt="MyBrand Logo" class="w-auto">
+                    <img src="{{ asset('storage/' . $logo) }}" alt="MyBrand Logo" class="w-auto">
                     @else
-                        <img src="{{ asset('assets/images/no-image-available.png') }}" alt="No Image" class="w-auto">
+                    <img src="{{ asset('assets/images/no-image-available.png') }}" alt="No Image" class="w-auto">
                     @endif
                 </a>
             </div>
@@ -81,7 +81,7 @@
                 </a>
                 <a class="size-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-white hover:bg-white/10 focus:outline-hidden focus:bg-white/10 disabled:opacity-50 disabled:pointer-events-none" href="{{ get_setting('linkedin'); }}" target="_blank" rel="noopener noreferrer">
                     <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M0 1.146C0 .513.324 0 .725 0h14.55c.4 0 .725.513.725 1.146v13.708c0 .633-.325 1.146-.725 1.146H.725A.723.723 0 0 1 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.209c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.358.54-1.358 1.248 0 .694.52 1.248 1.327 1.248h.015zm4.908 8.209V9.359c0-.213.015-.426.08-.578.174-.426.571-.868 1.238-.868.873 0 1.222.655 1.222 1.615v3.866h2.401V9.25c0-2.22-1.185-3.252-2.767-3.252-1.276 0-1.845.701-2.165 1.194v.026h-.015a5.33 5.33 0 0 1 .015-.026V6.169h-2.4c.03.7 0 7.225 0 7.225h2.4z"/>
+                        <path d="M0 1.146C0 .513.324 0 .725 0h14.55c.4 0 .725.513.725 1.146v13.708c0 .633-.325 1.146-.725 1.146H.725A.723.723 0 0 1 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.209c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.358.54-1.358 1.248 0 .694.52 1.248 1.327 1.248h.015zm4.908 8.209V9.359c0-.213.015-.426.08-.578.174-.426.571-.868 1.238-.868.873 0 1.222.655 1.222 1.615v3.866h2.401V9.25c0-2.22-1.185-3.252-2.767-3.252-1.276 0-1.845.701-2.165 1.194v.026h-.015a5.33 5.33 0 0 1 .015-.026V6.169h-2.4c.03.7 0 7.225 0 7.225h2.4z" />
                     </svg>
                 </a>
                 <a class="size-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-white hover:bg-white/10 focus:outline-hidden focus:bg-white/10 disabled:opacity-50 disabled:pointer-events-none" href="{{ get_setting('x_twitter'); }}">
@@ -91,7 +91,7 @@
                 </a>
                 <a class="size-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-white hover:bg-white/10 focus:outline-hidden focus:bg-white/10 disabled:opacity-50 disabled:pointer-events-none" href="{{ get_setting('instagram'); }}" target="_blank" rel="noopener noreferrer">
                     <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M8 0C5.8 0 5.5.01 4.7.05 3.9.1 3.3.24 2.8.42c-.5.2-.9.44-1.3.84-.4.4-.64.8-.84 1.3-.18.5-.32 1.1-.37 1.9C.01 5.5 0 5.8 0 8c0 2.2.01 2.5.05 3.3.05.8.19 1.4.37 1.9.2.5.44.9.84 1.3.4.4.8.64 1.3.84.5.18 1.1.32 1.9.37.8.04 1.1.05 3.3.05s2.5-.01 3.3-.05c.8-.05 1.4-.19 1.9-.37.5-.2.9-.44 1.3-.84.4-.4.64-.8.84-1.3.18-.5.32-1.1.37-1.9.04-.8.05-1.1.05-3.3s-.01-2.5-.05-3.3c-.05-.8-.19-1.4-.37-1.9a3.284 3.284 0 0 0-.84-1.3c-.4-.4-.8-.64-1.3-.84-.5-.18-1.1-.32-1.9-.37C10.5.01 10.2 0 8 0zM8 1.5c2.1 0 2.4.01 3.2.05.7.04 1.1.18 1.4.3.4.15.7.33 1 .64.3.3.5.6.64 1 .12.3.26.7.3 1.4.04.8.05 1.1.05 3.2s-.01 2.4-.05 3.2c-.04.7-.18 1.1-.3 1.4a2.21 2.21 0 0 1-.64 1c-.3.3-.6.5-1 .64-.3.12-.7.26-1.4.3-.8.04-1.1.05-3.2.05s-2.4-.01-3.2-.05c-.7-.04-1.1-.18-1.4-.3a2.21 2.21 0 0 1-1-.64 2.21 2.21 0 0 1-.64-1c-.12-.3-.26-.7-.3-1.4C1.51 10.4 1.5 10.1 1.5 8s.01-2.4.05-3.2c.04-.7.18-1.1.3-1.4a2.21 2.21 0 0 1 .64-1c.3-.3.6-.5 1-.64.3-.12.7-.26 1.4-.3C5.6 1.51 5.9 1.5 8 1.5zM8 3.8a4.2 4.2 0 1 0 0 8.4 4.2 4.2 0 0 0 0-8.4zm0 6.9a2.7 2.7 0 1 1 0-5.4 2.7 2.7 0 0 1 0 5.4zm4.5-6.9a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                        <path d="M8 0C5.8 0 5.5.01 4.7.05 3.9.1 3.3.24 2.8.42c-.5.2-.9.44-1.3.84-.4.4-.64.8-.84 1.3-.18.5-.32 1.1-.37 1.9C.01 5.5 0 5.8 0 8c0 2.2.01 2.5.05 3.3.05.8.19 1.4.37 1.9.2.5.44.9.84 1.3.4.4.8.64 1.3.84.5.18 1.1.32 1.9.37.8.04 1.1.05 3.3.05s2.5-.01 3.3-.05c.8-.05 1.4-.19 1.9-.37.5-.2.9-.44 1.3-.84.4-.4.64-.8.84-1.3.18-.5.32-1.1.37-1.9.04-.8.05-1.1.05-3.3s-.01-2.5-.05-3.3c-.05-.8-.19-1.4-.37-1.9a3.284 3.284 0 0 0-.84-1.3c-.4-.4-.8-.64-1.3-.84-.5-.18-1.1-.32-1.9-.37C10.5.01 10.2 0 8 0zM8 1.5c2.1 0 2.4.01 3.2.05.7.04 1.1.18 1.4.3.4.15.7.33 1 .64.3.3.5.6.64 1 .12.3.26.7.3 1.4.04.8.05 1.1.05 3.2s-.01 2.4-.05 3.2c-.04.7-.18 1.1-.3 1.4a2.21 2.21 0 0 1-.64 1c-.3.3-.6.5-1 .64-.3.12-.7.26-1.4.3-.8.04-1.1.05-3.2.05s-2.4-.01-3.2-.05c-.7-.04-1.1-.18-1.4-.3a2.21 2.21 0 0 1-1-.64 2.21 2.21 0 0 1-.64-1c-.12-.3-.26-.7-.3-1.4C1.51 10.4 1.5 10.1 1.5 8s.01-2.4.05-3.2c.04-.7.18-1.1.3-1.4a2.21 2.21 0 0 1 .64-1c.3-.3.6-.5 1-.64.3-.12.7-.26 1.4-.3C5.6 1.51 5.9 1.5 8 1.5zM8 3.8a4.2 4.2 0 1 0 0 8.4 4.2 4.2 0 0 0 0-8.4zm0 6.9a2.7 2.7 0 1 1 0-5.4 2.7 2.7 0 0 1 0 5.4zm4.5-6.9a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
                     </svg>
                 </a>
             </div>
