@@ -82,7 +82,7 @@ class StaffController extends Controller
                                     <i class="feather icon-trash-2"></i>
                                  </button>';
                         } else {
-                            $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteStaff-' . $row->id . '">
+                            $btn .= '<form action="' . route('staff.destroy', [$row->id]) . '" method="POST" style="display:inline;" id="deleteStaff-' . $row->id . '">
                                     ' . csrf_field() . '
                                     <input type="hidden" name="_method" value="DELETE">
                                     <button type="button" onclick="return deleteStaff(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Staff">
@@ -392,21 +392,20 @@ class StaffController extends Controller
 
     public function destroy($id)
     {
+        // dd($id);
         $user = User::find($id);
-        $authuser_id = Auth::user()->id;
 
-        if ($authuser_id != $id) {
-            if ($user) {
-                $user->delete();
+        if ($user) {
+            $user->delete();
 
-                Staff::where('user_id', $id)->delete();
-                StaffServiceAssociation::where('staff_member', $id)->delete();
-                return response()->json(['success' => true]);
-            }
+            Staff::where('user_id', $id)->delete();
+            StaffServiceAssociation::where('staff_member', $id)->delete();
+            VendorStaffAssociation::where('user_id', $id)->delete();
+
+            return response()->json(['success' => true]);
+        } else {
 
             return response()->json(['success' => false, 'message' => 'User not found.']);
-        } else {
-            return response()->json(['success' => 'login', 'message' => 'Cannot delete logged-in user.']);
         }
     }
 }
