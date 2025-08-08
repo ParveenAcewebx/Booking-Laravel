@@ -139,6 +139,7 @@ class BookingTemplateController extends Controller
 
     public function templateAdd()
     {
+        $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by', 'slug'])->get();
         $allusers  = $this->allUsers;
         $loginId = getOriginalUserId();
         $loginUser = null;
@@ -146,6 +147,18 @@ class BookingTemplateController extends Controller
         if ($loginId) {
             $loginUser = User::find($loginId);
         }
-        return view('admin.booking-template.add', compact('allusers', 'loginUser'));
+        return view('admin.booking-template.add', compact('allusers', 'loginUser', 'query'));
+    }
+    
+    public function copytemplate(Request $request)
+    {
+        if ($request->has('templateid')) {
+            $templateid = $request['templateid'];
+            $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by', 'slug', 'data'])->where('id', $templateid)->first();
+            if ($query) {
+                return response()->json([$query->data]);
+            }
+            return response()->json([]);
+        }
     }
 }

@@ -32,6 +32,39 @@
 								</div>
 							</div>
 						</div>
+						<div class="col-sm-8">
+							<div class="form-group">
+								<div class="page-header-titles align-items-center float-right">
+										<button class="btn btn-primary p-2" data-toggle="modal" data-target="#copyTemplateModal">Copy Template</button>
+								</div>
+							</div>
+
+							<!-- Modal for Copy Template -->
+							<div class="modal fade" id="copyTemplateModal" tabindex="-1" role="dialog" aria-labelledby="copyTemplateModalLabel" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="copyTemplateModalLabel">Copy Template</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<select class="form-control"name="Copy_template_id" id="Copy_template_id">
+												<option value=""disabled selected>---Select Template---</option>
+												@foreach($query as $template)
+													<option value="{{ $template->id }}">{{ $template->template_name }}</option>
+												@endforeach
+											</select>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+											<button type="button" class="btn btn-primary"id="copyTemplateBtn">Copy Template</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 					<input type="hidden" name="bookingTemplates" id="bookingTemplates" class="form-control" style="margin-top:178px;margin-left: 276px;">
 					<input type="hidden" name="bookingTemplates" id="bookingaddpage" class="form-control" style="margin-top:178px;margin-left: 276px;">

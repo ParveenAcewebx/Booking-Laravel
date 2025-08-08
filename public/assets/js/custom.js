@@ -401,32 +401,17 @@ function deleteService(id, event) {
         }
     });
 }
-
-//Booking Template Builder
-jQuery(function ($) {
-    const templateSelect = document.getElementById("bookingTemplates");
-    const fbEditor = document.getElementById("build-wrap");
+$(function ($) {
+    const templateSelect = $("#bookingTemplates");
+    const fbEditor = $("#build-wrap");
     let formBuilderInstance;
 
-    var newfield = [
-        {
-            label: "Next Step",
-            attrs: {
-                type: "newsection",
-            },
-            required: false,
-            icon: '<i class="fa-solid fa-section"></i>',
-        },
-        {
-            label: "ShortCode",
-            attrs: {
-                type: "shortcodeblock",
-            },
-            icon: '<i class="fa fa-code"></i>',
-        },
+    const newfield = [
+        { label: "Next Step", attrs: { type: "newsection" }, required: false, icon: '<i class="fa-solid fa-section"></i>' },
+        { label: "ShortCode", attrs: { type: "shortcodeblock" }, icon: '<i class="fa fa-code"></i>' },
     ];
 
-    var temp = {
+    const temp = {
         newsection: function (fieldData) {
             return {
                 field: `
@@ -438,98 +423,53 @@ jQuery(function ($) {
                         </div>
                     </div>`,
                 onRender: function () {
-                    var currentStep = 0;
-                    $(document).on(
-                        "click",
-                        `#${fieldData.name} .next-btn`,
-                        function () {
-                            currentStep++;
-                            showSection(currentStep);
-                        }
-                    );
-                    $(document).on(
-                        "click",
-                        `#${fieldData.name} .prev-btn`,
-                        function () {
-                            currentStep--;
-                            showSection(currentStep);
-                        }
-                    );
+                    let currentStep = 0;
+                    const $section = $(`#${fieldData.name}`);
+                    $section.on("click", ".next-btn", () => showSection(++currentStep));
+                    $section.on("click", ".prev-btn", () => showSection(--currentStep));
 
                     function showSection(step) {
-                        var allSections = $(".section");
-                        var totalSections = allSections.length;
-                        allSections.hide();
-                        if (step >= 0 && step < totalSections) {
-                            $(allSections[step]).show();
-                        }
-                        if (step === 0) {
-                            $(`#${fieldData.name} .prev-btn`).hide();
-                        } else {
-                            $(`#${fieldData.name} .prev-btn`).show();
-                        }
-                        if (step === totalSections - 1) {
-                            $(`#${fieldData.name} .next-btn`).hide();
-                        } else {
-                            $(`#${fieldData.name} .next-btn`).show();
-                        }
+                        const allSections = $(".section");
+                        allSections.hide().eq(step).show();
+                        $section.find(".prev-btn").toggle(step > 0);
+                        $section.find(".next-btn").toggle(step < allSections.length - 1);
                     }
 
                     showSection(currentStep);
                 },
             };
         },
-
+        
         shortcodeblock: function (fieldData) {
             return {
-                field: `
-            <div class="shortcode-block">
-                <select 
-                    name="shortcode" 
-                    class="form-control shortcode-select" 
-                    data-placeholder="Select a shortcode"
-                >
-                    <option></option>
-                </select>
-            </div>
-        `,
+                field: `<div class="shortcode-block">
+                            <select name="shortcode" class="form-control shortcode-select" data-placeholder="Select a shortcode">
+                                <option></option>
+                            </select>
+                        </div>`,
                 onRender: function () {
-                    const $select = $('.shortcode-select:last'); // Only target the most recently rendered
-
-                    // Fetch shortcodes from your backend
+                    const $select = $(".shortcode-select:last");
                     $.ajax({
                         url: '/admin/shortcodes/list',
                         type: 'GET',
                         dataType: 'json',
-                        success: function (shortcodes) {
-                            $select.empty().append(`<option></option>`); // clear & add placeholder
-
-                            shortcodes.forEach(function (code) {
+                        success: (shortcodes) => {
+                            $select.empty().append("<option></option>");
+                            shortcodes.forEach(code => {
                                 const isSelected = fieldData.value === `[${code}]`;
-                                $select.append(
-                                    new Option(`[${code}]`, `[${code}]`, isSelected, isSelected)
-                                );
+                                $select.append(new Option(`[${code}]`, `[${code}]`, isSelected, isSelected));
                             });
-
-                            // Init select2 after options loaded
-                            $select.select2({
-                                placeholder: "Select a shortcode",
-                                allowClear: true,
-                                width: '100%'
-                            });
+                            $select.select2({ placeholder: "Select a shortcode", allowClear: true, width: '100%' });
                         },
-                        error: function () {
-                            console.error("Failed to load shortcodes.");
-                        }
+                        error: () => console.error("Failed to load shortcodes."),
                     });
                 },
                 onSave: function (evt, field) {
                     const input = $(field).find('select[name="shortcode"]');
-                    fieldData.value = input.val(); // Save selected shortcode
+                    fieldData.value = input.val();
                 },
             };
         }
-
     };
 
     const formBuilder = $(fbEditor).formBuilder({
@@ -541,150 +481,134 @@ jQuery(function ($) {
 
     formBuilder.promise.then(function (fb) {
         formBuilderInstance = fb;
-
-        if (
-            $("#bookingaddpage").length === 0 &&
-            $("#bookingTemplates").length > 0
-        ) {
-            const selectedValue =
-                document.getElementById("bookingTemplates").value;
-            const parsedValue = JSON.parse(selectedValue);
-
-            parsedValue.forEach((item) => {
-                if (item.required === "false") item.required = false;
-                if (item.toggle === "false") item.toggle = false;
-                if (item.access === "false") item.access = false;
-                if (item.inline === "false") item.inline = false;
+        if ($("#bookingaddpage").length === 0 && templateSelect.length > 0) {
+            const selectedValue = JSON.parse(templateSelect.val());
+            selectedValue.forEach(item => {
+                Object.keys(item).forEach(key => {
+                    if (item[key] === "false") item[key] = false;
+                });
             });
-
-            fb.actions.setData(parsedValue);
+            fb.actions.setData(selectedValue);
         }
     });
 
-    $(document)
-        .off("click", ".save-template")
-        .on("click", ".save-template", function (e) {
-            e.preventDefault();
+    $(document).on("click", ".save-template", function (e) {
+        e.preventDefault();
+        const inputElement = $("#bookingTemplatesname");
+        const inputValue = inputElement.val().trim();
+        const errorMessageElement = $("#bookingTemplatesname-error");
 
-            var inputElement = document.getElementById("bookingTemplatesname");
-            var inputValue = inputElement.value.trim();
-            var errorMessageElement = document.getElementById(
-                "bookingTemplatesname-error"
-            );
+        if (errorMessageElement.length) errorMessageElement.remove();
 
-            if (errorMessageElement) {
-                errorMessageElement.remove();
-            }
+        if (!inputValue) {
+            $("<span id='bookingTemplatesname-error' style='color: red;'>The Template name cannot be empty.</span>")
+                .appendTo(inputElement.parent());
+            inputElement.focus();
+            return;
+        }
 
-            if (!inputValue) {
-                var errorMessage = document.createElement("span");
-                errorMessage.id = "bookingTemplatesname-error";
-                errorMessage.textContent = "The Template name cannot be empty.";
-                errorMessage.style.color = "red";
-                inputElement.parentNode.appendChild(errorMessage);
-                inputElement.focus();
-                return;
-            }
+        if (!formBuilderInstance) return console.error("Form Builder is not initialized yet.");
 
-            if (!formBuilderInstance) {
-                console.error("Form Builder is not initialized yet.");
-                return;
-            }
+        const data = formBuilderInstance.actions.getData();
+        const templateid = $("#templateid").val() || "";
+        const csrfToken = $('meta[name="csrf-token"]').attr("content");
 
-            var data = formBuilderInstance.actions.getData();
-            var templateid = document.getElementById("templateid")
-                ? document.getElementById("templateid").value
-                : "";
-            var csrfToken = document
-                .querySelector('meta[name="csrf-token"]')
-                .getAttribute("content");
-
-            var templateData = {
-                data: data,
-                templatename: inputValue,
-                templateid: templateid,
-                _token: csrfToken,
-            };
-
-            $.ajax({
-                url: "/admin/template/save",
-                method: "POST",
-                data: templateData,
-                success: function () {
-                    window.location.href = window.location.origin + "/admin/template";
-                },
-                error: function (xhr) {
-                    console.error(xhr.responseText);
-                },
-            });
+        $.ajax({
+            url: "/admin/template/save",
+            method: "POST",
+            data: { data, templatename: inputValue, templateid, _token: csrfToken },
+            success: () => window.location.href = `${window.location.origin}/admin/template`,
+            error: (xhr) => console.error(xhr.responseText),
         });
+    });
 
     $(window).on("load", function () {
         $("#bookingTemplates").click();
     });
 
     function setCookie(cname, cvalue, exdays) {
-        var d = new Date();
+        const d = new Date();
         d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
-        var expires = "expires=" + d.toGMTString();
-        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        document.cookie = `${cname}=${cvalue};expires=${d.toGMTString()};path=/`;
     }
 
     function getCookie(cname) {
-        var name = cname + "=";
-        var decodedCookie = decodeURIComponent(document.cookie);
-        var ca = decodedCookie.split(";");
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) === " ") {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) === 0) {
-                return c.substring(name.length, c.length);
-            }
+        const name = `${cname}=`;
+        const decodedCookie = decodeURIComponent(document.cookie);
+        const ca = decodedCookie.split(";");
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i].trim();
+            if (c.indexOf(name) === 0) return c.substring(name.length);
         }
         return "";
     }
 
     function checkCookie() {
-        var ticks = getCookie("modelopen");
+        let ticks = getCookie("modelopen");
         if (ticks !== "") {
             ticks++;
             setCookie("modelopen", ticks, 1);
-            if (ticks === "2" || ticks === "1" || ticks === "0") {
-                $("#exampleModalCenter").modal();
-            }
+            if (["0", "1", "2"].includes(ticks)) $("#exampleModalCenter").modal();
         } else {
             $("#exampleModalCenter").modal();
-            ticks = 1;
-            setCookie("modelopen", ticks, 1);
+            setCookie("modelopen", "1", 1);
         }
-
-        $("#exampleModal").on("show.bs.modal", function (event) {
-            var button = $(event.relatedTarget);
-            var recipient = button.data("whatever");
-            var modal = $(this);
-            modal.find(".modal-title").text("New message to " + recipient);
-            modal.find(".modal-body input").val(recipient);
-        });
-
-        $(window).on("load", function () {
-            $("#mymodelsformessage").click();
-        });
     }
 
-    $("#exampleModal").on("show.bs.modal", function (event) {
-        var button = $(event.relatedTarget);
-        var recipient = button.data("whatever");
-        var modal = $(this);
-        modal.find(".modal-title").text("New message to " + recipient);
+    $(document).on("show.bs.modal", "#exampleModal", function (event) {
+        const button = $(event.relatedTarget);
+        const recipient = button.data("whatever");
+        const modal = $(this);
+        modal.find(".modal-title").text(`New message to ${recipient}`);
         modal.find(".modal-body input").val(recipient);
     });
 
-    $(window).on("load", function () {
-        $("#mymodelsformessage").click();
+    $(document).on("click", "#copyTemplateBtn", function() {
+        const copytemplateid = $("#Copy_template_id").val();
+        if (copytemplateid) gettemplatedatafield(copytemplateid);
     });
+
+    function gettemplatedatafield(copytemplateid) {
+        $.ajax({
+            url: '/admin/get/copytemplateid', 
+            type: 'GET',
+            data: { templateid: copytemplateid },
+            dataType: 'json',
+            success: (response) => {
+                if (response?.length > 0) {
+                    const templateFields = JSON.parse(response[0]);
+                    addFieldsToBuilder(templateFields);
+                    $('#copyTemplateModal').modal('hide');
+                }
+            },
+            error: (xhr) => console.error('Error fetching template data:', xhr.responseText),
+        });
+    }
+
+    function addFieldsToBuilder(templateFields) {
+        if (fbEditor.find('.form-builder').length) fbEditor.empty();
+
+        const formBuilder = $(fbEditor).formBuilder({
+            fields: newfield,
+            templates: temp,
+            controlPosition: "left",
+            disableFields: ["autocomplete", "button"],
+        });
+
+        formBuilder.promise.then(function (fb) {
+            formBuilderInstance = fb;
+
+            templateFields.forEach(fieldData => {
+                Object.keys(fieldData).forEach(key => {
+                    if (fieldData[key] === "false") fieldData[key] = false;
+                });
+                formBuilderInstance.actions.addField(fieldData);
+            });
+        });
+    }
+
 });
+
 
 // Add Booking
 document.addEventListener("DOMContentLoaded", function () {

@@ -63,7 +63,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     Route::post('/{id}/switch', [UserController::class, 'switchUser'])->name('user.switch');
     Route::post('/switch-back', [UserController::class, 'switchBack'])->name('user.switch.back');
     Route::get('/booking/load-template-html/{id}', [BookingController::class, 'loadTemplateHTML']);
-
+    Route::get('/get/copytemplateid', [BookingTemplateController::class, 'copytemplate']);
     // Routes for editing (edit users, edit templates, etc.)
     Route::middleware('permission:view users')->group(function () {
         Route::get('/user', [UserController::class, 'index'])->name('user.list');
