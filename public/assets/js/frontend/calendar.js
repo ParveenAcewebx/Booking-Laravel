@@ -38,6 +38,8 @@
                 data: { vendor_id: selectedValue },
                 dataType: 'json',
                 success: function (response) {
+                    $('.availibility').addClass('hidden');
+
                     console.log('Calendar Response' + JSON.stringify(response))
                     $('.calendar-wrap').removeClass('hidden');
                     if (response.success === true && response.data && response.data[0]) {

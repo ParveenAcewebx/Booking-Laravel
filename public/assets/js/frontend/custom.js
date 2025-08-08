@@ -179,6 +179,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function get_services_staff() {
         var serviceId = ServiceStaffCode.value;
+        $('.availibility, .calendar-wrap').addClass('hidden');
         $.ajax({
             url: '/get/services/staff',
             type: 'GET',
