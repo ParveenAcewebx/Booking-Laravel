@@ -296,9 +296,8 @@
                 if (!date) return;
 
                 const serviceId = document.querySelector('.get_service_staff').value;
-                console.log('serviceId' + serviceId);
                 const vendorId = document.querySelector('.service_vendor_form').value;
-                console.log('vendorId' + vendorId);
+
                 $.ajax({
                     url: '/get/slotbooked',
                     method: 'GET',
@@ -313,63 +312,122 @@
                         let sessionsHTML = '';
                         if (response && response.staffdata.length > 0) {
                             $('.availibility').removeClass('hidden');
-                            const date = response.date;
+
+                            const formattedDate = response.date;
+                            const price = `${response.serviceCurrency} ${response.price}`;
 
                             sessionsHTML += `
-            <div class="date-section mb-3">
-                <h5 class="date-header text-lg font-semibold mb-2">${date}</h5>
-                <div class="overflow-x-auto scrollbar-thin" style="scrollbar-width: thin;">
-                    <div class="flex gap-4 pb-2 w-max min-w-full" style="-ms-overflow-style: none; scrollbar-width: thin;">
-        `;
+                    <div class="date-section mb-3">
+                        <h5 class="date-header text-lg font-semibold mb-2">${formattedDate}</h5>
+                        <div class="overflow-x-auto scrollbar-thin">
+                            <div class="flex gap-4 pb-2 w-max min-w-full">
+                `;
 
-                            response.staffdata.forEach((staff, index) => {
+                            response.staffdata.forEach((staff) => {
                                 const firstSlot = staff.slots[0];
                                 const lastSlot = staff.slots[staff.slots.length - 1];
 
                                 if (firstSlot && lastSlot) {
                                     sessionsHTML += `
-                    <div class="min-w-[170px] bg-white border border-gray-300 rounded-lg p-4 shadow-sm">
-                        <input type="hidden" name="staff_id" value="${staff.id}">
-                        <p class="text-sm mb-1 font-medium text-gray-700">${staff.day_start} - ${staff.day_end}</p>
-                        <p class="text-sm text-gray-600">Slots: ${staff.slots.length}</p>
-                        <p class="text-sm text-gray-600">Duration: ${formatDuration(response.duration)}</p>
-                        <p class="text-sm text-gray-600">Price: ${response.serviceCurrency} ${response.price}</p>
-                    </div>`;
+                            <div 
+                                class="min-w-[200px] bg-white border border-gray-300 rounded-lg p-4 shadow-sm slot-card cursor-pointer transition hover:shadow-md"
+                                data-date="${formattedDate}" 
+                                data-price="${price}"
+                                data-start="${staff.day_start}"
+                                data-end="${staff.day_end}"
+                            >
+                                <input type="hidden" name="staff_id" value="${staff.id}">
+                                <p class="text-sm mb-1 font-medium text-gray-700">${staff.day_start} - ${staff.day_end}</p>
+                                <p class="text-sm text-gray-600">Slots: ${staff.slots.length}</p>
+                                <p class="text-sm text-gray-600">Duration: ${formatDuration(response.duration)}</p>
+                                <p class="text-sm text-gray-600">Price: ${price}</p>
+                            </div>
+                        `;
                                 }
                             });
 
                             sessionsHTML += `
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>`;
+                    
+                `;
                         } else {
                             sessionsHTML = `<p class="text-sm text-red-500">No available slots found for this date.</p>`;
                         }
 
-                        const availabilityDiv = document.querySelector('.availibility');
-                        if (availabilityDiv) {
-                            availabilityDiv.innerHTML = sessionsHTML;
-                        }
-                    }
-                    ,
+                        $('.availibility').html(sessionsHTML);
+                        bindSlotClickEvent(); // ✨ Important
+                    },
                     error: function () {
                         alert('Error fetching session details');
                     }
                 });
             }
+
         }
 
+        function formatDuration(minutes) {
+            console.log(minutes);
+            const hrs = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            let label = '';
+
+            if (hrs > 0) label += hrs + ' hour' + (hrs > 1 ? 's' : '');
+            if (hrs > 0 && mins > 0) label += ' ';
+            if (mins > 0) label += mins + ' minutes';
+
+            return label;
+        }
+
+        function bindSlotClickEvent() {
+            $('.slot-card').off('click').on('click', function () {
+                const date = $(this).data('date');
+                const price = $(this).data('price');
+                const start = $(this).data('start');
+                const end = $(this).data('end');
+
+                AppendSlotBoxOnce(date, price, start, end);
+            });
+        }
+
+        function AppendSlotBoxOnce(date, price, start, end) {
+            const $wrapper = $('.slot-list-wrapper');
+            const uniqueKey = `${date}-${start}-${end}`;
+            const exists = $wrapper.find(`[data-slot="${uniqueKey}"]`).length;
+
+            if (!exists) {
+                $('.remove-all-slots').removeClass('hidden');
+                const slotHTML = `
+            <div class="slot-item flex justify-between items-center gap-4 border border-gray-300 rounded-md p-3 bg-white shadow-sm text-sm w-full sm:w-full" data-slot="${uniqueKey}">
+                <div class="font-medium text-gray-800 flex-1">
+                    <div>${date}</div>
+                    <div class="text-xs text-gray-500">${start} → ${end}</div>
+                </div>
+                <div class="text-green-600 font-semibold whitespace-nowrap">${price}</div>
+                <div class="text-red-500 font-bold cursor-pointer remove-slot ml-auto">&#10006;</div>
+            </div>
+        `;
+                $wrapper.append(slotHTML);
+            }
+
+            toggleRemoveAllButton();
+        }
+
+        function toggleRemoveAllButton() {
+            const hasSlots = $('.slot-list-wrapper .slot-item').length > 0;
+            $('.remove-all-slots').toggleClass('hidden', !hasSlots);
+        }
+
+        $(document).on('click', '.remove-slot', function () {
+            $(this).closest('.slot-item').remove();
+            toggleRemoveAllButton();
+        });
+
+        // Remove all slots
+        $(document).on('click', '.remove-all-slots', function () {
+            $('.slot-list-wrapper').empty();
+            toggleRemoveAllButton(); // ✅ Call this again after clearing
+        });
     });
-    function formatDuration(minutes) {
-        console.log(minutes);
-        const hrs = Math.floor(minutes / 60);
-        const mins = minutes % 60;
-        let label = '';
-
-        if (hrs > 0) label += hrs + ' hour' + (hrs > 1 ? 's' : '');
-        if (hrs > 0 && mins > 0) label += ' ';
-        if (mins > 0) label += mins + ' minutes';
-
-        return label;
-    }
 })(jQuery);

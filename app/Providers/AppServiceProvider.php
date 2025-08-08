@@ -55,7 +55,7 @@ class AppServiceProvider extends ServiceProvider
             $servicesForm .= "</div>";
 
             $servicesForm .=  '<div class="calendar-wrap hidden d-none">
-                    <div class="w-full flex items-center justify-between">
+                    <div class="w-full flex items-center justify-between d-flex w-100 justify-content-between">
                         <div class="pre-button flex items-center justify-center">
                             <i class="fa fa-chevron-left"></i>
                         </div>
@@ -136,9 +136,13 @@ class AppServiceProvider extends ServiceProvider
                     <div class="availibility p-4 m-2 border border-gray-300 shadow-md rounded-lg hidden">
                     <div class="timings"></div>
                     </div>
-                </div>';
-
-
+                </div>
+                <button type="button" class="remove-all-slots hidden bg-red-600 text-white p-2 float-right m-3 rounded mt-3">
+                    Remove All
+                </button>
+                <div class="slot-list-wrapper space-y-2">
+                <!-- slot items go here -->
+            </div>';
             return $servicesForm;
         });
 
