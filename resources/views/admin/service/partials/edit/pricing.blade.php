@@ -16,5 +16,6 @@
              value="{{$service->price}}"
              oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/^(\d+(\.\d{0,3})?).*$/, '$1');"
              placeholder="e.g., 100 or 100.50">
+             
      </div>
  </div>
