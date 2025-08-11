@@ -156,7 +156,11 @@ class BookingTemplateController extends Controller
             $templateid = $request['templateid'];
             $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by', 'slug', 'data'])->where('id', $templateid)->first();
             if ($query) {
-                return response()->json([$query->data]);
+                return response()->json([
+                    'template_name' => $query->template_name,
+                    'data' => $query->data
+                ]);
+
             }
             return response()->json([]);
         }

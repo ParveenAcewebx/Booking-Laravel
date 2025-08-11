@@ -575,8 +575,10 @@ $(function ($) {
             data: { templateid: copytemplateid },
             dataType: 'json',
             success: (response) => {
-                if (response?.length > 0) {
-                    const templateFields = JSON.parse(response[0]);
+                if (response['data']?.length > 0) {
+                    const templateFields = JSON.parse(response['data']);
+                      const templatename = response['template_name'];
+                   $('#bookingTemplatesname').val(templatename+'--copy');
                     addFieldsToBuilder(templateFields);
                     $('#copyTemplateModal').modal('hide');
                 }
