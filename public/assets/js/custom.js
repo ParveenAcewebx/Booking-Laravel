@@ -1660,7 +1660,7 @@ function get_services_staff(selectedvalue){
 
                                 if (firstSlot && lastSlot) {
                                     sessionsHTML += `
-                                <div class="rounded-lg p-2 bg-white border border-gray-300 m-2 slot-card"style="min-width: 170px; max-width: 100%;" 
+                                <div class="rounded-lg p-2 bg-white border border-gray-300 cursor-pointer m-2 slot-card"style="min-width: 170px; max-width: 100%;" 
                                 data-date="${formattedDate}" 
                                 data-price="${price}"
                                 data-start="${staff.day_start}"

@@ -156,3 +156,7 @@ table#calendar {
     transition: 0.3s;
     z-index: -1;
 }
+
+.cursor-pointer{
+    cursor: pointer;
+}
