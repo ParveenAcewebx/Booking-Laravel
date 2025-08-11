@@ -34,9 +34,11 @@
 						</div>
 						<div class="col-sm-8">
 							<div class="form-group">
-								<div class="page-header-titles align-items-center float-right">
-										<button class="btn btn-primary p-2" data-toggle="modal" data-target="#copyTemplateModal">Copy Template</button>
-								</div>
+							@if($query->isNotEmpty())
+                                <div class="page-header-titles align-items-center float-right">
+                                        <button class="btn btn-primary p-2" data-toggle="modal" data-target="#copyTemplateModal">Copy Template</button>
+                                </div>
+                                @endif
 							</div>
 
 							<!-- Modal for Copy Template -->

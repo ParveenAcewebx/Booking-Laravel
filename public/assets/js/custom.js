@@ -1657,7 +1657,8 @@ function get_services_staff(selectedvalue){
                                 data-date="${formattedDate}" 
                                 data-price="${price}"
                                 data-start="${staff.day_start}"
-                                data-end="${staff.day_end}">
+                                data-end="${staff.day_end}"
+                                data-id="${staff.id}">
                                     <input type="hidden" name="staff_id" value="${staff.id}">
                                     <p class="text-sm mb-1 font-medium text-gray-700">${staff.day_start} - ${staff.day_end}</p>
                                     <p class="text-sm text-gray-600 m-0">Slots: ${staff.slots.length}</p>

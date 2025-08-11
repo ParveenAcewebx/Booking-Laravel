@@ -28,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
             if ($services->isEmpty() || $services->every(function ($service) {
                 return $service->status !== 1;
             })) {
-                return "";
+                return " No services available at the moment";
             }
             $selectedService = $shortcodeAttrs['service'] ?? '';
             $selectedvendor = $shortcodeAttrs['vendor'] ?? '';
