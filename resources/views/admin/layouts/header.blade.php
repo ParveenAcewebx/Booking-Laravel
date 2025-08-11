@@ -121,6 +121,11 @@
                         </div>
                         <ul class="pro-body">
                             <li>
+                                <a href="{{ route('home') }}" class="dropdown-item"target="_blank">
+                                   <i class="fas fa-globe"></i> Visit Site
+                                </a>
+                            </li>
+                            <li>
                                 <a href="{{ route('profile') }}" class="dropdown-item">
                                     <i class="feather icon-user"></i> Profile
                                 </a>

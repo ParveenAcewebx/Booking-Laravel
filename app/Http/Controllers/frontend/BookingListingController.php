@@ -16,13 +16,17 @@ class BookingListingController extends Controller
                 'bookings' => BookingTemplate::all(),
                 'username' => null
             ]);
+        } else {
+            $userId = Auth::id();
+            if ($userId) {
+                $user = Auth::user();
+                $userId = $user->id;
+                $bookingform = BookingTemplate::where('created_by', $userId)->get();
+                return view('frontend.bookingListing', [
+                    'bookings' => $bookingform,
+                    'username' => null
+                ]);
+            }
         }
-
-        $userId = Auth::id();
-        $username = Auth::user()->name;
-
-        $bookings = BookingTemplate::where('created_by', $username)->get();
-
-        return view('frontend.bookingListing', compact('bookings', 'userId'));
     }
 }

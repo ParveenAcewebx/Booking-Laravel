@@ -1308,6 +1308,8 @@ function get_services_staff(selectedvalue){
          success: function(response) {
             var select_service_staff = document.querySelector('.select_service_vendor');
             var staffSelect = document.querySelector('.service_vendor_form');
+            var bookingcalendar = document.querySelector('.calendar-wrap');
+
             staffSelect.innerHTML = '';
             var defaultOption = document.createElement('option');
             defaultOption.value = '';
@@ -1336,6 +1338,7 @@ function get_services_staff(selectedvalue){
             } else {
                 staffSelect.disabled = true;
                 select_service_staff.classList.add('d-none');
+                bookingcalendar.classList.add('d-none');
                 var noStaffOption = document.createElement('option');
                 noStaffOption.value = '';
                 noStaffOption.textContent = 'No Vendor available';
@@ -1377,8 +1380,6 @@ function get_services_staff(selectedvalue){
                 dataType: 'json',
                 success: function (response) {
                     $('.availibility').addClass('d-none');
-
-                    console.log('Calendar Response' + JSON.stringify(response))
                     $('.calendar-wrap').removeClass('d-none');
                     if (response.success === true && response.data && response.data[0]) {
                         const workondayoff = response.data;
@@ -1388,13 +1389,8 @@ function get_services_staff(selectedvalue){
                     } else {
                         const workondayoff = 0;
                         const workingDays = 0;
-
-                        // Reset the calendar before initializing it
                         resetCalendar();
-
-                        // Initialize the calendar with the working days and days off
                         new Calendar(workingDays, workondayoff);
-
                     }
                 },
             });
@@ -1626,11 +1622,8 @@ function get_services_staff(selectedvalue){
             }
         BookeAslot(date) {
                 if (!date) return;
-
                 const serviceId = document.querySelector('.get_service_staff').value;
-                console.log('serviceId' + serviceId);
                 const vendorId = document.querySelector('.service_vendor_form').value;
-                console.log('vendorId' + vendorId);
                 $.ajax({
                     url: '/get/slotbooked',
                     method: 'GET',
@@ -1640,8 +1633,6 @@ function get_services_staff(selectedvalue){
                         vendorid: vendorId,
                     },
                     success: function (response) {
-                        console.log('success response', response);
-
                         let sessionsHTML = '';
                         if (response && response.staffdata.length > 0) {
                              const formattedDate = response.date;
@@ -1693,7 +1684,6 @@ function get_services_staff(selectedvalue){
             }
         }
         function formatDuration(minutes) {
-        console.log(minutes);
         const hrs = Math.floor(minutes / 60);
         const mins = minutes % 60;
         let label = '';
@@ -1710,15 +1700,14 @@ function get_services_staff(selectedvalue){
                 const price = $(this).data('price');
                 const start = $(this).data('start');
                 const end = $(this).data('end');
-
-                AppendSlotBoxOnce(date, price, start, end);
+                const id = $(this).data('id');
+                AppendSlotBoxOnce(date, price, start, end, id);
             });
         }
-          function AppendSlotBoxOnce(date, price, start, end) {
+          function AppendSlotBoxOnce(date, price, start, end, id) {
             const $wrapper = $('.slot-list-wrapper');
             const uniqueKey = `${date}-${start}-${end}`;
             const exists = $wrapper.find(`[data-slot="${uniqueKey}"]`).length;
-
             if (!exists) {
                 $('.remove-all-slots').removeClass('d-none');
                 const slotHTML = `
@@ -1726,6 +1715,7 @@ function get_services_staff(selectedvalue){
             <div class="d-flex w-100 justify-content-between align-items-center mr-2">    
             <div class="font-medium text-gray-800 flex-1">
                     <div>${date}</div>
+                        <input type="hidden" class=""value="${id}"/>
                     <div class="text-xs text-gray-500">${start} → ${end}</div>
                 </div>
                 <div class="text-success font-semibold whitespace-nowrap">${price}</div>
@@ -1735,23 +1725,19 @@ function get_services_staff(selectedvalue){
         `;
                 $wrapper.append(slotHTML);
             }
-
             toggleRemoveAllButton();
         }
-
         function toggleRemoveAllButton() {
             const hasSlots = $('.slot-list-wrapper .slot-item').length > 0;
             $('.remove-all-slots').toggleClass('d-none', !hasSlots);
         }
-
         $(document).on('click', '.remove-slot', function () {
             $(this).closest('.slot-item').remove();
             toggleRemoveAllButton();
         });
-
         // Remove all slots
         $(document).on('click', '.remove-all-slots', function () {
             $('.slot-list-wrapper').empty();
-            toggleRemoveAllButton(); // ✅ Call this again after clearing
+            toggleRemoveAllButton(); 
         });
 }
