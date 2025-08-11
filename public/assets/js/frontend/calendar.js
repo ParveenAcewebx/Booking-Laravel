@@ -295,66 +295,44 @@
             BookeAslot(date) {
                 if (!date) return;
 
-                const serviceId = document.querySelector('.get_service_staff').value;
-                const vendorId = document.querySelector('.service_vendor_form').value;
+                const serviceId = document.querySelector('.get_service_staff')?.value;
+                const vendorId = document.querySelector('.service_vendor_form')?.value;
+
+                if (!serviceId || !vendorId) {
+                    alert('Service or Vendor not selected.');
+                    return;
+                }
 
                 $.ajax({
                     url: '/get/slotbooked',
                     method: 'GET',
-                    data: {
-                        dates: date,
-                        serviceid: serviceId,
-                        vendorid: vendorId,
-                    },
+                    data: { dates: date, serviceid: serviceId, vendorid: vendorId },
                     success: function (response) {
-                        console.log('success response', response);
-
                         let sessionsHTML = '';
-                        if (response && response.staffdata.length > 0) {
+                        const formattedDate = response?.date || '';
+                        const price = `${response?.serviceCurrency || ''} ${response?.price || ''}`;
+                        const duration = parseInt(response?.duration, 10) || 0;
+
+                        if (response && response.merged_slots?.length > 0) {
                             $('.availibility').removeClass('hidden');
-
-                            const formattedDate = response.date;
-                            const price = `${response.serviceCurrency} ${response.price}`;
-
                             sessionsHTML += `
                     <div class="date-section mb-3">
                         <h5 class="date-header text-lg font-semibold mb-2">${formattedDate}</h5>
                         <div class="overflow-x-auto scrollbar-thin">
-                            <div class="flex gap-4 pb-2 w-max min-w-full">
-                `;
+                            <div class="flex gap-4 pb-2 w-max min-w-full">`;
 
-                            response.staffdata.forEach((staff) => {
-                                const firstSlot = staff.slots[0];
-                                const lastSlot = staff.slots[staff.slots.length - 1];
-
-                                if (firstSlot && lastSlot) {
-                                    sessionsHTML += `
-                            <div 
-                                class="min-w-[200px] bg-white border border-gray-300 rounded-lg p-4 shadow-sm slot-card cursor-pointer transition hover:shadow-md"
-                                data-date="${formattedDate}" 
-                                data-price="${price}"
-                                data-start="${staff.day_start}"
-                                data-end="${staff.day_end}"
-                                data-id="${staff.id}"
-                            >
-                                <input type="hidden" name="staff_id" value="${staff.id}">
-                                <p class="text-sm mb-1 font-medium text-gray-700">${staff.day_start} - ${staff.day_end}</p>
-                                <p class="text-sm text-gray-600">Slots: ${staff.slots.length}</p>
-                                <p class="text-sm text-gray-600">Duration: ${formatDuration(response.duration)}</p>
-                                <p class="text-sm text-gray-600">Price: ${price}</p>
-                            </div>
-                        `;
-                                }
+                            // ONLY show merged slots — no individual staff slots
+                            response.merged_slots.forEach((slot, index) => {
+                                sessionsHTML += createSlotHTML(
+                                    formattedDate, price, slot.start_time, slot.end_time,
+                                    `merged-${index}`, duration, slot.available_staff
+                                );
                             });
 
-                            sessionsHTML += `
-                            </div>
-                        </div>
-                    </div>
-                    
-                `;
+                            sessionsHTML += `</div></div></div>`;
                         } else {
                             sessionsHTML = `<p class="text-sm text-red-500">No available slots found for this date.</p>`;
+                            $('.availibility').addClass('hidden');
                         }
 
                         $('.availibility').html(sessionsHTML);
@@ -365,21 +343,47 @@
                     }
                 });
             }
-
         }
 
+        function createSlotHTML(date, price, start, end, id, duration) {
+            return `
+    <div class="min-w-[170px] bg-white border border-gray-300 rounded-lg p-4 shadow-sm slot-card cursor-pointer transition hover:shadow-md"
+        data-date="${date}" data-price="${price}" data-start="${start}" data-end="${end}" data-id="${id}" data-duration="${formatDuration(duration)}">
+        <p class="text-sm font-bold text-gray-700">${start} - ${end}</p>
+        <p class="text-sm text-gray-600">Duration: ${formatDuration(duration)}</p>
+        <p class="text-sm text-gray-600">Price: ${price}</p>
+    </div>`;
+        }
+
+
+        // function timeToMinutes(timeStr) {
+        //     const parts = timeStr.split(':');
+        //     return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+        // }
+
+        // function minutesToTime(totalMinutes) {
+        //     const hours = Math.floor(totalMinutes / 60);
+        //     const minutes = totalMinutes % 60;
+        //     return (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+        // }
+
+
         function formatDuration(minutes) {
-            console.log(minutes);
+            if (!minutes || minutes <= 0) return '0 minutes';
+
             const hrs = Math.floor(minutes / 60);
             const mins = minutes % 60;
             let label = '';
 
             if (hrs > 0) label += hrs + ' hour' + (hrs > 1 ? 's' : '');
-            if (hrs > 0 && mins > 0) label += ' ';
-            if (mins > 0) label += mins + ' minutes';
+            if (mins > 0) {
+                if (label) label += ' ';
+                label += mins + ' minute' + (mins > 1 ? 's' : '');
+            }
 
             return label;
         }
+
 
         function bindSlotClickEvent() {
             $('.slot-card').off('click').on('click', function () {
@@ -388,11 +392,12 @@
                 const start = $(this).data('start');
                 const end = $(this).data('end');
                 const id = $(this).data('id');
-                AppendSlotBoxOnce(date, price, start, end,id);
+                const duration = $(this).data('duration');
+                AppendSlotBoxOnce(date, price, start, end, id,duration);
             });
         }
 
-        function AppendSlotBoxOnce(date, price, start, end,id) {
+        function AppendSlotBoxOnce(date, price, start, end, id,duration) {
             const $wrapper = $('.slot-list-wrapper');
             const uniqueKey = `${date}-${start}-${end}`;
             const exists = $wrapper.find(`[data-slot="${uniqueKey}"]`).length;
@@ -405,6 +410,7 @@
                     <div>${date}</div>
                     <input type='hidden' name='staff_id' value = '${id}'>
                     <div class="text-xs text-gray-500">${start} → ${end}</div>
+                    <div class="text-xs text-gray-500">Duration: ${duration}</div>
                 </div>
                 <div class="text-green-600 font-semibold whitespace-nowrap">${price}</div>
                 <div class="text-red-500 cursor-pointer remove-slot ml-auto">&#10006;</div>

@@ -151,10 +151,6 @@ class FormController extends Controller
 
     public function getBookingSlot(Request $request)
     {
-        if (!$request) {
-            return response()->json(['error' => 'Invalid request.'], 400);
-        }
-
         $date = $request->input('dates');
         $formattedDate = Carbon::createFromFormat('Y-m-d', $date)->format('F j, Y');
         $weekday = strtolower(Carbon::createFromFormat('Y-m-d', $date)->format('l'));
@@ -173,71 +169,212 @@ class FormController extends Controller
             ->get();
 
         $staffAvailability = collect();
+        $allStaffSlots = collect(); // all individual staff slots, for availability count
+        $allIntervals = []; // to gather all intervals from all staff for merging
 
         foreach ($vendorAssociations as $association) {
             $staff = $association->staff;
-
             if (!$staff) continue;
 
-            $daysOff = json_decode($staff->days_off ?? '[]', true);
-            $workHours = json_decode($staff->work_hours ?? '[]', true);
-
-            if (!isset($workHours[$weekday])) continue;
-
-            $startTime = $workHours[$weekday]['start'] ?? null;
-            $endTime = $workHours[$weekday]['end'] ?? null;
-
-            if (!$startTime || !$endTime || ($startTime === '00:00' && $endTime === '00:00')) continue;
-
-            $start = Carbon::createFromFormat('H:i', $startTime);
-            $end = Carbon::createFromFormat('H:i', $endTime);
-            $totalAvailableMinutes = $start->diffInMinutes($end);
-
-            // Skip if on leave
-            $isOnLeave = collect($daysOff)->flatten(1)->contains(function ($dayOff) use ($formattedDate) {
-                return isset($dayOff['date']) && $dayOff['date'] === $formattedDate;
-            });
-
-            if ($isOnLeave || $totalAvailableMinutes < $serviceDuration) continue;
-
-            $slots = [];
-            $slotStartTime = clone $start;
-
-            while ($slotStartTime->diffInMinutes($end) >= $serviceDuration) {
-                $slotEndTime = clone $slotStartTime;
-                $slotEndTime->addMinutes($serviceDuration);
-
-                $slots[] = [
-                    'start_time' => $slotStartTime->format('H:i'),
-                    'end_time'   => $slotEndTime->format('H:i'),
-                ];
-
-                $slotStartTime = $slotEndTime;
+            $daysOffRaw = $staff->days_off ?? '[]';
+            $daysOff = json_decode($daysOffRaw, true);
+            if (is_array($daysOff) && isset($daysOff[0]) && is_array($daysOff[0])) {
+                $daysOff = $daysOff[0];
             }
 
-            $firstSlot = reset($slots);
-            $lastSlot = end($slots);
+            $workHoursRaw = $staff->work_hours ?? '{}';
+            $workHours = json_decode($workHoursRaw, true);
+
+            if (!isset($workHours[$weekday])) {
+                $staff->slots = [];
+                $staff->day_start = null;
+                $staff->day_end = null;
+                $staffAvailability->push($staff);
+                continue;
+            }
+
+            $intervals = [];
+            if (isset($workHours[$weekday][0]) && is_array($workHours[$weekday][0]) && isset($workHours[$weekday][0]['start'])) {
+                $intervals = $workHours[$weekday];
+            } else {
+                $intervals = [$workHours[$weekday]];
+            }
+
+            // Check date off
+            $dateIsOff = false;
+            if (is_array($daysOff)) {
+                foreach ($daysOff as $dayOff) {
+                    $offDate = is_array($dayOff) && isset($dayOff['date']) ? $dayOff['date'] : (is_string($dayOff) ? $dayOff : null);
+                    if ($offDate === $formattedDate) {
+                        $dateIsOff = true;
+                        break;
+                    }
+                }
+            }
+
+            if ($dateIsOff) {
+                $staff->slots = [];
+                $staff->day_start = null;
+                $staff->day_end = null;
+                $staffAvailability->push($staff);
+                continue;
+            }
+
+            $slots = [];
+            $intervalStartTimes = [];
+            $intervalEndTimes = [];
+
+            // Save staff intervals also for global merge
+            foreach ($intervals as $interval) {
+                $startTime = $interval['start'] ?? null;
+                $endTime = $interval['end'] ?? null;
+
+                if (!$startTime || !$endTime || ($startTime === '00:00' && $endTime === '00:00')) {
+                    continue;
+                }
+
+                $intervalStart = Carbon::createFromFormat('H:i', $startTime);
+                $intervalEnd = Carbon::createFromFormat('H:i', $endTime);
+
+                $intervalStartTimes[] = $intervalStart;
+                $intervalEndTimes[] = $intervalEnd;
+
+                // Collect for global intervals merge (just timestamps)
+                $allIntervals[] = [
+                    'start' => $intervalStart,
+                    'end' => $intervalEnd,
+                ];
+            }
+
+            // Generate slots for this staff's intervals
+            foreach ($intervals as $interval) {
+                $startTime = $interval['start'] ?? null;
+                $endTime = $interval['end'] ?? null;
+                if (!$startTime || !$endTime || ($startTime === '00:00' && $endTime === '00:00')) {
+                    continue;
+                }
+                $intervalStart = Carbon::createFromFormat('H:i', $startTime);
+                $intervalEnd = Carbon::createFromFormat('H:i', $endTime);
+
+                $totalMinutes = $intervalStart->diffInMinutes($intervalEnd);
+                $fullSlotMinutes = floor($totalMinutes / $serviceDuration) * $serviceDuration;
+                $adjustedEnd = $intervalStart->copy()->addMinutes($fullSlotMinutes);
+
+                if ($fullSlotMinutes >= $serviceDuration) {
+                    $slotStartTime = $intervalStart->copy();
+
+                    while ($slotStartTime->lessThan($adjustedEnd)) {
+                        $slotEndTime = $slotStartTime->copy()->addMinutes($serviceDuration);
+
+                        $slots[] = [
+                            'start_time' => $slotStartTime->format('H:i'),
+                            'end_time' => $slotEndTime->format('H:i'),
+                        ];
+
+                        $allStaffSlots->push([
+                            'start_time' => $slotStartTime->format('H:i'),
+                            'end_time' => $slotEndTime->format('H:i'),
+                            'staff_id' => $staff->id,
+                        ]);
+
+                        $slotStartTime = $slotEndTime;
+                    }
+                }
+            }
+
+            if (count($intervalStartTimes) > 0 && count($intervalEndTimes) > 0) {
+                $staff->day_start = min($intervalStartTimes)->format('H:i');
+                $staff->day_end = max($intervalEndTimes)->format('H:i');
+            } else {
+                $staff->day_start = null;
+                $staff->day_end = null;
+            }
 
             $staff->slots = $slots;
-            $staff->full_time = $formattedDate . ' ' . $firstSlot['start_time'] . ' - ' . $lastSlot['end_time'];
-            $staff->day_start = $start->format('H:i'); // ⬅️ For showing work hours start
-            $staff->day_end = $end->format('H:i');     // ⬅️ For showing work hours end
-
             $staffAvailability->push($staff);
         }
 
-        $totalSlotCount = $staffAvailability->flatMap(function ($staff) {
-            return $staff->slots ?? [];
-        })->count();
+        // Now merge all collected intervals (from all staff) into continuous intervals
+        $mergedIntervals = $this->mergeIntervals($allIntervals);
+
+        // Generate merged slots from mergedIntervals
+        $mergedSlots = collect();
+        foreach ($mergedIntervals as $interval) {
+            $intervalStart = $interval['start'];
+            $intervalEnd = $interval['end'];
+
+            $totalMinutes = $intervalStart->diffInMinutes($intervalEnd);
+            $fullSlotMinutes = floor($totalMinutes / $serviceDuration) * $serviceDuration;
+            $adjustedEnd = $intervalStart->copy()->addMinutes($fullSlotMinutes);
+
+            $slotStartTime = $intervalStart->copy();
+
+            while ($slotStartTime->lessThan($adjustedEnd)) {
+                $slotEndTime = $slotStartTime->copy()->addMinutes($serviceDuration);
+
+                // Count how many staff available in this slot by intersecting their intervals
+                $availableStaffCount = $allStaffSlots
+                    ->filter(function ($slot) use ($slotStartTime, $slotEndTime) {
+                        return $slot['start_time'] <= $slotStartTime->format('H:i') && $slot['end_time'] >= $slotEndTime->format('H:i');
+                    })
+                    ->pluck('staff_id')
+                    ->unique()
+                    ->count();
+
+                $mergedSlots->push([
+                    'start_time' => $slotStartTime->format('H:i'),
+                    'end_time' => $slotEndTime->format('H:i'),
+                    'available_staff' => $availableStaffCount,
+                ]);
+
+                $slotStartTime = $slotEndTime;
+            }
+        }
 
         return response()->json([
-            'date'      => $formattedDate,
-            'price'     => $servicePrice,
-            'serviceCurrency'     => $serviceCurrency,
-            'price'     => $servicePrice,
-            'slotleft'  => $totalSlotCount,
-            'duration'  => $serviceDuration,
+            'date' => $formattedDate,
+            'price' => $servicePrice,
+            'serviceCurrency' => $serviceCurrency,
+            'slotleft' => $mergedSlots->count(),
+            'duration' => $serviceDuration,
             'staffdata' => $staffAvailability->values()->toArray(),
+            'merged_slots' => $mergedSlots->values(),
         ]);
+    }
+
+    /**
+     * Merge overlapping intervals into continuous intervals.
+     * Input: array of ['start' => Carbon, 'end' => Carbon]
+     * Output: merged array of intervals
+     */
+    private function mergeIntervals(array $intervals)
+    {
+        if (count($intervals) === 0) return [];
+
+        // Sort intervals by start time
+        usort($intervals, function ($a, $b) {
+            return $a['start']->lt($b['start']) ? -1 : 1;
+        });
+
+        $merged = [];
+        $current = $intervals[0];
+
+        for ($i = 1; $i < count($intervals); $i++) {
+            $interval = $intervals[$i];
+
+            // If current interval end >= next interval start, merge
+            if ($current['end']->gte($interval['start'])) {
+                // Extend end if needed
+                if ($interval['end']->gt($current['end'])) {
+                    $current['end'] = $interval['end'];
+                }
+            } else {
+                $merged[] = $current;
+                $current = $interval;
+            }
+        }
+
+        $merged[] = $current;
+        return $merged;
     }
 }
