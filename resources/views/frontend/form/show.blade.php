@@ -4,7 +4,7 @@
 <div class="bg-gray-50 py-12">
     <div class="container mx-auto px-4">
         <div class="max-w-xl mx-auto bg-white shadow rounded-xl border border-gray-200 p-8">
-            <h2 class="mb-6 text-center text-2xl font-bold text-gray-800">{{ $template->title ?? 'Booking Form' }}</h2>
+            <h2 class="mb-6 text-center text-2xl font-bold text-gray-800">{{ $template->template_name }}</h2>
 
             {{-- Success message --}}
             @if (session('success'))
