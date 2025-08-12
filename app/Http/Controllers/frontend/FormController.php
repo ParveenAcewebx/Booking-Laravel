@@ -171,10 +171,13 @@ class FormController extends Controller
         $staffAvailability = collect();
         $allStaffSlots = collect();
         $allIntervals = [];
+        $allStaffIds = [];
 
         foreach ($vendorAssociations as $association) {
             $staff = $association->staff;
             if (!$staff) continue;
+
+            $allStaffIds[] = $staff->user_id;
 
             // Decode days_off
             $daysOff = json_decode($staff->days_off ?? '[]', true);
@@ -298,8 +301,11 @@ class FormController extends Controller
                     ->values()
                     ->all();
 
-                // Remove off staff only if $staffIdsOff is not empty
-                if (!empty($staffIdsOff)) {
+                // If no one has a day off, show ALL staff IDs
+                if (empty($staffIdsOff)) {
+                    $availableStaffIds = $allStaffIds;
+                } else {
+                    // Remove only those who are off
                     $availableStaffIds = array_values(array_diff($availableStaffIds, $staffIdsOff));
                 }
 
@@ -329,9 +335,8 @@ class FormController extends Controller
     private function mergeIntervals(array $intervals)
     {
         if (empty($intervals)) return [];
-
         usort($intervals, fn($a, $b) => $a['start']->lt($b['start']) ? -1 : 1);
-
+        
         $merged = [];
         $current = $intervals[0];
 
@@ -344,7 +349,6 @@ class FormController extends Controller
                 $current = $next;
             }
         }
-
         $merged[] = $current;
         return $merged;
     }
