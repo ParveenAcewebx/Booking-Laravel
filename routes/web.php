@@ -33,18 +33,14 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/booking', [BookingListingController::class, 'listing'])->name('booking.listing');
-Route::get('/admin', function () {
-    return redirect()->route('dashboard');
-});
-Route::get('/admin/shortcodes/list', function () {
-    return response()->json(Shortcode::getRegisteredShortcodes());
-});
+Route::get('/admin', function () {return redirect()->route('dashboard');});
+Route::get('/admin/shortcodes/list', function () {return response()->json(Shortcode::getRegisteredShortcodes());});
+
 Route::get('/form/{slug}', [FormController::class, 'show'])->name('form.show');
 Route::post('/form/{slug}', [FormController::class, 'store'])->name('form.store');
 Route::get('/get/services/staff', [FormController::class, 'getservicesstaff'])->name('get.services.staff');
 Route::get('/get/vendor/get_booking_calender', [FormController::class, 'getBookingCalender'])->name('service.vendor.calender');
 Route::get('/get/slotbooked', [FormController::class, 'getBookingSlot'])->name('service.slotbooked');
-
 
 // Guest routes (not logged in)
 Route::middleware('guest')->group(function () {
@@ -200,3 +196,6 @@ Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 
 Route::get('/profile', [UserProfileController::class, 'userEdit'])->name('Userprofile');
 Route::post('/profile/update', [UserProfileController::class, 'UserUpdate'])->name('ProfileUpdate');
+Route::post('/store/session', [FormController::class, 'storeSession'])->name('session.store');
+Route::get('/get/session', [FormController::class, 'getSession'])->name('session.get');
+Route::post('/form/session/destroyed', [FormController::class, 'sessiondestroy'])->name('session.destryoed');

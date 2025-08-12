@@ -229,4 +229,87 @@ document.addEventListener("DOMContentLoaded", function () {
     prevButton.addEventListener('click', handlePreviousButtonClick);
     submitButton.addEventListener('click', handleSubmitButtonClick);
     ServiceStaffCode.addEventListener('change', get_services_staff);
+
+$(document).ready(function () {
+    let formAction = document.querySelector('form').action;
+    
+    let urlParts = formAction.split('/');
+    let formId = urlParts[urlParts.length - 1];
+    $.ajax({
+        url: '/get/session', 
+        method: 'GET',
+        data:{ formId: formId },
+        success: function (response) {
+            if (response.status === 'success') {
+             Object.keys(response['data']).forEach(function(key) {
+                let value = response['data'][key];
+                    Object.keys(value).forEach(function(key) {
+                        let formattedKey = key + "]";
+                        let nestedValue = value[key];
+                        let inputElement = $('input[name="' + formattedKey + '"]');
+                            if (inputElement) {
+                                inputElement.val(nestedValue); 
+                            }
+                            let selectElement = $('select[name="' + formattedKey + '"]');
+                            if (selectElement.length > 0) {
+                                 selectElement.val(nestedValue);
+                                    if(selectElement.hasClass('get_service_staff')) {
+                                        get_services_staff();
+                                    }        
+                                  if(selectElement.hasClass('service_vendor_form')){
+                                        setTimeout(function() {
+                                       selectElement.val(nestedValue);
+                                         selectElement.trigger('change');
+                                        }, 1000); 
+                                  }                         
+                            }
+                            let textareaElement = $('textarea[name="' + formattedKey + '"]');
+                            if (textareaElement.length > 0) {
+                                textareaElement.val(nestedValue);
+                            }
+                    });
+                });
+            }
+        },
+        error: function (error) {
+            console.error('Error retrieving session data:', error);
+        }
+    });
+
+});
+
+window.onbeforeunload = function() {
+    let formAction = document.querySelector('form').action;
+    let urlParts = formAction.split('/');
+    let formId = urlParts[urlParts.length - 1];
+    let formElements = document.querySelector('form').elements;
+      let dataToSave = {};
+      Array.from(formElements).forEach(function(element) {
+        if (element.name) { 
+            dataToSave[element.name] = {
+                name: element.name,   
+                value: element.value  
+            };
+        }
+    });
+     let finalDataToSave = {
+        formId: formId,
+        data: dataToSave
+    };
+    var headers = {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+     };
+      $.ajax({
+          url: '/store/session',
+          method: 'POST',
+          data:finalDataToSave  ,
+          headers: headers,
+          success: function(response) {
+              console.log('Data saved successfully');
+          },
+          error: function(error) {
+              console.log('Error saving data');
+          }
+      });
+  };
 });

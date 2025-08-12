@@ -31,6 +31,7 @@ class FormController extends Controller
 
     public function store(Request $request, $slug)
     {
+        session()->forget('user_data_' . $slug);
         $template = BookingTemplate::findOrFail($slug);
         $bookingData = json_decode($request->input('booking_data'), true) ?? [];
         $inputData = $request->input('dynamic', []);
@@ -80,8 +81,8 @@ class FormController extends Controller
             'email'                     => $bookingData['email'] ?? NULL,
             'booking_data'              => json_encode($bookingData),
             'bookslots'                 => $request->input('bookslots'),
-            'service_id'                => $bookingData['service'],
-            'vendor_id'                 => $bookingData['vendor'],
+            'service_id'                => $bookingData['service'] ?? NULL,
+            'vendor_id'                 => $bookingData['vendor'] ?? NULL,
         ]);
         return redirect()
             ->route('form.show', $template->slug)
@@ -336,7 +337,7 @@ class FormController extends Controller
     {
         if (empty($intervals)) return [];
         usort($intervals, fn($a, $b) => $a['start']->lt($b['start']) ? -1 : 1);
-        
+
         $merged = [];
         $current = $intervals[0];
 
@@ -351,5 +352,27 @@ class FormController extends Controller
         }
         $merged[] = $current;
         return $merged;
+    }
+
+
+    public function storeSession(Request $request)
+    {
+        $formId = $request->input('formId');
+        $data = $request->input('data');
+        session()->put('user_data_' . $formId, $data);
+        return response()->json(['message' => 'Data saved to session successfully']);
+    }
+
+
+    public function getSession(Request $request)
+    {
+        $formId = $request->input('formId');
+        $data = session()->get('user_data_' . $formId, 'default value');
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'value' => $data
+            ]
+        ]);
     }
 }
