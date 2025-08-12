@@ -153,6 +153,10 @@ class BookingController extends Controller
             'booking_datetime' => $request->booking_datetime,
             'booking_data' => json_encode($bookingData),
             'selected_staff' => '',
+            'bookslots'                 => $request->input('bookslots'),
+            'service_id'                => $bookingData['service'] ?? NULL,
+            'vendor_id'                 => $bookingData['vendor'] ?? NULL,
+
         ]);
 
         return $booking

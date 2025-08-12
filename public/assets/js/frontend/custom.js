@@ -242,8 +242,10 @@ $(document).ready(function () {
         success: function (response) {
             if (response.status === 'success') {
              Object.keys(response['data']).forEach(function(key) {
+
                 let value = response['data'][key];
                     Object.keys(value).forEach(function(key) {
+                        
                         let formattedKey = key + "]";
                         let nestedValue = value[key];
                         let inputElement = $('input[name="' + formattedKey + '"]');
@@ -267,6 +269,38 @@ $(document).ready(function () {
                             if (textareaElement.length > 0) {
                                 textareaElement.val(nestedValue);
                             }
+                            
+                        if(key==='bookslots'){
+                              let inputElement = $('input[name="' + key + '"]');
+                           if (inputElement) {
+                                inputElement.val(nestedValue.value); 
+                                if(nestedValue.value){
+                                const $wrapper = $('.slot-list-wrapper');
+                                const decodedValue = nestedValue.value.replace(/&quot;/g, '"'); 
+                                const slots = JSON.parse(decodedValue);
+                                slots.forEach((slot, index) => {
+                                    const { date, price, start, end, duration, staff_ids } = slot;
+                                    const uniqueKey = `slot-${staff_ids[0]}-${index}`;
+                                    const slotHTML = `
+                                        <div class="slot-item flex justify-between items-center gap-4 border border-gray-300 rounded-md p-3 bg-white shadow-sm text-sm w-full sm:w-full" data-slot="${uniqueKey}">
+                                            <div class="font-medium text-gray-800 flex-1">
+                                                <div>${date}</div>
+                                                <input type='hidden' name='staff_id' value='${staff_ids.join(",")}'>
+                                                <div class="text-xs text-gray-500">${start} → ${end}</div>
+                                                <div class="text-xs text-gray-500">Duration: ${duration}</div>
+                                            </div>
+                                            <div class="text-green-600 font-semibold whitespace-nowrap">${price}</div>
+                                            <div class="text-red-500 cursor-pointer remove-slot ml-auto">&#10006;</div>
+                                        </div>`;
+
+                                    // Append this slot HTML to the container (assuming you have a container to append it to)
+                                    $($wrapper).append(slotHTML);
+                                });
+                                $('.remove-all-slots').removeClass('hidden');
+                            }
+                            }
+                        }
+
                     });
                 });
             }

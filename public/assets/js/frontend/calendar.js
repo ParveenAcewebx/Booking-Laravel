@@ -403,7 +403,7 @@
     </div>`;
         }
 
-        let slotDataArray = []; // Global array to hold all slots
+        let slotDataArray = []; // Keep this outside so it's global
 
         function AppendSlotBoxOnce(date, price, start, end, duration, staffIds) {
             const $wrapper = $('.slot-list-wrapper');
@@ -423,40 +423,54 @@
                     staff_ids: Array.isArray(staffIds) ? staffIds : [staffIds]
                 });
 
-                // Update hidden input with JSON
+                // Update hidden input
                 $('#bookslots').val(JSON.stringify(slotDataArray));
 
                 // Append UI slot
                 const slotHTML = `
-        <div class="slot-item flex justify-between items-center gap-4 border border-gray-300 rounded-md p-3 bg-white shadow-sm text-sm w-full sm:w-full" data-slot="${uniqueKey}">
-            <div class="font-medium text-gray-800 flex-1">
-                <div>${date}</div>
-                <input type='hidden' name='staff_id' value='${staffIds}'>
-                <div class="text-xs text-gray-500">${start} → ${end}</div>
-                <div class="text-xs text-gray-500">Duration: ${duration}</div>
-            </div>
-            <div class="text-green-600 font-semibold whitespace-nowrap">${price}</div>
-            <div class="text-red-500 cursor-pointer remove-slot ml-auto">&#10006;</div>
-        </div>`;
+            <div class="slot-item flex justify-between items-center gap-4 border border-gray-300 rounded-md p-3 bg-white shadow-sm text-sm w-full sm:w-full" 
+                data-slot="${uniqueKey}">
+                <div class="font-medium text-gray-800 flex-1">
+                    <div>${date}</div>
+                    <input type='hidden' name='staff_id' value='${staffIds}'>
+                    <div class="text-xs text-gray-500">${start} → ${end}</div>
+                    <div class="text-xs text-gray-500">Duration: ${duration}</div>
+                </div>
+                <div class="text-green-600 font-semibold whitespace-nowrap">${price}</div>
+                <div class="text-red-500 cursor-pointer remove-slot ml-auto">&#10006;</div>
+            </div>`;
                 $wrapper.append(slotHTML);
             }
             toggleRemoveAllButton();
         }
 
-
         function toggleRemoveAllButton() {
-            const hasSlots = $('.slot-list-wrapper .slot-item').length > 0;
+            const hasSlots = slotDataArray.length > 0;
             $('.remove-all-slots').toggleClass('hidden', !hasSlots);
         }
 
+        // Remove single slot
         $(document).on('click', '.remove-slot', function () {
-            $(this).closest('.slot-item').remove();
+            const $item = $(this).closest('.slot-item');
+            const uniqueKey = $item.data('slot');
+
+            // Remove from array
+            slotDataArray = slotDataArray.filter(slot => `${slot.date}-${slot.start}-${slot.end}` !== uniqueKey);
+
+            // Remove from DOM
+            $item.remove();
+
+            // Update hidden input
+            $('#bookslots').val(slotDataArray.length ? JSON.stringify(slotDataArray) : '');
+
             toggleRemoveAllButton();
         });
 
         // Remove all slots
         $(document).on('click', '.remove-all-slots', function () {
             $('.slot-list-wrapper').empty();
+            slotDataArray = [];
+            $('#bookslots').val('');
             toggleRemoveAllButton();
         });
     });
