@@ -308,24 +308,36 @@
                     method: 'GET',
                     data: { dates: date, serviceid: serviceId, vendorid: vendorId },
                     success: function (response) {
+                        // console.log(response.merged_slots);
                         let sessionsHTML = '';
                         const formattedDate = response?.date || '';
                         const price = `${response?.serviceCurrency || ''} ${response?.price || ''}`;
                         const duration = parseInt(response?.duration, 10) || 0;
+                        const staffOffIds = response.staff_off_ids ? response.staff_off_ids.split(',').map(id => id.trim()) : [];
 
                         if (response && response.merged_slots?.length > 0) {
                             $('.availibility').removeClass('hidden');
-                            sessionsHTML += `
-                    <div class="date-section mb-3">
-                        <h5 class="date-header text-lg font-semibold mb-2">${formattedDate}</h5>
-                        <div class="overflow-x-auto scrollbar-thin">
-                            <div class="flex gap-4 pb-2 w-max min-w-full">`;
 
-                            // ONLY show merged slots — no individual staff slots
-                            response.merged_slots.forEach((slot, index) => {
+                            sessionsHTML += `<div class="date-section mb-3">
+                    <h5 class="date-header text-lg font-semibold mb-2">${formattedDate}</h5>
+                    <div class="overflow-x-auto scrollbar-thin">
+                        <div class="flex gap-4 pb-2 w-max min-w-full">`;
+
+                            response.merged_slots.forEach((slot) => {
+                                let slotStaffIds = slot.available_staff_ids;
+
+                                // Only filter if staffOffIds is not empty
+                                if (staffOffIds.length > 0) {
+                                    slotStaffIds = slotStaffIds.filter(id => !staffOffIds.includes(String(id)));
+                                }
+
                                 sessionsHTML += createSlotHTML(
-                                    formattedDate, price, slot.start_time, slot.end_time,
-                                    `merged-${index}`, duration, slot.available_staff
+                                    formattedDate,
+                                    price,
+                                    slot.start_time,
+                                    slot.end_time,
+                                    duration,
+                                    slotStaffIds
                                 );
                             });
 
@@ -334,6 +346,8 @@
                             sessionsHTML = `<p class="text-sm text-red-500">No available slots found for this date.</p>`;
                             $('.availibility').addClass('hidden');
                         }
+
+                        sessionsHTML += `<input type="hidden" id="staffOffIds" value="${staffOffIds.join(',')}">`;
 
                         $('.availibility').html(sessionsHTML);
                         bindSlotClickEvent();
@@ -344,29 +358,6 @@
                 });
             }
         }
-
-        function createSlotHTML(date, price, start, end, id, duration) {
-            return `
-    <div class="min-w-[170px] bg-white border border-gray-300 rounded-lg p-4 shadow-sm slot-card cursor-pointer transition hover:shadow-md"
-        data-date="${date}" data-price="${price}" data-start="${start}" data-end="${end}" data-id="${id}" data-duration="${formatDuration(duration)}">
-        <p class="text-sm font-bold text-gray-700">${start} - ${end}</p>
-        <p class="text-sm text-gray-600">Duration: ${formatDuration(duration)}</p>
-        <p class="text-sm text-gray-600">Price: ${price}</p>
-    </div>`;
-        }
-
-
-        // function timeToMinutes(timeStr) {
-        //     const parts = timeStr.split(':');
-        //     return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
-        // }
-
-        // function minutesToTime(totalMinutes) {
-        //     const hours = Math.floor(totalMinutes / 60);
-        //     const minutes = totalMinutes % 60;
-        //     return (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
-        // }
-
 
         function formatDuration(minutes) {
             if (!minutes || minutes <= 0) return '0 minutes';
@@ -384,41 +375,74 @@
             return label;
         }
 
-
         function bindSlotClickEvent() {
             $('.slot-card').off('click').on('click', function () {
                 const date = $(this).data('date');
                 const price = $(this).data('price');
                 const start = $(this).data('start');
                 const end = $(this).data('end');
-                const id = $(this).data('id');
                 const duration = $(this).data('duration');
-                AppendSlotBoxOnce(date, price, start, end, id,duration);
+                const staffIds = $(this).data('id');
+
+                AppendSlotBoxOnce(date, price, start, end, duration, staffIds);
             });
         }
 
-        function AppendSlotBoxOnce(date, price, start, end, id,duration) {
+        function createSlotHTML(date, price, start, end, duration, staffIds) {
+            const staffIdsString = Array.isArray(staffIds) ? staffIds.join(',') : staffIds;
+            return `<div class="min-w-[170px] bg-white border border-gray-300 rounded-lg p-4 shadow-sm slot-card cursor-pointer transition hover:shadow-md"
+        data-date="${date}"
+        data-price="${price}"
+        data-start="${start}"
+        data-end="${end}"
+        data-id="${staffIdsString}"
+        data-duration="${formatDuration(duration)}">
+        <p class="text-sm font-bold text-gray-700">${start} - ${end}</p>
+        <p class="text-sm text-gray-600">Duration: ${formatDuration(duration)}</p>
+        <p class="text-sm text-gray-600">Price: ${price}</p>
+    </div>`;
+        }
+
+        let slotDataArray = []; // Global array to hold all slots
+
+        function AppendSlotBoxOnce(date, price, start, end, duration, staffIds) {
             const $wrapper = $('.slot-list-wrapper');
             const uniqueKey = `${date}-${start}-${end}`;
             const exists = $wrapper.find(`[data-slot="${uniqueKey}"]`).length;
 
             if (!exists) {
                 $('.remove-all-slots').removeClass('hidden');
+
+                // Push to array
+                slotDataArray.push({
+                    date: date,
+                    price: price,
+                    start: start,
+                    end: end,
+                    duration: duration,
+                    staff_ids: Array.isArray(staffIds) ? staffIds : [staffIds]
+                });
+
+                // Update hidden input with JSON
+                $('#bookslots').val(JSON.stringify(slotDataArray));
+
+                // Append UI slot
                 const slotHTML = `
-            <div class="slot-item flex justify-between items-center gap-4 border border-gray-300 rounded-md p-3 bg-white shadow-sm text-sm w-full sm:w-full" data-slot="${uniqueKey}">
-                <div class="font-medium text-gray-800 flex-1">
-                    <div>${date}</div>
-                    <input type='hidden' name='staff_id' value = '${id}'>
-                    <div class="text-xs text-gray-500">${start} → ${end}</div>
-                    <div class="text-xs text-gray-500">Duration: ${duration}</div>
-                </div>
-                <div class="text-green-600 font-semibold whitespace-nowrap">${price}</div>
-                <div class="text-red-500 cursor-pointer remove-slot ml-auto">&#10006;</div>
-            </div>`;
+        <div class="slot-item flex justify-between items-center gap-4 border border-gray-300 rounded-md p-3 bg-white shadow-sm text-sm w-full sm:w-full" data-slot="${uniqueKey}">
+            <div class="font-medium text-gray-800 flex-1">
+                <div>${date}</div>
+                <input type='hidden' name='staff_id' value='${staffIds}'>
+                <div class="text-xs text-gray-500">${start} → ${end}</div>
+                <div class="text-xs text-gray-500">Duration: ${duration}</div>
+            </div>
+            <div class="text-green-600 font-semibold whitespace-nowrap">${price}</div>
+            <div class="text-red-500 cursor-pointer remove-slot ml-auto">&#10006;</div>
+        </div>`;
                 $wrapper.append(slotHTML);
             }
             toggleRemoveAllButton();
         }
+
 
         function toggleRemoveAllButton() {
             const hasSlots = $('.slot-list-wrapper .slot-item').length > 0;
@@ -433,7 +457,7 @@
         // Remove all slots
         $(document).on('click', '.remove-all-slots', function () {
             $('.slot-list-wrapper').empty();
-            toggleRemoveAllButton(); // ✅ Call this again after clearing
+            toggleRemoveAllButton();
         });
     });
 })(jQuery);

@@ -148,7 +148,8 @@ class AppServiceProvider extends ServiceProvider
                     </button>';
                 }
             
-               $servicesForm .='<div class="slot-list-wrapper space-y-2">
+               $servicesForm .='<input type="hidden" name="bookslots" id="bookslots">
+                                <div class="slot-list-wrapper space-y-2">
                 <!-- slot items go here -->
             </div>';
             return $servicesForm;

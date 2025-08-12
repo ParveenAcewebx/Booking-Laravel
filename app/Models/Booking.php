@@ -22,6 +22,8 @@ class Booking extends Model
         'phone_number',
         'email',
         'service_id',
+        'vendor_id',
+        'bookslots'
     ];
 
     public function template()
