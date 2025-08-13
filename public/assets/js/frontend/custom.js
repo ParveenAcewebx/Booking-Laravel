@@ -230,58 +230,58 @@ document.addEventListener("DOMContentLoaded", function () {
     submitButton.addEventListener('click', handleSubmitButtonClick);
     ServiceStaffCode.addEventListener('change', get_services_staff);
 
-$(document).ready(function () {
-    let formAction = document.querySelector('form').action;
-    
-    let urlParts = formAction.split('/');
-    let formId = urlParts[urlParts.length - 1];
-    $.ajax({
-        url: '/get/session', 
-        method: 'GET',
-        data:{ formId: formId },
-        success: function (response) {
-            if (response.status === 'success') {
-             Object.keys(response['data']).forEach(function(key) {
+    $(document).ready(function () {
+        let formAction = document.querySelector('form').action;
 
-                let value = response['data'][key];
-                    Object.keys(value).forEach(function(key) {
-                        
-                        let formattedKey = key + "]";
-                        let nestedValue = value[key];
-                        let inputElement = $('input[name="' + formattedKey + '"]');
+        let urlParts = formAction.split('/');
+        let formId = urlParts[urlParts.length - 1];
+        $.ajax({
+            url: '/get/session',
+            method: 'GET',
+            data: { formId: formId },
+            success: function (response) {
+                if (response.status === 'success') {
+                    Object.keys(response['data']).forEach(function (key) {
+
+                        let value = response['data'][key];
+                        Object.keys(value).forEach(function (key) {
+
+                            let formattedKey = key + "]";
+                            let nestedValue = value[key];
+                            let inputElement = $('input[name="' + formattedKey + '"]');
                             if (inputElement) {
-                                inputElement.val(nestedValue); 
+                                inputElement.val(nestedValue);
                             }
                             let selectElement = $('select[name="' + formattedKey + '"]');
                             if (selectElement.length > 0) {
-                                 selectElement.val(nestedValue);
-                                    if(selectElement.hasClass('get_service_staff')) {
-                                        get_services_staff();
-                                    }        
-                                  if(selectElement.hasClass('service_vendor_form')){
-                                        setTimeout(function() {
-                                       selectElement.val(nestedValue);
-                                         selectElement.trigger('change');
-                                        }, 1000); 
-                                  }                         
+                                selectElement.val(nestedValue);
+                                if (selectElement.hasClass('get_service_staff')) {
+                                    get_services_staff();
+                                }
+                                if (selectElement.hasClass('service_vendor_form')) {
+                                    setTimeout(function () {
+                                        selectElement.val(nestedValue);
+                                        selectElement.trigger('change');
+                                    }, 1000);
+                                }
                             }
                             let textareaElement = $('textarea[name="' + formattedKey + '"]');
                             if (textareaElement.length > 0) {
                                 textareaElement.val(nestedValue);
                             }
-                            
-                        if(key==='bookslots'){
-                              let inputElement = $('input[name="' + key + '"]');
-                           if (inputElement) {
-                                inputElement.val(nestedValue.value); 
-                                if(nestedValue.value){
-                                const $wrapper = $('.slot-list-wrapper');
-                                const decodedValue = nestedValue.value.replace(/&quot;/g, '"'); 
-                                const slots = JSON.parse(decodedValue);
-                                slots.forEach((slot, index) => {
-                                    const { date, price, start, end, duration, staff_ids } = slot;
-                                    const uniqueKey = `slot-${staff_ids[0]}-${index}`;
-                                    const slotHTML = `
+
+                            if (key === 'bookslots') {
+                                let inputElement = $('input[name="' + key + '"]');
+                                if (inputElement) {
+                                    inputElement.val(nestedValue.value);
+                                    if (nestedValue.value) {
+                                        const $wrapper = $('.slot-list-wrapper');
+                                        const decodedValue = nestedValue.value.replace(/&quot;/g, '"');
+                                        const slots = JSON.parse(decodedValue);
+                                        slots.forEach((slot, index) => {
+                                            const { date, price, start, end, duration, staff_ids } = slot;
+                                            const uniqueKey = `slot-${staff_ids[0]}-${index}`;
+                                            const slotHTML = `
                                         <div class="slot-item flex justify-between items-center gap-4 border border-gray-300 rounded-md p-3 bg-white shadow-sm text-sm w-full sm:w-full" data-slot="${uniqueKey}">
                                             <div class="font-medium text-gray-800 flex-1">
                                                 <div>${date}</div>
@@ -293,57 +293,109 @@ $(document).ready(function () {
                                             <div class="text-red-500 cursor-pointer remove-slot ml-auto">&#10006;</div>
                                         </div>`;
 
-                                    // Append this slot HTML to the container (assuming you have a container to append it to)
-                                    $($wrapper).append(slotHTML);
-                                });
-                                $('.remove-all-slots').removeClass('hidden');
+                                            // Append this slot HTML to the container (assuming you have a container to append it to)
+                                            $($wrapper).append(slotHTML);
+                                        });
+                                        $('.remove-all-slots').removeClass('hidden');
+                                    }
+                                }
                             }
-                            }
-                        }
 
+                        });
                     });
-                });
+                }
+            },
+            error: function (error) {
+                console.error('Error retrieving session data:', error);
             }
-        },
-        error: function (error) {
-            console.error('Error retrieving session data:', error);
-        }
+        });
+
     });
 
-});
-
-window.onbeforeunload = function() {
-    let formAction = document.querySelector('form').action;
-    let urlParts = formAction.split('/');
-    let formId = urlParts[urlParts.length - 1];
-    let formElements = document.querySelector('form').elements;
-      let dataToSave = {};
-      Array.from(formElements).forEach(function(element) {
-        if (element.name) { 
-            dataToSave[element.name] = {
-                name: element.name,   
-                value: element.value  
-            };
-        }
-    });
-     let finalDataToSave = {
-        formId: formId,
-        data: dataToSave
+    window.onbeforeunload = function () {
+        let formAction = document.querySelector('form').action;
+        let urlParts = formAction.split('/');
+        let formId = urlParts[urlParts.length - 1];
+        let formElements = document.querySelector('form').elements;
+        let dataToSave = {};
+        Array.from(formElements).forEach(function (element) {
+            if (element.name) {
+                dataToSave[element.name] = {
+                    name: element.name,
+                    value: element.value
+                };
+            }
+        });
+        let finalDataToSave = {
+            formId: formId,
+            data: dataToSave
+        };
+        var headers = {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        };
+        $.ajax({
+            url: '/store/session',
+            method: 'POST',
+            data: finalDataToSave,
+            headers: headers,
+            success: function (response) {
+                console.log('Data saved successfully');
+            },
+            error: function (error) {
+                console.log('Error saving data');
+            }
+        });
     };
-    var headers = {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-     };
-      $.ajax({
-          url: '/store/session',
-          method: 'POST',
-          data:finalDataToSave  ,
-          headers: headers,
-          success: function(response) {
-              console.log('Data saved successfully');
-          },
-          error: function(error) {
-              console.log('Error saving data');
-          }
-      });
-  };
+    function checkSlots($context) {
+        const $wrapper = $context.find('.slot-list-wrapper:visible');
+
+        let $activeBtn;
+
+        const prevVisible = $context.find('.previous:visible').length > 0;
+        const submitVisible = $context.find('.submit:visible').length > 0;
+
+        console.log('prevVisible', prevVisible);
+        console.log('submitVisible', submitVisible);
+
+        if (prevVisible && submitVisible) {
+            $activeBtn = $context.find('.submit:visible');
+
+            if ($wrapper.length) {
+                const hasContent = $.trim($wrapper.html()) !== '';
+                $activeBtn.prop('disabled', !hasContent);
+                console.log('Condition First', hasContent);
+            } else {
+                $activeBtn.prop('disabled', true);
+                console.log('Condition Second', hasContent);
+            }
+            console.log('Condition third', 3);
+
+            return; 
+        }
+
+        if ($wrapper.length) {
+            const hasContent = $.trim($wrapper.html()) !== '';
+            $activeBtn = $context.find('.next:visible, .submit:visible, .simple-submit:visible');
+            $activeBtn.prop('disabled', !hasContent);
+            console.log('Condition third', 4);
+        }
+    }
+
+    $(document).ready(function () {
+        $('.form-navigation').each(function () {
+            checkSlots($(this).closest('form, body'));
+        });
+    });
+
+    $(document).on('click change', '.add-slot, .slot-card, .select_service_vendor, .services-show, .previous, .next', function () {
+        const $section = $(this).closest('form, body');
+        checkSlots($section);
+    });
+
+    $(document).on('click', '.remove-slot, .remove-all-slots', function () {
+        const $section = $(this).closest('form, body');
+        setTimeout(function () {
+            checkSlots($section);
+        }, 0);
+    });
 });

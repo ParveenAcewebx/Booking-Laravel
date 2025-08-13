@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
             $c = $class;
             $servicesForm  = '';
             $servicesForm .= "<div class='form-group {$c['group']}'>";
-            $servicesForm .= "<label for='service' class='{$c['label']}'>Select Service <span class='text-red-500'>*</span></label>";
+            $servicesForm .= "<label for='service' class='{$c['label']} services-show'>Select Service <span class='text-red-500'>*</span></label>";
             $servicesForm .= "<select name='dynamic[service]' class='get_service_staff {$c['select']}' required>";
             $servicesForm .= '<option>---Select Service---</option>';
             foreach ($services as $service) {
@@ -149,8 +149,7 @@ class AppServiceProvider extends ServiceProvider
                 }
             
                $servicesForm .='<input type="hidden" name="bookslots" id="bookslots">
-                                <div class="slot-list-wrapper space-y-2">
-                <!-- slot items go here -->
+            <p class="hidden mt-2 text-sm text-red-600 font-medium select_slot">Please select atleast one slot</p>                                <div class="slot-list-wrapper space-y-2">
             </div>';
             return $servicesForm;
         });
