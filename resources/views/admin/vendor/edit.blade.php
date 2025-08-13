@@ -333,6 +333,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (staffId) selectedStaff.delete(String(staffId));
             $row.remove();
             refreshOptions();
+            $('#addStaffButton').show();
              $('.staff_not_found_outer').remove();
         });
     }
@@ -366,16 +367,12 @@ document.addEventListener('DOMContentLoaded', function () {
             $newSelect.val(String(preSelectedId)).trigger('change.select2');
             selectedStaff.add(String(preSelectedId));
         }
-
         attachStaffChangeHandler($newSelect);
         attachDeleteHandler($('#dayOffRepeater').find('.delete-row').last());
-
         togglePrimaryState($newSelect);
-
         if (preSelectedId) {
             fetchAndDisplayServices(preSelectedId, $newSelect.closest('.card-body'));
         }
-
         refreshOptions();
     }
 
@@ -414,14 +411,16 @@ document.addEventListener('DOMContentLoaded', function () {
                             </div>
                             </div>
                         `);
-                }
-
+                          $('#addStaffButton').hide();
                         }
+                    }
                 }else{        
+                  
                     let staff_not_found_outer = $('#dayOffRepeater').find('.staff_not_found_outer');
                      if (staff_not_found_outer.hasClass('staff_not_found_outer')) {
                         $('.staff_not_found_outer').remove();
                         $('#dayOffRepeater .card.border.shadow-sm.day-off-entry.mb-3').remove();
+                          $('#addStaffButton').hide();
                      }
                     appendStaffTemplate();
                 }

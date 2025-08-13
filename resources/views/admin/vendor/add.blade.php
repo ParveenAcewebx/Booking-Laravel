@@ -148,7 +148,8 @@
                                 <div class="tab-pane show active" id="assignStaff" role="tabpanel">
                                     <div class="mb-3 d-flex justify-content-between align-items-center">
                                         <h6 class="mb-0 font-weight-bold">Assigned Staff</h6>
-                                        <button type="button" class="btn btn-sm btn-primary" id="addStaffButton">
+                                        
+                                        <button type="button" class="btn btn-sm btn-primary {{ $availableStaff->where('name', '!=', '')->isEmpty() ? 'd-none' : '' }}" id="addStaffButton">
                                             <i class="feather icon-plus"></i> Add Staff
                                         </button>
                                     </div>
@@ -292,11 +293,13 @@
                     if (staffId) selectedStaff.delete(String(staffId));
                     $row.remove();
                     refreshOptions();
+                    $('#addStaffButton').show();
                     $('.staff_not_found_outer').remove();
                 });
             }
 
             function refreshOptions() {
+                
                 $('.select-user').each(function() {
                     let $this = $(this);
                     let currentVal = $this.val();
@@ -319,7 +322,6 @@
                 document.getElementById('dayOffRepeater').appendChild(template);
                 let $newSelect = $('#dayOffRepeater').find('.select-user').last();
                 $newSelect.select2();
-
                 if (preSelectedId) {
                     $newSelect.val(String(preSelectedId)).trigger('change.select2');
                     selectedStaff.add(String(preSelectedId));
@@ -328,7 +330,6 @@
                 attachStaffChangeHandler($newSelect);
                 attachDeleteHandler($('#dayOffRepeater').find('.delete-row').last());
                 refreshOptions();
-
                 if (preSelectedId) {
                     fetchAndDisplayServices(preSelectedId, $newSelect.closest('.card-body'));
                 }
@@ -366,6 +367,7 @@
                                 </div>
                                 </div>
                             `);
+                            $('#addStaffButton').hide();
                         }
                     }
 
@@ -374,6 +376,7 @@
                     if (staff_not_found_outer.hasClass('staff_not_found_outer')) {
                         $('.staff_not_found_outer').remove();
                         $('#dayOffRepeater .card.border.shadow-sm.day-off-entry.mb-3').remove();
+                        $('#addStaffButton').hide();
                     }
                     appendStaffTemplate();
                 }
