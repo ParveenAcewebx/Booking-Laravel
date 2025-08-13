@@ -113,6 +113,8 @@ class BookingTemplateController extends Controller
             ]);
             session()->flash('success', "Booking Template Added Successfully.");
         }
+        return redirect()->route('template.list');
+
     }
 
 

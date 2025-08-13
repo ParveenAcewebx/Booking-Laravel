@@ -16,8 +16,8 @@
                                     <i class="feather icon-home"></i>
                                 </a>
                             </li>
-                            <li class="breadcrumb-item"><a href="{{ route('category.list') }}">Categories</a></li>
-                            <li class="breadcrumb-item">Add Category</li>
+                            <li class="breadcrumb-item"><a href="#!">Category</a></li>
+                            <li class="breadcrumb-item"><a href="#!">Add Category</a></li>
                         </ul>
                     </div>
                 </div>

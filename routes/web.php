@@ -33,8 +33,12 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/booking', [BookingListingController::class, 'listing'])->name('booking.listing');
-Route::get('/admin', function () {return redirect()->route('dashboard');});
-Route::get('/admin/shortcodes/list', function () {return response()->json(Shortcode::getRegisteredShortcodes());});
+Route::get('/admin', function () {
+    return redirect()->route('dashboard');
+});
+Route::get('/admin/shortcodes/list', function () {
+    return response()->json(Shortcode::getRegisteredShortcodes());
+});
 
 Route::get('/form/{slug}', [FormController::class, 'show'])->name('form.show');
 Route::post('/form/{slug}', [FormController::class, 'store'])->name('form.store');
@@ -62,7 +66,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     Route::get('/get/copytemplateid', [BookingTemplateController::class, 'copytemplate']);
     // Routes for editing (edit users, edit templates, etc.)
     Route::middleware('permission:view users')->group(function () {
-        Route::get('/user', [UserController::class, 'index'])->name('user.list');
+        Route::get('/users', [UserController::class, 'index'])->name('user.list');
     });
     Route::middleware('permission:create users')->group(function () {
         Route::get('/user/add', [UserController::class, 'userAdd'])->name('user.add');
@@ -76,7 +80,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
         Route::delete('/user/{userid}/delete', [UserController::class, 'userDelete'])->name('user.delete');
     });
     Route::middleware('permission:view templates')->group(function () {
-        Route::get('/template', [BookingTemplateController::class, 'index'])->name('template.list');
+        Route::get('/templates', [BookingTemplateController::class, 'index'])->name('template.list');
     });
     Route::middleware('permission:create templates')->group(function () {
         Route::get('/template/add', [BookingTemplateController::class, 'templateAdd'])->name('template.add');
@@ -107,12 +111,12 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
         Route::get('/roles', [RoleController::class, 'index'])->name('roles.list');
     });
     Route::middleware('permission:create roles')->group(function () {
-        Route::get('/roles/add', [RoleController::class, 'roleAdd'])->name('roles.add');
-        Route::post('/roles/store', [RoleController::class, 'store'])->name('roles.store');
+        Route::get('/role/add', [RoleController::class, 'roleAdd'])->name('roles.add');
+        Route::post('/role/store', [RoleController::class, 'store'])->name('roles.store');
     });
     Route::middleware('permission:edit roles')->group(function () {
-        Route::get('/roles/{id}/edit', [RoleController::class, 'roleEdit'])->name('roles.edit');
-        Route::put('/roles/{id}/update', [RoleController::class, 'roleUpdate'])->name('roles.update');
+        Route::get('/role/{id}/edit', [RoleController::class, 'roleEdit'])->name('roles.edit');
+        Route::put('/role/{id}/update', [RoleController::class, 'roleUpdate'])->name('roles.update');
     });
     Route::middleware('permission:delete roles')->group(function () {
         Route::delete('/roles/{id}/delete', [RoleController::class, 'roleDelete'])->name('roles.delete');
@@ -122,7 +126,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
         Route::put('/service/{service}', [ServiceController::class, 'serviceUpdate'])->name('service.update');
     });
     Route::middleware('permission:view services')->group(function () {
-        Route::get('/service', [ServiceController::class, 'index'])->name('service.list');
+        Route::get('/services', [ServiceController::class, 'index'])->name('service.list');
     });
     Route::middleware('permission:create services')->group(function () {
         Route::get('/service/add', [ServiceController::class, 'serviceAdd'])->name('service.add');
@@ -133,7 +137,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
 
     Route::middleware('permission:view vendors')->group(function () {
-        Route::get('/vendor', [VendorController::class, 'index'])->name('vendors.list');
+        Route::get('/vendors', [VendorController::class, 'index'])->name('vendors.list');
     });
     Route::middleware('permission:create vendors')->group(function () {
         Route::get('/vendor/add', [VendorController::class, 'add'])->name('vendors.add');
@@ -150,7 +154,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
 
     Route::middleware('permission:view categories')->group(function () {
-        Route::get('/category', [CategoryController::class, 'index'])->name('category.list');
+        Route::get('/categories', [CategoryController::class, 'index'])->name('category.list');
     });
     Route::middleware('permission:create categories')->group(function () {
         Route::get('/category/add', [CategoryController::class, 'create'])->name('category.create');
@@ -165,7 +169,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
 
     Route::middleware('permission:view staffs')->group(function () {
-        Route::get('/staff', [StaffController::class, 'index'])->name('staff.list');
+        Route::get('/staffs', [StaffController::class, 'index'])->name('staff.list');
     });
     Route::middleware('permission:create staffs')->group(function () {
         Route::get('/staff/add', [StaffController::class, 'add'])->name('staff.create');

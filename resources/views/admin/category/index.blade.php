@@ -17,7 +17,7 @@
                                 </a>
                             </li>
                             <li class="breadcrumb-item"><a href="{{ route('category.list') }}">Categories</a></li>
-                            <li class="breadcrumb-item">All Categories</li>
+                            <li class="breadcrumb-item"><a href="{{ route('category.list') }}">All Categories</a></li>
                         </ul>
                     </div>
                     <div class="col-md-2">

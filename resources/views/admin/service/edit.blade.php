@@ -14,8 +14,8 @@
                         </div>
                         <ul class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="feather icon-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('service.list') }}">Services</a></li>
-                            <li class="breadcrumb-item">Edit Service</li>
+                            <li class="breadcrumb-item"><a href="#!">Service</a></li>
+                            <li class="breadcrumb-item"><a href="#!">Edit Service</a></li>
                         </ul>
                     </div>
                 </div>

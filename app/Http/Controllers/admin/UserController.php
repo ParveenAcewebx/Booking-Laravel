@@ -163,7 +163,7 @@ class UserController extends Controller
         $user->assignRole($userRole);
 
         if ($user) {
-            return redirect('/admin/user')->with('success', 'User Added Successfully.');
+            // return redirect('/admin/users')->with('success', 'User Added Successfully.');
             return redirect()->route('user.list')->with('success', 'User Added Successfully.');
         } else {
             return redirect()->back()->with('error', 'It failed. Please try again.');

@@ -13,7 +13,7 @@
                         </div>
                         <ul class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="feather icon-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('template.list') }}">Booking Template</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('template.list') }}">Booking Templates</a></li>
                             <li class="breadcrumb-item"><a href="{{ route('template.list') }}">All Booking Templates</a></li>
                         </ul>
                     </div>

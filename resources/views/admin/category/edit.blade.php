@@ -19,9 +19,9 @@
                                 </a>
                             </li>
                             <li class="breadcrumb-item">
-                                <a href="{{ route('category.list') }}">Categories</a>
+                                <a href="#!">Category</a>
                             </li>
-                            <li class="breadcrumb-item">Edit Category</li>
+                            <li class="breadcrumb-item"><a href="#!">Edit Category</a></li>
                         </ul>
                     </div>
                 </div>

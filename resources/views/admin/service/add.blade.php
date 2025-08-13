@@ -17,9 +17,9 @@
                                 <a href="{{ route('dashboard') }}"><i class="feather icon-home"></i></a>
                             </li>
                             <li class="breadcrumb-item">
-                                <a href="{{ route('service.list') }}">Services</a>
+                                <a href="#!">Service</a>
                             </li>
-                            <li class="breadcrumb-item">Add Service</li>
+                            <li class="breadcrumb-item"><a href="#!">Add Service</a></li>
                         </ul>
                     </div>
                 </div>

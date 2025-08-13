@@ -17,6 +17,8 @@
                                 </a>
                             </li>
                             <li class="breadcrumb-item active">Services</li>
+                            <li class="breadcrumb-item"><a href="{{ route('service.list') }}">All Services</a></li>
+
                         </ul>
                     </div>
                     <div class="col-md-2 text-right">
@@ -54,20 +56,39 @@
 </div>
 
 <script>
-    $(function () {
+    $(function() {
         $('#service-list-table').DataTable({
             processing: true,
             serverSide: true,
             ajax: "{{ route('service.list') }}",
-            columns: [
-                { data: 'id', name: 'id', visible: false },
-                { data: 'name', name: 'name' },
+            columns: [{
+                    data: 'id',
+                    name: 'id',
+                    visible: false
+                },
+                {
+                    data: 'name',
+                    name: 'name'
+                },
                 // { data: 'staff_member', name: 'staff_member' },
-                { data: 'created_at', name: 'created_at' },
-                { data: 'status', name: 'status' },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
+                {
+                    data: 'created_at',
+                    name: 'created_at'
+                },
+                {
+                    data: 'status',
+                    name: 'status'
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                }
             ],
-            order: [[0, 'desc']],
+            order: [
+                [0, 'desc']
+            ],
         });
 
         // Toastr configuration
@@ -79,20 +100,20 @@
         };
 
         // Toastr messages from session
-        @if (session('success'))
-            toastr.success("{{ session('success') }}");
+        @if(session('success'))
+        toastr.success("{{ session('success') }}");
         @endif
 
-        @if (session('error'))
-            toastr.error("{{ session('error') }}");
+        @if(session('error'))
+        toastr.error("{{ session('error') }}");
         @endif
 
-        @if (session('info'))
-            toastr.info("{{ session('info') }}");
+        @if(session('info'))
+        toastr.info("{{ session('info') }}");
         @endif
 
-        @if (session('warning'))
-            toastr.warning("{{ session('warning') }}");
+        @if(session('warning'))
+        toastr.warning("{{ session('warning') }}");
         @endif
     });
 </script>

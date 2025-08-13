@@ -12,8 +12,8 @@
                         </div>
                         <ul class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="feather icon-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('roles.list') }}">Roles</a></li>
-                            <li class="breadcrumb-item active">All Roles</li>
+                            <li class="breadcrumb-item active"><a href="{{ route('roles.list') }}">Roles</a></li>
+                            <li class="breadcrumb-item "><a href="{{ route('roles.list') }}">All Roles</a></li>
                         </ul>
                     </div>
 

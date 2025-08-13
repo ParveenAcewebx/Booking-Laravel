@@ -16,8 +16,8 @@
                                     <i class="feather icon-home"></i>
                                 </a>
                             </li>
-                            <li class="breadcrumb-item"><a href="{{ route('roles.list') }}">Roles</a></li>
-                            <li class="breadcrumb-item">Add Role</li>
+                            <li class="breadcrumb-item"><a href="#!">Role</a></li>
+                            <li class="breadcrumb-item"><a href="#!">Add Role</a></li>
                         </ul>
                     </div>
                 </div>

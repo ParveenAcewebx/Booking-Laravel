@@ -517,7 +517,7 @@ $(function ($) {
             url: "/admin/template/save",
             method: "POST",
             data: { data, templatename: inputValue, templateid, _token: csrfToken },
-            success: () => window.location.href = `${window.location.origin}/admin/template`,
+            success: () => window.location.href = `${window.location.origin}/admin/templates`,
             error: (xhr) => console.error(xhr.responseText),
         });
     });

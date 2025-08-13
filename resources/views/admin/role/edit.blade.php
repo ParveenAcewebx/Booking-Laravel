@@ -13,8 +13,8 @@
                         </div>
                         <ul class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="feather icon-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('roles.list') }}">Roles</a></li>
-                            <li class="breadcrumb-item">Edit Role</li>
+                            <li class="breadcrumb-item"><a href="#!">Role</a></li>
+                            <li class="breadcrumb-item"><a href="#!">Edit Role</a></li>
                         </ul>
                     </div>
                 </div>

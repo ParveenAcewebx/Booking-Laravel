@@ -18,9 +18,9 @@
                                 </a>
                             </li>
                             <li class="breadcrumb-item">
-                                <a href="{{ route('booking.list') }}">Bookings</a>
+                                <a href="#!">Booking</a>
                             </li>
-                            <li class="breadcrumb-item">Edit Booking</li>
+                            <li class="breadcrumb-item"><a href="#!">Edit Booking</a></li>
                         </ul>
                     </div>
                 </div>

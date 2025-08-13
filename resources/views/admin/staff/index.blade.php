@@ -12,7 +12,7 @@
                         </div>
                         <ul class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="feather icon-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('staff.list') }}">Staff</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('staff.list') }}">Staffs</a></li>
                             <li class="breadcrumb-item"><a href="{{ route('staff.list') }}">All Staff</a></li>
                         </ul>
                     </div>
