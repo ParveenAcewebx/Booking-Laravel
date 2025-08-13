@@ -365,9 +365,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 $activeBtn.prop('disabled', !hasContent);
                 console.log('Condition First', hasContent);
             } else {
-                $activeBtn.prop('disabled', true);
-                console.log('Condition Second', hasContent);
+                $activeBtn.prop('enabled', true);
+                console.log('Condition Second');
             }
+              $activeBtn.prop('enabled', true);
             console.log('Condition third', 3);
 
             return; 
