@@ -65,14 +65,36 @@
               <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm font-medium">Dashboard</a>
           </li>
           @endif
+               @php
+                $isImpersonating = session()->has('impersonate_original_user') || Cookie::get('impersonate_original_user');
+                $loginUser = null;
+                if ($isImpersonating) {
+                    $loginUser = \App\Models\User::find(session('impersonate_original_user') ?? Cookie::get('impersonate_original_user'));
+                }
+            @endphp
+
+            <!-- Switch Back Button (if impersonating) -->
+            @if($isImpersonating && $loginUser)
+            <li>
+                <form method="POST" action="{{ route('user.switch.back') }}" class="m-0 hover:bg-red-100">
+                    @csrf
+                    <button type="submit" class="flex front-switch w-full px-4 py-2 text-sm font-medium text-red-600">
+                        Switch Back
+                    </button>
+                </form>
+            </li>
+            @endif
+         
           @endauth            
             <!-- Logout Link -->
             <li class="hover:bg-red-100 rounded-b-lg transition duration-200">
                 <a href="{{ route('logout') }}" class="block px-4 py-2 text-sm font-medium text-red-600">Logout</a>
             </li>
+          
         </ul>
           </div>
         @else
+        
           <!-- Show Sign in button if guest -->
           <a href="{{ route('login') }}"
             class="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-sm font-semibold rounded-lg">
