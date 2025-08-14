@@ -278,10 +278,10 @@ class FormHelper
                 </div>
           </div>";
         }
+
         if (!empty($c) && isset($c['button']) && $c['button'] != 'btn btn-primary') {
             $html .= ($countNewSections == '0' ? "<button type='submit' class='simple-submit submit {$c['button']}'>Submit</button>" : '');
         }
         return $htmlHidden . $html;
-
     }
 }

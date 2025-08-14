@@ -368,10 +368,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 $activeBtn.prop('enabled', true);
                 console.log('Condition Second');
             }
-              $activeBtn.prop('enabled', true);
+            $activeBtn.prop('enabled', true);
             console.log('Condition third', 3);
-
-            return; 
+            return;
         }
 
         if ($wrapper.length) {
