@@ -17,6 +17,7 @@ use App\Models\VendorServiceAssociation;
 use App\Models\Vendor;
 use App\Models\Staff;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 
 class FormController extends Controller
 {
@@ -31,15 +32,49 @@ class FormController extends Controller
 
     public function store(Request $request, $slug)
     {
+        // Only validate if 'dynamic' fields are in the request
+        if ($request->has(['dynamic.first_name', 'dynamic.last_name', 'dynamic.email'])) {
+            $request->validate([
+                'dynamic.first_name' => 'required|string|max:255',
+                'dynamic.last_name'  => 'required|string|max:255',
+                'dynamic.email'      => 'required|email|unique:users,email',
+                'dynamic.phone'      => 'nullable|string|max:20',
+            ], [
+                'dynamic.first_name.required' => 'First name is required.',
+                'dynamic.last_name.required'  => 'Last name is required.',
+                'dynamic.email.required'      => 'Email address is required.',
+                'dynamic.email.email'         => 'Please enter a valid email address.',
+                'dynamic.email.unique'        => 'This email is already registered.',
+            ]);
+        }
+        // if ($request->has(['dynamic.service', 'dynamic.vendor'])) {
+        //     $request->validate([
+        //         'dynamic.service' => 'required|exists:services,id',
+        //         'dynamic.vendor'  => 'required|exists:vendors,id',
+        //     ], [
+        //         'dynamic.service.required' => 'Please select a service.',
+        //         'dynamic.service.exists'   => 'The selected service is invalid.',
+        //         'dynamic.vendor.required'  => 'Please select a vendor.',
+        //         'dynamic.vendor.exists'    => 'The selected vendor is invalid.',
+        //     ]);
+        // }
+        // Clear any previous session data for this slug
         session()->forget('user_data_' . $slug);
+
+        // Get the booking template
         $template = BookingTemplate::findOrFail($slug);
+
+        // Collect dynamic form data
         $bookingData = json_decode($request->input('booking_data'), true) ?? [];
-        $inputData = $request->input('dynamic', []);
-        $files = $request->file('dynamic', []);
+        $inputData   = $request->input('dynamic', []);
+        $files       = $request->file('dynamic', []);
+
+        // Merge text inputs
         foreach ($inputData as $key => $val) {
             $bookingData[$key] = $val;
         }
 
+        // Handle file uploads
         if (is_array($files)) {
             foreach ($files as $key => $fileInput) {
                 if (is_array($fileInput)) {
@@ -56,38 +91,44 @@ class FormController extends Controller
             }
         }
 
-        $lastInsertedId = '0';
+        // Create user if first_name & last_name exist
+        $lastInsertedId = 0;
         if (!empty($bookingData['first_name']) && !empty($bookingData['last_name'])) {
-
             $user = User::create([
-                'name' => $bookingData['first_name'] . ' ' . $bookingData['last_name'],
-                'email' => $bookingData['email'],
-                'phone_number' => $bookingData['phone'],
-                'password' => bcrypt($request->password),
-                'avatar' => '',
-                'status' => $request->has('status') ? config('constants.status.active') : config('constants.status.inactive'),
+                'name'         => $bookingData['first_name'] . ' ' . $bookingData['last_name'],
+                'email'        => $bookingData['email'] ?? null,
+                'phone_number' => $bookingData['phone'] ?? null,
+                'password'     => bcrypt($request->password ?? 'password'),
+                'avatar'       => '',
+                'status'       => $request->has('status')
+                    ? config('constants.status.active')
+                    : config('constants.status.inactive'),
             ]);
             $user->assignRole('customer');
             $lastInsertedId = $user->id;
         }
+
+        // Create booking
         Booking::create([
-            'booking_template_id'       => $template->id,
-            'customer_id'               => auth()->id() ?? $lastInsertedId,
-            'booking_datetime'          => $request->input('booking_datetime', now()),
-            'selected_staff'            => $request->input('selected_staff', 'Staff User'),
-            'first_name'                => $bookingData['first_name'] ?? NULL,
-            'last_name'                 => $bookingData['last_name'] ?? NULL,
-            'phone_number'              => $bookingData['phone'] ?? NULL,
-            'email'                     => $bookingData['email'] ?? NULL,
-            'booking_data'              => json_encode($bookingData),
-            'bookslots'                 => $request->input('bookslots'),
-            'service_id'                => $bookingData['service'] ?? NULL,
-            'vendor_id'                 => $bookingData['vendor'] ?? NULL,
+            'booking_template_id' => $template->id,
+            'customer_id'         => auth()->id() ?? $lastInsertedId,
+            'booking_datetime'    => $request->input('booking_datetime', now()),
+            'selected_staff'      => $request->input('selected_staff', 'Staff User'),
+            'first_name'          => $bookingData['first_name'] ?? null,
+            'last_name'           => $bookingData['last_name'] ?? null,
+            'phone_number'        => $bookingData['phone'] ?? null,
+            'email'               => $bookingData['email'] ?? null,
+            'booking_data'        => json_encode($bookingData),
+            'bookslots'           => $request->input('bookslots'),
+            'service_id'          => $bookingData['service'] ?? null,
+            'vendor_id'           => $bookingData['vendor'] ?? null,
         ]);
+
         return redirect()
             ->route('form.show', $template->slug)
             ->with('success', 'Form submitted successfully!');
     }
+
 
     function getservicesstaff(Request $request)
     {
