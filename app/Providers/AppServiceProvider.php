@@ -151,7 +151,7 @@ class AppServiceProvider extends ServiceProvider
             $servicesForm .= '<input type="hidden" name="bookslots" id="bookslots">
          
             <div class="slot-list-wrapper space-y-2">
-              <p class="hidden pl-4 mt-2 text-sm text-red-600 font-medium select_slot">Please select atleast one slot</p>
+              <p class="hidden pl-4 mt-2 text-sm text-red-600 font-medium select_slot d-none">Please select atleast one slot</p>
             </div>
              ';
             return $servicesForm;
@@ -209,7 +209,7 @@ class AppServiceProvider extends ServiceProvider
 
             // Phone
             $userForm .= "<div class='mb-4 {$c['group']}'>";
-            $userForm .= "<label for='phone' class='block font-medium text-gray-700 {$c['label']}'>Phone</label>";
+            $userForm .= "<label for='phone' class='block font-medium text-gray-700 {$c['label']}'>Phone <span class='text-red-500'>*</span></label>";
             $userForm .= "<input type='tel' name='dynamic[phone]' id='phone' value='" . e($phone) . "' placeholder='Phone Number' maxlength='10'
         oninput=\"this.value = this.value.replace(/[^0-9]/g, '')\"
         class='mt-1 block w-full rounded-md shadow-sm {$c['input']} " . $errorClass('dynamic.phone') . "'>";

@@ -33,18 +33,19 @@ class FormController extends Controller
     public function store(Request $request, $slug)
     {
         // Only validate if 'dynamic' fields are in the request
-        if ($request->has(['dynamic.first_name', 'dynamic.last_name', 'dynamic.email'])) {
+        if ($request->has(['dynamic.first_name', 'dynamic.last_name', 'dynamic.email', 'dynamic.phone'])) {
             $request->validate([
                 'dynamic.first_name' => 'required|string|max:255',
                 'dynamic.last_name'  => 'required|string|max:255',
                 'dynamic.email'      => 'required|email|unique:users,email',
-                'dynamic.phone'      => 'nullable|string|max:20',
+                'dynamic.phone'      => 'required|string|max:20',
             ], [
                 'dynamic.first_name.required' => 'First name is required.',
                 'dynamic.last_name.required'  => 'Last name is required.',
                 'dynamic.email.required'      => 'Email address is required.',
                 'dynamic.email.email'         => 'Please enter a valid email address.',
                 'dynamic.email.unique'        => 'This email is already registered.',
+                'dynamic.phone.required'      => 'Phone Number is required.',
             ]);
         }
         // if ($request->has(['dynamic.service', 'dynamic.vendor'])) {

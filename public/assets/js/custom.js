@@ -735,13 +735,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         $("#bookingTemplateModal").modal("hide");
                         const services_short_code_get_staftf = document.querySelector('.get_service_staff');
-                        if(services_short_code_get_staftf != null){
-                            
+                        if (services_short_code_get_staftf != null) {
+
                             services_short_code_get_staftf.addEventListener('change', function () {
                                 var customValue = services_short_code_get_staftf;
                                 get_services_staff(customValue);
                             });
-                        } 
+                        }
 
                     } else {
                         alert(data.message || "Failed to load template.");
@@ -1638,11 +1638,13 @@ function get_services_staff(selectedvalue) {
                     vendorid: vendorId,
                 },
                 success: function (response) {
+                    console.log(response);
                     let sessionsHTML = '';
                     if (response && response.staffdata.length > 0) {
+                        console.log('working');
                         const formattedDate = response.date;
                         const price = `${response.serviceCurrency} ${response.price}`;
-                        $('.availibility').removeClass('d-none');
+                        $('.availibility').removeClass('hidden d-none');
                         const date = response.date;
 
                         sessionsHTML += `<div class="date-section mb-3">
@@ -1676,9 +1678,11 @@ function get_services_staff(selectedvalue) {
                             </div>
                         </div>`;
                     } else {
+                        console.log('why not working');
+                        $('.availibility').removeClass('hidden d-none');
                         sessionsHTML = `<p class="text-sm text-red-500">No available slots found for this date.</p>`;
                     }
-
+                    console.log('all working');
                     $('.availibility').html(sessionsHTML);
                     bindSlotClickEvent();
                 }

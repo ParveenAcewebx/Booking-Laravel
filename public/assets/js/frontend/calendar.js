@@ -308,7 +308,7 @@
                     method: 'GET',
                     data: { dates: date, serviceid: serviceId, vendorid: vendorId },
                     success: function (response) {
-                        // console.log(response.merged_slots);
+                        console.log(response.merged_slots);
                         let sessionsHTML = '';
                         const formattedDate = response?.date || '';
                         const price = `${response?.serviceCurrency || ''} ${response?.price || ''}`;
@@ -316,6 +316,8 @@
                         const staffOffIds = response.staff_off_ids ? response.staff_off_ids.split(',').map(id => id.trim()) : [];
 
                         if (response && response.merged_slots?.length > 0) {
+                            // alert('sdfsf1');
+
                             $('.availibility').removeClass('hidden');
 
                             sessionsHTML += `<div class="date-section mb-3">
@@ -343,8 +345,8 @@
 
                             sessionsHTML += `</div></div></div>`;
                         } else {
-                            sessionsHTML = `<p class="text-sm text-red-500">No available slots found for this date.</p>`;
-                            $('.availibility').addClass('hidden');
+                            sessionsHTML = `<p class="text-sm text-red-500">No available slots found for this date ${date}.</p>`;
+                            $('.availibility').removeClass('hidden');
                         }
 
                         sessionsHTML += `<input type="hidden" id="staffOffIds" value="${staffOffIds.join(',')}">`;

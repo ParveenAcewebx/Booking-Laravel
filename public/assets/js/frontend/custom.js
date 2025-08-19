@@ -348,7 +348,6 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     function checkSlots($context) {
         const $wrapper = $context.find('.slot-list-wrapper:visible');
-
         let $activeBtn;
 
         const prevVisible = $context.find('.previous:visible').length > 0;
@@ -357,27 +356,20 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log('prevVisible', prevVisible);
         console.log('submitVisible', submitVisible);
 
+        // Check if slot-item exists
+        const hasSlot = $wrapper.find('.slot-item').length > 0;
+
         if (prevVisible && submitVisible) {
             $activeBtn = $context.find('.submit:visible');
-
-            if ($wrapper.length) {
-                const hasContent = $.trim($wrapper.html()) !== '';
-                $activeBtn.prop('disabled', !hasContent);
-                console.log('Condition First', hasContent);
-            } else {
-                $activeBtn.prop('enabled', true);
-                console.log('Condition Second');
-            }
-            $activeBtn.prop('enabled', true);
-            console.log('Condition third', 3);
+            $activeBtn.prop('disabled', !hasSlot);
+            console.log('Condition First - hasSlot:', hasSlot);
             return;
         }
 
         if ($wrapper.length) {
-            const hasContent = $.trim($wrapper.html()) !== '';
             $activeBtn = $context.find('.next:visible, .submit:visible, .simple-submit:visible');
-            $activeBtn.prop('disabled', !hasContent);
-            console.log('Condition third', 4);
+            $activeBtn.prop('disabled', !hasSlot);
+            console.log('Condition Second - hasSlot:', hasSlot);
         }
     }
 
@@ -398,4 +390,5 @@ document.addEventListener("DOMContentLoaded", function () {
             checkSlots($section);
         }, 0);
     });
+
 });
