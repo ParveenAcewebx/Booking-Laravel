@@ -156,6 +156,7 @@ class FormController extends Controller
             $workingDates = [];
             $vendor_id = $request['vendor_id'];
             $vendoraiationsstaff = VendorStaffAssociation::where('vendor_id', $vendor_id)->with('staff')->get();
+            
             if ($vendoraiationsstaff->isNotEmpty()) {
                 $workingDates = $vendoraiationsstaff->map(function ($association) {
                     $formattedWorkHours = [];

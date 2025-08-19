@@ -29,67 +29,156 @@
         <!-- [ Page Header ] end -->
 
         <!-- [ Form Section ] start -->
-        <form action="{{ route('booking.update', $booking->id) }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-
-            <div class="row">
-                <!-- [ Left Column (8) ] start -->
-                <div class="col-md-8 order-md-1">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Booking Information</h5>
-                        </div>
-                        <div class="card-body">
-                            {{-- Success or Error Messages --}}
-                            @if(session('success'))
-                            <div class="alert alert-success">{{ session('success') }}</div>
-                            @endif
-                            @if(session('error'))
-                            <div class="alert alert-danger">{{ session('error') }}</div>
-                            @endif
-
-                            <!-- <h5 class="mb-4">Booking Information</h5> -->
-
-                            {{-- Rendered Dynamic Fields --}}
-                            {!! $dynamicFieldHtml !!}
-                        </div>
+        <div class="row">
+            <!-- [ Left Column (8) ] start -->
+            <div class="col-md-12 order-md-1">
+                <div class="card">
+                    <div class="card-header text-white" style="background-color: #0073aa;">
+                        <h5 class="text-white">Booking Information</h5>
                     </div>
-                </div>
-                <!-- [ Left Column (8) ] end -->
+                    <div class="card-body">
+                        <!-- User Info Section -->
+                        @if(!empty($userinfo['first_name']) || !empty($userinfo['last_name']) || !empty($userinfo['email']) || !empty($userinfo['phone']))
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="invoice-box">
+                                    <h6 class="ml-2">User Information</h6>
+                                    <table class="table table-borderless">
+                                      <tbody>
+                                            @if(!empty($userinfo['first_name']) && !empty($userinfo['last_name']))
+                                                <tr>
+                                                    <td><strong>Name:</strong> {{ $userinfo['first_name'] }} {{ $userinfo['last_name'] }}</td>
+                                                </tr>
+                                            @endif
 
-                <!-- [ Right Column (4) ] start -->
-                <div class="col-md-4 order-md-2">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Settings</h5>
-                        </div>
-                        <div class="card-body">
-                            <!-- Status -->
-                            <div class="row">
-                                <!-- Staff Dropdown -->
-                               
-                                </div>
+                                            @if(!empty($userinfo['email']))
+                                                <tr>
+                                                    <td><strong>Email:</strong> <a href="mailto:{{ $userinfo['email'] }}" class="text-info">{{ $userinfo['email'] }}</a></td>
+                                                </tr>
+                                            @endif
 
-                                <!-- Booking Date and Time -->
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label class="form-label">Booking Date and Time</label>
-                                        <input type="datetime-local" class="form-control" name="booking_datetime"
-                                            value="{{ old('booking_datetime', $booking->booking_datetime) }}" required>
-                                    </div>
-                                  {{-- Save Button for Settings --}}
-                                    <div class="text-right mt-4">
-                                        <button type="submit" class="btn btn-primary">Update</button>
-                                    </div>
+                                            @if(!empty($userinfo['phone']))
+                                                <tr>
+                                                    <td><strong>Phone No:</strong> {{ $userinfo['phone'] }}</td>
+                                                </tr>
+                                            @endif
+                                      </tbody>
+                                    </table>
                                 </div>
                             </div>
+                        @endif
+
+                        <!-- Service / Vendor Info Section -->
+                        @if(!empty($serviceverndor['serivename']) || !empty($serviceverndor['vendorname']))
+                            <div class="col-md-4">
+                                <h6 class="ml-2">Service / Vendor Information</h6>
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        @if(!empty($serviceverndor['serivename']))
+                                            <tr>
+                                                <td><strong>Service Name:</strong> {{ htmlspecialchars($serviceverndor['serivename']) }}</td>
+                                            </tr>
+                                        @endif
+
+                                        @if(!empty($serviceverndor['vendorname']))
+                                            <tr>
+                                                <td><strong>Vendor Name:</strong> {{ htmlspecialchars($serviceverndor['vendorname']) }}</td>
+                                            </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                     
+                        @endif
                         </div>
+
+                    </div>
+
+                    <div class="card-body">
+                        <!-- Booking Details Section -->
+                        @if(is_array($slotedetail) && count($slotedetail) > 0)
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6 class="ml-2">Booking Information</h6>
+                                <table class="table table-responsive">
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Total number of slots:</strong> {{ count($slotedetail) }}</td>
+                                        </tr>
+                                        @foreach($slotedetail as $index => $slotededata)
+                                            <tr>
+                                                <th>Slot {{ $index + 1 }}:</th>
+                                                <td>
+                                                    <strong>Date:</strong> {{ $slotededata->date }}<br>
+                                                    <strong>Time:</strong> {{ $slotededata->start }} To {{ $slotededata->end }}<br>
+                                                    <strong>Duration:</strong> {{ $slotededata->duration }}<br>
+                                                    <strong>Price:</strong> {{ $slotededata->price }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Total Price Section -->
+                            <div class="col-md-4">
+                                <h6 class="m-b-20">Amount</h6>
+                                <h5 class="text-uppercase text-primary">Total Price: 
+                                    @php
+                                        $totalPrice = 0;
+                                        foreach($slotedetail as $slotededata) {
+                                           $price = str_replace(['$', ' '], '', $slotededata->price);
+                                           $totalPrice += (float) $price;
+                                        }
+                                    @endphp
+                                    <span>${{ number_format($totalPrice, 2) }}</span>    
+                                </h5>
+                            </div>
+                        </div>
+                        @else
+                            <p>No booking slots available.</p> <!-- In case $slotedetail is empty or null -->
+                        @endif
+                    </div>
+
+                    <div class="card-body">
+                        <!-- Additional Fields Section -->
+                        @if(is_array($userinfo) && count($userinfo) > 0) <!-- Check if $userinfo is an array and not empty -->
+                        <h6>Additional Information</h6>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Field</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($userinfo as $key => $value)
+                                        @if(!in_array($key, ['first_name', 'last_name', 'email', 'phone', 'service', 'vendor']))
+                                            <tr>
+                                                <th>{{ ucfirst(str_replace('_', ' ', $key)) }}:</th>
+                                                <td>
+                                                    @if(is_array($value) || is_object($value))
+                                                        @foreach($value as $subKey => $subValue)
+                                                            <strong>{{ ucfirst(str_replace('_', ' ', $subKey)) }}:</strong> {{ $subValue }}<br>
+                                                        @endforeach
+                                                    @else
+                                                        {{ $value }}
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        @else
+                            <p>No additional information available.</p> <!-- In case $userinfo is empty -->
+                        @endif
                     </div>
                 </div>
-                <!-- [ Right Column (4) ] end -->
             </div>
-        </form>
+        </div>
         <!-- [ Form Section ] end -->
     </div>
 </section>

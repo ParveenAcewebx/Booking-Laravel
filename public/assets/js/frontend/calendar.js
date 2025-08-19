@@ -390,7 +390,7 @@
         // Create slot card HTML
         function createSlotHTML(date, price, start, end, duration, staffIds) {
             const staffIdsString = Array.isArray(staffIds) ? staffIds.join(',') : staffIds;
-            return `
+            const html = `
         <div class="min-w-[170px] bg-white border border-gray-300 rounded-lg p-4 shadow-sm slot-card cursor-pointer transition hover:shadow-md"
             data-date="${date}"
             data-price="${price}"
@@ -403,6 +403,9 @@
             <p class="text-sm text-gray-600">Price: ${price}</p>
         </div>
     `;
+
+            updateUIState(); // ✅ Check state when slot-card is appended
+            return html;
         }
 
         // Append slot item only once
@@ -434,23 +437,15 @@
             </div>
         `);
             }
-            updateUIState();
+
+            updateUIState(); // ✅ Also check state after slot added
         }
 
-        // Update UI (Remove All + Error Msg + Button state)
+        // Toggle Remove All + Error Message
         function updateUIState() {
             const hasSlots = slotDataArray.length > 0;
-            const bookslotsValue = $('#bookslots').val();
-            const hasBookslot = bookslotsValue && bookslotsValue.trim() !== '';
-
-            const enableButton = hasSlots && hasBookslot;
             $('.remove-all-slots').toggleClass('hidden', !hasSlots);
-            $('.select_slots').toggleClass('hidden d-none', enableButton);
-
-            // Enable/disable all next/submit buttons
-            const $context = $('.wizard-step:visible'); // Adjust selector if needed
-            const $activeBtn = $context.find('.next:visible, .submit:visible, .simple-submit:visible');
-            $activeBtn.prop('disabled', !enableButton);
+            $('.select_slots').toggleClass('hidden d-none', hasSlots);
         }
 
         // Remove single slot
@@ -465,16 +460,12 @@
             updateUIState();
         });
 
-\        $(document).on('click', '.remove-all-slots', function () {
+        // Remove all slots
+        $(document).on('click', '.remove-all-slots', function () {
             $('.slot-list-wrapper').find('.slot-item').remove();
             slotDataArray = [];
             $('#bookslots').val('');
             updateUIState();
         });
-
-        $(document).on('change', '#bookslots', function () {
-            updateUIState();
-        });
-
     });
 })(jQuery);

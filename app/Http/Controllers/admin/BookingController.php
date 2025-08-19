@@ -22,6 +22,8 @@ use Mail;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cookie;
+use App\Models\Service;
+use App\Models\Vendor;
 
 class BookingController extends Controller
 {
@@ -121,10 +123,11 @@ class BookingController extends Controller
 
     public function bookingSave(Request $request)
     {
+        
         $request->validate([
             'booking_datetime' => 'required'
         ]);
-
+        
         $bookingData = json_decode($request->booking_data, true) ?? [];
         $inputData = $request->input('dynamic', []);
         $files = $request->file('dynamic', []);
@@ -165,30 +168,45 @@ class BookingController extends Controller
     }
 
     public function bookingEdit($id)
-    {
-        $booking = Booking::with('template')->findOrFail($id);
-        $dynamicValues = json_decode($booking->booking_data, true) ?? [];
-        $formStructureJson = $booking->template->data ?? '[]';
-        $formStructureArray = json_decode($formStructureJson, true);
+        {
+            $booking = Booking::with('template')->findOrFail($id);
+            $dynamicValues = json_decode($booking->booking_data, true) ?? [];
+            if (isset($dynamicValues['service'])) {
+                $servicedata = Service::where('id', $dynamicValues['service'])->first();
+            } else {
+                $servicedata = null;
+            }
+            if (isset($dynamicValues['vendor'])) {
+                $vendorname = Vendor::where('id', $dynamicValues['vendor'])->pluck('name')->first();
+            } else {
+                $vendorname = null;
+            }
+            $serviceverndor = [
+                'serivename' => $servicedata ? $servicedata->name : null,
+                'serviceprice' => $servicedata ? $servicedata->price : null,
+                'servicurrency' => $servicedata ? $servicedata->currency : null,
+                'serviceduration' => $servicedata ? $servicedata->duration : null,
+                'vendorname' => $vendorname,
+            ];
+            $slotedetail = json_decode($booking->bookslots);
+            $formStructureJson = $booking->template->data ?? '[]';
+            $formStructureArray = json_decode($formStructureJson, true);
+            $bookingid = $id ? $id : '';
+            $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
+            $selectedStaffUser = User::where('name', $booking->selected_staff)->first();
+            $booking->selected_staff = $selectedStaffUser ? $selectedStaffUser->id : null;
+            $loginId = getOriginalUserId();
+            $loginUser = $loginId ? User::find($loginId) : null;
+            return view('admin.booking.edit', [
+                'booking' => $booking,
+                'userinfo' => $dynamicValues,
+                'serviceverndor' => $serviceverndor,
+                'slotedetail' => $slotedetail,
+                'staffList' => $this->allUsers,
+                'loginUser' => $loginUser,
+            ]);
+        }
 
-        // explicitly use bootstrap for backend
-        $dynamicFieldHtml = FormHelper::renderDynamicFieldHTML($formStructureArray, $dynamicValues, 'bootstrap');
-
-        $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
-
-        $selectedStaffUser = User::where('name', $booking->selected_staff)->first();
-        $booking->selected_staff = $selectedStaffUser?->id;
-
-        $loginId = getOriginalUserId();
-        $loginUser = $loginId ? User::find($loginId) : null;
-
-        return view('admin.booking.edit', [
-            'booking' => $booking,
-            'dynamicFieldHtml' => $dynamicFieldHtml,
-            'staffList' => $this->allUsers,
-            'loginUser' => $loginUser,
-        ]);
-    }
 
 
     public function bookingUpdate(Request $request, $id)

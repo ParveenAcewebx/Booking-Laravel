@@ -735,13 +735,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         $("#bookingTemplateModal").modal("hide");
                         const services_short_code_get_staftf = document.querySelector('.get_service_staff');
-                        if (services_short_code_get_staftf != null) {
-
+                        if(services_short_code_get_staftf != null){
+                            
                             services_short_code_get_staftf.addEventListener('change', function () {
                                 var customValue = services_short_code_get_staftf;
                                 get_services_staff(customValue);
                             });
-                        }
+                        } 
 
                     } else {
                         alert(data.message || "Failed to load template.");
@@ -1638,13 +1638,11 @@ function get_services_staff(selectedvalue) {
                     vendorid: vendorId,
                 },
                 success: function (response) {
-                    console.log(response);
                     let sessionsHTML = '';
                     if (response && response.staffdata.length > 0) {
-                        console.log('working');
                         const formattedDate = response.date;
                         const price = `${response.serviceCurrency} ${response.price}`;
-                        $('.availibility').removeClass('hidden d-none');
+                        $('.availibility').removeClass('d-none');
                         const date = response.date;
 
                         sessionsHTML += `<div class="date-section mb-3">
@@ -1663,6 +1661,7 @@ function get_services_staff(selectedvalue) {
                                 data-price="${price}"
                                 data-start="${staff.day_start}"
                                 data-end="${staff.day_end}"
+                                data-duration=" ${formatDuration(response.duration)}"
                                 data-id="${staff.id}">
                                     <input type="hidden" name="staff_id" value="${staff.id}">
                                     <p class="text-sm mb-1 font-medium text-gray-700">${staff.day_start} - ${staff.day_end}</p>
@@ -1670,6 +1669,10 @@ function get_services_staff(selectedvalue) {
                                     <p class="text-sm text-gray-600 m-0">Duration: ${formatDuration(response.duration)}</p>
                                     <p class="text-sm text-gray-600 m-0">Price: ${response.serviceCurrency} ${response.price}</p>
                                 </div>`;
+                            }else{
+                                     sessionsHTML = `<p class="text-danger text-center">No available slots found for this date ${date}.</p>`;
+                            $('.availibility').removeClass('d-none');
+                             $('.availibility').removeClass('hidden');
                             }
                         });
 
@@ -1678,11 +1681,9 @@ function get_services_staff(selectedvalue) {
                             </div>
                         </div>`;
                     } else {
-                        console.log('why not working');
-                        $('.availibility').removeClass('hidden d-none');
                         sessionsHTML = `<p class="text-sm text-red-500">No available slots found for this date.</p>`;
                     }
-                    console.log('all working');
+
                     $('.availibility').html(sessionsHTML);
                     bindSlotClickEvent();
                 }
@@ -1710,44 +1711,83 @@ function get_services_staff(selectedvalue) {
             const price = $(this).data('price');
             const start = $(this).data('start');
             const end = $(this).data('end');
-            const id = $(this).data('id');
-            AppendSlotBoxOnce(date, price, start, end, id);
+            const duration = $(this).data('duration');
+            const staffIds = $(this).data('id');
+            AppendSlotBoxOnce(date, price, start, end, duration, staffIds);
         });
     }
-    function AppendSlotBoxOnce(date, price, start, end, id) {
+    
+    let bookSlots = $('#bookslots').val();
+      let slotDataArray = [];
+    if (bookSlots !== "" && bookSlots !== null && bookSlots !== undefined) {
+        let slots = JSON.parse(bookSlots);
+        slots.forEach(function(slot) {
+            let { date, price, start, end, staff_ids, duration } = slot;
+            let staffId = staff_ids[0]; 
+            AppendSlotBoxOnce(date, price, start, end, duration,staffId);
+        });
+
+    }
+
+    function AppendSlotBoxOnce(date, price, start, end, duration, id) {
         const $wrapper = $('.slot-list-wrapper');
         const uniqueKey = `${date}-${start}-${end}`;
         const exists = $wrapper.find(`[data-slot="${uniqueKey}"]`).length;
         if (!exists) {
             $('.remove-all-slots').removeClass('d-none');
-            const slotHTML = `
-            <div class="slot-item d-flex align-items-center justify-content-between gap-4 border border-gray-300 rounded-md p-3 bg-white shadow-sm text-sm w-full sm:w-full" data-slot="${uniqueKey}">
-            <div class="d-flex w-100 justify-content-between align-items-center mr-2">    
-            <div class="font-medium text-gray-800 flex-1">
-                    <div>${date}</div>
-                        <input type="hidden" class=""value="${id}"/>
-                    <div class="text-xs text-gray-500">${start} → ${end}</div>
+                slotDataArray.push({
+                    date: date,
+                    price: price,
+                    start: start,
+                    end: end,
+                    duration: duration,
+                    staff_ids: id,
+                });
+                $('#bookslots').val(JSON.stringify(slotDataArray));
+                const slotHTML = `
+                <div class="slot-item d-flex align-items-center justify-content-between gap-4 border border-gray-300 rounded-md p-3 bg-white shadow-sm text-sm w-full sm:w-full" data-slot="${uniqueKey}">
+                <div class="d-flex w-100 justify-content-between align-items-center mr-2">    
+                <div class="font-medium text-gray-800 flex-1">
+                        <div>${date}</div>
+                            <input type="hidden" class=""value="${id}"/>
+                            <div class="text-xs text-gray-500">${start} → ${end}</div>
+                            <div class="text-xs text-gray-500">Duration: ${duration}</div>
+                    </div>
+                    <div class="text-success font-semibold whitespace-nowrap">${price}</div>
+                    </div>
+                    ${bookSlots ? '' : '<div class="text-danger font-bold cursor-pointer remove-slot ml-auto">&#10006;</div>'}
                 </div>
-                <div class="text-success font-semibold whitespace-nowrap">${price}</div>
-                </div>
-                <div class="text-danger font-bold cursor-pointer remove-slot ml-auto">&#10006;</div>
-            </div>
-        `;
+            `;
             $wrapper.append(slotHTML);
         }
         toggleRemoveAllButton();
     }
+
     function toggleRemoveAllButton() {
         const hasSlots = $('.slot-list-wrapper .slot-item').length > 0;
         $('.remove-all-slots').toggleClass('d-none', !hasSlots);
     }
+
     $(document).on('click', '.remove-slot', function () {
-        $(this).closest('.slot-item').remove();
+        const $item = $(this).closest('.slot-item');
+        const uniqueKey = $item.data('slot');
+        slotDataArray = slotDataArray.filter(slot => `${slot.date}-${slot.start}-${slot.end}` !== uniqueKey);
+        $item.remove();
+        $('#bookslots').val(slotDataArray.length ? JSON.stringify(slotDataArray) : '');
         toggleRemoveAllButton();
     });
+
     // Remove all slots
     $(document).on('click', '.remove-all-slots', function () {
         $('.slot-list-wrapper').empty();
         toggleRemoveAllButton();
     });
+    
+    $(document).on('click', '.remove-all-slots', function () {
+            $('.slot-list-wrapper').empty();
+            slotDataArray = [];
+            $('#bookslots').val('');
+            toggleRemoveAllButton();
+    });
+
 }
