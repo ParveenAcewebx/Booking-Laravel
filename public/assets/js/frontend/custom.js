@@ -348,36 +348,21 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     function checkSlots($context) {
         const $wrapper = $context.find('.slot-list-wrapper:visible');
-        let $activeBtn;
+        const hasSlotItems = $wrapper.find('.slot-item').length > 0;
+        const bookslotsValue = $('#bookslots').val();
+        const serviceValue = $('#get_service_staff').val();
+        const vendorValue = $('#service_vendor_form').val();
+        const $activeBtn = $context.find('.next:visible, .submit:visible, .simple-submit:visible');
 
-        const prevVisible = $context.find('.previous:visible').length > 0;
-        const submitVisible = $context.find('.submit:visible').length > 0;
-
-        console.log('prevVisible', prevVisible);
-        console.log('submitVisible', submitVisible);
-
-        if (prevVisible && submitVisible) {
-            $activeBtn = $context.find('.submit:visible');
-
-            if ($wrapper.length) {
-                const hasContent = $.trim($wrapper.html()) !== '';
-                $activeBtn.prop('disabled', !hasContent);
-                console.log('Condition First', hasContent);
-            } else {
-                $activeBtn.prop('enabled', true);
-                console.log('Condition Second');
-            }
-            $activeBtn.prop('enabled', true);
-            console.log('Condition third', 3);
+        let valid = true;
+        if(!empty(serviceValue) && !empty(vendorValue)){
+            console.log('asdasd');
+            $('.error-vendor').removeClass('hidden');
             return;
         }
 
-        if ($wrapper.length) {
-            const hasContent = $.trim($wrapper.html()) !== '';
-            $activeBtn = $context.find('.next:visible, .submit:visible, .simple-submit:visible');
-            $activeBtn.prop('disabled', !hasContent);
-            console.log('Condition third', 4);
-        }
+        // ✅ Enable/disable next or submit
+        $activeBtn.prop('enabled', !valid);
     }
 
     $(document).ready(function () {
@@ -386,15 +371,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    $(document).on('click change', '.add-slot, .slot-card, .select_service_vendor, .services-show, .previous, .next', function () {
+    $(document).on('click change', '.slot-card, .add-slot, .remove-slot, .remove-all-slots, #get_service_staff, #service_vendor_form', function () {
         const $section = $(this).closest('form, body');
-        checkSlots($section);
+        setTimeout(() => { checkSlots($section); }, 0);
     });
 
-    $(document).on('click', '.remove-slot, .remove-all-slots', function () {
-        const $section = $(this).closest('form, body');
-        setTimeout(function () {
-            checkSlots($section);
-        }, 0);
-    });
 });

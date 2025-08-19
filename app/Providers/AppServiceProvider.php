@@ -30,31 +30,44 @@ class AppServiceProvider extends ServiceProvider
             })) {
                 return " No services available at the moment";
             }
-            $selectedService = $shortcodeAttrs['service'] ?? '';
-            $selectedvendor = $shortcodeAttrs['vendor'] ?? '';
+            $services = Service::all();
             $c = $class;
-            $servicesForm  = '';
+
+            if ($services->isEmpty() || $services->every(function ($service) {
+                return $service->status !== 1;
+            })) {
+                return " No services available at the moment";
+            }
+
+            $selectedService = $shortcodeAttrs['service'] ?? '';
+            $selectedvendor  = $shortcodeAttrs['vendor'] ?? '';
+            $servicesForm    = '';
+
+            // Service dropdown
             $servicesForm .= "<div class='form-group {$c['group']}'>";
             $servicesForm .= "<label for='service' class='{$c['label']} services-show'>Select Service <span class='text-red-500'>*</span></label>";
-            $servicesForm .= "<select name='dynamic[service]' class='get_service_staff {$c['select']}' required>";
-            $servicesForm .= '<option>---Select Service---</option>';
+            $servicesForm .= "<select name='dynamic[service]' id='get_service_staff' class='get_service_staff {$c['select']}' required>";
+            $servicesForm .= '<option value="">---Select Service---</option>';
             foreach ($services as $service) {
                 $attributes = $service->getAttributes();
                 if ($attributes['status'] === 1) {
-                    $selected = $attributes['id'] == $selectedService ? 'selected' : '';  // Check if the service is selected
+                    $selected = $attributes['id'] == $selectedService ? 'selected' : '';
                     $servicesForm .= "<option value='{$attributes['id']}' {$selected}>{$attributes['name']}</option>";
                 }
             }
             $servicesForm .= "</select>";
+            $servicesForm .= "<p class='text-sm text-red-600 font-medium mt-1 hidden error-service'>Please select a service</p>";
             $servicesForm .= "</div>";
+
+            // Vendor dropdown
             $servicesForm .= "<div class='form-group {$c['group']} select_service_vendor {$c['hidden']}'>";
             $servicesForm .= "<label for='staff' class='{$c['label']}'>Select Vendor <span class='text-red-500'>*</span></label>";
             $servicesForm .= "<input type='hidden' class='selected_vendor' value='" . $selectedvendor . "'>";
             $servicesForm .= "<select name='dynamic[vendor]' id='service_vendor_form' class='{$c['select']} service_vendor_form' required>";
             $servicesForm .= '<option value="">---Select Vendor---</option>';
             $servicesForm .= "</select>";
+            $servicesForm .= "<p class='text-sm text-red-600 font-medium mt-1 hidden error-vendor'>Please select a vendor</p>";
             $servicesForm .= "</div>";
-
             $servicesForm .=  '<div class="calendar-wrap hidden d-none">
                     <div class="w-full flex items-center justify-between d-flex w-100 justify-content-between">
                         <div class="pre-button flex items-center justify-center">
@@ -148,12 +161,10 @@ class AppServiceProvider extends ServiceProvider
                     </button>';
             }
 
-            $servicesForm .= '<input type="hidden" name="bookslots" id="bookslots">
-         
-            <div class="slot-list-wrapper space-y-2">
-              <p class="hidden pl-4 mt-2 text-sm text-red-600 font-medium p-4  border border-gray-300 shadow-md rounded-lg select_slots d-none">Please select atleast one slot</p>
-            </div>
-             ';
+           $servicesForm .= '<input type="hidden" name="bookslots" id="bookslots">
+        <p class="text-sm text-red-600 font-medium mt-1 hidden error-slots">Please select at least one slot</p>
+        <div class="slot-list-wrapper space-y-2"></div>';
+
             return $servicesForm;
         });
 
@@ -188,5 +199,6 @@ class AppServiceProvider extends ServiceProvider
 
             return $userForm;
         });
+
     }
 }
