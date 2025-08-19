@@ -160,10 +160,20 @@
                                                 <td>
                                                     @if(is_array($value) || is_object($value))
                                                         @foreach($value as $subKey => $subValue)
-                                                            <strong>{{ ucfirst(str_replace('_', ' ', $subKey)) }}:</strong> {{ $subValue }}<br>
+                                                            <strong>{{ ucfirst(str_replace('_', ' ', $subKey)) }}:</strong> 
+                                                            @if (strpos($subKey, 'file-') === 0) <!-- Check if the key starts with 'file-' -->
+                                                                <img src="{{ asset('storage/' . $subValue) }}" alt="{{ $subKey }}" style="max-width: 100px; height: auto;">
+                                                            @else
+                                                                {{ $subValue }}
+                                                            @endif
+                                                            <br>
                                                         @endforeach
                                                     @else
-                                                        {{ $value }}
+                                                    @if (preg_match('/\.(jpg|jpeg|png|gif|bmp)$/i', $value)) 
+                                                            <img src="{{ asset('storage/' . $value) }}" alt="{{ $key }}" style="max-width: 100px; height: auto;">
+                                                        @else
+                                                            {{ $value }}
+                                                        @endif
                                                     @endif
                                                 </td>
                                             </tr>
