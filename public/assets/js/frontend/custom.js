@@ -355,10 +355,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const $activeBtn = $context.find('.next:visible, .submit:visible, .simple-submit:visible');
 
         let valid = true;
-        if(!empty(serviceValue) && !empty(vendorValue)){
+        if(!empty(serviceValue) && !empty(vendorValue) && empty(bookslotsValue)){
             console.log('asdasd');
             $('.error-vendor').removeClass('hidden');
-            return;
+            return false;
+        }else{
+                        console.log('aswqewqedasd');
+
         }
 
         // ✅ Enable/disable next or submit
@@ -375,5 +378,4 @@ document.addEventListener("DOMContentLoaded", function () {
         const $section = $(this).closest('form, body');
         setTimeout(() => { checkSlots($section); }, 0);
     });
-
 });

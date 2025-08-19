@@ -32,33 +32,6 @@ class FormController extends Controller
 
     public function store(Request $request, $slug)
     {
-        // Only validate if 'dynamic' fields are in the request
-        if ($request->has(['dynamic.first_name', 'dynamic.last_name', 'dynamic.email', 'dynamic.phone'])) {
-            $request->validate([
-                'dynamic.first_name' => 'required|string|max:255',
-                'dynamic.last_name'  => 'required|string|max:255',
-                'dynamic.email'      => 'required|email|unique:users,email',
-                'dynamic.phone'      => 'required|string|max:20',
-            ], [
-                'dynamic.first_name.required' => 'First name is required.',
-                'dynamic.last_name.required'  => 'Last name is required.',
-                'dynamic.email.required'      => 'Email address is required.',
-                'dynamic.email.email'         => 'Please enter a valid email address.',
-                'dynamic.email.unique'        => 'This email is already registered.',
-                'dynamic.phone.required'      => 'Phone Number is required.',
-            ]);
-        }
-        // if ($request->has(['dynamic.service', 'dynamic.vendor'])) {
-        //     $request->validate([
-        //         'dynamic.service' => 'required|exists:services,id',
-        //         'dynamic.vendor'  => 'required|exists:vendors,id',
-        //     ], [
-        //         'dynamic.service.required' => 'Please select a service.',
-        //         'dynamic.service.exists'   => 'The selected service is invalid.',
-        //         'dynamic.vendor.required'  => 'Please select a vendor.',
-        //         'dynamic.vendor.exists'    => 'The selected vendor is invalid.',
-        //     ]);
-        // }
         // Clear any previous session data for this slug
         session()->forget('user_data_' . $slug);
 
@@ -95,18 +68,31 @@ class FormController extends Controller
         // Create user if first_name & last_name exist
         $lastInsertedId = 0;
         if (!empty($bookingData['first_name']) && !empty($bookingData['last_name'])) {
-            $user = User::create([
-                'name'         => $bookingData['first_name'] . ' ' . $bookingData['last_name'],
-                'email'        => $bookingData['email'] ?? null,
-                'phone_number' => $bookingData['phone'] ?? null,
-                'password'     => bcrypt($request->password ?? 'password'),
-                'avatar'       => '',
-                'status'       => $request->has('status')
-                    ? config('constants.status.active')
-                    : config('constants.status.inactive'),
-            ]);
-            $user->assignRole('customer');
-            $lastInsertedId = $user->id;
+            // Check if email exists
+            $existingUser = null;
+            if (!empty($bookingData['email'])) {
+                $existingUser = User::where('email', $bookingData['email'])->first();
+            }
+
+            if ($existingUser) {
+                // If user already exists, use their ID
+                $lastInsertedId = $existingUser->id;
+            } else {
+                // Otherwise, create a new user
+                $user = User::create([
+                    'name'         => $bookingData['first_name'] . ' ' . $bookingData['last_name'],
+                    'email'        => $bookingData['email'] ?? null,
+                    'phone_number' => $bookingData['phone'] ?? null,
+                    'password'     => bcrypt($request->password ?? 'password'),
+                    'avatar'       => '',
+                    'status'       => $request->has('status')
+                        ? config('constants.status.active')
+                        : config('constants.status.inactive'),
+                ]);
+
+                $user->assignRole('customer');
+                $lastInsertedId = $user->id;
+            }
         }
 
         // Create booking
@@ -156,7 +142,7 @@ class FormController extends Controller
             $workingDates = [];
             $vendor_id = $request['vendor_id'];
             $vendoraiationsstaff = VendorStaffAssociation::where('vendor_id', $vendor_id)->with('staff')->get();
-            
+
             if ($vendoraiationsstaff->isNotEmpty()) {
                 $workingDates = $vendoraiationsstaff->map(function ($association) {
                     $formattedWorkHours = [];
