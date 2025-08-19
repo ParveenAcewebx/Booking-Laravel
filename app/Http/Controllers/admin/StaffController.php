@@ -378,7 +378,7 @@ class StaffController extends Controller
         $staffMeta->work_hours = json_encode($workingHours);
 
         // Always update days_off (empty = cleared)
-        $staffMeta->days_off = !empty($nestedDayOffs) ? json_encode($nestedDayOffs) : null;
+        $staffMeta->days_off = !empty($nestedDayOffs) ? json_encode($nestedDayOffs) : json_encode([]);
 
         $staffMeta->save();
         if ($request->filled('assigned_vendor')) {

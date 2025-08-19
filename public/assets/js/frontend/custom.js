@@ -348,30 +348,19 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     function checkSlots($context) {
         const $wrapper = $context.find('.slot-list-wrapper:visible');
-        let $activeBtn;
+        const hasSlotItems = $wrapper.find('.slot-item').length > 0;
+        const bookslotsValue = $('#bookslots').val();
+        const enableButton = hasSlotItems && bookslotsValue && bookslotsValue.trim() !== '';
 
-        const prevVisible = $context.find('.previous:visible').length > 0;
-        const submitVisible = $context.find('.submit:visible').length > 0;
-
-        console.log('prevVisible', prevVisible);
-        console.log('submitVisible', submitVisible);
-
-        // Check if slot-item exists
-        const hasSlot = $wrapper.find('.slot-item').length > 0;
-
-        if (prevVisible && submitVisible) {
-            $activeBtn = $context.find('.submit:visible');
-            $activeBtn.prop('disabled', !hasSlot);
-            console.log('Condition First - hasSlot:', hasSlot);
-            return;
+        if (enableButton) {
+            $wrapper.find('.select_slots').addClass('hidden d-none');
+        } else {
+            $wrapper.find('.select_slots').removeClass('hidden d-none');
         }
-
-        if ($wrapper.length) {
-            $activeBtn = $context.find('.next:visible, .submit:visible, .simple-submit:visible');
-            $activeBtn.prop('disabled', !hasSlot);
-            console.log('Condition Second - hasSlot:', hasSlot);
-        }
+        const $activeBtn = $context.find('.next:visible, .submit:visible, .simple-submit:visible');
+        $activeBtn.prop('disabled', !enableButton);
     }
+
 
     $(document).ready(function () {
         $('.form-navigation').each(function () {
@@ -379,16 +368,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    $(document).on('click change', '.add-slot, .slot-card, .select_service_vendor, .services-show, .previous, .next', function () {
+    $(document).on('click change', '.slot-card, .add-slot, .remove-slot, .remove-all-slots, .services-show, .select_service_vendor', function () {
         const $section = $(this).closest('form, body');
-        checkSlots($section);
+        setTimeout(() => { checkSlots($section); }, 0);
     });
-
-    $(document).on('click', '.remove-slot, .remove-all-slots', function () {
-        const $section = $(this).closest('form, body');
-        setTimeout(function () {
-            checkSlots($section);
-        }, 0);
-    });
-
 });
