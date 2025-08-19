@@ -697,10 +697,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         const form = document.querySelector("form");
                         if (form) {
                             form.addEventListener("submit", function (event) {
+                                
                                 let templateData = {};
                                 const inputs =
                                     form.querySelectorAll("[name^='dynamic']");
-
                                 inputs.forEach((input) => {
                                     const nameMatch =
                                         input.name.match(/dynamic\[(.+?)\]/);
@@ -1639,43 +1639,46 @@ function get_services_staff(selectedvalue) {
                 },
                 success: function (response) {
                     let sessionsHTML = '';
+                    //  console.log(response.merged_slots);
                     if (response && response.staffdata.length > 0) {
                         const formattedDate = response.date;
                         const price = `${response.serviceCurrency} ${response.price}`;
                         $('.availibility').removeClass('d-none');
                         const date = response.date;
-
+                        const staffOffIds = response.staff_off_ids ? response.staff_off_ids.split(',').map(id => id.trim()) : [];
                         sessionsHTML += `<div class="date-section mb-3">
                                   <h5 class="date-header text-lg font-semibold mb-2">${formattedDate}</h5>
                                     <div class="d-flex gap-4 pb-2 overflow-auto mx-auto max-w-800px" style="scrollbar-width: thin;">
                                     <div class="d-flex gap-4 pb-2 w-max min-w-full" style="-ms-overflow-style: none; scrollbar-width: thin;">`;
 
-                        response.staffdata.forEach((staff, index) => {
-                            const firstSlot = staff.slots[0];
-                            const lastSlot = staff.slots[staff.slots.length - 1];
-
-                            if (firstSlot && lastSlot) {
-                                sessionsHTML += `
-                                <div class="rounded-lg p-2 bg-white border border-gray-300 cursor-pointer m-2 slot-card"style="min-width: 170px; max-width: 100%;" 
-                                data-date="${formattedDate}" 
-                                data-price="${price}"
-                                data-start="${staff.day_start}"
-                                data-end="${staff.day_end}"
-                                data-duration=" ${formatDuration(response.duration)}"
-                                data-id="${staff.id}">
-                                    <input type="hidden" name="staff_id" value="${staff.id}">
-                                    <p class="text-sm mb-1 font-medium text-gray-700">${staff.day_start} - ${staff.day_end}</p>
-                                    <p class="text-sm text-gray-600 m-0">Slots: ${staff.slots.length}</p>
-                                    <p class="text-sm text-gray-600 m-0">Duration: ${formatDuration(response.duration)}</p>
-                                    <p class="text-sm text-gray-600 m-0">Price: ${response.serviceCurrency} ${response.price}</p>
-                                </div>`;
-                            }else{
-                                     sessionsHTML = `<p class="text-danger text-center">No available slots found for this date ${date}.</p>`;
-                            $('.availibility').removeClass('d-none');
-                             $('.availibility').removeClass('hidden');
+                        if (response && response.merged_slots?.length > 0) {
+                            response.merged_slots.forEach((slot) => {
+                            let slotStaffIds = slot.available_staff_ids;
+                             if (staffOffIds.length > 0) {
+                                    slotStaffIds = slotStaffIds.filter(id => !staffOffIds.includes(String(id)));
                             }
-                        });
+                                sessionsHTML += `
+                                    <div class="rounded-lg p-2 bg-white border border-gray-300 cursor-pointer m-2 slot-card"style="min-width: 170px; max-width: 100%;" 
+                                    data-date="${formattedDate}" 
+                                    data-price="${price}"
+                                    data-start="${slot.start_time}"
+                                    data-end="${slot.end_time}"
+                                    data-duration=" ${formatDuration(response.duration)}"
+                                    data-id="${slot.id}">
+                                        <input type="hidden" name="staff_id" value="${slot.id}">
+                                        <p class="text-sm mb-1 font-medium text-gray-700">${slot.start_time} - ${slot.end_time}</p>
 
+                                        <p class="text-sm text-gray-600 m-0">Duration: ${formatDuration(response.duration)}</p>
+                                        <p class="text-sm text-gray-600 m-0">Price: ${response.serviceCurrency} ${response.price}</p>
+                                    </div>`
+
+                                });
+
+                            }else{
+                                sessionsHTML = `<p class="text-danger text-center">No available slots found for this date ${date}.</p>`;
+                                $('.availibility').removeClass('d-none');
+                                $('.availibility').removeClass('hidden');
+                            }
                         sessionsHTML += `
                                 </div>
                             </div>
