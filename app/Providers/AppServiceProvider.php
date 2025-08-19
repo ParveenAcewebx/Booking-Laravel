@@ -158,66 +158,35 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Shortcode::register('user-information', function ($shortcodeAttrs, $class) {
-    $c = $class;
+            $c = $class;
+            // dd($shortcodeAttrs);
+            $firstName = $shortcodeAttrs['first_name'] ?? '';
+            $lastName  = $shortcodeAttrs['last_name'] ?? '';
+            $email     = $shortcodeAttrs['email'] ?? '';
+            $phone     = $shortcodeAttrs['phone'] ?? '';
+            $userForm  = '';
 
-    $firstName = old('dynamic.first_name', $shortcodeAttrs['first_name'] ?? '');
-    $lastName  = old('dynamic.last_name',  $shortcodeAttrs['last_name'] ?? '');
-    $email     = old('dynamic.email',      $shortcodeAttrs['email'] ?? '');
-    $phone     = old('dynamic.phone',      $shortcodeAttrs['phone'] ?? '');
+            $userForm .= "<div class='form-group {$c['group']}'>";
+            $userForm .= "<label for='first_name'class='{$c['label']}'>First Name <span class='text-red-500'>*</span></label>";
+            $userForm .= "<input type='text' name='dynamic[first_name]' id='first_name' class='form-control {$c['input']}' value='" . e($firstName) . "' placeholder='First Name' required>";
+            $userForm .= "</div>";
 
-    $errors = session('errors');
+            $userForm .= "<div class='form-group {$c['group']}'>";
+            $userForm .= "<label for='last_name' class='{$c['label']}'>Last Name <span class='text-red-500'>*</span></label>";
+            $userForm .= "<input type='text' name='dynamic[last_name]' id='last_name' class='form-control {$c['input']}' value='" . e($lastName) . "' placeholder='Last Name' required>";
+            $userForm .= "</div>";
 
-    // Helper to get Tailwind error class
-    $errorClass = function ($field) use ($errors) {
-        return ($errors && $errors->has($field))
-            ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-            : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500';
-    };
+            $userForm .= "<div class='form-group {$c['group']}' >";
+            $userForm .= "<label for='email'class='{$c['label']}'>Email <span class='text-red-500'>*</span></label>";
+            $userForm .= "<input type='email' name='dynamic[email]' id='email' class='form-control {$c['input']}' value='" . e($email) . "' placeholder='Email Address' required>";
+            $userForm .= "</div>";
 
-    // Helper to get error message HTML
-    $errorMessage = function ($field) use ($errors) {
-        return ($errors && $errors->has($field))
-            ? "<p class='mt-1 text-sm text-red-600'>" . e($errors->first($field)) . "</p>"
-            : '';
-    };
+            $userForm .= "<div class='form-group {$c['group']}'>";
+            $userForm .= "<label for='phone' class='{$c['label']}'>Phone</label>";
+            $userForm .= "<input type='tel' name='dynamic[phone]' id='phone' class='form-control {$c['input']}' value='" . e($phone) . "' placeholder='Phone Number' maxlength='10' oninput=\"this.value = this.value.replace(/[^0-9]/g, '')\">";
+            $userForm .= "</div>";
 
-    $userForm = '';
-
-    // First Name
-    $userForm .= "<div class='mb-4 {$c['group']}'>";
-    $userForm .= "<label for='first_name' class='block font-medium text-gray-700 {$c['label']}'>First Name <span class='text-red-500'>*</span></label>";
-    $userForm .= "<input type='text' name='dynamic[first_name]' id='first_name' value='" . e($firstName) . "' placeholder='First Name' 
-        class='mt-1 block w-full rounded-md shadow-sm {$c['input']} " . $errorClass('dynamic.first_name') . "'>";
-    $userForm .= $errorMessage('dynamic.first_name');
-    $userForm .= "</div>";
-
-    // Last Name
-    $userForm .= "<div class='mb-4 {$c['group']}'>";
-    $userForm .= "<label for='last_name' class='block font-medium text-gray-700 {$c['label']}'>Last Name <span class='text-red-500'>*</span></label>";
-    $userForm .= "<input type='text' name='dynamic[last_name]' id='last_name' value='" . e($lastName) . "' placeholder='Last Name' 
-        class='mt-1 block w-full rounded-md shadow-sm {$c['input']} " . $errorClass('dynamic.last_name') . "'>";
-    $userForm .= $errorMessage('dynamic.last_name');
-    $userForm .= "</div>";
-
-    // Email
-    $userForm .= "<div class='mb-4 {$c['group']}'>";
-    $userForm .= "<label for='email' class='block font-medium text-gray-700 {$c['label']}'>Email <span class='text-red-500'>*</span></label>";
-    $userForm .= "<input type='email' name='dynamic[email]' id='email' value='" . e($email) . "' placeholder='Email Address' 
-        class='mt-1 block w-full rounded-md shadow-sm {$c['input']} " . $errorClass('dynamic.email') . "'>";
-    $userForm .= $errorMessage('dynamic.email');
-    $userForm .= "</div>";
-
-    // Phone
-    $userForm .= "<div class='mb-4 {$c['group']}'>";
-    $userForm .= "<label for='phone' class='block font-medium text-gray-700 {$c['label']}'>Phone <span class='text-red-500'>*</span></label>";
-    $userForm .= "<input type='tel' name='dynamic[phone]' id='phone' value='" . e($phone) . "' placeholder='Phone Number' maxlength='10'
-        oninput=\"this.value = this.value.replace(/[^0-9]/g, '')\"
-        class='mt-1 block w-full rounded-md shadow-sm {$c['input']} " . $errorClass('dynamic.phone') . "'>";
-    $userForm .= $errorMessage('dynamic.phone');
-    $userForm .= "</div>";
-
-    return $userForm;
-});
-
+            return $userForm;
+        });
     }
 }

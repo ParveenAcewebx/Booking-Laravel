@@ -348,19 +348,37 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     function checkSlots($context) {
         const $wrapper = $context.find('.slot-list-wrapper:visible');
-        const hasSlotItems = $wrapper.find('.slot-item').length > 0;
-        const bookslotsValue = $('#bookslots').val();
-        const enableButton = hasSlotItems && bookslotsValue && bookslotsValue.trim() !== '';
+        let $activeBtn;
 
-        if (enableButton) {
-            $wrapper.find('.select_slots').addClass('hidden d-none');
-        } else {
-            $wrapper.find('.select_slots').removeClass('hidden d-none');
+        const prevVisible = $context.find('.previous:visible').length > 0;
+        const submitVisible = $context.find('.submit:visible').length > 0;
+
+        console.log('prevVisible', prevVisible);
+        console.log('submitVisible', submitVisible);
+
+        if (prevVisible && submitVisible) {
+            $activeBtn = $context.find('.submit:visible');
+
+            if ($wrapper.length) {
+                const hasContent = $.trim($wrapper.html()) !== '';
+                $activeBtn.prop('disabled', !hasContent);
+                console.log('Condition First', hasContent);
+            } else {
+                $activeBtn.prop('enabled', true);
+                console.log('Condition Second');
+            }
+            $activeBtn.prop('enabled', true);
+            console.log('Condition third', 3);
+            return;
         }
-        const $activeBtn = $context.find('.next:visible, .submit:visible, .simple-submit:visible');
-        $activeBtn.prop('disabled', !enableButton);
-    }
 
+        if ($wrapper.length) {
+            const hasContent = $.trim($wrapper.html()) !== '';
+            $activeBtn = $context.find('.next:visible, .submit:visible, .simple-submit:visible');
+            $activeBtn.prop('disabled', !hasContent);
+            console.log('Condition third', 4);
+        }
+    }
 
     $(document).ready(function () {
         $('.form-navigation').each(function () {
@@ -368,8 +386,15 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    $(document).on('click change', '.slot-card, .add-slot, .remove-slot, .remove-all-slots, .services-show, .select_service_vendor', function () {
+    $(document).on('click change', '.add-slot, .slot-card, .select_service_vendor, .services-show, .previous, .next', function () {
         const $section = $(this).closest('form, body');
-        setTimeout(() => { checkSlots($section); }, 0);
+        checkSlots($section);
+    });
+
+    $(document).on('click', '.remove-slot, .remove-all-slots', function () {
+        const $section = $(this).closest('form, body');
+        setTimeout(function () {
+            checkSlots($section);
+        }, 0);
     });
 });
