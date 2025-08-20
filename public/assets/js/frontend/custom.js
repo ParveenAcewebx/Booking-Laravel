@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    let currentStep = 1;
+    let currentSteps = 1;
     const steps = document.querySelectorAll('.step');
     const prevButton = document.querySelector('.previous');
     const nextButtons = document.querySelectorAll('.next');
@@ -7,191 +7,192 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector('form');
     const ServiceStaffCode = document.querySelector('.get_service_staff');
 
-    // Ensure required elements exist
-    if (!steps.length || !prevButton || !nextButtons.length || !submitButtons.length) return;
+    console.log('ServiceStaffCode', ServiceStaffCode);
 
-    // Utility: Check if value is empty
-    function isEmpty(value) {
-        return value === null || value === undefined || value.trim() === '';
+    if (!steps.length || !prevButton || !nextButtons.length || !submitButtons.length) {
+        console.error('Required elements not found!');
+        return; // Exit if elements aren't found
     }
 
-    // Show error message
-    function showError(field, message, className) {
-        let errorMessage = field.parentElement.querySelector(`.${className}`);
-        if (!errorMessage) {
-            errorMessage = document.createElement('p');
-            errorMessage.classList.add(className, 'text-red-500', 'text-xs', 'mt-1');
-            errorMessage.textContent = message;
-            field.parentElement.appendChild(errorMessage);
-        }
-    }
-
-    // Clear error message
-    function clearError(field, className) {
-        const errorMessage = field.parentElement.querySelector(`.${className}`);
-        if (errorMessage) errorMessage.remove();
-    }
-
-    // Validate required fields in a step
+    // Function to validate required fields
     function validateRequiredFields(step) {
         const requiredFields = step.querySelectorAll('[required]');
         let isValid = true;
 
         requiredFields.forEach(field => {
-            if (field.type === 'checkbox' || field.type === 'radio') {
-                const inputs = step.querySelectorAll(`input[name="${field.name}"]`);
-                const checked = Array.from(inputs).some(input => input.checked);
-                if (!checked) {
+            if (field.type === 'checkbox') {
+                const checkboxGroup = step.querySelectorAll(`input[name="${field.name}"]`);
+                const checkedCheckboxes = Array.from(checkboxGroup).filter(checkbox => checkbox.checked);
+
+                if (checkedCheckboxes.length === 0) {
                     field.classList.add('border-red-500');
-                    showError(field, 'This field is required', `${field.type}-error-message`);
+                    let errorMessage = field.parentElement.querySelector('.checkbox-error-message');
+                    if (!errorMessage) {
+                        errorMessage = document.createElement('p');
+                        errorMessage.classList.add('checkbox-error-message', 'text-red-500', 'text-xs', 'mt-1');
+                        errorMessage.textContent = 'This field is required';
+                        field.parentElement.appendChild(errorMessage);
+                    }
                     isValid = false;
                 } else {
                     field.classList.remove('border-red-500');
-                    clearError(field, `${field.type}-error-message`);
+                    let errorMessage = field.parentElement.querySelector('.checkbox-error-message');
+                    if (errorMessage) errorMessage.remove();
                 }
-            } else if (field.type === 'email' && !field.checkValidity()) {
+            } else if (field.type === 'radio') {
+                const radioGroup = step.querySelectorAll(`input[name="${field.name}"]`);
+                const isChecked = Array.from(radioGroup).some(radio => radio.checked);
+
+                if (!isChecked) {
+                    field.classList.add('border-red-500');
+                    let errorMessage = field.parentElement.querySelector('.radio-error-message');
+                    if (!errorMessage) {
+                        errorMessage = document.createElement('p');
+                        errorMessage.classList.add('radio-error-message', 'text-red-500', 'text-xs', 'mt-1');
+                        errorMessage.textContent = 'This field is required';
+                        field.parentElement.appendChild(errorMessage);
+                    }
+                    isValid = false;
+                } else {
+                    field.classList.remove('border-red-500');
+                    let errorMessage = field.parentElement.querySelector('.radio-error-message');
+                    if (errorMessage) errorMessage.remove();
+                }
+            } else if (field.type === 'email') {
+                if (!field.checkValidity()) {
+                    field.classList.add('border-red-500');
+                    let errorMessage = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')
+                        ? field.nextElementSibling
+                        : document.createElement('p');
+                    if (!errorMessage.classList.contains('error-message')) {
+                        errorMessage.classList.add('error-message', 'text-red-500', 'text-xs', 'mt-1');
+                        errorMessage.textContent = 'Please enter a valid email address';
+                        field.insertAdjacentElement('afterend', errorMessage);
+                    }
+                    isValid = false;
+                } else {
+                    field.classList.remove('border-red-500');
+                    let errorMessage = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')
+                        ? field.nextElementSibling
+                        : null;
+                    if (errorMessage) errorMessage.remove();
+                }
+            } else if (!field.value.trim()) {
                 field.classList.add('border-red-500');
-                showError(field, 'Please enter a valid email address', 'error-message');
-                isValid = false;
-            } else if (isEmpty(field.value)) {
-                field.classList.add('border-red-500');
-                showError(field, 'This field is required', 'error-message');
+                let errorMessage = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')
+                    ? field.nextElementSibling
+                    : document.createElement('p');
+                if (!errorMessage.classList.contains('error-message')) {
+                    errorMessage.classList.add('error-message', 'text-red-500', 'text-xs', 'mt-1');
+                    errorMessage.textContent = 'This field is required';
+                    field.insertAdjacentElement('afterend', errorMessage);
+                }
                 isValid = false;
             } else {
                 field.classList.remove('border-red-500');
-                clearError(field, 'error-message');
+                let errorMessage = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')
+                    ? field.nextElementSibling
+                    : null;
+                if (errorMessage) errorMessage.remove();
             }
         });
 
         return isValid;
     }
 
-    // =========================
-    // Booking Slots Validation
-    // =========================
-    function checkSlots() {
-        const bookslotsInput = document.querySelector('#bookslots');
-        const bookslotsValue = bookslotsInput ? bookslotsInput.value : '';
-        const serviceInput = document.querySelector('#get_service_staff');
-        const vendorInput = document.querySelector('#service_vendor_form');
-        const errorElement = document.querySelector('.select-slots');
-        const activeBtns = document.querySelectorAll('.next:visible, .submit:visible');
-
-        let valid = true;
-
-        // Only enforce slot selection if both service and vendor are selected
-        if (serviceInput && vendorInput && !isEmpty(serviceInput.value) && !isEmpty(vendorInput.value)) {
-            if (isEmpty(bookslotsValue)) {
-                if (errorElement) errorElement.classList.remove('hidden');
-                if (bookslotsInput) {
-                    bookslotsInput.classList.add('border-red-500');
-                }
-                valid = false;
-            } else {
-                if (errorElement) errorElement.classList.add('hidden');
-                if (bookslotsInput) {
-                    bookslotsInput.classList.remove('border-red-500');
-                }
-                valid = true;
-            }
-        } else {
-            // If either service or vendor is missing, don't require slots
-            if (errorElement) errorElement.classList.add('hidden');
-            if (bookslotsInput) {
-                bookslotsInput.classList.remove('border-red-500');
-            }
-            valid = true;
-        }
-
-        // Enable/disable buttons
-        activeBtns.forEach(btn => {
-            btn.disabled = !valid;
-        });
-
-        return valid;
-    }
-
-    // =========================
-    // Step Navigation
-    // =========================
     function handleNextButtonClick() {
-        const currentStepElement = steps[currentStep - 1];
-        if (validateRequiredFields(currentStepElement) && checkSlots()) {
-            if (currentStep < steps.length) {
+        const currentStepElement = steps[currentSteps - 1];
+
+        if (validateRequiredFields(currentStepElement)) {
+            if (currentSteps < steps.length) {
                 currentStepElement.style.display = 'none';
-                steps[currentStep].style.display = 'block';
-                currentStep++;
+                steps[currentSteps].style.display = 'block';
+                currentSteps++;
+
                 prevButton.style.display = 'inline-block';
-                if (currentStep === steps.length) {
+
+                if (currentSteps === steps.length) {
                     nextButtons.forEach(btn => btn.style.display = 'none');
                     submitButtons.forEach(btn => btn.style.display = 'inline-block');
                 }
-                checkSlots(); // Re-validate after moving
             }
+        } else {
+            return; 
         }
     }
 
     function handlePreviousButtonClick() {
         nextButtons.forEach(btn => btn.style.display = 'inline-block');
         submitButtons.forEach(btn => btn.style.display = 'none');
-        if (currentStep === 2) prevButton.style.display = 'none';
-        if (currentStep > 1) {
-            steps[currentStep - 1].style.display = 'none';
-            steps[currentStep - 2].style.display = 'block';
-            currentStep--;
-            checkSlots();
+
+        if (currentSteps === 2) {
+            prevButton.style.display = 'none';
+        }
+
+        if (currentSteps > 1) {
+            steps[currentSteps - 1].style.display = 'none';
+            steps[currentSteps - 2].style.display = 'block';
+            currentSteps--;
         }
     }
 
     function handleSubmitButtonClick(event) {
         let isFormValid = true;
+
         steps.forEach(step => {
-            if (!validateRequiredFields(step) || !checkSlots()) isFormValid = false;
+            if (!validateRequiredFields(step)) {
+                isFormValid = false;
+            }
         });
-        if (!isFormValid) event.preventDefault();
+
+        if (!isFormValid) {
+            event.preventDefault();
+            console.warn("Form validation failed!");
+        }
     }
 
-    // =========================
-    // AJAX for service staff
-    // =========================
     function get_services_staff() {
-        const serviceId = ServiceStaffCode.value;
+        var serviceId = ServiceStaffCode.value;
         $('.availibility, .calendar-wrap').addClass('hidden');
-
         $.ajax({
             url: '/get/services/staff',
             type: 'GET',
-            data: { service_id: serviceId },
+            data: {
+                service_id: serviceId
+            },
             dataType: 'json',
             success: function (response) {
-                const staffSelect = document.querySelector('.service_vendor_form');
-                const selectWrapper = document.querySelector('.select_service_vendor');
+                console.log('Services Staff', response);
+                var select_service_staff = document.querySelector('.select_service_vendor');
+                var staffSelect = document.querySelector('.service_vendor_form');
+                var calendarHidden = document.querySelector('.calendar-wrap');
 
                 staffSelect.innerHTML = '';
-                const defaultOption = document.createElement('option');
+                var defaultOption = document.createElement('option');
                 defaultOption.value = '';
                 defaultOption.textContent = '---Select Vendor---';
                 staffSelect.appendChild(defaultOption);
 
-                if (response && response.length) {
+                if (response && response.length > 0) {
                     staffSelect.disabled = false;
-                    selectWrapper.classList.remove('hidden');
-                    response.forEach(staff => {
-                        const option = document.createElement('option');
+                    select_service_staff.classList.remove('hidden');
+
+                    response.forEach(function (staff) {
+                        var option = document.createElement('option');
                         option.value = staff.id;
                         option.textContent = staff.name;
                         staffSelect.appendChild(option);
                     });
                 } else {
                     staffSelect.disabled = true;
-                    selectWrapper.classList.add('hidden');
-                    $('.calendar-wrap').addClass('hidden');
-                    const noStaffOption = document.createElement('option');
+                    select_service_staff.classList.add('hidden');
+                    calendarHidden.classList.add('hidden');
+
+                    var noStaffOption = document.createElement('option');
                     noStaffOption.value = '';
                     noStaffOption.textContent = 'No staff available';
                     staffSelect.appendChild(noStaffOption);
                 }
-                checkSlots(); // Re-validate after staff load
             },
             error: function (xhr, status, error) {
                 console.error("AJAX error:", status, error);
@@ -199,45 +200,174 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // =========================
-    // Slot click / input change
-    // =========================
-    document.addEventListener('click', function (e) {
-        if (e.target.closest('.slot-card')) {
-            const bookslotsInput = document.querySelector('#bookslots');
-            if (bookslotsInput && !isEmpty(bookslotsInput.value)) {
-                checkSlots(); // This will auto-hide error and enable buttons
-            }
-        }
-    });
-
-    // Listen for changes in service/vendor dropdowns
-    document.addEventListener('change', function (e) {
-        if (e.target.id === 'get_service_staff' || e.target.id === 'service_vendor_form') {
-            checkSlots();
-        }
-    });
-
-    // Also listen for input changes in #bookslots
-    document.addEventListener('input', function (e) {
-        if (e.target.id === 'bookslots') {
-            checkSlots();
-        }
-    });
-
-    // =========================
-    // Initial Setup
-    // =========================
-    steps.forEach((step, index) => step.style.display = index === 0 ? 'block' : 'none');
-    prevButton.style.display = 'none';
-    submitButtons.forEach(btn => btn.style.display = 'none');
-    document.querySelector('.select-slots')?.classList.add('hidden'); // Hide initially
-
-    nextButtons.forEach(btn => btn.addEventListener('click', handleNextButtonClick));
+    nextButtons.forEach(button => button.addEventListener('click', handleNextButtonClick));
     prevButton.addEventListener('click', handlePreviousButtonClick);
-    submitButtons.forEach(btn => btn.addEventListener('click', handleSubmitButtonClick));
+    submitButtons.forEach(button => button.addEventListener('click', handleSubmitButtonClick));
     ServiceStaffCode.addEventListener('change', get_services_staff);
 
-    // Run initial validation
-    checkSlots();
+    $(document).ready(function () {
+        let formAction = document.querySelector('form').action;
+
+        let urlParts = formAction.split('/');
+        let formId = urlParts[urlParts.length - 1];
+        $.ajax({
+            url: '/get/session',
+            method: 'GET',
+            data: { formId: formId },
+            success: function (response) {
+                if (response.status === 'success') {
+                    Object.keys(response['data']).forEach(function (key) {
+
+                        let value = response['data'][key];
+                        Object.keys(value).forEach(function (key) {
+
+                            let formattedKey = key + "]";
+                            let nestedValue = value[key];
+                            let inputElement = $('input[name="' + formattedKey + '"]');
+                            if (inputElement) {
+                                inputElement.val(nestedValue);
+                            }
+                            let selectElement = $('select[name="' + formattedKey + '"]');
+                            if (selectElement.length > 0) {
+                                selectElement.val(nestedValue);
+                                if (selectElement.hasClass('get_service_staff')) {
+                                    get_services_staff();
+                                }
+                                if (selectElement.hasClass('service_vendor_form')) {
+                                    setTimeout(function () {
+                                        selectElement.val(nestedValue);
+                                        selectElement.trigger('change');
+                                    }, 1000);
+                                }
+                            }
+                            let textareaElement = $('textarea[name="' + formattedKey + '"]');
+                            if (textareaElement.length > 0) {
+                                textareaElement.val(nestedValue);
+                            }
+
+                            if (key === 'bookslots') {
+                                let inputElement = $('input[name="' + key + '"]');
+                                if (inputElement) {
+                                    inputElement.val(nestedValue.value);
+                                    if (nestedValue.value) {
+                                        const $wrapper = $('.slot-list-wrapper');
+                                        const decodedValue = nestedValue.value.replace(/&quot;/g, '"');
+                                        const slots = JSON.parse(decodedValue);
+                                        slots.forEach((slot, index) => {
+                                            const { date, price, start, end, duration, staff_ids } = slot;
+                                            const uniqueKey = `slot-${staff_ids[0]}-${index}`;
+                                            const slotHTML = `
+                                        <div class="slot-item flex justify-between items-center gap-4 border border-gray-300 rounded-md p-3 bg-white shadow-sm text-sm w-full sm:w-full" data-slot="${uniqueKey}">
+                                            <div class="font-medium text-gray-800 flex-1">
+                                                <div>${date}</div>
+                                                <input type='hidden' name='staff_id' value='${staff_ids.join(",")}'>
+                                                <div class="text-xs text-gray-500">${start} → ${end}</div>
+                                                <div class="text-xs text-gray-500">Duration: ${duration}</div>
+                                            </div>
+                                            <div class="text-green-600 font-semibold whitespace-nowrap">${price}</div>
+                                            <div class="text-red-500 cursor-pointer remove-slot ml-auto">&#10006;</div>
+                                        </div>`;
+
+                                            // Append this slot HTML to the container (assuming you have a container to append it to)
+                                            $($wrapper).append(slotHTML);
+                                        });
+                                        $('.remove-all-slots').removeClass('hidden');
+                                    }
+                                }
+                            }
+
+                        });
+                    });
+                }
+            },
+            error: function (error) {
+                console.error('Error retrieving session data:', error);
+            }
+        });
+
+    });
+
+    window.onbeforeunload = function () {
+        let formAction = document.querySelector('form').action;
+        let urlParts = formAction.split('/');
+        let formId = urlParts[urlParts.length - 1];
+        let formElements = document.querySelector('form').elements;
+        let dataToSave = {};
+        Array.from(formElements).forEach(function (element) {
+            if (element.name) {
+                dataToSave[element.name] = {
+                    name: element.name,
+                    value: element.value
+                };
+            }
+        });
+        let finalDataToSave = {
+            formId: formId,
+            data: dataToSave
+        };
+        var headers = {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        };
+        $.ajax({
+            url: '/store/session',
+            method: 'POST',
+            data: finalDataToSave,
+            headers: headers,
+            success: function (response) {
+                console.log('Data saved successfully');
+            },
+            error: function (error) {
+                console.log('Error saving data');
+            }
+        });
+    };
+    function isEmpty(value) {
+        return (
+            value === undefined ||
+            value === null ||
+            (typeof value === "string" && value.trim() === "") ||
+            (Array.isArray(value) && value.length === 0)
+        );
+    }
+    function checkSlots($context) {
+        const $wrapper = $context.find('.slot-list-wrapper:visible');
+        const bookslotsValue = $('#bookslots').val();
+        const serviceValue = $('#get_service_staff').val();
+        const vendorValue = $('#service_vendor_form').val();
+        const $activeBtn = $context.find('.next:visible, .submit:visible');
+
+        let valid = true;
+
+        if (!isEmpty(serviceValue) && !isEmpty(vendorValue) && isEmpty(bookslotsValue)) {
+            console.log('❌ No booking slots selected');
+            $('.select-slots').removeClass('hidden');
+            valid = false;
+        } else {
+            console.log('✅ Validation passed');
+            $('.select-slots').addClass('hidden');
+            valid = true;
+        }
+
+        // ✅ Correct way
+        $activeBtn.prop('disabled', !valid);
+    }
+
+    // Run once on page load
+    $(document).ready(function () {
+        $('.form-navigation').each(function () {
+            checkSlots($(this).closest('form, body'));
+        });
+    });
+
+    // Recheck on actions
+    $(document).on(
+        'click change',
+        '.slot-card, .add-slot, .remove-slot, .remove-all-slots, #get_service_staff, #service_vendor_form',
+        function () {
+            const $section = $(this).closest('form, body');
+            setTimeout(() => {
+                checkSlots($section);
+            }, 0);
+        }
+    );
 });
