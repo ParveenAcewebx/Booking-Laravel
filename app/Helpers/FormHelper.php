@@ -270,10 +270,10 @@ class FormHelper
         if (!empty($c) && isset($c['button'])) {
                 $html .= "<div class='form-navigation flex justify-between  justify-content-between " . ($countNewSections > 0 ? 'd-flex' : 'hidden d-none') . "'>
                     <div class='perv_step'>
-                        <button type='button' class='step-previous previous {$c['button']}' style='display: none;'>Previous</button>
+                        <button type='button' class='previous {$c['button']}' style='display: none;'>Previous</button>
                     </div>
                     <div class='nex_step'>
-                        <button type='button' class='step-next next {$c['button']}'>Next</button>
+                        <button type='button' class='next {$c['button']}'>Next</button>
                         <button type='submit' class='submit {$c['button']} hidden d-none'>Submit</button>
                     </div>
             </div>";

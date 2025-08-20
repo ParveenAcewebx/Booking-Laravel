@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         } else {
-            return; 
+            return;
         }
     }
 
@@ -329,27 +329,32 @@ document.addEventListener("DOMContentLoaded", function () {
             (Array.isArray(value) && value.length === 0)
         );
     }
+
     function checkSlots($context) {
-        const $wrapper = $context.find('.slot-list-wrapper:visible');
+        const steps = $context.find('.step');
+        const activeStep = steps.filter(':visible');
+        // const currentStepIndex = steps.index(activeStep) + 1;
+
+        // console.log("👉 Currently showing Step:", currentStepIndex);
+
         const bookslotsValue = $('#bookslots').val();
+        const wrapper = activeStep.find('.slot-list-wrapper:visible');
         const serviceValue = $('#get_service_staff').val();
         const vendorValue = $('#service_vendor_form').val();
-        const $activeBtn = $context.find('.next:visible, .submit:visible');
-
+        const activeBtn = $context.find('.next:visible,.submit:visible');
+        // console.log('activeBtn', activeBtn);
         let valid = true;
-
-        if (!isEmpty(serviceValue) && !isEmpty(vendorValue) && isEmpty(bookslotsValue)) {
-            console.log('❌ No booking slots selected');
+        const slotCount = wrapper.find('.slot-item').length;
+        if (wrapper.length > 0 && !isEmpty(serviceValue) && !isEmpty(vendorValue) && isEmpty(bookslotsValue) && slotCount === 0) {
+            // console.log(`❌ No booking slots selected (Step ${currentStepIndex})`);
             $('.select-slots').removeClass('hidden');
             valid = false;
-        } else {
-            console.log('✅ Validation passed');
+        } else if (valid) {
+            // console.log(`✅ Slot validation passed (Step ${currentStepIndex})`);
             $('.select-slots').addClass('hidden');
             valid = true;
         }
-
-        // ✅ Correct way
-        $activeBtn.prop('disabled', !valid);
+        activeBtn.prop('disabled', !valid);
     }
 
     // Run once on page load
@@ -362,7 +367,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Recheck on actions
     $(document).on(
         'click change',
-        '.slot-card, .add-slot, .remove-slot, .remove-all-slots, #get_service_staff, #service_vendor_form',
+        '.slot-card, .add-slot, .remove-slot, .remove-all-slots, #get_service_staff, #service_vendor_form , .next,.submit,.previous',
         function () {
             const $section = $(this).closest('form, body');
             setTimeout(() => {
