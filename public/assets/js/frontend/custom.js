@@ -3,23 +3,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const steps = document.querySelectorAll('.step');
     const prevButton = document.querySelector('.previous');
     const nextButtons = document.querySelectorAll('.next');
-    const submitButton = document.querySelector('.submit');
-    // alert(submitButton);
+    const submitButtons = document.querySelectorAll('.submit');
     const form = document.querySelector('form');
     const ServiceStaffCode = document.querySelector('.get_service_staff');
-    console.log('ServiceStaffCode' + ServiceStaffCode);
-    if (steps.length <= 1) {
-        // Handle case where there is only 1 step
-    }
 
-    if (!steps.length || !prevButton || !nextButtons.length || !submitButton) {
+    console.log('ServiceStaffCode', ServiceStaffCode);
+
+    if (!steps.length || !prevButton || !nextButtons.length || !submitButtons.length) {
         console.error('Required elements not found!');
         return; // Exit if elements aren't found
     }
 
     // Function to validate required fields
     function validateRequiredFields(step) {
-        // alert('asdad');
         const requiredFields = step.querySelectorAll('[required]');
         let isValid = true;
 
@@ -29,54 +25,40 @@ document.addEventListener("DOMContentLoaded", function () {
                 const checkedCheckboxes = Array.from(checkboxGroup).filter(checkbox => checkbox.checked);
 
                 if (checkedCheckboxes.length === 0) {
-                    field.classList.add('border-red-500'); // Add red border to indicate error
-                    let errorMessage = document.querySelector('.checkbox-error-message');
-
-                    // Check if error message already exists, if not, create and append
+                    field.classList.add('border-red-500');
+                    let errorMessage = field.parentElement.querySelector('.checkbox-error-message');
                     if (!errorMessage) {
                         errorMessage = document.createElement('p');
                         errorMessage.classList.add('checkbox-error-message', 'text-red-500', 'text-xs', 'mt-1');
                         errorMessage.textContent = 'This field is required';
                         field.parentElement.appendChild(errorMessage);
-                    } else {
-                        errorMessage.textContent = 'This field is required'; // Update text if it already exists
                     }
                     isValid = false;
                 } else {
-                    field.classList.remove('border-red-500'); // Remove red border if valid
+                    field.classList.remove('border-red-500');
                     let errorMessage = field.parentElement.querySelector('.checkbox-error-message');
-                    if (errorMessage) {
-                        errorMessage.remove(); // Remove error message if the checkbox is checked
-                    }
+                    if (errorMessage) errorMessage.remove();
                 }
-            }
-            // Check for radio buttons
-            else if (field.type === 'radio') {
+            } else if (field.type === 'radio') {
                 const radioGroup = step.querySelectorAll(`input[name="${field.name}"]`);
                 const isChecked = Array.from(radioGroup).some(radio => radio.checked);
 
                 if (!isChecked) {
                     field.classList.add('border-red-500');
-                    let errorMessage = document.querySelector('.radio-error-message');
+                    let errorMessage = field.parentElement.querySelector('.radio-error-message');
                     if (!errorMessage) {
                         errorMessage = document.createElement('p');
                         errorMessage.classList.add('radio-error-message', 'text-red-500', 'text-xs', 'mt-1');
                         errorMessage.textContent = 'This field is required';
                         field.parentElement.appendChild(errorMessage);
-                    } else {
-                        errorMessage.textContent = 'This field is required'; // Update text if it already exists
                     }
                     isValid = false;
                 } else {
-                    field.classList.remove('border-red-500'); // Remove red border if valid
+                    field.classList.remove('border-red-500');
                     let errorMessage = field.parentElement.querySelector('.radio-error-message');
-                    if (errorMessage) {
-                        errorMessage.remove(); // Remove error message if the radio is selected
-                    }
+                    if (errorMessage) errorMessage.remove();
                 }
-            }
-
-            else if (field.type === 'email') {
+            } else if (field.type === 'email') {
                 if (!field.checkValidity()) {
                     field.classList.add('border-red-500');
                     let errorMessage = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')
@@ -93,15 +75,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     let errorMessage = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')
                         ? field.nextElementSibling
                         : null;
-                    if (errorMessage) {
-                        errorMessage.remove(); // Remove error message if the email is valid
-                    }
+                    if (errorMessage) errorMessage.remove();
                 }
-            }
-
-            // Handle regular text inputs and other fields
-            else if (!field.value.trim()) {
-                field.classList.add('border-red-500'); // Add red border to indicate error
+            } else if (!field.value.trim()) {
+                field.classList.add('border-red-500');
                 let errorMessage = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')
                     ? field.nextElementSibling
                     : document.createElement('p');
@@ -112,48 +89,46 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 isValid = false;
             } else {
-                field.classList.remove('border-red-500'); // Remove red border if valid
+                field.classList.remove('border-red-500');
                 let errorMessage = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')
                     ? field.nextElementSibling
                     : null;
-                if (errorMessage) {
-                    errorMessage.remove(); // Remove error message if the field has value
-                }
+                if (errorMessage) errorMessage.remove();
             }
-
         });
+
         return isValid;
     }
 
     function handleNextButtonClick() {
         const currentStepElement = steps[currentSteps - 1];
-        // alert(currentStepElement);
-        // Validate required fields before moving to the next step
+
         if (validateRequiredFields(currentStepElement)) {
             if (currentSteps < steps.length) {
                 currentStepElement.style.display = 'none';
                 steps[currentSteps].style.display = 'block';
                 currentSteps++;
+
                 prevButton.style.display = 'inline-block';
-                const currentNextButton = steps[currentSteps - 1].querySelector('.next');
+
                 if (currentSteps === steps.length) {
-                    // Last step, hide Next and show Submit
-                    document.querySelector('.next').style.display = 'none';
-                    submitButton.style.display = 'inline-block';
+                    nextButtons.forEach(btn => btn.style.display = 'none');
+                    submitButtons.forEach(btn => btn.style.display = 'inline-block');
                 }
             }
         } else {
-            // Prevent navigation if validation fails
-            return;
+            return; 
         }
     }
 
     function handlePreviousButtonClick() {
-        document.querySelector('.next').style.display = 'inline-block';
-        submitButton.style.display = 'none'; // Hide Submit when navigating back
+        nextButtons.forEach(btn => btn.style.display = 'inline-block');
+        submitButtons.forEach(btn => btn.style.display = 'none');
+
         if (currentSteps === 2) {
             prevButton.style.display = 'none';
         }
+
         if (currentSteps > 1) {
             steps[currentSteps - 1].style.display = 'none';
             steps[currentSteps - 2].style.display = 'block';
@@ -164,7 +139,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function handleSubmitButtonClick(event) {
         let isFormValid = true;
 
-        // Validate all steps on submit
         steps.forEach(step => {
             if (!validateRequiredFields(step)) {
                 isFormValid = false;
@@ -173,11 +147,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!isFormValid) {
             event.preventDefault();
+            console.warn("Form validation failed!");
         }
     }
-    nextButtons.forEach(button => {
-        button.addEventListener('click', handleNextButtonClick);
-    });
 
     function get_services_staff() {
         var serviceId = ServiceStaffCode.value;
@@ -190,21 +162,21 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             dataType: 'json',
             success: function (response) {
-                console.log('Services Staff' + response);
+                console.log('Services Staff', response);
                 var select_service_staff = document.querySelector('.select_service_vendor');
                 var staffSelect = document.querySelector('.service_vendor_form');
-                var calendarHidden = document.querySelector('.calendar-wrap ');
+                var calendarHidden = document.querySelector('.calendar-wrap');
 
                 staffSelect.innerHTML = '';
                 var defaultOption = document.createElement('option');
                 defaultOption.value = '';
                 defaultOption.textContent = '---Select Vendor---';
                 staffSelect.appendChild(defaultOption);
+
                 if (response && response.length > 0) {
                     staffSelect.disabled = false;
                     select_service_staff.classList.remove('hidden');
 
-                    // Add each staff member to the dropdown
                     response.forEach(function (staff) {
                         var option = document.createElement('option');
                         option.value = staff.id;
@@ -212,7 +184,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         staffSelect.appendChild(option);
                     });
                 } else {
-                    // If no staff available, disable dropdown and show a no staff option
                     staffSelect.disabled = true;
                     select_service_staff.classList.add('hidden');
                     calendarHidden.classList.add('hidden');
@@ -228,8 +199,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+
+    nextButtons.forEach(button => button.addEventListener('click', handleNextButtonClick));
     prevButton.addEventListener('click', handlePreviousButtonClick);
-    submitButton.addEventListener('click', handleSubmitButtonClick);
+    submitButtons.forEach(button => button.addEventListener('click', handleSubmitButtonClick));
     ServiceStaffCode.addEventListener('change', get_services_staff);
 
     $(document).ready(function () {
