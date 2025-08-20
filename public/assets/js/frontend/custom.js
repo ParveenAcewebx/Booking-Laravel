@@ -7,36 +7,26 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector('form');
     const ServiceStaffCode = document.querySelector('.get_service_staff');
 
+    console.log('ServiceStaffCode', ServiceStaffCode);
+
     if (!steps.length || !prevButton || !nextButtons.length || !submitButtons.length) {
         console.error('Required elements not found!');
-        return;
+        return; // Exit if elements aren't found
     }
 
-    // Utility
-    function isEmpty(value) {
-        return (
-            value === undefined ||
-            value === null ||
-            (typeof value === "string" && value.trim() === "") ||
-            (Array.isArray(value) && value.length === 0)
-        );
-    }
-
-    // ✅ Validation for fields
+    // Function to validate required fields
     function validateRequiredFields(step) {
         const requiredFields = step.querySelectorAll('[required]');
         let isValid = true;
 
         requiredFields.forEach(field => {
-            let errorMessage;
-
             if (field.type === 'checkbox') {
-                const group = step.querySelectorAll(`input[name="${field.name}"]`);
-                const checked = [...group].some(chk => chk.checked);
+                const checkboxGroup = step.querySelectorAll(`input[name="${field.name}"]`);
+                const checkedCheckboxes = Array.from(checkboxGroup).filter(checkbox => checkbox.checked);
 
-                if (!checked) {
+                if (checkedCheckboxes.length === 0) {
                     field.classList.add('border-red-500');
-                    errorMessage = field.parentElement.querySelector('.checkbox-error-message');
+                    let errorMessage = field.parentElement.querySelector('.checkbox-error-message');
                     if (!errorMessage) {
                         errorMessage = document.createElement('p');
                         errorMessage.classList.add('checkbox-error-message', 'text-red-500', 'text-xs', 'mt-1');
@@ -46,16 +36,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     isValid = false;
                 } else {
                     field.classList.remove('border-red-500');
-                    errorMessage = field.parentElement.querySelector('.checkbox-error-message');
+                    let errorMessage = field.parentElement.querySelector('.checkbox-error-message');
                     if (errorMessage) errorMessage.remove();
                 }
             } else if (field.type === 'radio') {
-                const group = step.querySelectorAll(`input[name="${field.name}"]`);
-                const checked = [...group].some(r => r.checked);
+                const radioGroup = step.querySelectorAll(`input[name="${field.name}"]`);
+                const isChecked = Array.from(radioGroup).some(radio => radio.checked);
 
-                if (!checked) {
+                if (!isChecked) {
                     field.classList.add('border-red-500');
-                    errorMessage = field.parentElement.querySelector('.radio-error-message');
+                    let errorMessage = field.parentElement.querySelector('.radio-error-message');
                     if (!errorMessage) {
                         errorMessage = document.createElement('p');
                         errorMessage.classList.add('radio-error-message', 'text-red-500', 'text-xs', 'mt-1');
@@ -65,13 +55,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     isValid = false;
                 } else {
                     field.classList.remove('border-red-500');
-                    errorMessage = field.parentElement.querySelector('.radio-error-message');
+                    let errorMessage = field.parentElement.querySelector('.radio-error-message');
                     if (errorMessage) errorMessage.remove();
                 }
             } else if (field.type === 'email') {
                 if (!field.checkValidity()) {
                     field.classList.add('border-red-500');
-                    errorMessage = field.nextElementSibling?.classList.contains('error-message')
+                    let errorMessage = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')
                         ? field.nextElementSibling
                         : document.createElement('p');
                     if (!errorMessage.classList.contains('error-message')) {
@@ -82,14 +72,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     isValid = false;
                 } else {
                     field.classList.remove('border-red-500');
-                    errorMessage = field.nextElementSibling?.classList.contains('error-message')
+                    let errorMessage = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')
                         ? field.nextElementSibling
                         : null;
                     if (errorMessage) errorMessage.remove();
                 }
             } else if (!field.value.trim()) {
                 field.classList.add('border-red-500');
-                errorMessage = field.nextElementSibling?.classList.contains('error-message')
+                let errorMessage = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')
                     ? field.nextElementSibling
                     : document.createElement('p');
                 if (!errorMessage.classList.contains('error-message')) {
@@ -100,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 isValid = false;
             } else {
                 field.classList.remove('border-red-500');
-                errorMessage = field.nextElementSibling?.classList.contains('error-message')
+                let errorMessage = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')
                     ? field.nextElementSibling
                     : null;
                 if (errorMessage) errorMessage.remove();
@@ -110,9 +100,9 @@ document.addEventListener("DOMContentLoaded", function () {
         return isValid;
     }
 
-    // ✅ Navigation handlers
     function handleNextButtonClick() {
         const currentStepElement = steps[currentSteps - 1];
+
         if (validateRequiredFields(currentStepElement)) {
             if (currentSteps < steps.length) {
                 currentStepElement.style.display = 'none';
@@ -126,6 +116,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     submitButtons.forEach(btn => btn.style.display = 'inline-block');
                 }
             }
+        } else {
+            return;
         }
     }
 
@@ -146,31 +138,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function handleSubmitButtonClick(event) {
         let isFormValid = true;
+
         steps.forEach(step => {
             if (!validateRequiredFields(step)) {
                 isFormValid = false;
             }
         });
+
         if (!isFormValid) {
             event.preventDefault();
             console.warn("Form validation failed!");
         }
     }
 
-    // ✅ Fetch staff
     function get_services_staff() {
-        const serviceId = ServiceStaffCode.value;
-        document.querySelectorAll('.availibility, .calendar-wrap').forEach(el => el.classList.add('hidden'));
-
-        fetch(`/get/services/staff?service_id=${encodeURIComponent(serviceId)}`)
-            .then(res => res.json())
-            .then(response => {
-                const select_service_staff = document.querySelector('.select_service_vendor');
-                const staffSelect = document.querySelector('.service_vendor_form');
-                const calendarHidden = document.querySelector('.calendar-wrap');
+        var serviceId = ServiceStaffCode.value;
+        $('.availibility, .calendar-wrap').addClass('hidden');
+        $.ajax({
+            url: '/get/services/staff',
+            type: 'GET',
+            data: {
+                service_id: serviceId
+            },
+            dataType: 'json',
+            success: function (response) {
+                console.log('Services Staff', response);
+                var select_service_staff = document.querySelector('.select_service_vendor');
+                var staffSelect = document.querySelector('.service_vendor_form');
+                var calendarHidden = document.querySelector('.calendar-wrap');
 
                 staffSelect.innerHTML = '';
-                const defaultOption = document.createElement('option');
+                var defaultOption = document.createElement('option');
                 defaultOption.value = '';
                 defaultOption.textContent = '---Select Vendor---';
                 staffSelect.appendChild(defaultOption);
@@ -178,8 +176,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (response && response.length > 0) {
                     staffSelect.disabled = false;
                     select_service_staff.classList.remove('hidden');
-                    response.forEach(staff => {
-                        const option = document.createElement('option');
+
+                    response.forEach(function (staff) {
+                        var option = document.createElement('option');
                         option.value = staff.id;
                         option.textContent = staff.name;
                         staffSelect.appendChild(option);
@@ -189,58 +188,23 @@ document.addEventListener("DOMContentLoaded", function () {
                     select_service_staff.classList.add('hidden');
                     calendarHidden.classList.add('hidden');
 
-                    const noStaffOption = document.createElement('option');
+                    var noStaffOption = document.createElement('option');
                     noStaffOption.value = '';
                     noStaffOption.textContent = 'No staff available';
                     staffSelect.appendChild(noStaffOption);
                 }
-            })
-            .catch(err => console.error("AJAX error:", err));
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX error:", status, error);
+            }
+        });
     }
 
-    // ✅ Slot validation
-    function checkSlots(context) {
-        const activeStep = [...context.querySelectorAll('.step')].find(step => step.offsetParent !== null);
-
-        const bookslotsValue = document.querySelector('#bookslots')?.value;
-        const wrapper = activeStep ? activeStep.querySelector('.slot-list-wrapper') : null;
-        const serviceValue = document.querySelector('#get_service_staff')?.value;
-        const vendorValue = document.querySelector('#service_vendor_form')?.value;
-
-        const activeBtn = [...context.querySelectorAll('.next, .submit')].find(
-            btn => btn.offsetParent !== null
-        );
-
-        let valid = true;
-        const slotCount = wrapper ? wrapper.querySelectorAll('.slot-item').length : 0;
-
-        if (wrapper && !isEmpty(serviceValue) && !isEmpty(vendorValue) && isEmpty(bookslotsValue) && slotCount === 0) {
-            document.querySelector('.select-slots').classList.remove('hidden'); // show error
-            valid = false;
-        } else {
-            document.querySelector('.select-slots').classList.add('hidden'); // hide error
-            valid = true;
-        }
-
-        if (activeBtn) activeBtn.disabled = !valid;
-    }
-
-    // ✅ Event bindings
     nextButtons.forEach(button => button.addEventListener('click', handleNextButtonClick));
     prevButton.addEventListener('click', handlePreviousButtonClick);
     submitButtons.forEach(button => button.addEventListener('click', handleSubmitButtonClick));
     ServiceStaffCode.addEventListener('change', get_services_staff);
 
-    // ✅ Initial check
-    checkSlots(document);
-
-    // Recheck on slot or nav clicks
-    document.addEventListener('click', e => {
-        if (e.target.closest('.slot-card, .add-slot, .remove-slot, .remove-all-slots, #get_service_staff, #service_vendor_form, .next, .submit, .previous')) {
-            // small delay so DOM updates first
-            setTimeout(() => checkSlots(document), 50);
-        }
-    });
     $(document).ready(function () {
         let formAction = document.querySelector('form').action;
 
@@ -357,4 +321,58 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     };
+    function isEmpty(value) {
+        return (
+            value === undefined ||
+            value === null ||
+            (typeof value === "string" && value.trim() === "") ||
+            (Array.isArray(value) && value.length === 0)
+        );
+    }
+
+    function checkSlots($context) {
+        const steps = $context.find('.step');
+        const activeStep = steps.filter(':visible');
+        // const currentStepIndex = steps.index(activeStep) + 1;
+
+        // console.log("👉 Currently showing Step:", currentStepIndex);
+
+        const bookslotsValue = $('#bookslots').val();
+        const wrapper = activeStep.find('.slot-list-wrapper:visible');
+        const serviceValue = $('#get_service_staff').val();
+        const vendorValue = $('#service_vendor_form').val();
+        const activeBtn = $context.find('.next:visible,.submit:visible');
+        // console.log('activeBtn', activeBtn);
+        let valid = true;
+        const slotCount = wrapper.find('.slot-item').length;
+        if (wrapper.length > 0 && !isEmpty(serviceValue) && !isEmpty(vendorValue) && isEmpty(bookslotsValue) && slotCount === 0) {
+            // console.log(`❌ No booking slots selected (Step ${currentStepIndex})`);
+            $('.select-slots').removeClass('hidden');
+            valid = false;
+        } else if (valid) {
+            // console.log(`✅ Slot validation passed (Step ${currentStepIndex})`);
+            $('.select-slots').addClass('hidden');
+            valid = true;
+        }
+        activeBtn.prop('disabled', !valid);
+    }
+
+    // Run once on page load
+    $(document).ready(function () {
+        $('.form-navigation').each(function () {
+            checkSlots($(this).closest('form, body'));
+        });
+    });
+
+    // Recheck on actions
+    $(document).on(
+        'click change',
+        '.slot-card, .add-slot, .remove-slot, .remove-all-slots, #get_service_staff, #service_vendor_form , .next,.submit,.previous',
+        function () {
+            const $section = $(this).closest('form, body');
+            setTimeout(() => {
+                checkSlots($section);
+            }, 0);
+        }
+    );
 });
