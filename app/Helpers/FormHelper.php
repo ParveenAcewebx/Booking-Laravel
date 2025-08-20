@@ -274,13 +274,13 @@ class FormHelper
                 </div>
                 <div class='nex_step'>
                     <button type='button' class='step-next next {$c['button']}'>Next</button>
-                    <button type='submit' class='step-submit submit {$c['button']} hidden'>Submit</button>
+                    <button type='submit' class='submit {$c['button']} hidden'>Submit</button>
                 </div>
           </div>";
         }
 
         if (!empty($c) && isset($c['button']) && $c['button'] != 'btn btn-primary') {
-            $html .= ($countNewSections == '0' ? "<button type='submit' class='simple-submit submit {$c['button']}'>Submit</button>" : '');
+            $html .= ($countNewSections == '0' ? "<div class='form-navigation'><button type='submit' class='submit {$c['button']}'>Submit</button>" : '');
         }
         return $htmlHidden . $html;
     }

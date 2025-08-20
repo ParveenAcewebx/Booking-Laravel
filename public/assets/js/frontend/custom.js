@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const prevButton = document.querySelector('.previous');
     const nextButtons = document.querySelectorAll('.next');
     const submitButton = document.querySelector('.submit');
+    // alert(submitButton);
     const form = document.querySelector('form');
     const ServiceStaffCode = document.querySelector('.get_service_staff');
     console.log('ServiceStaffCode' + ServiceStaffCode);
@@ -18,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to validate required fields
     function validateRequiredFields(step) {
+        // alert('asdad');
         const requiredFields = step.querySelectorAll('[required]');
         let isValid = true;
 
@@ -125,7 +127,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function handleNextButtonClick() {
         const currentStepElement = steps[currentSteps - 1];
-
+        // alert(currentStepElement);
         // Validate required fields before moving to the next step
         if (validateRequiredFields(currentStepElement)) {
             if (currentSteps < steps.length) {
@@ -346,36 +348,53 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     };
+    function isEmpty(value) {
+        return (
+            value === undefined ||
+            value === null ||
+            (typeof value === "string" && value.trim() === "") ||
+            (Array.isArray(value) && value.length === 0)
+        );
+    }
     function checkSlots($context) {
         const $wrapper = $context.find('.slot-list-wrapper:visible');
-        const hasSlotItems = $wrapper.find('.slot-item').length > 0;
         const bookslotsValue = $('#bookslots').val();
         const serviceValue = $('#get_service_staff').val();
         const vendorValue = $('#service_vendor_form').val();
-        const $activeBtn = $context.find('.next:visible, .submit:visible, .simple-submit:visible');
+        const $activeBtn = $context.find('.next:visible, .step-submit:visible, .step-submit:visible');
 
         let valid = true;
-        if(!empty(serviceValue) && !empty(vendorValue) && empty(bookslotsValue)){
-            console.log('asdasd');
-            $('.error-vendor').removeClass('hidden');
-            return false;
-        }else{
-                        console.log('aswqewqedasd');
 
+        if (!isEmpty(serviceValue) && !isEmpty(vendorValue) && isEmpty(bookslotsValue)) {
+            console.log('❌ No booking slots selected');
+            $('.select-slots').removeClass('hidden');
+            valid = false;
+        } else {
+            console.log('✅ Validation passed');
+            $('.select-slots').addClass('hidden');
+            valid = true;
         }
 
-        // ✅ Enable/disable next or submit
-        $activeBtn.prop('enabled', !valid);
+        // ✅ Correct way
+        $activeBtn.prop('disabled', !valid);
     }
 
+    // Run once on page load
     $(document).ready(function () {
         $('.form-navigation').each(function () {
             checkSlots($(this).closest('form, body'));
         });
     });
 
-    $(document).on('click change', '.slot-card, .add-slot, .remove-slot, .remove-all-slots, #get_service_staff, #service_vendor_form', function () {
-        const $section = $(this).closest('form, body');
-        setTimeout(() => { checkSlots($section); }, 0);
-    });
+    // Recheck on actions
+    $(document).on(
+        'click change',
+        '.slot-card, .add-slot, .remove-slot, .remove-all-slots, #get_service_staff, #service_vendor_form',
+        function () {
+            const $section = $(this).closest('form, body');
+            setTimeout(() => {
+                checkSlots($section);
+            }, 0);
+        }
+    );
 });
