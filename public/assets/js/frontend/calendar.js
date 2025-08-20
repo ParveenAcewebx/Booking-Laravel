@@ -404,7 +404,7 @@
         </div>
     `;
 
-            updateUIState(); // ✅ Check state when slot-card is appended
+            updateUIState(); 
             return html;
         }
 
@@ -419,10 +419,8 @@
                     staff_ids: Array.isArray(staffIds) ? staffIds : [staffIds]
                 });
 
-                // Update hidden input
                 $('#bookslots').val(JSON.stringify(slotDataArray));
 
-                // Append UI
                 $wrapper.append(`
             <div class="slot-item flex justify-between items-center gap-4 border border-gray-300 rounded-md p-3 bg-white shadow-sm text-sm w-full sm:w-full" 
                 data-slot="${uniqueKey}">
@@ -438,17 +436,15 @@
         `);
             }
 
-            updateUIState(); // ✅ Also check state after slot added
+            updateUIState(); 
         }
 
-        // Toggle Remove All + Error Message
         function updateUIState() {
             const hasSlots = slotDataArray.length > 0;
             $('.remove-all-slots').toggleClass('hidden', !hasSlots);
             $('.select_slots').toggleClass('hidden d-none', hasSlots);
         }
 
-        // Remove single slot
         $(document).on('click', '.remove-slot', function () {
             const $item = $(this).closest('.slot-item');
             const uniqueKey = $item.data('slot');
@@ -460,7 +456,6 @@
             updateUIState();
         });
 
-        // Remove all slots
         $(document).on('click', '.remove-all-slots', function () {
             $('.slot-list-wrapper').find('.slot-item').remove();
             slotDataArray = [];

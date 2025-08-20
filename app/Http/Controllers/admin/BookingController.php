@@ -124,9 +124,9 @@ class BookingController extends Controller
     public function bookingSave(Request $request)
     {
         
-        $request->validate([
-            'booking_datetime' => 'required'
-        ]);
+        // $request->validate([
+        //     'booking_datetime' => 'required'
+        // ]);
         
         $bookingData = json_decode($request->booking_data, true) ?? [];
         $inputData = $request->input('dynamic', []);

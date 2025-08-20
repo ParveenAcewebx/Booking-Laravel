@@ -69,7 +69,8 @@
     <script src="{{asset('assets/js/plugins/sweetalert.min.js')}}"></script>
     <script src="{{asset('assets/js/pages/ac-alert.js')}}"></script>
     <script src="{{asset('assets/js/plugins/jquery.dataTables.min.js')}}"></script>
-    <script src="{{ asset('assets/js/custom.js') }}?v={{ time() }}"></script>
+    <script src="{{ asset('assets/js/backend/custom.js') }}?v={{ time() }}"></script>
+    <script src="{{ asset('assets/js/backend/twosetpform.js') }}?v={{ time() }}"></script>
     <!-- DataTable Js -->
     <script src="{{asset('assets/js/plugins/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('assets/js/plugins/dataTables.bootstrap4.min.js')}}"></script>

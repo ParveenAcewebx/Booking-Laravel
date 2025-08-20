@@ -61,7 +61,7 @@ class FormHelper
 
         $c = $classes[$theme] ?? $classes['bootstrap'];
 
-        if (!empty($c) && isset($c['button']) && $c['button'] != 'btn btn-primary') {
+        if (!empty($c) && isset($c['button'])) {
             $countNewSections = count(array_filter($fields, function ($item) {
                 return isset($item['type']) && $item['type'] === 'newsection';
             }));
@@ -267,20 +267,19 @@ class FormHelper
             $html .= "</div>";
             $stepCount++;
         }
-        if (!empty($c) && isset($c['button']) && $c['button'] != 'btn btn-primary') {
-            $html .= "<div class='form-navigation flex justify-between " . ($countNewSections > 0 ? '' : 'hidden') . "'>
-                <div class='perv_step'>
-                    <button type='button' class='step-previous previous {$c['button']}' style='display: none;'>Previous</button>
-                </div>
-                <div class='nex_step'>
-                    <button type='button' class='step-next next {$c['button']}'>Next</button>
-                    <button type='submit' class='submit {$c['button']} hidden'>Submit</button>
-                </div>
-          </div>";
-        }
-
-        if (!empty($c) && isset($c['button']) && $c['button'] != 'btn btn-primary') {
-            $html .= ($countNewSections == '0' ? "<div class='form-navigation'><button type='submit' class='submit {$c['button']}'>Submit</button>" : '');
+        if (!empty($c) && isset($c['button'])) {
+                $html .= "<div class='form-navigation flex justify-between  justify-content-between " . ($countNewSections > 0 ? 'd-flex' : 'hidden d-none') . "'>
+                    <div class='perv_step'>
+                        <button type='button' class='step-previous previous {$c['button']}' style='display: none;'>Previous</button>
+                    </div>
+                    <div class='nex_step'>
+                        <button type='button' class='step-next next {$c['button']}'>Next</button>
+                        <button type='submit' class='submit {$c['button']} hidden d-none'>Submit</button>
+                    </div>
+            </div>";
+            }
+        if (!empty($c) && isset($c['button'])) {
+                $html .= ($countNewSections == '0' ? "<button type='submit' class='submit {$c['button']}'>Submit</button>" : '');
         }
         return $htmlHidden . $html;
     }

@@ -26,8 +26,7 @@
         <form action="{{ route('booking.save') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
-                <!-- Left Column -->
-                <div class="col-md-8 order-md-1">
+                <div class="col-md-12 order-md-1">
                     <div class="card">
                         <div class="card-header">
                             <h5>Booking Information</h5>
@@ -70,15 +69,12 @@
                 </div>
 
                 <!-- Right Column -->
-                <div class="col-md-4 order-md-2">
+                <!-- <div class="col-md-4 order-md-2">
                     <div class="card">
                         <div class="card-header">
                             <h5>Settings</h5>
                         </div>
                         <div class="card-body">
-                            <!-- Staff List -->
-                          
-                            <!-- Booking Date/Time -->
                             <div class="form-group mt-3">
                                 <label>Booking Date/Time</label>
                                 <input type="datetime-local" id="booking_datetime" name="booking_datetime" class="form-control">
@@ -94,7 +90,7 @@
                         </div>
                         
                     </div>
-                </div>
+                </div> -->
             </div>
         </form>
     </div>

@@ -56,7 +56,6 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
             $servicesForm .= "</select>";
-            $servicesForm .= "<p class='text-sm text-red-600 font-medium mt-1 hidden error-service'>Please select a service</p>";
             $servicesForm .= "</div>";
 
             // Vendor dropdown
@@ -66,7 +65,6 @@ class AppServiceProvider extends ServiceProvider
             $servicesForm .= "<select name='dynamic[vendor]' id='service_vendor_form' class='{$c['select']} service_vendor_form' required>";
             $servicesForm .= '<option value="">---Select Vendor---</option>';
             $servicesForm .= "</select>";
-            $servicesForm .= "<p class='text-sm text-red-600 font-medium mt-1 hidden error-vendor'>Please select a vendor</p>";
             $servicesForm .= "</div>";
             $servicesForm .=  '<div class="calendar-wrap hidden d-none">
                     <div class="w-full flex items-center justify-between d-flex w-100 justify-content-between">
@@ -164,7 +162,7 @@ class AppServiceProvider extends ServiceProvider
            $servicesForm .= '<input type="hidden" name="bookslots" id="bookslots">
         
         <div class="slot-list-wrapper space-y-2">
-        <p class="hidden text-sm text-red-600 font-medium mt-1 hidden select-slots p-4 border border-gray-300 shadow-md rounded-l">Please select at least one slot</p></div>';
+        <p class="hidden text-sm text-red-600 font-medium mt-1 hidden select-slots p-4 border border-gray-300 shadow-md rounded-l text-danger ">Please select at least one slot</p></div>';
             return $servicesForm;
         });
 
