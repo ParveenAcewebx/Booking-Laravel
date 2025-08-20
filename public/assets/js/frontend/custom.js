@@ -334,7 +334,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const bookslotsValue = $('#bookslots').val();
         const serviceValue = $('#get_service_staff').val();
         const vendorValue = $('#service_vendor_form').val();
-        const $activeBtn = $context.find('.next:visible, .step-submit:visible, .step-submit:visible');
+        const $activeBtn = $context.find('.next:visible, .submit:visible');
 
         let valid = true;
 
@@ -362,7 +362,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Recheck on actions
     $(document).on(
         'click change',
-        '.slot-card, .add-slot, .remove-slot, .remove-all-slots, #get_service_staff, #service_vendor_form',
+        '.slot-card, .add-slot, .remove-slot, .remove-all-slots, #get_service_staff, #service_vendor_form, .submit',
         function () {
             const $section = $(this).closest('form, body');
             setTimeout(() => {
