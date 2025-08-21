@@ -13,7 +13,7 @@ class UserProfileController extends Controller
         return view('frontend.user.profile');
     }
     public function UserUpdate(Request $request)
-    {
+    { 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . auth()->id(),
