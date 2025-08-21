@@ -10,6 +10,17 @@ class FormHelper
     public static function renderDynamicFieldHTML($templateJson, $values = [], $theme = 'bootstrap')
     {
         $fields = is_array($templateJson) ? $templateJson : json_decode($templateJson, true);
+        $services = Service::where('status', 1)->get();
+        $hasServiceShortcode = false;
+        foreach ($fields as $field) {
+            if (
+                isset($field['type']) && $field['type'] === 'shortcodeblock' &&
+                isset($field['value']) && trim($field['value'], '[]') === 'services'
+            ) {
+                $hasServiceShortcode = true;
+                break;
+            }
+        }
 
 
         // Begin the form output
@@ -268,7 +279,7 @@ class FormHelper
             $stepCount++;
         }
         if (!empty($c) && isset($c['button'])) {
-                $html .= "<div class='form-navigation flex justify-between  justify-content-between " . ($countNewSections > 0 ? 'd-flex' : 'hidden d-none') . "'>
+            $html .= "<div class='form-navigation flex justify-between  justify-content-between " . ($countNewSections > 0 ? 'd-flex' : 'hidden d-none') . "'>
                     <div class='perv_step'>
                         <button type='button' class='previous {$c['button']}' style='display: none;'>Previous</button>
                     </div>
@@ -277,9 +288,20 @@ class FormHelper
                         <button type='submit' class='submit {$c['button']} hidden d-none'>Submit</button>
                     </div>
             </div>";
-            }
+        }
         if (!empty($c) && isset($c['button'])) {
-                $html .= ($countNewSections == '0' ? "<button type='submit' class='submit {$c['button']}'>Submit</button>" : '');
+
+            if ($hasServiceShortcode) {
+                if ($services->count() > 0) {
+                    if ($countNewSections == 0) {
+                        $html .= "<button type='submit' class='submit {$c['button']}'>Submit</button>";
+                    }
+                }
+            } else {
+                if ($countNewSections == 0) {
+                    $html .= "<button type='submit' class='submit {$c['button']}'>Submit</button>";
+                }
+            }
         }
         return $htmlHidden . $html;
     }
