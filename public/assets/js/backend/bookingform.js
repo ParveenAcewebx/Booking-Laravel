@@ -623,7 +623,7 @@ document.addEventListener("DOMContentLoaded", function () {
          });
          if (!isFormValid) {
             event.preventDefault();
-            console.warn("Form validation failed!");
+            // console.warn("Form validation failed!");
          }
       }
       /* ================================== call function on click button =============================*/

@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!isFormValid) {
             event.preventDefault();
-            console.warn("Form validation failed!");
+            // console.warn("Form validation failed!");
         }
     }
 
@@ -167,30 +167,42 @@ document.addEventListener("DOMContentLoaded", function () {
                 var staffSelect = document.querySelector('.service_vendor_form');
                 var calendarHidden = document.querySelector('.calendar-wrap');
 
+                // Clear previous options
                 staffSelect.innerHTML = '';
-                var defaultOption = document.createElement('option');
-                defaultOption.value = '';
-                defaultOption.textContent = '---Select Vendor---';
-                staffSelect.appendChild(defaultOption);
 
                 if (response && response.length > 0) {
+                    console.log('frontend Value', 1);
+
+                    // Enable dropdown + show vendor field
                     staffSelect.disabled = false;
                     select_service_staff.classList.remove('hidden');
 
+                    // Default option
+                    var defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = '--- Select Vendor ---';
+                    staffSelect.appendChild(defaultOption);
+
+                    // Add each staff member
                     response.forEach(function (staff) {
                         var option = document.createElement('option');
                         option.value = staff.id;
                         option.textContent = staff.name;
                         staffSelect.appendChild(option);
                     });
+
                 } else {
+                    console.log('frontend Value', 0);
+
+                    // Disable dropdown + show vendor field
                     staffSelect.disabled = true;
-                    select_service_staff.classList.add('hidden');
+                    select_service_staff.classList.remove('hidden');
                     calendarHidden.classList.add('hidden');
 
+                    // Show "No staff available"
                     var noStaffOption = document.createElement('option');
                     noStaffOption.value = '';
-                    noStaffOption.textContent = 'No staff available';
+                    noStaffOption.textContent = 'No vendor available';
                     staffSelect.appendChild(noStaffOption);
                 }
             },
