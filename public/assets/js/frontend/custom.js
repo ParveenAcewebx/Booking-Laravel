@@ -215,8 +215,9 @@ document.addEventListener("DOMContentLoaded", function () {
     nextButtons.forEach(button => button.addEventListener('click', handleNextButtonClick));
     prevButton.addEventListener('click', handlePreviousButtonClick);
     submitButtons.forEach(button => button.addEventListener('click', handleSubmitButtonClick));
-    ServiceStaffCode.addEventListener('change', get_services_staff);
-
+    if (ServiceStaffCode) {
+        ServiceStaffCode.addEventListener('change', get_services_staff);
+    }
     $(document).ready(function () {
         let formAction = document.querySelector('form').action;
 

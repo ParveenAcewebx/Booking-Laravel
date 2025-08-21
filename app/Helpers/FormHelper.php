@@ -11,16 +11,22 @@ class FormHelper
     {
         $fields = is_array($templateJson) ? $templateJson : json_decode($templateJson, true);
         $services = Service::where('status', 1)->get();
+
         $hasServiceShortcode = false;
+        $hasUserShortcode = false;
+
         foreach ($fields as $field) {
-            if (
-                isset($field['type']) && $field['type'] === 'shortcodeblock' &&
-                isset($field['value']) && trim($field['value'], '[]') === 'services'
-            ) {
-                $hasServiceShortcode = true;
-                break;
+            if (isset($field['type']) && $field['type'] === 'shortcodeblock' && isset($field['value'])) {
+                $shortcodeName = trim($field['value'], '[]');
+                if ($shortcodeName === 'services') {
+                    $hasServiceShortcode = true;
+                }
+                if ($shortcodeName === 'user-information') {
+                    $hasUserShortcode = true;
+                }
             }
         }
+
 
 
         // Begin the form output
@@ -291,16 +297,27 @@ class FormHelper
         }
         if (!empty($c) && isset($c['button'])) {
 
-            if ($hasServiceShortcode) {
-                if ($services->count() > 0) {
-                    if ($countNewSections == 0) {
-                        $html .= "<button type='submit' class='submit {$c['button']}'>Submit</button>";
-                    }
+
+            $shouldShowSubmit = false;
+
+            if ($hasServiceShortcode && $hasUserShortcode) {
+                // Case 1: both shortcodes present → always show
+                $shouldShowSubmit = true;
+            } elseif ($hasServiceShortcode && !$hasUserShortcode) {
+                // Case 2: only services shortcode
+                if ($services->count() > 0 || !empty($fields)) {
+                    $shouldShowSubmit = true;
                 }
-            } else {
-                if ($countNewSections == 0) {
-                    $html .= "<button type='submit' class='submit {$c['button']}'>Submit</button>";
-                }
+            } elseif (!$hasServiceShortcode && $hasUserShortcode) {
+                // Case 3: only user-information shortcode → always show
+                $shouldShowSubmit = true;
+            } elseif (!$hasServiceShortcode && !$hasUserShortcode) {
+                // Case 4: neither shortcode → always show
+                $shouldShowSubmit = true;
+            }
+
+            if ($shouldShowSubmit && $countNewSections == 0) {
+                $html .= "<button type='submit' class='submit {$c['button']}'>Submit</button>";
             }
         }
         return $htmlHidden . $html;
