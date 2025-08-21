@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+    @extends('admin.layouts.app')
 
 @section('content')
 <section class="pcoded-main-container">
@@ -9,7 +9,7 @@
                 <div class="row align-items-center">
                     <div class="col-md-12">
                         <div class="page-header-title">
-                            <h5 class="m-b-10">Edit Booking</h5>
+                            <h5 class="m-b-10">Booking #{{$bookingid}}</h5>
                         </div>
                         <ul class="breadcrumb">
                             <li class="breadcrumb-item">
@@ -20,7 +20,7 @@
                             <li class="breadcrumb-item">
                                 <a href="#!">Booking</a>
                             </li>
-                            <li class="breadcrumb-item"><a href="#!">Edit Booking</a></li>
+                            <li class="breadcrumb-item"><a href="#!">Booking #{{$bookingid}}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -31,165 +31,160 @@
         <!-- [ Form Section ] start -->
         <div class="row">
             <!-- [ Left Column (8) ] start -->
-            <div class="col-md-12 order-md-1">
-                <div class="card">
-                    <div class="card-header text-white" style="background-color: #0073aa;">
-                        <h5 class="text-white">Booking Information</h5>
-                    </div>
-                    <div class="card-body">
-                        <!-- User Info Section -->
-                        @if(!empty($userinfo['first_name']) || !empty($userinfo['last_name']) || !empty($userinfo['email']) || !empty($userinfo['phone']))
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="invoice-box">
-                                    <h6 class="ml-2">User Information</h6>
-                                    <table class="table table-borderless">
-                                      <tbody>
-                                            @if(!empty($userinfo['first_name']) && !empty($userinfo['last_name']))
-                                                <tr>
-                                                    <td><strong>Name:</strong> {{ $userinfo['first_name'] }} {{ $userinfo['last_name'] }}</td>
-                                                </tr>
-                                            @endif
+            @if(!empty($userinfo['first_name']) || !empty($userinfo['last_name']) || !empty($userinfo['email']) || !empty($userinfo['phone']))
+                <div class="col-md-6 col-xl-4">
+                    <div class="card">
+                        <div class="card-header"><h5>User Information</h5></div>
+                        <div class="card-body">
+                            <div class="invoice-box">
+                                <div class="user-info">
+                                    @if(!empty($userinfo['first_name']) && !empty($userinfo['last_name']))
+                                        <div class="info-item">
+                                            <strong>Name:</strong> {{ $userinfo['first_name'] }} {{ $userinfo['last_name'] }}
+                                        </div>
+                                    @endif
 
-                                            @if(!empty($userinfo['email']))
-                                                <tr>
-                                                    <td><strong>Email:</strong> <a href="mailto:{{ $userinfo['email'] }}" class="text-info">{{ $userinfo['email'] }}</a></td>
-                                                </tr>
-                                            @endif
+                                    @if(!empty($userinfo['email']))
+                                        <div class="info-item">
+                                            <strong>Email:</strong> <a href="mailto:{{ $userinfo['email'] }}" class="text-info">{{ $userinfo['email'] }}</a>
+                                        </div>
+                                    @endif
 
-                                            @if(!empty($userinfo['phone']))
-                                                <tr>
-                                                    <td><strong>Phone No:</strong> {{ $userinfo['phone'] }}</td>
-                                                </tr>
-                                            @endif
-                                      </tbody>
-                                    </table>
+                                    @if(!empty($userinfo['phone']))
+                                        <div class="info-item">
+                                            <strong>Phone No:</strong> {{ $userinfo['phone'] }}
+                                        </div>
+                                    @endif
                                 </div>
-                            </div>
-                        @endif
-
-                        <!-- Service / Vendor Info Section -->
-                        @if(!empty($serviceverndor['serivename']) || !empty($serviceverndor['vendorname']))
-                            <div class="col-md-4">
-                                <h6 class="ml-2">Service / Vendor Information</h6>
-                                <table class="table table-borderless">
-                                    <tbody>
-                                        @if(!empty($serviceverndor['serivename']))
-                                            <tr>
-                                                <td><strong>Service Name:</strong> {{ htmlspecialchars($serviceverndor['serivename']) }}</td>
-                                            </tr>
-                                        @endif
-
-                                        @if(!empty($serviceverndor['vendorname']))
-                                            <tr>
-                                                <td><strong>Vendor Name:</strong> {{ htmlspecialchars($serviceverndor['vendorname']) }}</td>
-                                            </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
-                            </div>
-                     
-                        @endif
+                            </div>              
                         </div>
-
                     </div>
+                </div>
+            @endif
 
-                    <div class="card-body">
-                        <!-- Booking Details Section -->
-                        @if(is_array($slotedetail) && count($slotedetail) > 0)
-                        <div class="row">
-                            <div class="col-md-8">
-                                <h6 class="ml-2">Booking Information</h6>
-                                <table class="table table-responsive">
-                                    <tbody>
-                                        <tr>
-                                            <td><strong>Total number of slots:</strong> {{ count($slotedetail) }}</td>
-                                        </tr>
-                                        @foreach($slotedetail as $index => $slotededata)
-                                            <tr>
-                                                <th>Slot {{ $index + 1 }}:</th>
-                                                <td>
-                                                    <strong>Date:</strong> {{ $slotededata->date }}<br>
-                                                    <strong>Time:</strong> {{ $slotededata->start }} To {{ $slotededata->end }}<br>
-                                                    <strong>Duration:</strong> {{ $slotededata->duration }}<br>
-                                                    <strong>Price:</strong> {{ $slotededata->price }}
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+            @if(!empty($serviceverndor['serivename']) || !empty($serviceverndor['vendorname']))
+                <div class="col-md-6 col-xl-4">
+                    <div class="card">
+                        <div class="card-header"><h5>Service / Vendor Information</h5></div>
+                        <div class="card-body">
+                            <div class="invoice-box">
+                                <div class="service-vendor-info">
+                                    @if(!empty($serviceverndor['serivename']))
+                                        <div class="info-item">
+                                            <strong>Service Name:</strong> {{ htmlspecialchars($serviceverndor['serivename']) }}
+                                        </div>
+                                    @endif
 
-                            <!-- Total Price Section -->
-                            <div class="col-md-4">
-                                <h6 class="m-b-20">Amount</h6>
-                                <h5 class="text-uppercase text-primary">Total Price: 
-                                    @php
-                                        $totalPrice = 0;
-                                        foreach($slotedetail as $slotededata) {
-                                           $price = str_replace(['$', ' '], '', $slotededata->price);
-                                           $totalPrice += (float) $price;
-                                        }
-                                    @endphp
-                                    <span>${{ number_format($totalPrice, 2) }}</span>    
-                                </h5>
-                            </div>
+                                    @if(!empty($serviceverndor['vendorname']))
+                                        <div class="info-item">
+                                            <strong>Vendor Name:</strong> {{ htmlspecialchars($serviceverndor['vendorname']) }}
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>              
                         </div>
-                        @else
-                            <p>No booking slots available.</p> <!-- In case $slotedetail is empty or null -->
-                        @endif
                     </div>
+                </div>
+            @endif
 
-                    <div class="card-body">
-                        <!-- Additional Fields Section -->
-                        @if(is_array($userinfo) && count($userinfo) > 0) <!-- Check if $userinfo is an array and not empty -->
-                        <h6>Additional Information</h6>
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Field</th>
-                                        <th>Value</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($userinfo as $key => $value)
-                                        @if(!in_array($key, ['first_name', 'last_name', 'email', 'phone', 'service', 'vendor']))
-                                            <tr>
-                                                <th>{{ ucfirst(str_replace('_', ' ', $key)) }}:</th>
-                                                <td>
-                                                    @if(is_array($value) || is_object($value))
-                                                        @foreach($value as $subKey => $subValue)
-                                                            <strong>{{ ucfirst(str_replace('_', ' ', $subKey)) }}:</strong> 
-                                                            @if (strpos($subKey, 'file-') === 0) <!-- Check if the key starts with 'file-' -->
-                                                                <img src="{{ asset('storage/' . $subValue) }}" alt="{{ $subKey }}" style="max-width: 100px; height: auto;">
-                                                            @else
-                                                                {{ $subValue }}
-                                                            @endif
-                                                            <br>
-                                                        @endforeach
-                                                    @else
-                                                    @if (preg_match('/\.(jpg|jpeg|png|gif|bmp)$/i', $value)) 
-                                                            <img src="{{ asset('storage/' . $value) }}" alt="{{ $key }}" style="max-width: 100px; height: auto;">
-                                                        @else
-                                                            {{ $value }}
-                                                        @endif
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @endif
+            @if(is_array($slotedetail) && count($slotedetail) > 0)
+                <div class="col-md-6 col-xl-4">
+                    <div class="card">
+                        <div class="card-header"><h5>Booking Information</h5></div>
+                        <div class="card-body">
+                            <div class="invoice-box">
+                                <div class="booking-info">
+                                    <div class="info-item">
+                                        <strong>Total number of slots:</strong> {{ count($slotedetail) }}
+                                    </div>
+                                    @foreach($slotedetail as $index => $slotededata)
+                                        <div class="info-item">
+                                            <p><strong>Slot {{ $index + 1 }}:</strong></p>
+                                            <strong>Date:</strong> {{ $slotededata->date }}<br>
+                                            <strong>Time:</strong> {{ $slotededata->start }} To {{ $slotededata->end }}<br>
+                                            <strong>Duration:</strong> {{ $slotededata->duration }}<br>
+                                            <strong>Price:</strong> {{ $slotededata->price }}
+                                        </div>
                                     @endforeach
-                                </tbody>
-                            </table>
+                                </div>
+                            </div>              
                         </div>
-                        @else
-                            <p>No additional information available.</p> <!-- In case $userinfo is empty -->
+                          @if(is_array($slotedetail) && count($slotedetail) > 0)
+                                <div class="card-body">
+                                        <h5 class="text-uppercase text-primary">Total Price: 
+                                            @php
+                                                $totalPrice = 0;
+                                                foreach($slotedetail as $slotededata) {
+                                                    $price = str_replace(['$', ' '], '', $slotededata->price);
+                                                    $totalPrice += (float) $price;
+                                                }
+                                            @endphp
+                                            <span>${{ number_format($totalPrice, 2) }}</span>    
+                                        </h5>
+                                    </div>
+                                </div>
                         @endif
                     </div>
                 </div>
+            @endif
+           @if(is_array($AdditionalInformation['AddInfoLabel']) && !empty($AdditionalInformation['AddInfoLabel']))
+            <div class="col-md-6 col-xl-4">
+                <div class="card">
+                    <div class="card-header"><h5>Additional Information</h5></div>
+                    <div class="card-body">
+                        <div class="additional-info">
+                            <div class="info-item">
+                                <div class="field-name">
+                                    @foreach($AdditionalInformation['AddInfoLabel'] as $index => $label)
+                                        @php
+                                            $value = $AdditionalInformation['AddInfoValue'][$index];
+                                        @endphp
+                                        <div>
+                                            <strong>{{ $label }}:</strong>
+                                            <div class="field-value">
+                                                @if (is_string($value) && preg_match('/\.(jpg|jpeg|png|gif|bmp)$/i', $value))  
+                                                    <img src="{{ asset('storage/' . $value) }}" alt="" style="max-width: 100px; height: auto;">
+                                                @elseif (is_string($value) && preg_match('/\.pdf$/i', $value))
+                                                    <a href="{{ asset('storage/' . $value) }}" target="_blank">
+                                                        <i class="fas fa-file-pdf" style="font-size: 30px; color: red;"></i>
+                                                    </a>
+                                                @elseif (is_array($value))
+                                                @php
+                                                    $formattedOptions = implode(', ', $value);
+                                                @endphp
+                                                    <label class="info-label">{{ $formattedOptions }}</label>
+                                                @else
+                                                    @php 
+                                                        $matchedValues = (array) $value; 
+                                                        $formfileddata = $AdditionalInformation['formStructureArray'];
+                                                        $valueinputlabel = [];
+                                                        foreach ($formfileddata as $item) {
+                                                            if (isset($item['values']) && is_array($item['values'])) {
+                                                                foreach ($item['values'] as $subvalue) {
+                                                                    if (in_array($subvalue['value'], $matchedValues)) {
+                                                                        $valueinputlabel[] = $subvalue['label'];
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    @endphp
+                                                    @if(count($valueinputlabel) > 0)
+                                                        <p>{{ implode(', ', $valueinputlabel) }}</p>
+                                                    @else
+                                                        <p>{{ $value }}</p> 
+                                                    @endif
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+        @endif
         </div>
-        <!-- [ Form Section ] end -->
-    </div>
+  </div>
 </section>
 @endsection
