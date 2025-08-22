@@ -31,7 +31,7 @@
             } else {
                 selectedValue = selectedValue;
             }
-            console.log('selectedValue', selectedValue);
+            // console.log('selectedValue', selectedValue);
             $.ajax({
                 url: '/get/vendor/get_booking_calender',
                 type: 'GET',
@@ -40,7 +40,7 @@
                 success: function (response) {
                     $('.availibility').addClass('hidden');
 
-                    console.log('Calendar Response' + JSON.stringify(response))
+                    // console.log('Calendar Response' + JSON.stringify(response))
                     $('.calendar-wrap').removeClass('hidden');
                     if (response.success === true && response.data && response.data[0]) {
                         const workondayoff = response.data;

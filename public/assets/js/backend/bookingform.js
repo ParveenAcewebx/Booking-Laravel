@@ -498,7 +498,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const submitButtons = document.querySelectorAll('.submit');
       const form = document.querySelector('form');
       const ServiceStaffCode = document.querySelector('.get_service_staff');
-      console.log('ServiceStaffCode', ServiceStaffCode);
+      // console.log('ServiceStaffCode', ServiceStaffCode);
       if (!steps.length || !prevButton || !nextButtons.length || !submitButtons.length) {
          console.error('Required elements not found!');
          return;

@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(function () {
+        $(".alert-message").fadeOut("slow", function () {
+            $(this).remove();
+        });
+    }, 2000);
     let currentSteps = 1;
     const steps = document.querySelectorAll('.step');
     const prevButton = document.querySelector('.previous');
@@ -7,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector('form');
     const ServiceStaffCode = document.querySelector('.get_service_staff');
 
-    console.log('ServiceStaffCode', ServiceStaffCode);
+    // console.log('ServiceStaffCode', ServiceStaffCode);
 
     if (!steps.length || !prevButton || !nextButtons.length || !submitButtons.length) {
         console.error('Required elements not found!');
@@ -162,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             dataType: 'json',
             success: function (response) {
-                console.log('Services Staff', response);
+                // console.log('Services Staff', response);
                 var select_service_staff = document.querySelector('.select_service_vendor');
                 var staffSelect = document.querySelector('.service_vendor_form');
                 var calendarHidden = document.querySelector('.calendar-wrap');
@@ -171,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 staffSelect.innerHTML = '';
 
                 if (response && response.length > 0) {
-                    console.log('frontend Value', 1);
+                    // console.log('frontend Value', 1);
 
                     // Enable dropdown + show vendor field
                     staffSelect.disabled = false;
@@ -192,7 +197,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
 
                 } else {
-                    console.log('frontend Value', 0);
+                    // console.log('frontend Value', 0);
 
                     // Disable dropdown + show vendor field
                     staffSelect.disabled = true;

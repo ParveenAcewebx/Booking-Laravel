@@ -6,11 +6,10 @@
         <div class="max-w-xl mx-auto bg-white shadow rounded-xl border border-gray-200 p-8">
             <h2 class="mb-6 text-center text-2xl font-bold text-gray-800">{{ $template->template_name }}</h2>
 
-            {{-- Success message --}}
             @if (session('success'))
-                <div class="mb-4 rounded bg-green-100 px-4 py-3 text-green-800">
-                    {{ session('success') }}
-                </div>
+            <div class="alert-message {{ session('alert-class', 'mb-4 rounded bg-green-100 px-4 py-3 text-green-800') }}">
+                {{ session('success') }}
+            </div>
             @endif
 
             {{-- Form --}}
