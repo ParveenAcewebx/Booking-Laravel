@@ -295,8 +295,33 @@ class FormHelper
                     </div>
             </div>";
         }
-        if (!empty($c) && isset($c['button'])) {
 
+        if (!empty($c) && isset($c['button'])) {
+            $services = Service::where('status', 1)->get();
+
+            $hasServiceShortcode = false;
+            $hasUserShortcode   = false;
+
+            foreach ($fields as $field) {
+                if (isset($field['type']) && $field['type'] === 'shortcodeblock' && isset($field['value'])) {
+                    $shortcodeName = trim($field['value'], '[]');
+                    if ($shortcodeName === 'services') {
+                        $hasServiceShortcode = true;
+                    }
+                    if ($shortcodeName === 'user-information') {
+                        $hasUserShortcode = true;
+                    }
+                }
+            }
+
+            // detect if there are any NON-shortcode fields (like radio, text, etc.)
+            $hasOtherFields = false;
+            foreach ($fields as $field) {
+                if (!isset($field['type']) || $field['type'] !== 'shortcodeblock') {
+                    $hasOtherFields = true;
+                    break;
+                }
+            }
 
             $shouldShowSubmit = false;
 
@@ -305,7 +330,8 @@ class FormHelper
                 $shouldShowSubmit = true;
             } elseif ($hasServiceShortcode && !$hasUserShortcode) {
                 // Case 2: only services shortcode
-                if ($services->count() > 0) {
+                // show if services exist OR other template fields exist
+                if ($services->count() > 0 || $hasOtherFields) {
                     $shouldShowSubmit = true;
                 }
             } elseif (!$hasServiceShortcode && $hasUserShortcode) {
@@ -320,6 +346,7 @@ class FormHelper
                 $html .= "<button type='submit' class='submit {$c['button']}'>Submit</button>";
             }
         }
+
         return $htmlHidden . $html;
     }
 }
