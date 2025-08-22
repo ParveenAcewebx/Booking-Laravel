@@ -81,8 +81,8 @@ class BookingController extends Controller
                     $btn = '';
 
                     if (auth()->user()->can('edit bookings')) {
-                        $btn .= '<a href="' . route('booking.edit', $booking->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit Booking">
-                                <i class="fas fa-pencil-alt"></i>
+                        $btn .= '<a href="' . route('booking.view', $booking->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="View Booking">
+                              <i class="feather icon-eye"></i>
                             </a> ';
                     }
 
@@ -160,7 +160,7 @@ class BookingController extends Controller
             : redirect()->back()->with('error', 'It failed. Please try again.');
     }
 
-    public function bookingEdit($id)
+    public function bookingview($id)
         {
             $booking = Booking::with('template')->findOrFail($id);
             $dynamicValues = json_decode($booking->booking_data, true) ?? [];
@@ -224,7 +224,6 @@ class BookingController extends Controller
                 ];
             
             }
-
             $bookingid = $id ? $id : '';
             $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
             $selectedStaffUser = User::where('name', $booking->selected_staff)->first();

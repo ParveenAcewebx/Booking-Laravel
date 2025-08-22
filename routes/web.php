@@ -101,7 +101,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
         Route::post('/booking/save', [BookingController::class, 'bookingSave'])->name('booking.save');
     });
     Route::middleware('permission:edit bookings')->group(function () {
-        Route::get('/booking/{id}/edit', [BookingController::class, 'bookingEdit'])->name('booking.edit');
+        Route::get('/booking/{id}/view', [BookingController::class, 'bookingview'])->name('booking.view');
         Route::put('/booking/{id}/update', [BookingController::class, 'bookingUpdate'])->name('booking.update');
     });
     Route::middleware('permission:delete bookings')->group(function () {
