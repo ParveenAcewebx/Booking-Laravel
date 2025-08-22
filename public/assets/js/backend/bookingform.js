@@ -1,6 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
    /* ================================== Get service data   =============================*/
    function get_services_staff(selectedvalue) {
+      $('.slot-list-wrapper').empty();
+      $('.calendar-wrap, .remove-all-slots').addClass('d-none');
+      $('#bookslots').val('');
+       $('.select-slots').css('display', 'none');
       var serviceId = selectedvalue.value;
       var selectedStaff = document.querySelector('.selected_vendor').value;
       $.ajax({
@@ -72,6 +76,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const availableDates = typeof availabledatesArray !== 'undefined' ? availabledatesArray : [];
       $('.service_vendor_form').on('change', function () {
          let selectedValue = $(this).val();
+         $('.slot-list-wrapper').empty();
+         $('.remove-all-slots').addClass('d-none');
+         $('.select-slots').css('display', 'block');
+         $('#bookslots').val('');
          if (selectedValue === "") {
             selectedValue = 0;
          } else {
@@ -325,7 +333,7 @@ document.addEventListener("DOMContentLoaded", function () {
                   let sessionsHTML = '';
                   if (response && response.staffdata.length > 0) {
                      const formattedDate = response.date;
-                     const price = `${response.serviceCurrency} ${response.price}`;
+                     const price = `${response.serviceCurrency}${response.price}`;
                      $('.availibility').removeClass('d-none');
                      const date = response.date;
                      const staffOffIds = response.staff_off_ids ? response.staff_off_ids.split(',').map(id => id.trim()) : [];
@@ -350,7 +358,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                     <input type="hidden" name="staff_id" value="${slot.id}">
                                     <p class="text-sm mb-1 font-medium text-gray-700">${slot.start_time} - ${slot.end_time}</p>
                                     <p class="text-sm text-gray-600 m-0">Duration: ${formatDuration(response.duration)}</p>
-                                    <p class="text-sm text-gray-600 m-0">Price: ${response.serviceCurrency} ${response.price}</p>
+                                    <p class="text-sm text-gray-600 m-0">Price: ${response.serviceCurrency}${response.price}</p>
                                 </div>`
                         });
                      } else {
@@ -470,7 +478,6 @@ document.addEventListener("DOMContentLoaded", function () {
          $('.slot-list-wrapper').empty();
          slotDataArray = [];
          $('#bookslots').val('');
-
          toggleRemoveAllButton();
       });
    }
@@ -482,7 +489,6 @@ document.addEventListener("DOMContentLoaded", function () {
          services_short_code_get_staff.addEventListener('change', function () {
             var customValue = services_short_code_get_staff;
             get_services_staff(customValue);
-
          });
       }
       var selectedStaff = document.querySelector('.selected_vendor');
