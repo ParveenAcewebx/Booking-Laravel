@@ -157,8 +157,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function get_services_staff() {
+                    console.log('get_services_staff', 1);
+
         var serviceId = ServiceStaffCode.value;
-        $('.availibility, .calendar-wrap').addClass('hidden');
+        $('.availibility, .calendar-wrap, .remove-all-slots, .select-slots').addClass('hidden');
+        $('input[name="bookslots"]').val('');
+        $('.slot-item').remove();
         $.ajax({
             url: '/get/services/staff',
             type: 'GET',

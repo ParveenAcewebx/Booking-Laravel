@@ -25,6 +25,11 @@
 
         // Vendor selection event listener
         $('.service_vendor_form').on('change', function () {
+            console.log('service_vendor_form', 1);
+            $('.remove-all-slots').addClass('hidden');
+            $('.slot-item').remove();
+            $('input[name="bookslots"]').val('');
+
             let selectedValue = $(this).val();
             if (selectedValue === "") {
                 selectedValue = 0;
@@ -39,15 +44,16 @@
                 dataType: 'json',
                 success: function (response) {
                     $('.availibility').addClass('hidden');
-
                     // console.log('Calendar Response' + JSON.stringify(response))
                     $('.calendar-wrap').removeClass('hidden');
                     if (response.success === true && response.data && response.data[0]) {
+                         $('.slot-item').removeClass('hidden');
                         const workondayoff = response.data;
                         const workingDays = response.data.map(item => item.Working_day);
                         resetCalendar();
                         new Calendar(workingDays, workondayoff);
                     } else {
+                        $('.slot-item').remove();
                         const workondayoff = 0;
                         const workingDays = 0;
 
@@ -317,7 +323,7 @@
 
                         if (response && response.merged_slots?.length > 0) {
                             // alert('sdfsf1');
-
+                          
                             $('.availibility').removeClass('hidden');
 
                             sessionsHTML += `<div class="date-section mb-3">
@@ -350,7 +356,7 @@
                         }
 
                         sessionsHTML += `<input type="hidden" id="staffOffIds" value="${staffOffIds.join(',')}">`;
-
+                        // console.log('dfsfsf');
                         $('.availibility').html(sessionsHTML);
                         bindSlotClickEvent();
                     },
@@ -404,7 +410,7 @@
         </div>
     `;
 
-            updateUIState(); 
+            updateUIState();
             return html;
         }
 
@@ -436,7 +442,7 @@
         `);
             }
 
-            updateUIState(); 
+            updateUIState();
         }
 
         function updateUIState() {
