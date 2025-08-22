@@ -157,12 +157,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function get_services_staff() {
-                    console.log('get_services_staff', 1);
-
+        console.log('get_services_staff', 1);
+        var selectslots = document.querySelector('.select-slots');
         var serviceId = ServiceStaffCode.value;
-        $('.availibility, .calendar-wrap, .remove-all-slots, .select-slots').addClass('hidden');
+        $('.availibility,.calendar-wrap,.remove-all-slots').addClass('hidden');
         $('input[name="bookslots"]').val('');
         $('.slot-item').remove();
+        
         $.ajax({
             url: '/get/services/staff',
             type: 'GET',
@@ -175,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 var select_service_staff = document.querySelector('.select_service_vendor');
                 var staffSelect = document.querySelector('.service_vendor_form');
                 var calendarHidden = document.querySelector('.calendar-wrap');
-
+                
                 // Clear previous options
                 staffSelect.innerHTML = '';
 
@@ -205,8 +206,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // Disable dropdown + show vendor field
                     staffSelect.disabled = true;
+                    selectslots.classList.add('hidden');
                     select_service_staff.classList.remove('hidden');
                     calendarHidden.classList.add('hidden');
+                    
 
                     // Show "No staff available"
                     var noStaffOption = document.createElement('option');

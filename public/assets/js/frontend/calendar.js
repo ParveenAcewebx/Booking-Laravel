@@ -47,13 +47,13 @@
                     // console.log('Calendar Response' + JSON.stringify(response))
                     $('.calendar-wrap').removeClass('hidden');
                     if (response.success === true && response.data && response.data[0]) {
-                         $('.slot-item').removeClass('hidden');
+                        //  $('.slot-item').removeClass('hidden');
                         const workondayoff = response.data;
                         const workingDays = response.data.map(item => item.Working_day);
                         resetCalendar();
                         new Calendar(workingDays, workondayoff);
                     } else {
-                        $('.slot-item').remove();
+                        // $('.slot-item').remove();
                         const workondayoff = 0;
                         const workingDays = 0;
 
@@ -323,7 +323,7 @@
 
                         if (response && response.merged_slots?.length > 0) {
                             // alert('sdfsf1');
-                          
+
                             $('.availibility').removeClass('hidden');
 
                             sessionsHTML += `<div class="date-section mb-3">
@@ -409,7 +409,6 @@
             <p class="text-sm text-gray-600">Price: ${price}</p>
         </div>
     `;
-
             updateUIState();
             return html;
         }
@@ -418,6 +417,18 @@
         function AppendSlotBoxOnce(date, price, start, end, duration, staffIds) {
             const $wrapper = $('.slot-list-wrapper');
             const uniqueKey = `${date}-${start}-${end}`;
+
+            // Sync slotDataArray with hidden input
+            let existingValue = $('#bookslots').val();
+            if (existingValue) {
+                try {
+                    slotDataArray = JSON.parse(existingValue);
+                } catch (e) {
+                    slotDataArray = [];
+                }
+            } else {
+                slotDataArray = [];
+            }
 
             if (!$wrapper.find(`[data-slot="${uniqueKey}"]`).length) {
                 slotDataArray.push({
@@ -445,12 +456,16 @@
             updateUIState();
         }
 
+        // ✅ Update UI State based on hidden input value
         function updateUIState() {
-            const hasSlots = slotDataArray.length > 0;
+            const bookslotsVal = $('#bookslots').val();
+            const hasSlots = bookslotsVal && bookslotsVal.trim() !== '';
+
             $('.remove-all-slots').toggleClass('hidden', !hasSlots);
             $('.select_slots').toggleClass('hidden d-none', hasSlots);
         }
 
+        // Remove single slot
         $(document).on('click', '.remove-slot', function () {
             const $item = $(this).closest('.slot-item');
             const uniqueKey = $item.data('slot');
@@ -462,11 +477,19 @@
             updateUIState();
         });
 
+        // Remove all slots
         $(document).on('click', '.remove-all-slots', function () {
             $('.slot-list-wrapper').find('.slot-item').remove();
             slotDataArray = [];
             $('#bookslots').val('');
             updateUIState();
         });
+
+        // ✅ Page load pe bhi check karo
+        $(document).ready(function () {
+            updateUIState();
+            bindSlotClickEvent();
+        });
     });
-})(jQuery);
+
+    })(jQuery);
