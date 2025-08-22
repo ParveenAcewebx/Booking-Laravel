@@ -157,6 +157,9 @@ class StaffController extends Controller
             foreach ($request->working_days as $day => $data) {
                 $start = $data['start'] ?? '00:00';
                 $end = $data['end'] ?? '00:00';
+                if ($start == '00:00' || $end == '00:00') {
+                        $start = $end = '00:00';
+                    }
 
                 $workingHours[$day] = [
                     'start' => $start,
@@ -332,9 +335,15 @@ class StaffController extends Controller
 
         foreach ($weekDays as $day) {
             $data = $request->working_days[$day] ?? [];
+            
+            $start = $data['start'] ?? '00:00';
+            $end = $data['end'] ?? '00:00';
+            if ($start == '00:00' || $end == '00:00') {
+            $start = $end = '00:00';
+            }
             $workingHours[$day] = [
-                'start' => $data['start'] ?? '00:00',
-                'end'   => $data['end'] ?? '00:00',
+                'start' => $start,
+                'end'   => $end,
                 'services' => $submittedServices ?? [],
             ];
         }
