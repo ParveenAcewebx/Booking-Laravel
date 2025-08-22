@@ -131,7 +131,7 @@ class ServiceController extends Controller
         $data['payment__is_live'] = $request->has('payment__is_live') ? 1 : 0;
         $data['duration'] = $request->duration;
         $data['currency'] = $request->currency;
-
+        $data['price'] = $request->price ? $request->price : '0.00';
         Service::create($data);
         // $lastServiceId = $service->id;
         // $staffMembers = $request->input('staff_member', []);
@@ -213,7 +213,7 @@ class ServiceController extends Controller
             'category'              => $request->category,
             'duration'              => $request->duration,
             'status'                => $request->status,
-            'price'                 => $request->price,
+            'price'                 => $request->price ? $request->price : '0.00',
             'currency'              => $request->currency,
             'appointment_status'    => $request->appointment_status,
             'cancelling_unit'       => $request->cancelling_unit,
