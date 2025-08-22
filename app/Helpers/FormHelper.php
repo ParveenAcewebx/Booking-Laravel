@@ -13,7 +13,7 @@ class FormHelper
         $services = Service::where('status', 1)->get();
 
         $hasServiceShortcode = false;
-        $hasUserShortcode = false;
+        $hasUserShortcode   = false;
 
         foreach ($fields as $field) {
             if (isset($field['type']) && $field['type'] === 'shortcodeblock' && isset($field['value'])) {
@@ -24,6 +24,15 @@ class FormHelper
                 if ($shortcodeName === 'user-information') {
                     $hasUserShortcode = true;
                 }
+            }
+        }
+
+        // detect if there are any NON-shortcode fields (like radio, text, etc.)
+        $hasOtherFields = false;
+        foreach ($fields as $field) {
+            if (!isset($field['type']) || $field['type'] !== 'shortcodeblock') {
+                $hasOtherFields = true;
+                break;
             }
         }
 
@@ -297,32 +306,6 @@ class FormHelper
         }
 
         if (!empty($c) && isset($c['button'])) {
-            $services = Service::where('status', 1)->get();
-
-            $hasServiceShortcode = false;
-            $hasUserShortcode   = false;
-
-            foreach ($fields as $field) {
-                if (isset($field['type']) && $field['type'] === 'shortcodeblock' && isset($field['value'])) {
-                    $shortcodeName = trim($field['value'], '[]');
-                    if ($shortcodeName === 'services') {
-                        $hasServiceShortcode = true;
-                    }
-                    if ($shortcodeName === 'user-information') {
-                        $hasUserShortcode = true;
-                    }
-                }
-            }
-
-            // detect if there are any NON-shortcode fields (like radio, text, etc.)
-            $hasOtherFields = false;
-            foreach ($fields as $field) {
-                if (!isset($field['type']) || $field['type'] !== 'shortcodeblock') {
-                    $hasOtherFields = true;
-                    break;
-                }
-            }
-
             $shouldShowSubmit = false;
 
             if ($hasServiceShortcode && $hasUserShortcode) {
