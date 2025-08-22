@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  /* ================================== Get service data   =============================*/
+   /* ================================== Get service data   =============================*/
    function get_services_staff(selectedvalue) {
       var serviceId = selectedvalue.value;
       var selectedStaff = document.querySelector('.selected_vendor').value;
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("AJAX error:", status, error);
          }
       });
-/* ================================== Reset callender data   =============================*/
+      /* ================================== Reset callender data   =============================*/
       function resetCalendar() {
          const calendar = document.getElementById('calendar');
          if (calendar) {
@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
          });
       });
-/* ================================== Add staff data in the callender   =============================*/
+      /* ================================== Add staff data in the callender   =============================*/
       class Calendar {
          constructor(workingDays, workondayoff) {
             this.workingDays = workingDays;
@@ -278,7 +278,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (pre) pre.addEventListener('click', () => this.changeMonth(-1));
             if (next) next.addEventListener('click', () => this.changeMonth(1));
          }
-          /* ================================== Calender change month  =============================*/
+         /* ================================== Calender change month  =============================*/
          changeMonth(direction) {
             month += direction;
             if (month < 0) {
@@ -308,7 +308,7 @@ document.addEventListener("DOMContentLoaded", function () {
             dayElem.classList.add('selected');
             this.BookeAslot(selectedDate);
          }
-    /* ================================== Booke  slotes  =============================*/
+         /* ================================== Booke  slotes  =============================*/
          BookeAslot(date) {
             if (!date) return;
             const serviceId = document.querySelector('.get_service_staff').value;
@@ -374,7 +374,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
          }
       }
-    /* ================================== Calculate service duration function  =============================*/
+      /* ================================== Calculate service duration function  =============================*/
       function formatDuration(minutes) {
          const hrs = Math.floor(minutes / 60);
          const mins = minutes % 60;
@@ -384,7 +384,7 @@ document.addEventListener("DOMContentLoaded", function () {
          if (mins > 0) label += mins + ' minutes';
          return label;
       }
-    /* ================================== Add total slotes box function    =============================*/
+      /* ================================== Add total slotes box function    =============================*/
       function bindSlotClickEvent() {
          $('.slot-card').off('click').on('click', function () {
             const date = $(this).data('date');
@@ -415,7 +415,7 @@ document.addEventListener("DOMContentLoaded", function () {
          });
 
       }
-/* ================================== Add slotes box function    =============================*/
+      /* ================================== Add slotes box function    =============================*/
       function AppendSlotBoxOnce(date, price, start, end, duration, id) {
          const $wrapper = $('.slot-list-wrapper');
          const uniqueKey = `${date}-${start}-${end}`;
@@ -449,13 +449,13 @@ document.addEventListener("DOMContentLoaded", function () {
          }
          toggleRemoveAllButton();
       }
-/* ================================== Remove  slotes function    =============================*/
+      /* ================================== Remove  slotes function    =============================*/
 
       function toggleRemoveAllButton() {
          const hasSlots = $('.slot-list-wrapper .slot-item').length > 0;
          $('.remove-all-slots').toggleClass('d-none', !hasSlots);
       }
-/* ================================== Remove  slotes one by one   =============================*/
+      /* ================================== Remove  slotes one by one   =============================*/
       $(document).on('click', '.remove-slot', function () {
          const $item = $(this).closest('.slot-item');
          const uniqueKey = $item.data('slot');
@@ -465,7 +465,7 @@ document.addEventListener("DOMContentLoaded", function () {
          toggleRemoveAllButton();
       });
 
-/* ================================== Remove All slotes  =============================*/
+      /* ================================== Remove All slotes  =============================*/
       $(document).on('click', '.remove-all-slots', function () {
          $('.slot-list-wrapper').empty();
          slotDataArray = [];
@@ -476,13 +476,15 @@ document.addEventListener("DOMContentLoaded", function () {
    }
    /* ================================== Function for booking form =============================*/
    function twostepform() {
-      
-      const services_short_code_get_staff = document.querySelector('.get_service_staff');
-      services_short_code_get_staff.addEventListener('change', function () {
-         var customValue = services_short_code_get_staff;
-         get_services_staff(customValue);
 
-      });
+      const services_short_code_get_staff = document.querySelector('.get_service_staff');
+      if (services_short_code_get_staff) {
+         services_short_code_get_staff.addEventListener('change', function () {
+            var customValue = services_short_code_get_staff;
+            get_services_staff(customValue);
+
+         });
+      }
       var selectedStaff = document.querySelector('.selected_vendor');
       if (selectedStaff) {
          const services_selected = document.querySelector('.get_service_staff');
