@@ -1278,18 +1278,4 @@ $(document).ready(function () {
 });
 /* ------------------------ End Services Thumbnail Function  ---------------------------- */
 
-$(document).ready(function() {
-            // Check all steps (with class "step")
-            $('.step').each(function() {
-                var step = $(this);  // Current step
-                var submitButton = $('#dynamictemplateFields .submit');
-                // Check if there are input fields inside the current step
-                if (step.find('input').length === 0) {
-                    // No input fields found, hide the submit button
-                    submitButton.hide();
-                } else {
-                    // Input fields found, show the submit button
-                    submitButton.show();
-                }
-            });
-        });
+
