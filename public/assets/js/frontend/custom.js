@@ -207,7 +207,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Show "No staff available"
                     var noStaffOption = document.createElement('option');
                     noStaffOption.value = '';
-                    noStaffOption.textContent = 'No vendor available';
+                    noStaffOption.textContent = 'No vendor assigned';
                     staffSelect.appendChild(noStaffOption);
                 }
             },

@@ -128,7 +128,7 @@ class FormController extends Controller
             $vendorIds = VendorServiceAssociation::where('service_id', $serviceId)->with('vendor')->get();
 
             foreach ($vendorIds as $vendor) {
-                if ($vendor->vendor->status === 1) {
+                if ($vendor->vendor && ($vendor->vendor->status === 1 || $vendor->vendor->status === null)) {
                     $vendor_data[] = [
                         'id' => $vendor->vendor->id,
                         'name' => $vendor->vendor->name,
