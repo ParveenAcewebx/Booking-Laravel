@@ -36,6 +36,10 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="{{ asset('assets/js/frontend/calendar.js') }}?v={{ time() }}"></script>
 
+  <!-- Bootstrap JS (choose only one version, based on what you're using) -->
+  <!-- For Bootstrap 4 -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
   <!-- (Optional) Alpine.js for more interactivity -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>

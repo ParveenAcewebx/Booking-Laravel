@@ -476,6 +476,7 @@ document.addEventListener("DOMContentLoaded", function () {
    }
    /* ================================== Function for booking form =============================*/
    function twostepform() {
+      
       const services_short_code_get_staff = document.querySelector('.get_service_staff');
       services_short_code_get_staff.addEventListener('change', function () {
          var customValue = services_short_code_get_staff;

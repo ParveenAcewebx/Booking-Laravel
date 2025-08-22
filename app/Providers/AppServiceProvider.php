@@ -160,7 +160,7 @@ class AppServiceProvider extends ServiceProvider
             }
 
            $servicesForm .= '<input type="hidden" name="bookslots" id="bookslots">
-     <p class="hidden text-sm text-red-600 font-medium mt-1 hidden select-slots p-4 border border-gray-300 shadow-md rounded-l text-danger ">Please select at least one slot</p>        <div class="slot-list-wrapper space-y-2">
+     <p class="hidden text-sm text-red-600 font-medium mt-1 hidden select-slots p-4 border border-gray-300 shadow-md rounded-l text-danger ">Please select a date and select atleast one slot.</p><div class="slot-list-wrapper space-y-2">
    </div>';
             return $servicesForm;
         });

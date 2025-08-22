@@ -305,7 +305,7 @@ class FormHelper
                 $shouldShowSubmit = true;
             } elseif ($hasServiceShortcode && !$hasUserShortcode) {
                 // Case 2: only services shortcode
-                if ($services->count() > 0 || !empty($fields)) {
+                if ($services->count() > 0) {
                     $shouldShowSubmit = true;
                 }
             } elseif (!$hasServiceShortcode && $hasUserShortcode) {
