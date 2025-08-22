@@ -311,7 +311,7 @@
                         console.log(response.merged_slots);
                         let sessionsHTML = '';
                         const formattedDate = response?.date || '';
-                        const price = `${response?.serviceCurrency || ''} ${response?.price || ''}`;
+                        const price = `${response?.serviceCurrency || ''}${response?.price || ''}`;
                         const duration = parseInt(response?.duration, 10) || 0;
                         const staffOffIds = response.staff_off_ids ? response.staff_off_ids.split(',').map(id => id.trim()) : [];
 
