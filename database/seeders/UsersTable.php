@@ -20,6 +20,8 @@ class UsersTable extends Seeder
                 'name' => 'Admin User',
                 'email' => 'admin@example.com',
                 'password' => Hash::make('password'),
+                'phone_code'=>'+91',
+                'phone_number'=>'1234222567890',
                 'avatar' => '',
                 'status' => '1',
             ],
@@ -28,6 +30,8 @@ class UsersTable extends Seeder
                 'name' => 'Staff User',
                 'email' => 'staff@example.com',
                 'password' => Hash::make('password'),
+                'phone_code'=>'+91',
+                'phone_number'=>'85234567890',
                 'avatar' => '',
                 'status' => '1'
             ],
@@ -36,6 +40,8 @@ class UsersTable extends Seeder
                 'name' => 'Manager User',
                 'email' => 'manager@example.com',
                 'password' => Hash::make('password'),
+                'phone_code'=>'+91',
+                'phone_number'=>'11234567890',
                 'avatar' => '',
                 'status' => '1'
             ],
@@ -44,6 +50,8 @@ class UsersTable extends Seeder
                 'name' => 'Customer User',
                 'email' => 'customer@example.com',
                 'password' => Hash::make('password'),
+                'phone_code'=>'+91',
+                'phone_number'=>'12345567890',
                 'avatar' => '',
                 'status' => '1'
             ],
