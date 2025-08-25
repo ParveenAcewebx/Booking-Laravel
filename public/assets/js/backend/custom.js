@@ -441,35 +441,72 @@ $(function ($) {
         },
 
         shortcodeblock: function (fieldData) {
+            // Generate a unique ID for this block
+            const uniqueId =
+                "shortcode-select-" +
+                Date.now() +
+                "-" +
+                Math.floor(Math.random() * 1000);
+
             return {
-                field: `<div class="shortcode-block">
-                            <select name="shortcode" class="form-control shortcode-select" data-placeholder="Select a shortcode">
-                                <option></option>
-                            </select>
-                        </div>`,
+                field: `
+            <div class="shortcode-block">
+                <select id="${uniqueId}" name="shortcode" class="form-control shortcode-select" data-placeholder="Select a shortcode">
+                    <option value="">Select a shortcode</option>
+                </select>
+            </div>
+        `,
                 onRender: function () {
-                    const $select = $(".shortcode-select:last");
+                    const $select = $("#" + uniqueId);
+                    const savedValue = fieldData.value || "";
+
+                    console.log("Rendering block with ID:", uniqueId);
+                    console.log("Saved value (normalized):", savedValue);
+
                     $.ajax({
-                        url: '/admin/shortcodes/list',
-                        type: 'GET',
-                        dataType: 'json',
+                        url: "/admin/shortcodes/list",
+                        type: "GET",
+                        dataType: "json",
                         success: (shortcodes) => {
-                            $select.empty().append("<option></option>");
-                            shortcodes.forEach(code => {
-                                const isSelected = fieldData.value === `[${code}]`;
-                                $select.append(new Option(`[${code}]`, `[${code}]`, isSelected, isSelected));
+                            console.log("Shortcodes received:", shortcodes);
+
+                            $select.empty();
+                            $select.append(
+                                `<option value="">Select a shortcode</option>`
+                            );
+
+                            shortcodes.forEach((code) => {
+                                const value = `[${code}]`;
+                                const isSelected = savedValue === value;
+                                $select.append(
+                                    `<option value="${value}" ${
+                                        isSelected ? "selected" : ""
+                                    }>${value}</option>`
+                                );
                             });
-                            $select.select2({ placeholder: "Select a shortcode", allowClear: true, width: '100%' });
+                            $select.select2({
+                                placeholder: "Select a shortcode",
+                                allowClear: true,
+                                width: "100%",
+                            });
+
+                            console.log(
+                                "Options after render for ID",
+                                uniqueId,
+                                ":",
+                                $select.html()
+                            );
                         },
-                        error: () => console.error("Failed to load shortcodes."),
+                        error: () =>
+                            console.error("Failed to load shortcodes."),
                     });
                 },
-                onSave: function (evt, field) {
-                    const input = $(field).find('select[name="shortcode"]');
-                    fieldData.value = input.val();
+                onSave: function () {
+                    const $select = $("#" + uniqueId);
+                    fieldData.value = $select.val() || "";
                 },
             };
-        }
+        },
     };
 
     const formBuilder = $(fbEditor).formBuilder({
