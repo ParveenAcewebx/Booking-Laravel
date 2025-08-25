@@ -165,16 +165,24 @@
                         </div>
 
                         <div class="card-body">
-                            <h5 class="text-uppercase text-primary">Total Price:
+                            <h5 class="text-primary">Total Price:
                                 @php
                                 $totalPrice = 0;
-                                foreach($slotedetail as $slotededata) {
-                                    $get_currencyprice = explode(' ', $slotededata->price);
-                                    $price = $get_currencyprice[1];
-                                    $totalPrice += (float) $price;
+                                $currencySymbol = '';
+                                if($slotedetail){
+                                    foreach($slotedetail as $slotededata) {
+                                        if($slotededata->price){
+                                            preg_match('/[^\d.,]+/', $slotededata->price, $matches);
+                                            if($matches){
+                                                $currencySymbol = $matches[0]; 
+                                            }
+                                            $price = preg_replace('/[^0-9.]/', '', $slotededata->price);
+                                            $totalPrice += $price;
+                                        }
+                                    }
                                 }
                                 @endphp
-                                <span>{{$get_currencyprice[0]}}{{number_format($totalPrice, 2) }}</span>
+                                <span>{{ htmlspecialchars($currencySymbol) }}{{number_format($totalPrice, 2) }}</span>
                             </h5>
                         </div>
                     </div>

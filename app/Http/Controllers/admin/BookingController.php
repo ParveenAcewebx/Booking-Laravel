@@ -231,7 +231,7 @@ class BookingController extends Controller
             $loginId = getOriginalUserId();
             $loginUser = $loginId ? User::find($loginId) : null;
           
-            return view('admin.booking.edit', [
+            return view('admin.booking.view', [
                 'bookingid'=>$id,
                 'booking' => $booking,
                 'AdditionalInformation'=>$AdditionalInformation,
