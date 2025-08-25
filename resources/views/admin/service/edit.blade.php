@@ -125,7 +125,7 @@
 
                             <!-- Category -->
                             <div class="form-group">
-                                <label>Category <span class="text-danger">*</span></label>
+                                <label>Category <span class="text-danger"></span></label>
                                 <select name="category" class="form-control category @error('category') is-invalid @enderror" >
                                     <option value="">-- Select Category --</option>
                                     @foreach($categories as $category)

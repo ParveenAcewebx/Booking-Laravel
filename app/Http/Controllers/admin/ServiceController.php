@@ -85,7 +85,7 @@ class ServiceController extends Controller
             'name'                   => 'required|string|max:255',
             'duration'               => 'required',
             'description'            => 'nullable|string',
-            'category'               => 'required|exists:categories,id',
+            // 'category'               => 'required|exists:categories,id',
             'thumbnail'              => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:2048',
             'gallery.*'              => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:2048',
             'status'                 => 'required|in:0,1',
