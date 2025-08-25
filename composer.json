@@ -49,6 +49,7 @@
             "@php artisan package:discover --ansi"
         ],
         "post-install-cmd": [
+            "@php artisan key:generate --ansi",
             "@php artisan vendor:publish --provider=\"Yajra\\DataTables\\DataTablesServiceProvider\" --force",
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ],
