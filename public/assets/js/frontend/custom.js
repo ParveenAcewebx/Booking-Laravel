@@ -212,9 +212,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     // console.log('frontend Value', 0);
 
                     // Disable dropdown + show vendor field
-                    staffSelect.disabled = true;
+                    staffSelect.disabled = false;
                     selectslots.classList.add('hidden');
-                    select_service_staff.classList.remove('hidden');
+                    select_service_staff.classList.add('hidden');
                     calendarHidden.classList.add('hidden');
                     
 
