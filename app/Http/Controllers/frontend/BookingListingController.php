@@ -18,7 +18,7 @@ class BookingListingController extends Controller
             }
         }
         return view('frontend.bookingListing', [
-            'bookings' => BookingTemplate::all(),
+            'bookings' => BookingTemplate::where('status', 1)->get(),
             'username' => null
         ]);
     }
