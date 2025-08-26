@@ -19,4 +19,8 @@ class BookingTemplate extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'id');
+    }
 }

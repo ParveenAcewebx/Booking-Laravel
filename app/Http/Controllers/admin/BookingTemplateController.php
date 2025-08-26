@@ -30,7 +30,10 @@ class BookingTemplateController extends Controller
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
-            $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by', 'slug', 'status'])->with('user');
+            // preload booking count to avoid N+1 queries
+            $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by', 'slug', 'status'])
+                ->with('user')
+                ->withCount('bookings');
 
             return DataTables::of($query)
                 ->addIndexColumn()
@@ -51,26 +54,35 @@ class BookingTemplateController extends Controller
                 ->addColumn('action', function ($row) {
                     $btn = '';
 
+                    // edit button
                     if (Auth::user()->can('edit templates')) {
                         $btn .= '<a href="' . route('template.edit', [$row->id]) . '" class="btn btn-icon btn-success" title="Edit Form">
-                        <i class="fas fa-pencil-alt"></i>
-                    </a> ';
+                            <i class="fas fa-pencil-alt"></i>
+                        </a> ';
                     }
 
+                    // delete button (disabled if bookings exist)
                     if (Auth::user()->can('delete templates')) {
-                        $btn .= '<form action="' . route('template.delete', [$row->id]) . '" method="POST" id="deleteTemplate-' . $row->id . '" style="display:inline;">
-                        <input type="hidden" name="_method" value="DELETE">
-                        ' . csrf_field() . '
-                        <button type="button" onclick="return deleteTemplate(' . $row->id . ')" class="btn btn-icon btn-danger" title="Delete Form">
-                            <i class="feather icon-trash-2"></i>
-                        </button>
-                    </form>';
+                        if ($row->bookings_count == 0) {
+                            $btn .= '<form action="' . route('template.delete', [$row->id]) . '" method="POST" id="deleteTemplate-' . $row->id . '" style="display:inline;">
+                                <input type="hidden" name="_method" value="DELETE">
+                                ' . csrf_field() . '
+                                <button type="button" onclick="return deleteTemplate(' . $row->id . ')" class="btn btn-icon btn-danger" title="Delete Form">
+                                    <i class="feather icon-trash-2"></i>
+                                </button>
+                            </form>';
+                        } else {
+                            $btn .= '<button type="button" class="btn btn-icon btn-secondary" title="Cannot delete (bookings exist)" disabled>
+                                <i class="feather icon-trash-2"></i>
+                            </button>';
+                        }
                     }
 
+                    // view button
                     if (auth()->user()->hasRole('Administrator')) {
                         $btn .= '<a href="' . url('/form/' . $row->slug) . '" class="btn btn-icon btn-info ml-1" title="View Booking" target="_blank">
-                        <i class="feather icon-eye"></i>
-                    </a>';
+                            <i class="feather icon-eye"></i>
+                        </a>';
                     }
 
                     return $btn;
@@ -81,6 +93,7 @@ class BookingTemplateController extends Controller
 
         return view('admin.booking-template.index', compact('loginUser'));
     }
+
 
     public function templateSave(Request $request)
     {
