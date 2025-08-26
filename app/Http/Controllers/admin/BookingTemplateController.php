@@ -30,7 +30,7 @@ class BookingTemplateController extends Controller
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
-            $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by', 'slug'])->with('user');
+            $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by', 'slug', 'status'])->with('user');
 
             return DataTables::of($query)
                 ->addIndexColumn()
@@ -42,7 +42,8 @@ class BookingTemplateController extends Controller
                         : '';
                 })
                 ->addColumn('status', function ($row) {
-                    return '<span class="badge badge-success">Active</span>';
+                    return '<span class="badge ' . ($row->status === 1 ? 'badge-success' : 'badge-danger') . '">' .
+                        ($row->status === 1 ? "Active" : "Inactive") . '</span>';
                 })
                 ->addColumn('created_by', function ($row) {
                     return $row->user->name ?? '';
@@ -86,11 +87,13 @@ class BookingTemplateController extends Controller
         $data = $request->input('data');
         $templatename = $request->input('templatename');
         $templateid = $request->input('templateid');
+        $status = $request->input('templatestatus');
         if (!empty($templateid)) {
             $template = BookingTemplate::find($templateid);
             if ($template) {
-                $template->data = $data;
+                $template->data = $data ? $data : "";
                 $template->template_name = $templatename;
+                $template->status = $status;
                 if (empty($template->slug)) {
                     $template->slug = Str::uuid();
                 }
@@ -100,6 +103,7 @@ class BookingTemplateController extends Controller
                 $template = BookingTemplate::create([
                     'data' => json_encode($data),
                     'template_name' => $templatename,
+                    'status' => $status,
                     'created_by' => auth()->user()->id ?? 'NULL'
                 ]);
                 session()->flash('success', "Booking Template Added Successfully.");
@@ -108,13 +112,13 @@ class BookingTemplateController extends Controller
             $template = BookingTemplate::create([
                 'data' => json_encode($data),
                 'template_name' => $templatename,
+                'status' => $status,
                 'created_by' => auth()->user()->id ?? 'NULL',
                 'slug' => Str::uuid(),
             ]);
             session()->flash('success', "Booking Template Added Successfully.");
         }
         return redirect()->route('template.list');
-
     }
 
 
@@ -151,7 +155,7 @@ class BookingTemplateController extends Controller
         }
         return view('admin.booking-template.add', compact('allusers', 'loginUser', 'query'));
     }
-    
+
     public function copytemplate(Request $request)
     {
         if ($request->has('templateid')) {
@@ -162,7 +166,6 @@ class BookingTemplateController extends Controller
                     'template_name' => $query->template_name,
                     'data' => $query->data
                 ]);
-
             }
             return response()->json([]);
         }

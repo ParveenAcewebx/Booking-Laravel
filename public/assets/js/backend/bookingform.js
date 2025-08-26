@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
       $('.slot-list-wrapper').empty();
       $('.calendar-wrap, .remove-all-slots').addClass('d-none');
       $('#bookslots').val('');
-       $('.select-slots').css('display', 'none');
+      $('.select-slots').css('display', 'none');
       var serviceId = selectedvalue.value;
       var selectedStaff = document.querySelector('.selected_vendor').value;
       $.ajax({
@@ -511,8 +511,19 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       /* ================================== Form validation =============================*/
       function validateRequiredFields(step) {
-         const requiredFields = step.querySelectorAll('[required]');
          let isValid = true;
+        const requiredFields = step.querySelectorAll('[required]');
+        const current_step = step.getAttribute('id');
+        const calendarWrapExists = $('#' +current_step).find('.calendar-wrap').length > 0;
+          if(calendarWrapExists){
+            let bookedslootes = $('#bookslots').val();
+            if(bookedslootes){
+                isValid =true;
+            }else{     
+            $('.select-slots').html('<p class="text-sm text-red-600 font-medium mt-1 p-4 border border-gray-300 shadow-md rounded-l text-danger ">Please select a date and select atleast one slot.</p>');
+              isValid =false;
+            }
+          }
          requiredFields.forEach(field => {
             if (field.type === 'checkbox') {
                const checkboxGroup = step.querySelectorAll(`input[name="${field.name}"]`);
@@ -654,13 +665,13 @@ document.addEventListener("DOMContentLoaded", function () {
          const serviceValue = $('#get_service_staff').val();
          const vendorValue = $('#service_vendor_form').val();
          if (!isEmpty(serviceValue) && !isEmpty(vendorValue) && isEmpty(bookslotsValue)) {
-            $('.submit').prop('disabled', true);
-            $('.next').prop('disabled', true);
+            // $('.submit').prop('disabled', true);
+            // $('.next').prop('disabled', true);
             $('.select-slots').removeClass('d-none');
          } else {
             $('.select-slots').addClass('d-none');
-            $('.submit').prop('disabled', false);
-            $('.next').prop('disabled', false);
+            // $('.submit').prop('disabled', false);
+            // $('.next').prop('disabled', false);
          }
       }
       /* ================================== Slot validation =============================*/

@@ -21,9 +21,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to validate required fields
     function validateRequiredFields(step) {
-        const requiredFields = step.querySelectorAll('[required]');
         let isValid = true;
-
+        const requiredFields = step.querySelectorAll('[required]');
+        const current_step = step.getAttribute('id');
+        const calendarWrapExists = $('#' +current_step).find('.calendar-wrap').length > 0;
+          if(calendarWrapExists){
+            let bookedslootes = $('#bookslots').val();
+            if(bookedslootes){
+                isValid =true;
+            }else{     
+            $('.select-slots').html('<p class="text-sm text-red-600 font-medium mt-1 p-4 border border-gray-300 shadow-md rounded-l text-danger ">Please select a date and select atleast one slot.</p>');
+              isValid =false;
+            }
+          }
         requiredFields.forEach(field => {
             if (field.type === 'checkbox') {
                 const checkboxGroup = step.querySelectorAll(`input[name="${field.name}"]`);
@@ -107,15 +117,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function handleNextButtonClick() {
         const currentStepElement = steps[currentSteps - 1];
-
         if (validateRequiredFields(currentStepElement)) {
             if (currentSteps < steps.length) {
                 currentStepElement.style.display = 'none';
                 steps[currentSteps].style.display = 'block';
                 currentSteps++;
-
                 prevButton.style.display = 'inline-block';
-
                 if (currentSteps === steps.length) {
                     nextButtons.forEach(btn => btn.style.display = 'none');
                     submitButtons.forEach(btn => btn.style.display = 'inline-block');
@@ -379,7 +386,7 @@ document.addEventListener("DOMContentLoaded", function () {
             $('.select-slots').addClass('hidden');
             valid = true;
         }
-        activeBtn.prop('disabled', !valid);
+        // activeBtn.prop('disabled', !valid);
     }
 
     // Run once on page load
@@ -400,4 +407,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }, 0);
         }
     );
+
+
 });

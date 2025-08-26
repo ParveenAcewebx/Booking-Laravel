@@ -532,6 +532,8 @@ $(function ($) {
     $(document).on("click", ".save-template", function (e) {
         e.preventDefault();
         const inputElement = $("#bookingTemplatesname");
+        const status = $('.select-template-status').val();
+
         const inputValue = inputElement.val().trim();
         const errorMessageElement = $("#bookingTemplatesname-error");
 
@@ -553,7 +555,7 @@ $(function ($) {
         $.ajax({
             url: "/admin/template/save",
             method: "POST",
-            data: { data, templatename: inputValue, templateid, _token: csrfToken },
+            data: { data, templatename: inputValue, templatestatus:status, templateid, _token: csrfToken },
             success: () => window.location.href = `${window.location.origin}/admin/templates`,
             error: (xhr) => console.error(xhr.responseText),
         });

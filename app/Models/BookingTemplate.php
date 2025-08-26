@@ -12,7 +12,8 @@ class BookingTemplate extends Model
         'data',
         'template_name',
         'created_by',
-        'slug'
+        'slug',
+        'status'
     ];
     public function user()
     {
