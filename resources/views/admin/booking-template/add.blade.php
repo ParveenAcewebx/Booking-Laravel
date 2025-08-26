@@ -31,7 +31,7 @@
 					</div>
 					<div class="card-body">
 						<div class="row">
-							<div class="col-sm-10">
+							<div class="col-sm-6">
 								<div class="form-group">
 									<label class="floating-label" for="">Booking Template Name <span class="text-danger">*</span></label>
 									<div>
@@ -39,7 +39,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-sm-2">
+							<div class="col-sm-6">
 								<div class="form-group">
 									<label>Status</label>
 									<select name="status"
