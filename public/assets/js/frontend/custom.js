@@ -1,4 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
+
+const loader = document.getElementById('loader');
+    const formWrapper = document.getElementById('dynamic-form');
+
+    setTimeout(() => {
+        if (loader) loader.style.display = 'none';  
+        if (formWrapper) formWrapper.classList.remove('hidden'); 
+    }, 500);
+
     setTimeout(function () {
         $(".alert-message").fadeOut("slow", function () {
             $(this).remove();
@@ -9,26 +18,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const prevButton = document.querySelector('.previous');
     const nextButtons = document.querySelectorAll('.next');
     const submitButtons = document.querySelectorAll('.submit');
-    const form = document.querySelector('form');
     const ServiceStaffCode = document.querySelector('.get_service_staff');
-    // Remove field errors on input/change
+
     $(document).on("input change", "input, select", function () {
         const field = this;
-    
-        // Remove red border from current field only
         field.classList.remove('border-red-500');
     
-        // Remove error message immediately following this field
         const err = field.nextElementSibling;
         if (err && err.classList.contains('error-message')) err.remove();
     
-        // Special handling for checkboxes
         if (field.type === 'checkbox') {
             const checkboxParent = $(field).closest('.mb-6')[0];
             $(checkboxParent).find('.checkbox-error-message').remove();
         }
     
-        // Remove vendor placeholder error if vendor selected
         if (field.classList.contains('service_vendor_form') && field.value) {
             const placeholder = field.parentNode.querySelector('.vendor-placeholder');
             if (placeholder) placeholder.innerHTML = '';
@@ -285,7 +288,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             let formattedKey = key + "]";
                             let nestedValue = value[key];
 
-                            // ✅ Normal inputs (text, hidden, etc.)
                             let inputElement = $('input[name="' + formattedKey + '"]');
                             if (
                                 inputElement.length > 0 &&
@@ -295,7 +297,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                 inputElement.val(nestedValue);
                             }
 
-                            // ✅ Selects
                             let selectElement = $('select[name="' + formattedKey + '"]');
                             if (selectElement.length > 0) {
                                 selectElement.val(nestedValue);
@@ -310,13 +311,11 @@ document.addEventListener("DOMContentLoaded", function () {
                                 }
                             }
 
-                            // ✅ Textareas
                             let textareaElement = $('textarea[name="' + formattedKey + '"]');
                             if (textareaElement.length > 0) {
                                 textareaElement.val(nestedValue);
                             }
 
-                            // ✅ Radio buttons
                             if (typeof nestedValue === "string") {
                                 let radioElement = $(
                                     'input[type="radio"][name="' + formattedKey + '"][value="' + nestedValue + '"]'
@@ -326,7 +325,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                 }
                             }
 
-                            // ✅ Radio with "other"
                             if (key.endsWith("_other")) {
                                 let otherField = $('input[name="' + formattedKey + '"]'); // text box
                                 if (otherField.length > 0 && nestedValue) {
@@ -335,7 +333,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                             ? nestedValue[1]
                                             : nestedValue
                                     );
-                                    // Also check the "__other__" radio
                                     let radioOther = $(
                                         'input[type="radio"][name="' +
                                         key.replace("_other", "") +
@@ -347,12 +344,10 @@ document.addEventListener("DOMContentLoaded", function () {
                                 }
                             }
 
-                            // ✅ Checkboxes
                             let checkboxElements = $('input[type="checkbox"][name="' + formattedKey + '[]"');
                             if (checkboxElements.length > 0) {
                                 let valuesToCheck = [];
                                 if (Array.isArray(nestedValue)) {
-                                    // Example: ['dynamic[...][]', 'option-1', 'firstoptiontest']
                                     if (nestedValue[0] === formattedKey) {
                                         valuesToCheck = nestedValue.slice(1);
                                     } else {
