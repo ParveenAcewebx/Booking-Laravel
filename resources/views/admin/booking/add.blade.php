@@ -67,6 +67,12 @@
                         </div>
                     </div>
                 </div>
+                <!-- Loader -->
+                <div class="loader-block d-none">
+                <div class="loader-content">
+                    <div class="loader-circle"></div>
+                </div>
+                </div>
 
                 <!-- Right Column -->
                 <!-- <div class="col-md-4 order-md-2">

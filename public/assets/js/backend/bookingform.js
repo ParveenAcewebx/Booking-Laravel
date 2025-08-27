@@ -483,6 +483,7 @@ document.addEventListener("DOMContentLoaded", function () {
    }
    /* ================================== Function for booking form =============================*/
    function twostepform() {
+   
       /*================== on click other checkbox show other input to fill and hide when they unchecked the checkbox and radio button  ==============*/
       $(document).on("change", ".other_checkbox", function () {
          let relatedInput = $(this).closest(".mb-3").find(".other_checkbox_input");
@@ -534,6 +535,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       /* ================================== Form validation =============================*/
       function validateRequiredFields(step) {
+         console.log(step);
          let isValid = true;
          const requiredFields = step.querySelectorAll('[required]');
          const current_step = step.getAttribute('id');
@@ -669,6 +671,13 @@ document.addEventListener("DOMContentLoaded", function () {
             // console.warn("Form validation failed!");
          }
       }
+      $(document).on("input change", "input, select", function () {
+        steps.forEach(step => {
+         $('.error-message').remove();
+         $('.form-control').removeClass('border-danger');
+         });
+      });
+
       /* ================================== call function on click button =============================*/
       nextButtons.forEach(button => button.addEventListener('click', handleNextButtonClick));
       prevButton.addEventListener('click', handlePreviousButtonClick);
@@ -715,6 +724,7 @@ document.addEventListener("DOMContentLoaded", function () {
          }
       );
    }
+  
    /* ================================== Onclick load template and run function =============================*/
    $('#loadTemplateBtn').on('click', function () {
       setTimeout(function () {
