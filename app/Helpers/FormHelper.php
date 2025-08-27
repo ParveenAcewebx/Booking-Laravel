@@ -269,7 +269,7 @@ class FormHelper
                     case 'shortcodeblock':
                         $shortcodeValue = $field['value'] ?? '';
                         $class = $c;
-                        $html .= "<div class='{$c['group']}'>" . Shortcode::render(trim($shortcodeValue, '[]'), $values, $class) . "</div>";
+                        $html .= "<div class='{$c['group']}'>" . Shortcode::render(trim($shortcodeValue, '[]'), $class, $values) . "</div>";
                         break;
 
                     default:
