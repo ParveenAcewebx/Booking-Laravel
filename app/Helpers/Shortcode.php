@@ -35,13 +35,14 @@ class Shortcode
         return $attributes;
     }
 
-    public static function render(string $name, array $attrs = [], $class): string
+    public static function render(string $name, $class, array $attrs = []): string
     {
         if (isset(static::$shortcodes[$name])) {
             return call_user_func(static::$shortcodes[$name], $attrs, $class);
         }
         return '';
     }
+    
 
     public static function getRegisteredShortcodes(): array
     {

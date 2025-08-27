@@ -218,14 +218,14 @@ class FormHelper
                                     </div>
                                         <p class='checkbox-error-message text-red-500 text-xs mt-1'></p>";
                         }
-                        if ($other) {
+                        if ($other === 'true') {
                             $isOtherChecked = in_array('__other__', $valueArr) ? 'checked' : '';
                             $otherVal = $values["{$name}_other"][0] ?? '';
                             $html .= "<div class='{$c['checkboxWrapper']}'>
-                                    <input type='checkbox' name='{$inputName}[]' value='__other__' class='{$c['checkbox']}' $isOtherChecked>
+                                    <input type='checkbox' name='{$inputName}[]' value='__other__' class='{$c['checkbox']} other_checkbox' $isOtherChecked>
                                     <label class='{$c['checkboxLabel']}'>Other</label>
                                   </div>
-                                  <input type='text' name='dynamic[{$name}_other][]' class='{$c['input']} mt-1' placeholder='Please specify' value='" . htmlspecialchars($otherVal) . "'>";
+                                  <input type='text' name='dynamic[{$name}_other][]' class='{$c['input']} {$c['hidden']} mt-1 other_checkbox_input' placeholder='Please specify' value='" . htmlspecialchars($otherVal) . "'>";
                         }
                         $html .= "</div>";
                         break;
@@ -247,15 +247,15 @@ class FormHelper
                                   
                                   ";
                         }
-                        if ($other) {
+                        if ($other === 'true') {
                             $isOther = $value === '__other__' || (!in_array($value, $optionValues) && !empty($value));
                             $otherVal = $isOther ? ($values["{$name}_other"] ?? $value) : '';
                             $otherId = $idBase . '_other';
                             $html .= "<div class='{$c['radioWrapper']}'>
-                                    <input type='radio' id='$otherId' name='$inputName' value='__other__' class='{$c['radio']}' " . ($isOther ? 'checked' : '') . " $required>
+                                    <input type='radio' id='$otherId' name='$inputName' value='__other__' class='{$c['radio']} radio_other' " . ($isOther ? 'checked' : '') . " $required>
                                     <label for='$otherId' class='{$c['radioLabel']}'>Other</label>
                                   </div>
-                                  <input type='text' name='dynamic[{$name}_other]' class='{$c['input']} mt-1' placeholder='Please specify' value='" . htmlspecialchars($otherVal) . "'>";
+                                  <input type='text' name='dynamic[{$name}_other]' class='{$c['input']} {$c['hidden']} mt-1 other_radiobox_input' placeholder='Please specify' value='" . htmlspecialchars($otherVal) . "'>";
                         }
                         $html .= "<p class='radio-error-message text-red-500 text-xs mt-1'></p>
                         </div>";

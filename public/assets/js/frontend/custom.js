@@ -24,16 +24,16 @@ document.addEventListener("DOMContentLoaded", function () {
         let isValid = true;
         const requiredFields = step.querySelectorAll('[required]');
         const current_step = step.getAttribute('id');
-        const calendarWrapExists = $('#' +current_step).find('.calendar-wrap').length > 0;
-          if(calendarWrapExists){
+        const calendarWrapExists = $('#' + current_step).find('.calendar-wrap').length > 0;
+        if (calendarWrapExists) {
             let bookedslootes = $('#bookslots').val();
-            if(bookedslootes){
-                isValid =true;
-            }else{     
-            $('.select-slots').html('<p class="text-sm text-red-600 font-medium mt-1 p-4 border border-gray-300 shadow-md rounded-l text-danger ">Please select a date and select atleast one slot.</p>');
-              isValid =false;
+            if (bookedslootes) {
+                isValid = true;
+            } else {
+                $('.select-slots').html('<p class="text-sm text-red-600 font-medium mt-1 p-4 border border-gray-300 shadow-md rounded-l text-danger ">Please select a date and select atleast one slot.</p>');
+                isValid = false;
             }
-          }
+        }
         requiredFields.forEach(field => {
             if (field.type === 'checkbox') {
                 const checkboxGroup = step.querySelectorAll(`input[name="${field.name}"]`);
@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
         $('.availibility,.calendar-wrap,.remove-all-slots').addClass('hidden');
         $('input[name="bookslots"]').val('');
         $('.slot-item').remove();
-        
+
         $.ajax({
             url: '/get/services/staff',
             type: 'GET',
@@ -183,7 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 var select_service_staff = document.querySelector('.select_service_vendor');
                 var staffSelect = document.querySelector('.service_vendor_form');
                 var calendarHidden = document.querySelector('.calendar-wrap');
-                
+
                 // Clear previous options
                 staffSelect.innerHTML = '';
 
@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     selectslots.classList.add('hidden');
                     select_service_staff.classList.add('hidden');
                     calendarHidden.classList.add('hidden');
-                    
+
 
                     // Show "No staff available"
                     var noStaffOption = document.createElement('option');
@@ -237,28 +237,38 @@ document.addEventListener("DOMContentLoaded", function () {
     if (ServiceStaffCode) {
         ServiceStaffCode.addEventListener('change', get_services_staff);
     }
+
     $(document).ready(function () {
         let formAction = document.querySelector('form').action;
-
         let urlParts = formAction.split('/');
         let formId = urlParts[urlParts.length - 1];
+
         $.ajax({
             url: '/get/session',
             method: 'GET',
             data: { formId: formId },
             success: function (response) {
+                console.log(response);
+
                 if (response.status === 'success') {
-                    Object.keys(response['data']).forEach(function (key) {
+                    Object.keys(response['data']).forEach(function (parentKey) {
+                        let value = response['data'][parentKey];
 
-                        let value = response['data'][key];
                         Object.keys(value).forEach(function (key) {
-
                             let formattedKey = key + "]";
                             let nestedValue = value[key];
+
+                            // ✅ Normal inputs (text, hidden, etc.)
                             let inputElement = $('input[name="' + formattedKey + '"]');
-                            if (inputElement) {
+                            if (
+                                inputElement.length > 0 &&
+                                inputElement.attr('type') !== 'radio' &&
+                                inputElement.attr('type') !== 'checkbox'
+                            ) {
                                 inputElement.val(nestedValue);
                             }
+
+                            // ✅ Selects
                             let selectElement = $('select[name="' + formattedKey + '"]');
                             if (selectElement.length > 0) {
                                 selectElement.val(nestedValue);
@@ -272,14 +282,102 @@ document.addEventListener("DOMContentLoaded", function () {
                                     }, 1000);
                                 }
                             }
+
+                            // ✅ Textareas
                             let textareaElement = $('textarea[name="' + formattedKey + '"]');
                             if (textareaElement.length > 0) {
                                 textareaElement.val(nestedValue);
                             }
 
+                            // ✅ Radio buttons
+                            if (typeof nestedValue === "string") {
+                                let radioElement = $(
+                                    'input[type="radio"][name="' + formattedKey + '"][value="' + nestedValue + '"]'
+                                );
+                                if (radioElement.length > 0) {
+                                    radioElement.prop('checked', true);
+                                }
+                            }
+
+                            // ✅ Radio with "other"
+                            if (key.endsWith("_other")) {
+                                let otherField = $('input[name="' + formattedKey + '"]'); // text box
+                                if (otherField.length > 0 && nestedValue) {
+                                    otherField.val(
+                                        Array.isArray(nestedValue) && nestedValue.length > 1
+                                            ? nestedValue[1]
+                                            : nestedValue
+                                    );
+                                    // Also check the "__other__" radio
+                                    let radioOther = $(
+                                        'input[type="radio"][name="' +
+                                        key.replace("_other", "") +
+                                        ']"][value="__other__"]'
+                                    );
+                                    if (radioOther.length > 0) {
+                                        radioOther.prop("checked", true);
+                                    }
+                                }
+                            }
+
+                            // ✅ Checkboxes
+                            let checkboxElements = $('input[type="checkbox"][name="' + formattedKey + '[]"');
+                            if (checkboxElements.length > 0) {
+                                let valuesToCheck = [];
+                                if (Array.isArray(nestedValue)) {
+                                    // Example: ['dynamic[...][]', 'option-1', 'firstoptiontest']
+                                    if (nestedValue[0] === formattedKey) {
+                                        valuesToCheck = nestedValue.slice(1);
+                                    } else {
+                                        valuesToCheck = nestedValue;
+                                    }
+                                } else if (typeof nestedValue === "string") {
+                                    valuesToCheck = [nestedValue];
+                                } else if (
+                                    nestedValue === true ||
+                                    nestedValue === "true" ||
+                                    nestedValue === 1 ||
+                                    nestedValue === "1"
+                                ) {
+                                    valuesToCheck = ["on"];
+                                }
+
+                                // Reset first
+                                checkboxElements.prop("checked", false);
+
+                                // Match
+                                checkboxElements.each(function () {
+                                    if (valuesToCheck.includes($(this).val())) {
+                                        $(this).prop("checked", true);
+                                    }
+                                });
+                            }
+
+                            // ✅ Checkbox with "other"
+                            if (key.endsWith("_other")) {
+                                let otherField = $('input[name="' + formattedKey + '[]"'); // text box
+                                if (otherField.length > 0) {
+                                    if (Array.isArray(nestedValue) && nestedValue.length > 1) {
+                                        otherField.val(nestedValue[1]);
+                                    } else if (typeof nestedValue === "string") {
+                                        otherField.val(nestedValue);
+                                    }
+                                    // Also check "__other__" checkbox
+                                    let otherCheckbox = $(
+                                        'input[type="checkbox"][name="' +
+                                        key.replace("_other", "") +
+                                        ']"][value="__other__"]'
+                                    );
+                                    if (otherCheckbox.length > 0) {
+                                        otherCheckbox.prop("checked", true);
+                                    }
+                                }
+                            }
+
+                            // ✅ Special handling for bookslots
                             if (key === 'bookslots') {
                                 let inputElement = $('input[name="' + key + '"]');
-                                if (inputElement) {
+                                if (inputElement.length > 0) {
                                     inputElement.val(nestedValue.value);
                                     if (nestedValue.value) {
                                         const $wrapper = $('.slot-list-wrapper');
@@ -289,25 +387,22 @@ document.addEventListener("DOMContentLoaded", function () {
                                             const { date, price, start, end, duration, staff_ids } = slot;
                                             const uniqueKey = `slot-${staff_ids[0]}-${index}`;
                                             const slotHTML = `
-                                        <div class="slot-item flex justify-between items-center gap-4 border border-gray-300 rounded-md p-3 bg-white shadow-sm text-sm w-full sm:w-full" data-slot="${uniqueKey}">
-                                            <div class="font-medium text-gray-800 flex-1">
-                                                <div>${date}</div>
-                                                <input type='hidden' name='staff_id' value='${staff_ids.join(",")}'>
-                                                <div class="text-xs text-gray-500">${start} → ${end}</div>
-                                                <div class="text-xs text-gray-500">Duration: ${duration}</div>
-                                            </div>
-                                            <div class="text-green-600 font-semibold whitespace-nowrap">${price}</div>
-                                            <div class="text-red-500 cursor-pointer remove-slot ml-auto">&#10006;</div>
-                                        </div>`;
-
-                                            // Append this slot HTML to the container (assuming you have a container to append it to)
+                                            <div class="slot-item flex justify-between items-center gap-4 border border-gray-300 rounded-md p-3 bg-white shadow-sm text-sm w-full sm:w-full" data-slot="${uniqueKey}">
+                                                <div class="font-medium text-gray-800 flex-1">
+                                                    <div>${date}</div>
+                                                    <input type='hidden' name='staff_id' value='${staff_ids.join(",")}'>
+                                                    <div class="text-xs text-gray-500">${start} → ${end}</div>
+                                                    <div class="text-xs text-gray-500">Duration: ${duration}</div>
+                                                </div>
+                                                <div class="text-green-600 font-semibold whitespace-nowrap">${price}</div>
+                                                <div class="text-red-500 cursor-pointer remove-slot ml-auto">&#10006;</div>
+                                            </div>`;
                                             $($wrapper).append(slotHTML);
                                         });
                                         $('.remove-all-slots').removeClass('hidden');
                                     }
                                 }
                             }
-
                         });
                     });
                 }
@@ -316,36 +411,59 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error('Error retrieving session data:', error);
             }
         });
-
     });
 
+
+    // Save form data on page unload
     window.onbeforeunload = function () {
         let formAction = document.querySelector('form').action;
         let urlParts = formAction.split('/');
         let formId = urlParts[urlParts.length - 1];
         let formElements = document.querySelector('form').elements;
         let dataToSave = {};
+
         Array.from(formElements).forEach(function (element) {
             if (element.name) {
-                dataToSave[element.name] = {
-                    name: element.name,
-                    value: element.value
-                };
+                if (element.type === "radio") {
+                    if (element.checked) {
+                        dataToSave[element.name] = {
+                            name: element.name,
+                            value: element.value
+                        };
+                    }
+                } else if (element.type === "checkbox") {
+                    // ✅ Save multiple checkbox values as an array
+                    if (!dataToSave[element.name]) {
+                        dataToSave[element.name] = { name: element.name, value: [] };
+                    }
+                    if (element.checked) {
+                        dataToSave[element.name].value.push(element.value);
+                    }
+                } else {
+                    dataToSave[element.name] = {
+                        name: element.name,
+                        value: element.value
+                    };
+                }
             }
         });
+
         let finalDataToSave = {
             formId: formId,
             data: dataToSave
         };
+
         var headers = {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         };
+
         $.ajax({
             url: '/store/session',
             method: 'POST',
             data: finalDataToSave,
             headers: headers,
             success: function (response) {
+                console.log(response);
                 console.log('Data saved successfully');
             },
             error: function (error) {
@@ -353,6 +471,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     };
+
     function isEmpty(value) {
         return (
             value === undefined ||
@@ -407,6 +526,44 @@ document.addEventListener("DOMContentLoaded", function () {
             }, 0);
         }
     );
+    $(document).on("change", ".other_checkbox", function () {
+        let relatedInput = $(this).closest(".mb-6").find(".other_checkbox_input");
+        if ($(this).is(":checked")) {
+            relatedInput.removeClass("hidden");
+        } else {
+            relatedInput.addClass("hidden").val("");
+        }
+    });
 
+    let radio_other_name = $(".radio_other").attr("name");
+    $(document).on("change", "input[name='" + radio_other_name + "']", function () {
+        let radiobutton = $(this).val();
+        let relatedInput = $(this).closest(".mb-6").find(".other_radiobox_input");
+        if (radiobutton == '__other__') {
+            if (relatedInput) {
+                $(relatedInput).removeClass('hidden');
+            }
+        } else {
+            $(relatedInput).addClass('hidden').val('');
+        }
+    });
+    setTimeout(function () {
+        $("input[name='" + radio_other_name + "']:checked").each(function () {
+            let radiobutton = $(this).val();
+            let relatedInput = $(this).closest(".mb-6").find(".other_radiobox_input");
+            if (radiobutton == '__other__') {
+                relatedInput.removeClass("hidden");
+            } else {
+                relatedInput.addClass("hidden").val('');
+            }
+        });
+        $(".other_checkbox").each(function () {
+            let relatedInput = $(this).closest(".mb-6").find(".other_checkbox_input");
+
+            if ($(this).is(":checked")) {
+                relatedInput.removeClass("hidden");
+            }
+        });
+    }, 1000);
 
 });

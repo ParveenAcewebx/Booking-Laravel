@@ -483,6 +483,29 @@ document.addEventListener("DOMContentLoaded", function () {
    }
    /* ================================== Function for booking form =============================*/
    function twostepform() {
+      /*================== on click other checkbox show other input to fill and hide when they unchecked the checkbox and radio button  ==============*/
+      $(document).on("change", ".other_checkbox", function () {
+         let relatedInput = $(this).closest(".mb-3").find(".other_checkbox_input");
+         if ($(this).is(":checked")) {
+            relatedInput.removeClass("d-none");
+         } else {
+            relatedInput.addClass("d-none").val(" ");
+         }
+      });
+
+      let radio_other_name = $(".radio_other").attr("name");
+      $(document).on("change", "input[name='" + radio_other_name + "']", function () {
+         let radiobutton = $(this).val();
+         let relatedInput = $(this).closest(".mb-3").find(".other_radiobox_input");
+         if (radiobutton == '__other__') {
+            if (relatedInput) {
+               $(relatedInput).removeClass('d-none');
+            }
+         } else {
+            $(relatedInput).addClass('d-none').val('');
+         }
+      });
+      /*================= on click other checkbox show other input to fill and hide when they unchecked the checkbox and radio button End ==========================*/
 
       const services_short_code_get_staff = document.querySelector('.get_service_staff');
       if (services_short_code_get_staff) {
@@ -512,18 +535,18 @@ document.addEventListener("DOMContentLoaded", function () {
       /* ================================== Form validation =============================*/
       function validateRequiredFields(step) {
          let isValid = true;
-        const requiredFields = step.querySelectorAll('[required]');
-        const current_step = step.getAttribute('id');
-        const calendarWrapExists = $('#' +current_step).find('.calendar-wrap').length > 0;
-          if(calendarWrapExists){
+         const requiredFields = step.querySelectorAll('[required]');
+         const current_step = step.getAttribute('id');
+         const calendarWrapExists = $('#' + current_step).find('.calendar-wrap').length > 0;
+         if (calendarWrapExists) {
             let bookedslootes = $('#bookslots').val();
-            if(bookedslootes){
-                isValid =true;
-            }else{     
-            $('.select-slots').html('<p class="text-sm text-red-600 font-medium mt-1 p-4 border border-gray-300 shadow-md rounded-l text-danger ">Please select a date and select atleast one slot.</p>');
-              isValid =false;
+            if (bookedslootes) {
+               isValid = true;
+            } else {
+               $('.select-slots').html('<p class="text-sm text-red-600 font-medium mt-1 p-4 border border-gray-300 shadow-md rounded-l text-danger ">Please select a date and select atleast one slot.</p>');
+               isValid = false;
             }
-          }
+         }
          requiredFields.forEach(field => {
             if (field.type === 'checkbox') {
                const checkboxGroup = step.querySelectorAll(`input[name="${field.name}"]`);
@@ -699,6 +722,20 @@ document.addEventListener("DOMContentLoaded", function () {
          if (templateId) {
             twostepform();
          }
+         $('.loader-block').removeClass('d-none');
+            let percent = 0;
+            let interval = setInterval(function () {
+               percent += 1;
+               jQuery(".loader-percent").text(percent + "%");
+               if (percent >= 100) {
+                  clearInterval(interval);
+                  jQuery(".loader-block").fadeOut(600, function () {
+                     jQuery(".site-wrapper").fadeIn(1000);
+                  });
+               }
+            }, 30);
+  
+
       }, 500);
    });
 
