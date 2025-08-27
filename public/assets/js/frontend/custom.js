@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
         $(".alert-message").fadeOut("slow", function () {
             $(this).remove();
         });
-    }, 2000);
+    }, 3000);
     let currentSteps = 1;
     const steps = document.querySelectorAll('.step');
     const prevButton = document.querySelector('.previous');
@@ -11,11 +11,34 @@ document.addEventListener("DOMContentLoaded", function () {
     const submitButtons = document.querySelectorAll('.submit');
     const form = document.querySelector('form');
     const ServiceStaffCode = document.querySelector('.get_service_staff');
-
+    // Remove field errors on input/change
+    $(document).on("input change", "input, select", function () {
+        const field = this;
+    
+        // Remove red border from current field only
+        field.classList.remove('border-red-500');
+    
+        // Remove error message immediately following this field
+        const err = field.nextElementSibling;
+        if (err && err.classList.contains('error-message')) err.remove();
+    
+        // Special handling for checkboxes
+        if (field.type === 'checkbox') {
+            const checkboxParent = $(field).closest('.mb-6')[0];
+            $(checkboxParent).find('.checkbox-error-message').remove();
+        }
+    
+        // Remove vendor placeholder error if vendor selected
+        if (field.classList.contains('service_vendor_form') && field.value) {
+            const placeholder = field.parentNode.querySelector('.vendor-placeholder');
+            if (placeholder) placeholder.innerHTML = '';
+        }
+    });
+    
 
     if (!steps.length || !prevButton || !nextButtons.length || !submitButtons.length) {
         console.error('Required elements not found!');
-        return; 
+        return;
     }
 
     function validateRequiredFields(step) {
@@ -55,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         : null;
                     if (err) err.remove();
                 }
-                return; 
+                return;
             }
 
             if (field.type === 'checkbox') {
