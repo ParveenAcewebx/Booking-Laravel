@@ -62,6 +62,7 @@ class AppServiceProvider extends ServiceProvider
             $servicesForm .= "<div class='form-group {$c['group']} select_service_vendor {$c['hidden']}'>";
             $servicesForm .= "<label for='staff' class='{$c['label']}'>Select Vendor <span class='text-red-500'>*</span></label>";
             $servicesForm .= "<input type='hidden' class='selected_vendor' value='" . $selectedvendor . "'>";
+            $servicesForm .= "<div class='vendor-placeholder'></div>";  
             $servicesForm .= "<select name='dynamic[vendor]' id='service_vendor_form' class='{$c['select']} service_vendor_form' required>";
             $servicesForm .= '<option value="">---Select Vendor---</option>';
             $servicesForm .= "</select>";

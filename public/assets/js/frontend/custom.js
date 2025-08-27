@@ -12,108 +12,88 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector('form');
     const ServiceStaffCode = document.querySelector('.get_service_staff');
 
-    // console.log('ServiceStaffCode', ServiceStaffCode);
 
     if (!steps.length || !prevButton || !nextButtons.length || !submitButtons.length) {
         console.error('Required elements not found!');
-        return; // Exit if elements aren't found
+        return; 
     }
 
-    // Function to validate required fields
     function validateRequiredFields(step) {
         let isValid = true;
         const requiredFields = step.querySelectorAll('[required]');
         const current_step = step.getAttribute('id');
-        const calendarWrapExists = $('#' + current_step).find('.calendar-wrap').length > 0;
-        if (calendarWrapExists) {
-            let bookedslootes = $('#bookslots').val();
-            if (bookedslootes) {
-                isValid = true;
-            } else {
-                $('.select-slots').html('<p class="text-sm text-red-600 font-medium mt-1 p-4 border border-gray-300 shadow-md rounded-l text-danger ">Please select a date and select atleast one slot.</p>');
+
+        const noVendorElement = $('#' + current_step).find('.vendor-placeholder .no-vendor-text');
+        const noVendorAssigned = noVendorElement.length > 0;
+
+        const calendarWrap = $('#' + current_step).find('.calendar-wrap');
+        if (!noVendorAssigned && calendarWrap.length) {
+            const bookedSlots = $('#' + current_step + ' #bookslots').val();
+            if (!bookedSlots) {
+                $('#' + current_step).find('.select-slots').html('<p class="text-sm text-red-600 font-medium mt-1 p-4 border border-gray-300 shadow-md rounded-l text-danger">Please select a date and at least one slot.</p>');
                 isValid = false;
+            } else {
+                $('#' + current_step).find('.select-slots').empty();
             }
         }
+
         requiredFields.forEach(field => {
-            if (field.type === 'checkbox') {
-                const checkboxGroup = step.querySelectorAll(`input[name="${field.name}"]`);
-                const checkedCheckboxes = Array.from(checkboxGroup).filter(checkbox => checkbox.checked);
-
-                if (checkedCheckboxes.length === 0) {
+            if (field.tagName.toLowerCase() === 'select') {
+                if (!field.value || field.value.trim() === "") {
                     field.classList.add('border-red-500');
-                    let errorMessage = field.parentElement.querySelector('.checkbox-error-message');
-                    if (!errorMessage) {
-                        errorMessage = document.createElement('p');
-                        errorMessage.classList.add('checkbox-error-message', 'text-red-500', 'text-xs', 'mt-1');
-                        errorMessage.textContent = 'This field is required';
-                        field.parentElement.appendChild(errorMessage);
+                    if (!field.nextElementSibling || !field.nextElementSibling.classList.contains('error-message')) {
+                        const err = document.createElement('p');
+                        err.className = 'error-message text-red-500 text-xs mt-1';
+                        err.textContent = 'This field is required';
+                        field.insertAdjacentElement('afterend', err);
                     }
                     isValid = false;
                 } else {
                     field.classList.remove('border-red-500');
-                    let errorMessage = field.parentElement.querySelector('.checkbox-error-message');
-                    if (errorMessage) errorMessage.remove();
-                }
-            } else if (field.type === 'radio') {
-                const radioGroup = step.querySelectorAll(`input[name="${field.name}"]`);
-                const isChecked = Array.from(radioGroup).some(radio => radio.checked);
-
-                if (!isChecked) {
-                    field.classList.add('border-red-500');
-                    let errorMessage = field.parentElement.querySelector('.radio-error-message');
-                    if (!errorMessage) {
-                        errorMessage = document.createElement('p');
-                        errorMessage.classList.add('radio-error-message', 'text-red-500', 'text-xs', 'mt-1');
-                        errorMessage.textContent = 'This field is required';
-                        field.parentElement.appendChild(errorMessage);
-                    }
-                    isValid = false;
-                } else {
-                    field.classList.remove('border-red-500');
-                    let errorMessage = field.parentElement.querySelector('.radio-error-message');
-                    if (errorMessage) errorMessage.remove();
-                }
-            } else if (field.type === 'email') {
-                if (!field.checkValidity()) {
-                    field.classList.add('border-red-500');
-                    let errorMessage = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')
-                        ? field.nextElementSibling
-                        : document.createElement('p');
-                    if (!errorMessage.classList.contains('error-message')) {
-                        errorMessage.classList.add('error-message', 'text-red-500', 'text-xs', 'mt-1');
-                        errorMessage.textContent = 'Please enter a valid email address';
-                        field.insertAdjacentElement('afterend', errorMessage);
-                    }
-                    isValid = false;
-                } else {
-                    field.classList.remove('border-red-500');
-                    let errorMessage = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')
+                    const err = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')
                         ? field.nextElementSibling
                         : null;
-                    if (errorMessage) errorMessage.remove();
+                    if (err) err.remove();
+                }
+                return; 
+            }
+
+            if (field.type === 'checkbox') {
+                const checkboxes = step.querySelectorAll(`input[name="${field.name}"]`);
+                const checked = Array.from(checkboxes).some(c => c.checked);
+                if (!checked) {
+                    field.classList.add('border-red-500');
+                    if (!field.parentElement.querySelector('.checkbox-error-message')) {
+                        const err = document.createElement('p');
+                        err.className = 'checkbox-error-message text-red-500 text-xs mt-1';
+                        err.textContent = 'This field is required';
+                        field.parentElement.appendChild(err);
+                    }
+                    isValid = false;
+                } else {
+                    field.classList.remove('border-red-500');
+                    const err = field.parentElement.querySelector('.checkbox-error-message');
+                    if (err) err.remove();
                 }
             } else if (!field.value.trim()) {
                 field.classList.add('border-red-500');
-                let errorMessage = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')
-                    ? field.nextElementSibling
-                    : document.createElement('p');
-                if (!errorMessage.classList.contains('error-message')) {
-                    errorMessage.classList.add('error-message', 'text-red-500', 'text-xs', 'mt-1');
-                    errorMessage.textContent = 'This field is required';
-                    field.insertAdjacentElement('afterend', errorMessage);
+                if (!field.nextElementSibling || !field.nextElementSibling.classList.contains('error-message')) {
+                    const err = document.createElement('p');
+                    err.className = 'error-message text-red-500 text-xs mt-1';
+                    err.textContent = 'This field is required';
+                    field.insertAdjacentElement('afterend', err);
                 }
                 isValid = false;
             } else {
                 field.classList.remove('border-red-500');
-                let errorMessage = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message')
-                    ? field.nextElementSibling
-                    : null;
-                if (errorMessage) errorMessage.remove();
+                const err = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message') ? field.nextElementSibling : null;
+                if (err) err.remove();
             }
         });
 
         return isValid;
     }
+
 
     function handleNextButtonClick() {
         const currentStepElement = steps[currentSteps - 1];
@@ -179,50 +159,74 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             dataType: 'json',
             success: function (response) {
-                // console.log('Services Staff', response);
                 var select_service_staff = document.querySelector('.select_service_vendor');
                 var staffSelect = document.querySelector('.service_vendor_form');
                 var calendarHidden = document.querySelector('.calendar-wrap');
 
-                // Clear previous options
                 staffSelect.innerHTML = '';
+                if (serviceId != '' && response && response.length > 0) {
+                    console.log('frontend Value', 1);
 
-                if (response && response.length > 0) {
-                    // console.log('frontend Value', 1);
-
-                    // Enable dropdown + show vendor field
                     staffSelect.disabled = false;
+                    staffSelect.style.display = 'block';
                     select_service_staff.classList.remove('hidden');
-
-                    // Default option
-                    var defaultOption = document.createElement('option');
+                    calendarHidden.classList.add('hidden');
+                    selectslots.classList.add('hidden');
+                    staffSelect.required = true;
+                    staffSelect.classList.remove('border-red-500');
+                    const err = staffSelect.parentNode.querySelector('.error-message');
+                    if (err) err.remove();
+                    const defaultOption = document.createElement('option');
                     defaultOption.value = '';
                     defaultOption.textContent = '--- Select Vendor ---';
                     staffSelect.appendChild(defaultOption);
 
-                    // Add each staff member
                     response.forEach(function (staff) {
-                        var option = document.createElement('option');
+                        const option = document.createElement('option');
                         option.value = staff.id;
                         option.textContent = staff.name;
                         staffSelect.appendChild(option);
                     });
-
-                } else {
-                    // console.log('frontend Value', 0);
-
-                    // Disable dropdown + show vendor field
-                    staffSelect.disabled = false;
+                    const placeholder = staffSelect.parentNode.querySelector(".vendor-placeholder");
+                    if (placeholder) placeholder.innerHTML = "";
+                } else if (serviceId != '' && response && response.length === 0) {
+                    staffSelect.disabled = true;
+                    staffSelect.style.display = "none";
+                    select_service_staff.classList.remove('hidden');
+                    calendarHidden.classList.add('hidden');
                     selectslots.classList.add('hidden');
+                    staffSelect.required = false;
+
+                    let placeholder = staffSelect.parentNode.querySelector(".vendor-placeholder");
+                    if (placeholder) {
+                        placeholder.innerHTML = "";
+
+                        let noVendorText = document.createElement("div");
+                        noVendorText.textContent = "No Vendor Assigned For This Service";
+                        noVendorText.classList.add("no-vendor-text");
+                        placeholder.appendChild(noVendorText);
+
+                        staffSelect.classList.remove('border-red-500');
+                        const err = staffSelect.parentNode.querySelector('.error-message');
+                        if (err) err.remove();
+                    }
+                } else {
+                    console.log('frontend Value', 0);
+
+                    staffSelect.disabled = false;
+                    staffSelect.required = true;
+                    staffSelect.style.display = "none";
                     select_service_staff.classList.add('hidden');
                     calendarHidden.classList.add('hidden');
-
-
-                    // Show "No staff available"
-                    var noStaffOption = document.createElement('option');
-                    noStaffOption.value = '';
-                    noStaffOption.textContent = 'No vendor assigned';
-                    staffSelect.appendChild(noStaffOption);
+                    selectslots.classList.add('hidden');
+                    staffSelect.innerHTML = "";
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = '--- Select Vendor ---';
+                    staffSelect.appendChild(defaultOption);
+                    staffSelect.classList.remove('border-red-500');
+                    const err = staffSelect.parentNode.querySelector('.error-message');
+                    if (err) err.remove();
                 }
             },
             error: function (xhr, status, error) {
