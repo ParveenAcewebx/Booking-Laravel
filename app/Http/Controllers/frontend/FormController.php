@@ -23,6 +23,10 @@ class FormController extends Controller
 {
     public function show(Request $request, $slug)
     {
+        // $allSession = session()->all();
+        // print_r($allSession);
+        // print_r($sessionKey);
+        // die('fsfs');
         $template = BookingTemplate::where('slug', $slug)->firstOrFail();
         $formHtml = FormHelper::renderDynamicFieldHTML($template->data, [], 'tailwind');
         // Check if request has source=iframe

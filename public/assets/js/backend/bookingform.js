@@ -36,12 +36,17 @@ document.addEventListener("DOMContentLoaded", function () {
             var select_service_staff = document.querySelector('.select_service_vendor');
             var staffSelect = document.querySelector('.service_vendor_form');
             var bookingcalendar = document.querySelector('.calendar-wrap');
+            // var vendorplaceholder = document.querySelector('.vendor-placeholder');
             staffSelect.innerHTML = '';
             var defaultOption = document.createElement('option');
             defaultOption.value = '';
             defaultOption.textContent = '---Select Vendor---';
             staffSelect.appendChild(defaultOption);
             if (response && response.length > 0) {
+               var existingMsg = document.querySelector('.no-vendor-msg');
+               if (existingMsg) {
+                 existingMsg.remove();
+               }
                staffSelect.disabled = false;
                select_service_staff.classList.remove('d-none');
                // Add each staff member to the dropdown
@@ -50,6 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
                   option.value = staff.id;
                   option.textContent = staff.name;
                   staffSelect.appendChild(option);
+                  staffSelect.setAttribute('required', '');
                });
                if (selectedStaff) {
                   var options = staffSelect.querySelectorAll('option');
@@ -61,9 +67,16 @@ document.addEventListener("DOMContentLoaded", function () {
                   });
                }
             } else {
+               if(serviceId != '' && response && response.length === 0){
+                  var vendorPlaceholder = document.querySelector('.select_service_vendor');
+                   if ($('.no-vendor-msg').length === 0) {
+                      vendorPlaceholder.insertAdjacentHTML('beforebegin', '<p class="no-vendor-msg">No Vendor available for this service.</p>');
+                   }
+                } 
                staffSelect.disabled = true;
                select_service_staff.classList.add('d-none');
                bookingcalendar.classList.add('d-none');
+               staffSelect.removeAttribute('required');
                var noStaffOption = document.createElement('option');
                noStaffOption.value = '';
                noStaffOption.textContent = 'No Vendor available';
@@ -130,210 +143,140 @@ document.addEventListener("DOMContentLoaded", function () {
       /* ================================== Add staff data in the callender   =============================*/
       class Calendar {
          constructor(workingDays, workondayoff) {
-            this.workingDays = workingDays;
-            this.workOnoff = workondayoff;
-            this.draw();
-            this.addNavigationListeners();
-            this.addDayClickListener();
+           this.workingDays = workingDays || [];
+                this.workOnoff = workondayoff || [];
+                const now = new Date();
+                this.year = now.getFullYear();
+                this.month = now.getMonth();
+                this.draw();
+                this.addNavigationListeners();
+                this.addDayClickListener();
          }
-         draw() {
-            this.drawDays();
+        draw() {
+                this.drawDays();
          }
-         drawDays() {
-            const monthNames = [
-               "January", "February", "March", "April", "May", "June",
-               "July", "August", "September", "October", "November", "December"
-            ];
-            const startDay = new Date(year, month, 1).getDay();
-            const totalDays = new Date(year, month + 1, 0).getDate();
-            const monthNameElem = document.getElementById("month-name");
-            if (monthNameElem) {
-               monthNameElem.textContent = `${monthNames[month]} ${year}`;
-            }
-            const days = document.querySelectorAll('#calendar td');
-            days.forEach((dayCell) => {
-               dayCell.innerHTML = '';
-               dayCell.classList.remove('available', 'disabled', 'selected');
-               dayCell.style.backgroundColor = '';
-               dayCell.style.pointerEvents = '';
-            });
-            const currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-            let dayIndex = 0;
-            for (let i = 0; i < days.length; i++) {
-               const dayCell = days[i];
-               if (i >= startDay && dayIndex < totalDays) {
-                  const dayNum = ++dayIndex;
-                  const fullDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(dayNum).padStart(2, "0")}`;
-                  const dayDate = new Date(year, month, dayNum);
-                  dayCell.innerHTML = dayNum;
-                  const validWorkingDays = [];
-                  if (this.workingDays) {
-                     this.workingDays.forEach(week => {
-                        Object.entries(week).forEach(([day, time]) => {
-                           if (time.start) {
-                              const timePart = time.start.split("T")[1].split(".")[0];
-                              if (timePart !== "00:00:00") {
-                                 validWorkingDays.push(day.toLowerCase());
-                              }
-                           }
-                        });
-                     });
-                  }
-                  const dayOffData = [];
-                  if (this.workOnoff) {
-                     this.workOnoff.forEach(items => {
-                        const workingDay = items.Working_day;
-                        const dayoffDates = items.Dayoff;
-                        Object.entries(workingDay).forEach(([day, time]) => {
-                           if (time.start) {
-                              const timePart = time.start.split("T")[1].split(".")[0];
-                              if (timePart !== "00:00:00") {
-                                 dayoffDates.forEach(dayoff => {
-                                    const dayOfdates = dayoff.flat();
-                                    dayOffData.push(dayOfdates);
-                                 });
-                              }
-                           }
-                        });
-                     });
-                  }
-                  const isDayOff = dayOffData.some(dayoff => {
-                     let leaveapproved;
-                     let ofdates = [];
-                     dayoff.forEach(dayoof => {
-                        ofdates.push(dayoof.date);
-                     });
-                     return ofdates.some(date => {
-                        leaveapproved = true;
-                        const dateObj = new Date(date);
-                        if (dateObj.toDateString() === dayDate.toDateString()) {
-                           const dayNameFull = dateObj.toLocaleString('en-us', {
-                              weekday: 'long'
-                           }).toLowerCase();
-                           if (this.workOnoff) {
-                              this.workOnoff.forEach(items => {
-                                 const workingDay = items.Working_day;
-                                 const dayoffDates = items.Dayoff;
-                                 if (dayoffDates) {
-                                    const minDayoffArray = this.workOnoff.reduce((minArr, currentArr) => {
-                                       const currentDayoffDatesCount = currentArr.Dayoff.flat().length;
-                                       const minDayoffDatesCount = minArr.Dayoff.flat().length;
-                                       return currentDayoffDatesCount < minDayoffDatesCount ? currentArr : minArr;
-                                    });
-                                    if (minDayoffArray) {
-                                       const dayof = minDayoffArray.Dayoff.flat();
-                                       if (dayof && dayof.length > 0) {
-                                          leaveapproved = false;
-                                          const sortedDayoff = dayof.sort((a, b) => new Date(a.date) - new Date(b.date));
-                                          const startDate = sortedDayoff[0].date;
-                                          const endDate = sortedDayoff[sortedDayoff.length - 1].date;
-                                          const formattedDate = new Date(dateObj).toLocaleDateString('en-US', {
-                                             year: 'numeric',
-                                             month: 'long',
-                                             day: 'numeric'
-                                          });
-                                          if (formattedDate >= startDate && formattedDate <= endDate) {
-                                             leaveapproved = true;
-                                          }
-                                       }
-                                    }
-                                 } else {
-                                    leaveapproved = false;
-                                 }
-                                 Object.entries(workingDay).forEach(([day, time]) => {
-                                    if (time.start) {
-                                       const timePart = time.start.split("T")[1].split(".")[0];
-                                       if (timePart !== "00:00:00") {
-                                          dayoffDates.forEach(dayoff => {
-                                             const dayOfdates = dayoff.flat();
-                                             const excludedDateStrings = dayOfdates.map(item => item.date);
-                                             const filteredWorkOnoff = this.workOnoff.filter(items => {
-                                                const allDayoffDatesFormatted = items.Dayoff.flat().map(obj =>
-                                                   new Date(obj.date).toLocaleDateString('en-US', {
-                                                      year: 'numeric',
-                                                      month: 'long',
-                                                      day: 'numeric'
-                                                   })
-                                                );
-                                                return !allDayoffDatesFormatted.some(date => excludedDateStrings.includes(date));
-                                             });
-                                             filteredWorkOnoff.forEach(filteredItems => {
-                                                const workingDays = filteredItems.Working_day;
-                                                if (workingDays.hasOwnProperty(dayNameFull)) {
-                                                   const dayData = workingDays[dayNameFull];
-                                                   if (dayData.start) {
-                                                      const timePart = dayData.start.split("T")[1].split(".")[0];
-                                                      if (timePart !== "00:00:00") {
-                                                         leaveapproved = false;
-                                                      }
-                                                   }
-                                                };
-                                             });
-                                          });
-                                       }
-                                    }
-                                 });
-                              });
-                           }
-                           return leaveapproved;
-                        } else {
-                           return false;
-                        }
-                     });
-                  });
-                  const dayName = dayDate.toLocaleString('en-us', {
-                     weekday: 'long'
-                  }).toLowerCase();
-                  if (dayDate < currentDate || isDayOff || !validWorkingDays.includes(dayName)) {
-                     dayCell.classList.add("disabled");
-                     dayCell.style.backgroundColor = "#d3d3d3";
-                     dayCell.style.pointerEvents = "none";
-                  } else {
-                     if (availableDates) {
-                        dayCell.classList.add("available");
-                        dayCell.style.backgroundColor = "rgb(18 163 46)";
-                     }
-                  }
+       drawDays() {
+               const monthNames = [
+                  "January", "February", "March", "April", "May", "June",
+                  "July", "August", "September", "October", "November", "December"
+               ];
+
+               const startDay = new Date(this.year, this.month, 1).getDay();
+               const totalDays = new Date(this.year, this.month + 1, 0).getDate();
+
+               const monthNameElem = document.getElementById("month-name");
+               if (monthNameElem) {
+                  monthNameElem.textContent = `${monthNames[this.month]} ${this.year}`;
                }
-            }
+            const days = document.querySelectorAll('#calendar td');
+               days.forEach(cell => {
+                  cell.innerHTML = '';
+                  cell.classList.remove('available', 'disabled', 'selected');
+                  cell.style.backgroundColor = '';
+                  cell.style.pointerEvents = '';
+               });
+               const currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                let dayIndex = 0;
+
+                // Flatten dayoffs for all staff
+                const allDayoffs = this.workOnoff.flatMap(staff =>
+                    (staff.Dayoff || []).flat().map(d => new Date(d.date).toDateString())
+                );
+                const hasAnyDayoff = allDayoffs.length > 0;
+   
+            for (let i = 0; i < days.length; i++) {
+                    const cell = days[i];
+                    if (i >= startDay && dayIndex < totalDays) {
+                        const dayNum = ++dayIndex;
+                        const fullDate = `${this.year}-${String(this.month + 1).padStart(2, "0")}-${String(dayNum).padStart(2, "0")}`;
+                        const dayDate = new Date(this.year, this.month, dayNum);
+                        cell.innerHTML = dayNum;
+                        const dayName = dayDate.toLocaleString('en-us', { weekday: 'long' }).toLowerCase();
+
+                        // Collect which staff works on this weekday
+                        const staffWorking = this.workOnoff.map(staff => {
+                            const wd = staff.Working_day || {};
+                            const slot = wd[dayName];
+                            return slot && slot.start && !slot.start.includes("00:00:00");
+                        });
+
+                        const atLeastOneWorks = staffWorking.includes(true);
+
+                        let isDisabled = false;
+
+                        if (dayDate < currentDate) {
+                            isDisabled = true;
+                        } else if (!atLeastOneWorks) {
+                            // nobody works this weekday
+                            isDisabled = true;
+                        } else if (hasAnyDayoff) {
+                            // check if date is in someone's Dayoff
+                            const staffOnDayoff = this.workOnoff.filter(staff =>
+                                (staff.Dayoff || []).flat().some(d => new Date(d.date).toDateString() === dayDate.toDateString())
+                            );
+                            if (staffOnDayoff.length > 0) {
+                                // If ALL working staff are off -> disable
+                                const othersWork = this.workOnoff.some(staff => {
+                                    const wd = staff.Working_day || {};
+                                    const slot = wd[dayName];
+                                    return slot && slot.start && !slot.start.includes("00:00:00") &&
+                                           !(staff.Dayoff || []).flat().some(d => new Date(d.date).toDateString() === dayDate.toDateString());
+                                });
+                                if (!othersWork) {
+                                    isDisabled = true;
+                                }
+                            }
+                        }
+
+                        if (isDisabled) {
+                            cell.classList.add("disabled");
+                            cell.style.backgroundColor = "#d3d3d3";
+                            cell.style.pointerEvents = "none";
+                        } else {
+                            cell.classList.add("available");
+                            cell.style.backgroundColor = "rgb(18 163 46)";
+                        }
+                    }
+                }
          }
          /* ================================== Calender button   =============================*/
-         addNavigationListeners() {
-            const pre = document.querySelector('.pre-button');
-            const next = document.querySelector('.next-button');
-            if (pre) pre.addEventListener('click', () => this.changeMonth(-1));
-            if (next) next.addEventListener('click', () => this.changeMonth(1));
-         }
+          addNavigationListeners() {
+                const pre = document.querySelector('.pre-button');
+                const next = document.querySelector('.next-button');
+                if (pre) pre.addEventListener('click', () => this.changeMonth(-1));
+                if (next) next.addEventListener('click', () => this.changeMonth(1));
+            }
+
          /* ================================== Calender change month  =============================*/
          changeMonth(direction) {
-            month += direction;
-            if (month < 0) {
-               month = 11;
-               year--;
-            } else if (month > 11) {
-               month = 0;
-               year++;
+                this.month += direction;
+                if (this.month < 0) {
+                    this.month = 11;
+                    this.year--;
+                } else if (this.month > 11) {
+                    this.month = 0;
+                    this.year++;
+                }
+                this.drawDays();
             }
-            this.drawDays();
-         }
-         addDayClickListener() {
-            const calendar = document.getElementById('calendar');
-            if (calendar) {
-               calendar.addEventListener('click', (e) => {
-                  const dayElem = e.target;
-                  if (dayElem.tagName === 'TD' && dayElem.classList.contains("available")) {
-                     this.clickDay(dayElem);
-                  }
-               });
+          addDayClickListener() {
+                const calendar = document.getElementById('calendar');
+                if (calendar) {
+                    calendar.addEventListener('click', e => {
+                        const dayElem = e.target;
+                        if (dayElem.tagName === 'TD' && dayElem.classList.contains("available")) {
+                            this.clickDay(dayElem);
+                        }
+                    });
+                }
             }
-         }
          clickDay(dayElem) {
-            const day = parseInt(dayElem.innerHTML);
-            selectedDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-            document.querySelector('.selected')?.classList.remove('selected');
-            dayElem.classList.add('selected');
-            this.BookeAslot(selectedDate);
-         }
+                const day = parseInt(dayElem.innerHTML);
+                selectedDate = `${this.year}-${String(this.month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                document.querySelector('.selected')?.classList.remove('selected');
+                dayElem.classList.add('selected');
+                this.BookeAslot(selectedDate);
+            }
          /* ================================== Booke  slotes  =============================*/
          BookeAslot(date) {
             if (!date) return;
@@ -556,7 +499,8 @@ document.addEventListener("DOMContentLoaded", function () {
          const requiredFields = step.querySelectorAll('[required]');
          const current_step = step.getAttribute('id');
          const calendarWrapExists = $('#' + current_step).find('.calendar-wrap').length > 0;
-         if (calendarWrapExists) {
+         const service_vendor_form = $('.service_vendor_form').val();
+         if (calendarWrapExists && service_vendor_form) {
             let bookedslootes = $('#bookslots').val();
             if (bookedslootes) {
                isValid = true;
