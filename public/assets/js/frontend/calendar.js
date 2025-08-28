@@ -222,19 +222,19 @@
                         const price = `${response?.serviceCurrency || ''}${response?.price || ''}`;
                         const duration = parseInt(response?.duration, 10) || 0;
                         const staffOffIds = response.staff_off_ids ? response.staff_off_ids.split(',') : [];
-                        const formatDates = response?.changeDate || '';
-                        alert(formatDates);
+                        // const formatDates = response?.changeDate || '';
+                        // alert(formatDates);
                         $('.select-slots').addClass('hidden');
 
                         if (response?.merged_slots?.length > 0) {
                             $('.availibility').removeClass('hidden');
                             sessionsHTML += `<div class="date-section mb-3">
-                                <h5 class="date-header text-lg font-semibold mb-2">${formatDates}</h5>
+                                <h5 class="date-header text-lg font-semibold mb-2">${formattedDate}</h5>
                                 <div class="overflow-x-auto scrollbar-thin">
                                     <div class="flex gap-4 pb-2 w-max min-w-full">`;
                             response.merged_slots.forEach(slot => {
                                 let slotStaffIds = slot.available_staff_ids.filter(id => !staffOffIds.includes(String(id)));
-                                sessionsHTML += createSlotHTML(formatDates, price, slot.start_time, slot.end_time, duration, slotStaffIds);
+                                sessionsHTML += createSlotHTML(formattedDate, price, slot.start_time, slot.end_time, duration, slotStaffIds);
                             });
                             sessionsHTML += `</div></div></div>`;
                         } else {
