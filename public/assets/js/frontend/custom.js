@@ -507,10 +507,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const serviceValue = $('#get_service_staff').val();
         const vendorValue = $('#service_vendor_form').val();
         const activeBtn = $context.find('.next:visible,.submit:visible');
+       
         let valid = true;
         const slotCount = wrapper.find('.slot-item').length;
         if (wrapper.length > 0 && !isEmpty(serviceValue) && !isEmpty(vendorValue) && isEmpty(bookslotsValue) && slotCount === 0) {
             $('.select-slots').removeClass('hidden');
+           
             valid = false;
         } else if (valid) {
             $('.select-slots').addClass('hidden');

@@ -145,8 +145,12 @@ class FormController extends Controller
         if ($request) {
             $workingDates = [];
             $vendor_id = $request['vendor_id'];
-            $vendoraiationsstaff = VendorStaffAssociation::where('vendor_id', $vendor_id)->with('staff')->get();
-
+            $vendoraiationsstaff = VendorStaffAssociation::where('vendor_id', $vendor_id)
+            ->with('staff')
+            ->whereHas('user', function ($query) {
+                $query->where('status', 1); 
+            })
+            ->get();
             if ($vendoraiationsstaff->isNotEmpty()) {
                 $workingDates = $vendoraiationsstaff->map(function ($association) {
                     $formattedWorkHours = [];
@@ -185,6 +189,7 @@ class FormController extends Controller
 
     public function getBookingSlot(Request $request)
     {
+        // dd('sdfsfdsf');
         $date = $request->input('dates');
         $formattedDate = Carbon::createFromFormat('Y-m-d', $date)->format('F j, Y');
         $weekday = strtolower(Carbon::createFromFormat('Y-m-d', $date)->format('l'));
@@ -201,7 +206,7 @@ class FormController extends Controller
         $vendorAssociations = VendorStaffAssociation::with('staff')
             ->where('vendor_id', $request->vendorid)
             ->get();
-
+        
         $staffAvailability = collect();
         $allStaffSlots = collect();
         $allIntervals = [];
