@@ -538,7 +538,7 @@ const loader = document.getElementById('loader');
     // Recheck on actions
     $(document).on(
         'click change',
-        '.slot-card, .add-slot, .remove-slot, .remove-all-slots, #get_service_staff, #service_vendor_form , .next,.submit,.previous',
+        '.slot-card, .add-slot, #get_service_staff, #service_vendor_form , .next,.submit,.previous',
         function () {
             const $section = $(this).closest('form, body');
             setTimeout(() => {
@@ -586,10 +586,4 @@ const loader = document.getElementById('loader');
         });
     }, 1000);
 
-});
-window.addEventListener("pageshow", function (event) {
-    if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
-        // Page was restored from bfcache OR back/forward navigation
-        window.location.reload();
-    }
 });

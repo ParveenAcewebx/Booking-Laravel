@@ -270,6 +270,7 @@
 
         // Create slot card HTML
         function createSlotHTML(date, price, start, end, duration, staffIds) {
+
             const staffIdsString = Array.isArray(staffIds) ? staffIds.join(',') : staffIds;
             return `
         <div class="min-w-[170px] bg-white border border-gray-300 rounded-lg p-4 shadow-sm slot-card cursor-pointer transition hover:shadow-md"
