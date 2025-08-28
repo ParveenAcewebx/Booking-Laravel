@@ -206,6 +206,7 @@ const loader = document.getElementById('loader');
                     defaultOption.value = '';
                     defaultOption.textContent = '--- Select Vendor ---';
                     staffSelect.appendChild(defaultOption);
+                    $('label[for="staff"]').removeClass('hidden');
 
                     response.forEach(function (staff) {
                         const option = document.createElement('option');
@@ -222,7 +223,7 @@ const loader = document.getElementById('loader');
                     calendarHidden.classList.add('hidden');
                     selectslots.classList.add('hidden');
                     staffSelect.required = false;
-
+                    $('label[for="staff"]').addClass('hidden');
                     let placeholder = staffSelect.parentNode.querySelector(".vendor-placeholder");
                     if (placeholder) {
                         placeholder.innerHTML = "";
@@ -506,9 +507,6 @@ const loader = document.getElementById('loader');
     function checkSlots($context) {
         const steps = $context.find('.step');
         const activeStep = steps.filter(':visible');
-        // const currentStepIndex = steps.index(activeStep) + 1;
-
-        // console.log("👉 Currently showing Step:", currentStepIndex);
 
         const bookslotsValue = $('#bookslots').val();
         const wrapper = activeStep.find('.slot-list-wrapper:visible');
@@ -588,4 +586,10 @@ const loader = document.getElementById('loader');
         });
     }, 1000);
 
+});
+window.addEventListener("pageshow", function (event) {
+    if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+        // Page was restored from bfcache OR back/forward navigation
+        window.location.reload();
+    }
 });
