@@ -151,7 +151,7 @@ class BookingController extends Controller
             'selected_staff' => '',
             'bookslots'                 => $request->input('bookslots'),
             'service_id'                => $bookingData['service'] ?? NULL,
-            'vendor_id' => !empty($bookingData['vendor']) ? $bookingData['vendor'] : null,
+            'vendor_id'                 => $bookingData['vendor'] ?? NULL,
 
         ]);
 
