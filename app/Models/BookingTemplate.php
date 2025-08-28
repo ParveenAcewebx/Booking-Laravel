@@ -21,6 +21,7 @@ class BookingTemplate extends Model
     }
     public function bookings()
     {
-        return $this->hasMany(Booking::class, 'id');
+        return $this->hasMany(Booking::class, 'booking_template_id');
     }
 }
+
