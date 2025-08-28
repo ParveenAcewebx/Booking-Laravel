@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
       $('.select-slots').css('display', 'none');
       var serviceId = selectedvalue.value;
       var selectedStaff = document.querySelector('.selected_vendor').value;
+      $('.vendor-loder').removeClass('d-none');
       $.ajax({
          url: '/get/services/staff',
          type: 'GET',
@@ -33,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
          },
          dataType: 'json',
          success: function (response) {
+            $('.vendor-loder').addClass('d-none');
             var select_service_staff = document.querySelector('.select_service_vendor');
             var staffSelect = document.querySelector('.service_vendor_form');
             var bookingcalendar = document.querySelector('.calendar-wrap');
