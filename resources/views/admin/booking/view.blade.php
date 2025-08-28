@@ -17,9 +17,7 @@
                                     <i class="feather icon-home"></i>
                                 </a>
                             </li>
-                            <li class="breadcrumb-item">
-                                <a href="#!">Booking</a>
-                            </li>
+                            <li class="breadcrumb-item"><a href="#!">Booking</a></li>
                             <li class="breadcrumb-item"><a href="#!">Booking #{{$bookingid}}</a></li>
                         </ul>
                     </div>
@@ -30,114 +28,121 @@
 
         <!-- [ Form Section ] start -->
         <div class="row">
-         <!-- [ Left Column (6) ] start -->
-<div class="col-md-6">
-    <div class="card shadow-lg rounded-lg">
-        <div class="card-header">
-                <h5>Booking Information</h5>
-        </div>
-        <div class="card-body">
-            <div class="invoice-box">
-                <!-- User Information Section -->
-                <div class="info-section mb-4">
-                    <h6 class="info-title text-primary">User Information</h6>
-                    <div class="user-info">
-                        @if(!empty($userinfo['first_name']) && !empty($userinfo['last_name']))
-                        <div class="info-item">
-                            <strong>Name:</strong> <span class="font-weight-bold">{{ $userinfo['first_name'] }} {{ $userinfo['last_name'] }}</span>
-                        </div>
-                        @endif
-
-                        @if(!empty($userinfo['email']))
-                        <div class="info-item">
-                            <strong>Email:</strong> 
-                            <a href="mailto:{{ $userinfo['email'] }}" class="text-info">{{ $userinfo['email'] }}</a>
-                        </div>
-                        @endif
-
-                        @if(!empty($userinfo['phone']))
-                        <div class="info-item">
-                            <strong>Phone No:</strong> <span>{{ $userinfo['phone'] }}</span>
-                        </div>
-                        @endif
+            <!-- [ Left Column (6) ] start -->
+            <div class="col-md-6">
+                <div class="card shadow-lg rounded-lg">
+                    <div class="card-header">
+                        <h5>Booking Information</h5>
                     </div>
-                </div>
-                
-                <!-- Service/Vendor Information Section -->
-                @if(!empty($serviceverndor['serivename']) || !empty($serviceverndor['vendorname']))
-                <div class="info-section mb-4">
-                    <h6 class="info-title text-primary">Service / Vendor Information</h6>
-                    <div class="service-vendor-info">
-                        @if(!empty($serviceverndor['serivename']))
-                        <div class="info-item">
-                            <strong>Service Name:</strong> <span class="font-weight-bold">{{ htmlspecialchars($serviceverndor['serivename']) }}</span>
-                        </div>
-                        @endif
+                    <div class="card-body">
+                        <div class="invoice-box">
+                            <!-- User Information Section -->
+                            @if(!empty($userinfo['first_name']))
+                                <div class="info-section mb-4">
+                                    <h6 class="info-title text-primary">User Information</h6>
+                                    <div class="user-info">
+                                        @if(!empty($userinfo['first_name']) && !empty($userinfo['last_name']))
+                                            <div class="info-item">
+                                                <strong>Name:</strong>
+                                                <span class="font-weight-bold">{{ $userinfo['first_name'] }} {{ $userinfo['last_name'] }}</span>
+                                            </div>
+                                        @endif
 
-                        @if(!empty($serviceverndor['vendorname']))
-                        <div class="info-item">
-                            <strong>Vendor Name:</strong> <span class="font-weight-bold">{{ htmlspecialchars($serviceverndor['vendorname']) }}</span>
-                        </div>
-                        @endif
-                    </div>
-                </div>
-                @endif
+                                        @if(!empty($userinfo['email']))
+                                            <div class="info-item">
+                                                <strong>Email:</strong>
+                                                <a href="mailto:{{ $userinfo['email'] }}" class="text-info">{{ $userinfo['email'] }}</a>
+                                            </div>
+                                        @endif
 
-                <!-- Additional Information Section -->
-                @if(is_array($AdditionalInformation['AddInfoLabel']) && !empty($AdditionalInformation['AddInfoLabel']))
-                <div class="info-section mb-4">
-                    <h6 class="info-title text-primary">Additional Information</h6>
-                    <div class="additional-info">
-                        @foreach($AdditionalInformation['AddInfoLabel'] as $index => $label)
-                            @php
-                            $value = $AdditionalInformation['AddInfoValue'][$index];
-                            @endphp
-                            <div class="info-item">
-                                <strong>{{ $label }}:</strong>
-                                <div class="field-value">
-                                    @if (is_string($value) && preg_match('/\.(jpg|jpeg|png|gif|bmp)$/i', $value))
-                                    <img src="{{ asset('storage/' . $value) }}" alt="Image" class="img-fluid rounded" style="max-width: 150px;">
-                                    @elseif (is_string($value) && preg_match('/\.pdf$/i', $value))
-                                    <a href="{{ asset('storage/' . $value) }}" target="_blank" class="text-danger">
-                                        <i class="fas fa-file-pdf" style="font-size: 30px;"></i>
-                                    </a>
-                                    @elseif (is_array($value))
-                                    @php
-                                    $formattedOptions = implode(', ', $value);
-                                    @endphp
-                                    <label class="info-label">{{ $formattedOptions }}</label>
-                                    @else
-                                    @php
-                                    $matchedValues = (array) $value;
-                                    $formfileddata = $AdditionalInformation['formStructureArray'];
-                                    $valueinputlabel = [];
-                                    foreach ($formfileddata as $item) {
-                                        if (isset($item['values']) && is_array($item['values'])) {
-                                            foreach ($item['values'] as $subvalue) {
-                                                if (in_array($subvalue['value'], $matchedValues)) {
-                                                    $valueinputlabel[] = $subvalue['label'];
-                                                }
-                                            }
-                                        }
-                                    }
-                                    @endphp
-                                    @if(count($valueinputlabel) > 0)
-                                    <p>{{ implode(', ', $valueinputlabel) }}</p>
-                                    @else
-                                    <p>{{ $value }}</p>
-                                    @endif
-                                    @endif
+                                        @if(!empty($userinfo['phone']))
+                                            <div class="info-item">
+                                                <strong>Phone No:</strong>
+                                                <span>{{ $userinfo['phone'] }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endif
+
+                            <!-- Service/Vendor Information Section -->
+                            @if(!empty($serviceverndor['serivename']) || !empty($serviceverndor['vendorname']))
+                                <div class="info-section mb-4">
+                                    <h6 class="info-title text-primary">Service / Vendor Information</h6>
+                                    <div class="service-vendor-info">
+                                        @if(!empty($serviceverndor['serivename']))
+                                            <div class="info-item">
+                                                <strong>Service Name:</strong>
+                                                <span class="font-weight-bold">{{ htmlspecialchars($serviceverndor['serivename']) }}</span>
+                                            </div>
+                                        @endif
+
+                                        @if(!empty($serviceverndor['vendorname']))
+                                            <div class="info-item">
+                                                <strong>Vendor Name:</strong>
+                                                <span class="font-weight-bold">{{ htmlspecialchars($serviceverndor['vendorname']) }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- Additional Information Section -->
+                            @if(is_array($AdditionalInformation['AddInfoLabel']) && !empty($AdditionalInformation['AddInfoLabel']))
+                                <div class="info-section mb-4">
+                                    <h6 class="info-title text-primary">Additional Information</h6>
+                                    <div class="additional-info">
+                                        @foreach($AdditionalInformation['AddInfoLabel'] as $index => $label)
+                                            @php
+                                                $value = $AdditionalInformation['AddInfoValue'][$index];
+                                            @endphp
+                                            <div class="info-item">
+                                                <strong>{{ $label }}:</strong>
+                                                <div class="field-value">
+                                                    @if (is_string($value) && preg_match('/\.(jpg|jpeg|png|gif|bmp)$/i', $value))
+                                                        <img src="{{ asset('storage/' . $value) }}" alt="Image" class="img-fluid rounded" style="max-width: 150px;">
+                                                    @elseif (is_string($value) && preg_match('/\.pdf$/i', $value))
+                                                        <a href="{{ asset('storage/' . $value) }}" target="_blank" class="text-danger">
+                                                            <i class="fas fa-file-pdf" style="font-size: 30px;"></i>
+                                                        </a>
+                                                    @elseif (is_array($value))
+                                                        @php
+                                                            $formattedOptions = implode(', ', $value);
+                                                        @endphp
+                                                        <label class="info-label">{{ $formattedOptions }}</label>
+                                                    @else
+                                                        @php
+                                                            $matchedValues = (array) $value;
+                                                            $formfileddata = $AdditionalInformation['formStructureArray'];
+                                                            $valueinputlabel = [];
+                                                            foreach ($formfileddata as $item) {
+                                                                if (isset($item['values']) && is_array($item['values'])) {
+                                                                    foreach ($item['values'] as $subvalue) {
+                                                                        if (in_array($subvalue['value'], $matchedValues)) {
+                                                                            $valueinputlabel[] = $subvalue['label'];
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        @endphp
+                                                        @if(count($valueinputlabel) > 0)
+                                                            <p>{{ implode(', ', $valueinputlabel) }}</p>
+                                                        @else
+                                                            <p>{{ $value }}</p>
+                                                        @endif
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
-                @endif
             </div>
-        </div>
-    </div>
-</div>
-<!-- [ Left Column (6) ] end -->
+            <!-- [ Left Column (6) ] end -->
+
             <!-- [ Right Column (6) ] start -->
             @if(is_array($slotedetail) && count($slotedetail) > 0)
                 <div class="col-md-6">
@@ -157,7 +162,7 @@
                                             <strong>Date:</strong> {{ $slotededata->date }}<br>
                                             <strong>Time:</strong> {{ $slotededata->start }} To {{ $slotededata->end }}<br>
                                             <strong>Duration:</strong> {{ $slotededata->duration }}<br>
-                                            <strong>Price:</strong>{{str_replace(' ', '', $slotededata->price)}}
+                                            <strong>Price:</strong> {{ str_replace(' ', '', $slotededata->price) }}
                                         </div>
                                     @endforeach
                                 </div>
@@ -167,22 +172,22 @@
                         <div class="card-body">
                             <h5 class="text-primary">Total Price:
                                 @php
-                                $totalPrice = 0;
-                                $currencySymbol = '';
-                                if($slotedetail){
-                                    foreach($slotedetail as $slotededata) {
-                                        if($slotededata->price){
-                                            preg_match('/[^\d.,]+/', $slotededata->price, $matches);
-                                            if($matches){
-                                                $currencySymbol = $matches[0]; 
+                                    $totalPrice = 0;
+                                    $currencySymbol = '';
+                                    if ($slotedetail) {
+                                        foreach ($slotedetail as $slotededata) {
+                                            if ($slotededata->price) {
+                                                preg_match('/[^\d.,]+/', $slotededata->price, $matches);
+                                                if ($matches) {
+                                                    $currencySymbol = $matches[0]; 
+                                                }
+                                                $price = preg_replace('/[^0-9.]/', '', $slotededata->price);
+                                                $totalPrice += $price;
                                             }
-                                            $price = preg_replace('/[^0-9.]/', '', $slotededata->price);
-                                            $totalPrice += $price;
                                         }
                                     }
-                                }
                                 @endphp
-                                <span>{{ htmlspecialchars($currencySymbol) }}{{number_format($totalPrice, 2) }}</span>
+                                <span>{{ htmlspecialchars($currencySymbol) }}{{ number_format($totalPrice, 2) }}</span>
                             </h5>
                         </div>
                     </div>
@@ -190,6 +195,7 @@
             @endif
             <!-- [ Right Column (6) ] end -->
         </div>
+        <!-- [ Form Section ] end -->
     </div>
 </section>
 @endsection

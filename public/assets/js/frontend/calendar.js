@@ -23,31 +23,43 @@
 
         // Vendor selection
         $('.service_vendor_form').on('change', function () {
-            $('.remove-all-slots').addClass('hidden');
-            $('.slot-item').remove();
-            // $('.select-slots').addClass('hidden');
+            const selectedValue = $(this).val() || 0;
+            $('.select-slots p').addClass('hidden');
 
-            $('input[name="bookslots"]').val('');
-
-            let selectedValue = $(this).val() || 0;
-
+            // Optional: Show loading spinner or disable UI temporarily here
+        
             $.ajax({
                 url: '/get/vendor/get_booking_calender',
                 type: 'GET',
                 data: { vendor_id: selectedValue },
                 dataType: 'json',
                 success: function (response) {
+                    // Clear previous slots and reset UI
+                    $('.remove-all-slots').addClass('hidden');
+                    $('.slot-item').remove();
+                    $('input[name="bookslots"]').val('');
+                    $('.select-slots p').addClass('hidden');
+        
+                    // Hide old calendar and prepare new one
                     $('.availibility').addClass('hidden');
                     $('.calendar-wrap').removeClass('hidden');
-                    $('.select-slots').addClass('hidden');
+        
                     const workondayoff = response.success && response.data ? response.data : [];
                     const workingDays = workondayoff.map(item => item.Working_day);
-
+        
                     resetCalendar();
                     new Calendar(workingDays, workondayoff);
+        
+                    // After calendar is loaded, you may want to call updateUIState
+                    updateUIState();  // <-- to handle error state, etc.
                 },
+                error: function () {
+                    // Optional: show error message here
+                    console.error("Failed to fetch calendar data.");
+                }
             });
         });
+        
 
         // Calendar class
         class Calendar {
@@ -306,7 +318,7 @@
         // Update UI State
         function updateUIState() {
             const bookslotsVal = $('#bookslots').val();
-            // const hasSlots = bookslotsVal && bookslotsVal.trim() !== '';
+            const hasSlots = bookslotsVal && bookslotsVal.trim() !== '';
             $('.remove-all-slots').toggleClass('hidden', !hasSlots);
             // $('.select_slots').toggleClass('hidden d-none', hasSlots);
         }
