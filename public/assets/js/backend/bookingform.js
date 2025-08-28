@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
          let selectedValue = $(this).val();
          $('.slot-list-wrapper').empty();
          $('.remove-all-slots').addClass('d-none');
-         $('.select-slots').css('display', 'block');
+         $('.select-slots').css('display', 'none');
          $('#bookslots').val('');
          if (selectedValue === "") {
             selectedValue = 0;
@@ -505,6 +505,8 @@ document.addEventListener("DOMContentLoaded", function () {
             if (bookedslootes) {
                isValid = true;
             } else {
+            $('.select-slots').removeClass('d-none');
+               $('.select-slots').css('display', 'block');
                $('.select-slots').html('<p class="text-sm text-red-600 font-medium mt-1 p-4 border border-gray-300 shadow-md rounded-l text-danger ">Please select a date and select atleast one slot.</p>');
                isValid = false;
             }
@@ -652,7 +654,7 @@ document.addEventListener("DOMContentLoaded", function () {
          if (!isEmpty(serviceValue) && !isEmpty(vendorValue) && isEmpty(bookslotsValue)) {
             // $('.submit').prop('disabled', true);
             // $('.next').prop('disabled', true);
-            $('.select-slots').removeClass('d-none');
+            // $('.select-slots').removeClass('d-none');
          } else {
             $('.select-slots').addClass('d-none');
             // $('.submit').prop('disabled', false);

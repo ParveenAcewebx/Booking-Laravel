@@ -25,7 +25,8 @@
         $('.service_vendor_form').on('change', function () {
             $('.remove-all-slots').addClass('hidden');
             $('.slot-item').remove();
-            
+            // $('.select-slots').addClass('hidden');
+
             $('input[name="bookslots"]').val('');
 
             let selectedValue = $(this).val() || 0;
@@ -209,6 +210,7 @@
                         const price = `${response?.serviceCurrency || ''}${response?.price || ''}`;
                         const duration = parseInt(response?.duration, 10) || 0;
                         const staffOffIds = response.staff_off_ids ? response.staff_off_ids.split(',') : [];
+                        $('.select-slots').addClass('hidden');
 
                         if (response?.merged_slots?.length > 0) {
                             $('.availibility').removeClass('hidden');
@@ -304,9 +306,9 @@
         // Update UI State
         function updateUIState() {
             const bookslotsVal = $('#bookslots').val();
-            const hasSlots = bookslotsVal && bookslotsVal.trim() !== '';
+            // const hasSlots = bookslotsVal && bookslotsVal.trim() !== '';
             $('.remove-all-slots').toggleClass('hidden', !hasSlots);
-            $('.select_slots').toggleClass('hidden d-none', hasSlots);
+            // $('.select_slots').toggleClass('hidden d-none', hasSlots);
         }
 
         // Remove single slot
