@@ -25,6 +25,7 @@
         $('.service_vendor_form').on('change', function () {
             $('.remove-all-slots').addClass('hidden');
             $('.slot-item').remove();
+            
             $('input[name="bookslots"]').val('');
 
             let selectedValue = $(this).val() || 0;
@@ -37,7 +38,7 @@
                 success: function (response) {
                     $('.availibility').addClass('hidden');
                     $('.calendar-wrap').removeClass('hidden');
-
+                    $('.select-slots').addClass('hidden');
                     const workondayoff = response.success && response.data ? response.data : [];
                     const workingDays = workondayoff.map(item => item.Working_day);
 
