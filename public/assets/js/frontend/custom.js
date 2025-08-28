@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-const loader = document.getElementById('loader');
+    const loader = document.getElementById('loader');
     const formWrapper = document.getElementById('dynamic-form');
 
     setTimeout(() => {
-        if (loader) loader.style.display = 'none';  
-        if (formWrapper) formWrapper.classList.remove('hidden'); 
+        if (loader) loader.style.display = 'none';
+        if (formWrapper) formWrapper.classList.remove('hidden');
     }, 500);
 
     setTimeout(function () {
@@ -23,27 +23,28 @@ const loader = document.getElementById('loader');
     $(document).on("input change", "input, select", function () {
         const field = this;
         field.classList.remove('border-red-500');
-    
+
         const err = field.nextElementSibling;
         if (err && err.classList.contains('error-message')) err.remove();
-    
+
         if (field.type === 'checkbox') {
             const checkboxParent = $(field).closest('.mb-6')[0];
             $(checkboxParent).find('.checkbox-error-message').remove();
         }
-    
+
         if (field.classList.contains('service_vendor_form') && field.value) {
             const placeholder = field.parentNode.querySelector('.vendor-placeholder');
             if (placeholder) placeholder.innerHTML = '';
         }
     });
-    
+
 
     if (!steps.length || !prevButton || !nextButtons.length || !submitButtons.length) {
         console.error('Required elements not found!');
         return;
     }
 
+    /*------ Check ValidationReuired ------*/
     function validateRequiredFields(step) {
         let isValid = true;
         const requiredFields = step.querySelectorAll('[required]');
@@ -165,12 +166,11 @@ const loader = document.getElementById('loader');
 
         if (!isFormValid) {
             event.preventDefault();
-            // console.warn("Form validation failed!");
         }
     }
 
+    /*------ Staff Select On Change ------*/
     function get_services_staff() {
-        console.log('get_services_staff', 1);
         var selectslots = document.querySelector('.select-slots');
         var serviceId = ServiceStaffCode.value;
         $('.availibility,.calendar-wrap,.remove-all-slots').addClass('hidden');
@@ -365,10 +365,7 @@ const loader = document.getElementById('loader');
                                     valuesToCheck = ["on"];
                                 }
 
-                                // Reset first
                                 checkboxElements.prop("checked", false);
-
-                                // Match
                                 checkboxElements.each(function () {
                                     if (valuesToCheck.includes($(this).val())) {
                                         $(this).prop("checked", true);
@@ -376,7 +373,6 @@ const loader = document.getElementById('loader');
                                 });
                             }
 
-                            // ✅ Checkbox with "other"
                             if (key.endsWith("_other")) {
                                 let otherField = $('input[name="' + formattedKey + '[]"'); // text box
                                 if (otherField.length > 0) {
@@ -385,7 +381,6 @@ const loader = document.getElementById('loader');
                                     } else if (typeof nestedValue === "string") {
                                         otherField.val(nestedValue);
                                     }
-                                    // Also check "__other__" checkbox
                                     let otherCheckbox = $(
                                         'input[type="checkbox"][name="' +
                                         key.replace("_other", "") +
@@ -397,7 +392,6 @@ const loader = document.getElementById('loader');
                                 }
                             }
 
-                            // ✅ Special handling for bookslots
                             if (key === 'bookslots') {
                                 let inputElement = $('input[name="' + key + '"]');
                                 if (inputElement.length > 0) {
@@ -437,7 +431,7 @@ const loader = document.getElementById('loader');
     });
 
 
-    // Save form data on page unload
+    /*------ Save form data on page unload ------*/
     window.onbeforeunload = function () {
         let formAction = document.querySelector('form').action;
         let urlParts = formAction.split('/');
@@ -455,7 +449,6 @@ const loader = document.getElementById('loader');
                         };
                     }
                 } else if (element.type === "checkbox") {
-                    // ✅ Save multiple checkbox values as an array
                     if (!dataToSave[element.name]) {
                         dataToSave[element.name] = { name: element.name, value: [] };
                     }
@@ -504,6 +497,7 @@ const loader = document.getElementById('loader');
         );
     }
 
+    /*------ Check Slots based on buttons ------*/
     function checkSlots($context) {
         const steps = $context.find('.step');
         const activeStep = steps.filter(':visible');
@@ -513,29 +507,24 @@ const loader = document.getElementById('loader');
         const serviceValue = $('#get_service_staff').val();
         const vendorValue = $('#service_vendor_form').val();
         const activeBtn = $context.find('.next:visible,.submit:visible');
-        // console.log('activeBtn', activeBtn);
         let valid = true;
         const slotCount = wrapper.find('.slot-item').length;
         if (wrapper.length > 0 && !isEmpty(serviceValue) && !isEmpty(vendorValue) && isEmpty(bookslotsValue) && slotCount === 0) {
-            // console.log(`❌ No booking slots selected (Step ${currentStepIndex})`);
             $('.select-slots').removeClass('hidden');
             valid = false;
         } else if (valid) {
-            // console.log(`✅ Slot validation passed (Step ${currentStepIndex})`);
             $('.select-slots').addClass('hidden');
             valid = true;
         }
-        // activeBtn.prop('disabled', !valid);
     }
 
-    // Run once on page load
+    /*------ On page load check data ------*/
     $(document).ready(function () {
         $('.form-navigation').each(function () {
             checkSlots($(this).closest('form, body'));
         });
     });
 
-    // Recheck on actions
     $(document).on(
         'click change',
         '.slot-card, .add-slot, #get_service_staff, #service_vendor_form , .next,.submit,.previous',
@@ -585,5 +574,4 @@ const loader = document.getElementById('loader');
             }
         });
     }, 1000);
-
 });

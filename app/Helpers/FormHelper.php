@@ -274,15 +274,15 @@ class FormHelper
 
                     default:
                         if (in_array($subtype, ['date', 'time', 'datetime-local']) && !empty($value)) {
-                            $timestamp = strtotime($value);
-                            if ($timestamp) {
-                                $value = match ($subtype) {
-                                    'date' => date('Y-m-d', $timestamp),
-                                    'time' => date('H:i', $timestamp),
-                                    'datetime-local' => date('Y-m-d\TH:i', $timestamp),
-                                    default => $value
-                                };
-                            }
+                            // $timestamp = strtotime($value);
+                            // if ($timestamp) {
+                            //     $value = match ($subtype) {
+                            //         'date' => date('Y-m-d', $timestamp),
+                            //         'time' => date('H:i', $timestamp),
+                            //         'datetime-local' => date('Y-m-d\TH:i', $timestamp),
+                            //         default => $value
+                            //     };
+                            // }
                         }
                         $html .= "<div class='{$c['group']}'><label class='{$c['label']}'>$label " . ($required ? ' <span class="text-red-500">*</span>' : '') . "</label>
                               <input type='$subtype' name='$inputName' class='{$c['input']}' value='" . htmlspecialchars($value) . "' placeholder='" . htmlspecialchars($placeholder) . "' $required>

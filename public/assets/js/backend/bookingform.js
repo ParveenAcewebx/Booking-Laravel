@@ -112,9 +112,11 @@ document.addEventListener("DOMContentLoaded", function () {
          $('.select-slots').css('display', 'none');
          $('#bookslots').val('');
          if (selectedValue === "") {
+            $('.calendar-wrap').addClass('d-none');
             selectedValue = 0;
          } else {
             selectedValue = selectedValue;
+            $('.calendar-wrap').removeClass('d-none');
          }
          $.ajax({
             url: '/get/vendor/get_booking_calender',
@@ -125,7 +127,6 @@ document.addEventListener("DOMContentLoaded", function () {
             dataType: 'json',
             success: function (response) {
                $('.availibility').addClass('d-none');
-               $('.calendar-wrap').removeClass('d-none');
                if (response.success === true && response.data && response.data[0]) {
                   const workondayoff = response.data;
                   const workingDays = response.data.map(item => item.Working_day);

@@ -7,7 +7,7 @@
 
     $(document).ready(function () {
 
-        // Function to reset calendar cells
+        /*------ Function to reset calendar cells ------*/
         function resetCalendar() {
             const calendar = document.getElementById('calendar');
             if (calendar) {
@@ -21,47 +21,38 @@
             }
         }
 
-        // Vendor selection
+        /*------ Vendor selection ------*/
         $('.service_vendor_form').on('change', function () {
             const selectedValue = $(this).val() || 0;
             $('.select-slots p').addClass('hidden');
 
-            // Optional: Show loading spinner or disable UI temporarily here
-        
             $.ajax({
                 url: '/get/vendor/get_booking_calender',
                 type: 'GET',
                 data: { vendor_id: selectedValue },
                 dataType: 'json',
                 success: function (response) {
-                    // Clear previous slots and reset UI
                     $('.remove-all-slots').addClass('hidden');
                     $('.slot-item').remove();
                     $('input[name="bookslots"]').val('');
                     $('.select-slots p').addClass('hidden');
-        
-                    // Hide old calendar and prepare new one
                     $('.availibility').addClass('hidden');
                     $('.calendar-wrap').removeClass('hidden');
-        
+
                     const workondayoff = response.success && response.data ? response.data : [];
                     const workingDays = workondayoff.map(item => item.Working_day);
-        
+
                     resetCalendar();
                     new Calendar(workingDays, workondayoff);
-        
-                    // After calendar is loaded, you may want to call updateUIState
-                    updateUIState();  // <-- to handle error state, etc.
+                    updateUIState();
                 },
                 error: function () {
-                    // Optional: show error message here
                     console.error("Failed to fetch calendar data.");
                 }
             });
         });
-        
 
-        // Calendar class
+        /*------ Calendar class ------*/
         class Calendar {
             constructor(workingDays, workondayoff) {
                 this.workingDays = workingDays || [];
@@ -105,7 +96,7 @@
                 const currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
                 let dayIndex = 0;
 
-                // Flatten dayoffs for all staff
+                /*------ Flatten dayoffs for all staff ------*/
                 const allDayoffs = this.workOnoff.flatMap(staff =>
                     (staff.Dayoff || []).flat().map(d => new Date(d.date).toDateString())
                 );
@@ -120,7 +111,7 @@
                         cell.innerHTML = dayNum;
                         const dayName = dayDate.toLocaleString('en-us', { weekday: 'long' }).toLowerCase();
 
-                        // Collect which staff works on this weekday
+                        /*------ Collect which staff works on this weekday ------*/
                         const staffWorking = this.workOnoff.map(staff => {
                             const wd = staff.Working_day || {};
                             const slot = wd[dayName];
@@ -134,20 +125,20 @@
                         if (dayDate < currentDate) {
                             isDisabled = true;
                         } else if (!atLeastOneWorks) {
-                            // nobody works this weekday
+                            /*------ nobody works this weekday ------*/
                             isDisabled = true;
                         } else if (hasAnyDayoff) {
-                            // check if date is in someone's Dayoff
+                            /*------ check if date is in someone's Dayoff ------*/
                             const staffOnDayoff = this.workOnoff.filter(staff =>
                                 (staff.Dayoff || []).flat().some(d => new Date(d.date).toDateString() === dayDate.toDateString())
                             );
                             if (staffOnDayoff.length > 0) {
-                                // If ALL working staff are off -> disable
+                                /*------ If ALL working staff are off -> disable ------*/
                                 const othersWork = this.workOnoff.some(staff => {
                                     const wd = staff.Working_day || {};
                                     const slot = wd[dayName];
                                     return slot && slot.start && !slot.start.includes("00:00:00") &&
-                                           !(staff.Dayoff || []).flat().some(d => new Date(d.date).toDateString() === dayDate.toDateString());
+                                        !(staff.Dayoff || []).flat().some(d => new Date(d.date).toDateString() === dayDate.toDateString());
                                 });
                                 if (!othersWork) {
                                     isDisabled = true;
@@ -248,19 +239,19 @@
             }
         }
 
-        // Format duration
+        /*------ Format duration ------*/
         function formatDuration(minutes) {
             if (!minutes || minutes <= 0) return '0 minutes';
             const hrs = Math.floor(minutes / 60);
             const mins = minutes % 60;
             return (hrs > 0 ? `${hrs} hour${hrs > 1 ? 's' : ''}` : '') +
-                   (hrs > 0 && mins > 0 ? ' ' : '') +
-                   (mins > 0 ? `${mins} minute${mins > 1 ? 's' : ''}` : '');
+                (hrs > 0 && mins > 0 ? ' ' : '') +
+                (mins > 0 ? `${mins} minute${mins > 1 ? 's' : ''}` : '');
         }
 
         let slotDataArray = []; // Global
 
-        // Bind slot click event
+        /*------ Bind slot click event ------*/
         function bindSlotClickEvent() {
             $(document).off('click.slotCard').on('click.slotCard', '.slot-card', function () {
                 const { date, price, start, end, duration, id: staffIds } = $(this).data();
@@ -268,7 +259,7 @@
             });
         }
 
-        // Create slot card HTML
+        /*------ Create slot card HTML ------*/
         function createSlotHTML(date, price, start, end, duration, staffIds) {
 
             const staffIdsString = Array.isArray(staffIds) ? staffIds.join(',') : staffIds;
@@ -286,7 +277,7 @@
         </div>`;
         }
 
-        // Append slot item only once
+        /*------ Append slot item only once ------*/
         function AppendSlotBoxOnce(date, price, start, end, duration, staffIds) {
             const $wrapper = $('.slot-list-wrapper');
             const uniqueKey = `${date}-${start}-${end}`;
@@ -316,7 +307,7 @@
             updateUIState();
         }
 
-        // Update UI State
+        /*------ Update UI State ------*/
         function updateUIState() {
             const bookslotsVal = $('#bookslots').val();
             const hasSlots = bookslotsVal && bookslotsVal.trim() !== '';
@@ -324,7 +315,7 @@
             // $('.select_slots').toggleClass('hidden d-none', hasSlots);
         }
 
-        // Remove single slot
+        /*------ Remove single slot ------*/
         $(document).on('click', '.remove-slot', function () {
             const $item = $(this).closest('.slot-item');
             const uniqueKey = $item.data('slot');
@@ -334,7 +325,7 @@
             updateUIState();
         });
 
-        // Remove all slots
+        /*------ Remove all slots ------*/
         $(document).on('click', '.remove-all-slots', function () {
             $('.slot-list-wrapper').find('.slot-item').remove();
             slotDataArray = [];
@@ -342,7 +333,6 @@
             updateUIState();
         });
 
-        // Page load
         $(document).ready(function () {
             updateUIState();
             bindSlotClickEvent();
