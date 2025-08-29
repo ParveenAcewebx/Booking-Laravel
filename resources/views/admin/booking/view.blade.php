@@ -67,7 +67,7 @@
 
 
                             <!-- Service/Vendor Information Section -->
-                            @if(!empty($serviceverndor['serivename']) || !empty($serviceverndor['vendorname']))
+                            @if(!empty($serviceverndor['serivename']) && !empty($serviceverndor['vendorname']))
                             <div class="info-section mb-4">
                                 <h6 class="info-title text-primary">Service / Vendor Information</h6>
                                 <div class="service-vendor-info">
