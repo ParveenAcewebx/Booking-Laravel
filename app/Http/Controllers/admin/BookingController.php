@@ -164,83 +164,107 @@ class BookingController extends Controller
         $booking = Booking::with('template')->findOrFail($id);
         $dynamicValues = json_decode($booking->booking_data, true) ?? [];
 
-        if (isset($dynamicValues['service'])) {
-            $servicedata = Service::where('id', $dynamicValues['service'])->first();
-        } else {
-            $servicedata = null;
-        }
-        if (isset($dynamicValues['vendor'])) {
-            $vendorname = Vendor::where('id', $dynamicValues['vendor'])->pluck('name')->first();
-        } else {
-            $vendorname = null;
-        }
+        $servicedata = isset($dynamicValues['service'])
+            ? Service::where('id', $dynamicValues['service'])->first()
+            : null;
+
+        $vendorname = isset($dynamicValues['vendor'])
+            ? Vendor::where('id', $dynamicValues['vendor'])->pluck('name')->first()
+            : null;
+
         $serviceverndor = [
-            'serivename' => $servicedata ? $servicedata->name : null,
-            'serviceprice' => $servicedata ? $servicedata->price : null,
-            'servicurrency' => $servicedata ? $servicedata->currency : null,
-            'serviceduration' => $servicedata ? $servicedata->duration : null,
-            'vendorname' => $vendorname,
+            'serivename'      => $servicedata?->name,
+            'serviceprice'    => $servicedata?->price,
+            'servicurrency'   => $servicedata?->currency,
+            'serviceduration' => $servicedata?->duration,
+            'vendorname'      => $vendorname,
         ];
 
         $slotedetail = json_decode($booking->bookslots);
         $formStructureJson = $booking->template->data ?? '[]';
         $formStructureArray = json_decode($formStructureJson, true);
-        $formStructureArray = array_filter($formStructureArray, function ($item) {
-            return $item['type'] !== 'shortcodeblock';
-        });
+        $formStructureArray = array_filter($formStructureArray, fn($item) => $item['type'] !== 'shortcodeblock');
+
         $AdditionalInformation = [];
-        if (isset($dynamicValues)) {
+
+        if (!empty($dynamicValues)) {
             $excludedKeys = ['first_name', 'last_name', 'email', 'phone', 'service', 'vendor'];
 
-            $filteredDynamicValues = array_filter($dynamicValues, function ($key) use ($excludedKeys) {
-                return !in_array($key, $excludedKeys);
-            }, ARRAY_FILTER_USE_KEY);
+            $filteredDynamicValues = array_filter(
+                $dynamicValues,
+                fn($key) => !in_array($key, $excludedKeys),
+                ARRAY_FILTER_USE_KEY
+            );
 
             $filteredKeys = array_keys($filteredDynamicValues);
 
             $matchedValues = array_map(function ($field) use ($dynamicValues) {
-                return isset($dynamicValues[$field['name']]) ? $dynamicValues[$field['name']] : null;
-            }, array_filter($formStructureArray, function ($field) use ($filteredKeys) {
-                if (!empty($field['name'])) {
-                    return in_array($field['name'], $filteredKeys);
+                $name = $field['name'] ?? null;
+                if (!$name) return null;
+                $value = $dynamicValues[$name] ?? null;
+
+                if ($field['type'] === 'checkbox-group') {
+                    $values = (array) ($value ?? []);
+                    if (in_array('other', $values)) {
+                        $values = array_diff($values, ['other']);
+                        if (!empty($dynamicValues[$name . '_other'])) {
+                            $otherValues = (array) $dynamicValues[$name . '_other'];
+                            $values = array_merge($values, $otherValues);
+                        }
+                    }
+                    return array_values($values);
                 }
-                return;
+
+                if ($field['type'] === 'radio-group') {
+                    if ($value === 'other' && !empty($dynamicValues[$name . '_other'])) {
+                        return $dynamicValues[$name . '_other'];
+                    }
+                    return $value;
+                }
+
+                return $value;
+            }, array_filter($formStructureArray, function ($field) use ($filteredKeys) {
+                return !empty($field['name']) && in_array($field['name'], $filteredKeys);
             }));
 
             $matchedLabels = array_map(
                 function ($field) {
-                    return $field['label'];
+                    return isset($field['label']) ? $field['label'] : '';
                 },
                 array_filter($formStructureArray, function ($field) use ($filteredKeys) {
-                    if (!empty($field['name'])) {
-                        return in_array($field['name'], $filteredKeys);
-                    }
-                    return;
+                    return !empty($field['name']) && in_array($field['name'], $filteredKeys);
                 })
             );
+
+
             $AdditionalInformation = [
-                'AddInfoLabel' => $matchedLabels,
-                'AddInfoValue' => $matchedValues,
-                'formStructureArray' => $formStructureArray
+                'AddInfoLabel'       => $matchedLabels,
+                'AddInfoValue'       => $matchedValues,
+                'formStructureArray' => $formStructureArray,
             ];
         }
-        $bookingid = $id ? $id : '';
-        $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
+
+        $bookingid = $id ?: '';
+
+        if (!empty($booking->booking_datetime)) {
+            $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
+        }
+
         $selectedStaffUser = User::where('name', $booking->selected_staff)->first();
-        $booking->selected_staff = $selectedStaffUser ? $selectedStaffUser->id : null;
+        $booking->selected_staff = $selectedStaffUser?->id;
+
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
         return view('admin.booking.view', [
-            'bookingid' => $id,
-            'booking' => $booking,
+            'bookingid'            => $id,
+            'booking'              => $booking,
             'AdditionalInformation' => $AdditionalInformation,
-            'userinfo' => $dynamicValues,
-            'serviceverndor' => $serviceverndor,
-            'slotedetail' => $slotedetail,
-            'staffList' => $this->allUsers,
-            'loginUser' => $loginUser,
-
+            'userinfo'             => $dynamicValues,
+            'serviceverndor'       => $serviceverndor,
+            'slotedetail'          => $slotedetail,
+            'staffList'            => $this->allUsers,
+            'loginUser'            => $loginUser,
         ]);
     }
 
