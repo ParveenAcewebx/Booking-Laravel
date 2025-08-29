@@ -146,11 +146,11 @@ class FormController extends Controller
             $workingDates = [];
             $vendor_id = $request['vendor_id'];
             $vendoraiationsstaff = VendorStaffAssociation::where('vendor_id', $vendor_id)
-            ->with('staff')
-            ->whereHas('user', function ($query) {
-                $query->where('status', 1); 
-            })
-            ->get();
+                ->with('staff')
+                ->whereHas('user', function ($query) {
+                    $query->where('status', 1);
+                })
+                ->get();
             if ($vendoraiationsstaff->isNotEmpty()) {
                 $workingDates = $vendoraiationsstaff->map(function ($association) {
                     $formattedWorkHours = [];
@@ -203,10 +203,13 @@ class FormController extends Controller
         $servicePrice = $service->price ?? 0;
         $serviceCurrency = $service->currency;
 
-        $vendorAssociations = VendorStaffAssociation::with('staff')
+        $vendorAssociations = VendorStaffAssociation::with(['staff', 'user'])
             ->where('vendor_id', $request->vendorid)
+            ->whereHas('user', function ($q) {
+                $q->where('status', 1); // active column in users table
+            })
             ->get();
-        
+
         $staffAvailability = collect();
         $allStaffSlots = collect();
         $allIntervals = [];
