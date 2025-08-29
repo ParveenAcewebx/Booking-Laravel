@@ -273,95 +273,81 @@ document.addEventListener("DOMContentLoaded", function () {
         let formAction = document.querySelector('form').action;
         let urlParts = formAction.split('/');
         let formId = urlParts[urlParts.length - 1];
+        let isSubmitting = false; // <-- flag
+
+        // detect form submit
+        $('form').on('submit', function () {
+            isSubmitting = true;
+        });
 
         $.ajax({
             url: '/get/session',
             method: 'GET',
             data: { formId: formId },
             success: function (response) {
-                console.log(response);
-
                 if (response.status === 'success') {
                     Object.keys(response['data']).forEach(function (parentKey) {
                         let value = response['data'][parentKey];
 
                         Object.keys(value).forEach(function (key) {
-                            let formattedKey = key + "]";
+                            let formattedKey = key;
                             let nestedValue = value[key];
+                            console.log("nestedValue:", nestedValue);
 
+                            // always use nestedValue.value here
+                            let val = (nestedValue && typeof nestedValue === "object" && "value" in nestedValue)
+                                ? nestedValue.value
+                                : nestedValue;
+
+                            // ---------- input ----------
                             let inputElement = $('input[name="' + formattedKey + '"]');
-                            if (
-                                inputElement.length > 0 &&
-                                inputElement.attr('type') !== 'radio' &&
-                                inputElement.attr('type') !== 'checkbox'
-                            ) {
-                                inputElement.val(nestedValue);
+                            if (inputElement.length > 0 && inputElement.attr('type') !== 'radio' && inputElement.attr('type') !== 'checkbox') {
+                                inputElement.val(val);
                             }
 
+                            // ---------- select ----------
                             let selectElement = $('select[name="' + formattedKey + '"]');
                             if (selectElement.length > 0) {
-                                selectElement.val(nestedValue);
+                                selectElement.val(val);
                                 if (selectElement.hasClass('get_service_staff')) {
-                                    get_services_staff();
+                                    setTimeout(function () {
+                                        selectElement.val(val).trigger('change');
+                                        get_services_staff();
+                                    }, 500);
                                 }
                                 if (selectElement.hasClass('service_vendor_form')) {
-                                    setTimeout(function () {
-                                        selectElement.val(nestedValue);
-                                        selectElement.trigger('change');
-                                    }, 1000);
+                                    if (val != null) {
+                                        setTimeout(function () {
+                                            console.log(val);
+                                            selectElement.val(val).trigger('change');
+                                        }, 1000);
+                                    }
                                 }
                             }
 
+                            // ---------- textarea ----------
                             let textareaElement = $('textarea[name="' + formattedKey + '"]');
                             if (textareaElement.length > 0) {
-                                textareaElement.val(nestedValue);
+                                textareaElement.val(val);
                             }
 
-                            if (typeof nestedValue === "string") {
-                                let radioElement = $(
-                                    'input[type="radio"][name="' + formattedKey + '"][value="' + nestedValue + '"]'
-                                );
+                            // ---------- radio ----------
+                            if (typeof val === "string") {
+                                let radioElement = $('input[type="radio"][name="' + formattedKey + '"][value="' + val + '"]');
                                 if (radioElement.length > 0) {
                                     radioElement.prop('checked', true);
                                 }
                             }
 
-                            if (key.endsWith("_other")) {
-                                let otherField = $('input[name="' + formattedKey + '"]'); // text box
-                                if (otherField.length > 0 && nestedValue) {
-                                    otherField.val(
-                                        Array.isArray(nestedValue) && nestedValue.length > 1
-                                            ? nestedValue[1]
-                                            : nestedValue
-                                    );
-                                    let radioOther = $(
-                                        'input[type="radio"][name="' +
-                                        key.replace("_other", "") +
-                                        ']"][value="__other__"]'
-                                    );
-                                    if (radioOther.length > 0) {
-                                        radioOther.prop("checked", true);
-                                    }
-                                }
-                            }
-
+                            // ---------- checkboxes ----------
                             let checkboxElements = $('input[type="checkbox"][name="' + formattedKey + '[]"');
                             if (checkboxElements.length > 0) {
                                 let valuesToCheck = [];
-                                if (Array.isArray(nestedValue)) {
-                                    if (nestedValue[0] === formattedKey) {
-                                        valuesToCheck = nestedValue.slice(1);
-                                    } else {
-                                        valuesToCheck = nestedValue;
-                                    }
-                                } else if (typeof nestedValue === "string") {
-                                    valuesToCheck = [nestedValue];
-                                } else if (
-                                    nestedValue === true ||
-                                    nestedValue === "true" ||
-                                    nestedValue === 1 ||
-                                    nestedValue === "1"
-                                ) {
+                                if (Array.isArray(val)) {
+                                    valuesToCheck = val;
+                                } else if (typeof val === "string") {
+                                    valuesToCheck = [val];
+                                } else if (val === true || val === "true" || val === 1 || val === "1") {
                                     valuesToCheck = ["on"];
                                 }
 
@@ -373,32 +359,14 @@ document.addEventListener("DOMContentLoaded", function () {
                                 });
                             }
 
-                            if (key.endsWith("_other")) {
-                                let otherField = $('input[name="' + formattedKey + '[]"'); // text box
-                                if (otherField.length > 0) {
-                                    if (Array.isArray(nestedValue) && nestedValue.length > 1) {
-                                        otherField.val(nestedValue[1]);
-                                    } else if (typeof nestedValue === "string") {
-                                        otherField.val(nestedValue);
-                                    }
-                                    let otherCheckbox = $(
-                                        'input[type="checkbox"][name="' +
-                                        key.replace("_other", "") +
-                                        ']"][value="__other__"]'
-                                    );
-                                    if (otherCheckbox.length > 0) {
-                                        otherCheckbox.prop("checked", true);
-                                    }
-                                }
-                            }
-
+                            // ---------- special case bookslots ----------
                             if (key === 'bookslots') {
                                 let inputElement = $('input[name="' + key + '"]');
                                 if (inputElement.length > 0) {
-                                    inputElement.val(nestedValue.value);
-                                    if (nestedValue.value) {
+                                    inputElement.val(val);
+                                    if (val) {
                                         const $wrapper = $('.slot-list-wrapper');
-                                        const decodedValue = nestedValue.value.replace(/&quot;/g, '"');
+                                        const decodedValue = val.replace(/&quot;/g, '"');
                                         const slots = JSON.parse(decodedValue);
                                         slots.forEach((slot, index) => {
                                             const { date, price, start, end, duration, staff_ids } = slot;
@@ -428,65 +396,51 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error('Error retrieving session data:', error);
             }
         });
-    });
 
+        /*------ Save form data on page unload ------*/
+        window.onbeforeunload = function (event) {
+            if (isSubmitting) {
+                // allow normal form submission, don't interfere
+                return;
+            }
 
-    /*------ Save form data on page unload ------*/
-    window.onbeforeunload = function () {
-        let formAction = document.querySelector('form').action;
-        let urlParts = formAction.split('/');
-        let formId = urlParts[urlParts.length - 1];
-        let formElements = document.querySelector('form').elements;
-        let dataToSave = {};
+            let formAction = document.querySelector('form').action;
+            let urlParts = formAction.split('/');
+            let formId = urlParts[urlParts.length - 1];
+            let formElements = document.querySelector('form').elements;
+            let dataToSave = {};
 
-        Array.from(formElements).forEach(function (element) {
-            if (element.name) {
-                if (element.type === "radio") {
-                    if (element.checked) {
-                        dataToSave[element.name] = {
-                            name: element.name,
-                            value: element.value
-                        };
+            Array.from(formElements).forEach(function (element) {
+                if (element.name) {
+                    if (element.type === "radio") {
+                        if (element.checked) {
+                            dataToSave[element.name] = { name: element.name, value: element.value };
+                        }
+                    } else if (element.type === "checkbox") {
+                        if (!dataToSave[element.name]) {
+                            dataToSave[element.name] = { name: element.name, value: [] };
+                        }
+                        if (element.checked) {
+                            dataToSave[element.name].value.push(element.value);
+                        }
+                    } else {
+                        dataToSave[element.name] = { name: element.name, value: element.value };
                     }
-                } else if (element.type === "checkbox") {
-                    if (!dataToSave[element.name]) {
-                        dataToSave[element.name] = { name: element.name, value: [] };
-                    }
-                    if (element.checked) {
-                        dataToSave[element.name].value.push(element.value);
-                    }
-                } else {
-                    dataToSave[element.name] = {
-                        name: element.name,
-                        value: element.value
-                    };
                 }
-            }
-        });
+            });
 
-        let finalDataToSave = {
-            formId: formId,
-            data: dataToSave
+            let finalDataToSave = {
+                formId: formId,
+                data: dataToSave,
+                _token: document.querySelector('meta[name="csrf-token"]').content
+            };
+
+            navigator.sendBeacon(
+                '/store/session',
+                new Blob([JSON.stringify(finalDataToSave)], { type: 'application/json' })
+            );
         };
-
-        var headers = {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        };
-
-        $.ajax({
-            url: '/store/session',
-            method: 'POST',
-            data: finalDataToSave,
-            headers: headers,
-            success: function (response) {
-                console.log(response);
-                console.log('Data saved successfully');
-            },
-            error: function (error) {
-                console.log('Error saving data');
-            }
-        });
-    };
+    });
 
     function isEmpty(value) {
         return (
@@ -507,12 +461,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const serviceValue = $('#get_service_staff').val();
         const vendorValue = $('#service_vendor_form').val();
         const activeBtn = $context.find('.next:visible,.submit:visible');
-       
+
         let valid = true;
         const slotCount = wrapper.find('.slot-item').length;
         if (wrapper.length > 0 && !isEmpty(serviceValue) && !isEmpty(vendorValue) && isEmpty(bookslotsValue) && slotCount === 0) {
             $('.select-slots').removeClass('hidden');
-           
+
             valid = false;
         } else if (valid) {
             $('.select-slots').addClass('hidden');
