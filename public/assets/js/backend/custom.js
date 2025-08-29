@@ -479,8 +479,7 @@ $(function ($) {
                                 const value = `[${code}]`;
                                 const isSelected = savedValue === value;
                                 $select.append(
-                                    `<option value="${value}" ${
-                                        isSelected ? "selected" : ""
+                                    `<option value="${value}" ${isSelected ? "selected" : ""
                                     }>${value}</option>`
                                 );
                             });
@@ -555,7 +554,7 @@ $(function ($) {
         $.ajax({
             url: "/admin/template/save",
             method: "POST",
-            data: { data, templatename: inputValue, templatestatus:status, templateid, _token: csrfToken },
+            data: { data, templatename: inputValue, templatestatus: status, templateid, _token: csrfToken },
             success: () => window.location.href = `${window.location.origin}/admin/templates`,
             error: (xhr) => console.error(xhr.responseText),
         });
@@ -736,7 +735,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         const form = document.querySelector("form");
                         if (form) {
                             form.addEventListener("submit", function (event) {
-                                
+
                                 let templateData = {};
                                 const inputs =
                                     form.querySelectorAll("[name^='dynamic']");
@@ -772,14 +771,26 @@ document.addEventListener("DOMContentLoaded", function () {
                             });
                         }
 
-                        $("#bookingTemplateModal").modal("hide");                       
+                        $("#bookingTemplateModal").modal("hide");
+                        $('.loader-block').removeClass('d-none');
+                        let percent = 0;
+                        let interval = setInterval(function () {
+                            percent += 1;
+                            jQuery(".loader-percent").text(percent + "%");
+                            if (percent >= 100) {
+                                clearInterval(interval);
+                                jQuery(".loader-block").fadeOut(600, function () {
+                                    jQuery(".site-wrapper").fadeIn(1000);
+                                });
+                            }
+                        }, 30);
                     } else {
                         alert(data.message || "Failed to load template.");
                     }
                 })
                 .catch((error) => {
                     console.error("Error loading template:", error);
-                    alert("An error occurred while loading the template.");
+                    alert("This template is empty. Please select another template.");
                 });
         });
     }
@@ -787,7 +798,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.addEventListener("DOMContentLoaded", function () {
     const selectAll = document.getElementById("select-all-permissions");
-    if (!selectAll) return; 
+    if (!selectAll) return;
     function updateSelectAllCheckbox() {
         const all = document.querySelectorAll(".permission-checkbox");
         const checked = Array.from(all).filter((cb) => cb.checked);

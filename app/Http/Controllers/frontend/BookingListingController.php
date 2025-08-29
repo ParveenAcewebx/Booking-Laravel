@@ -17,8 +17,9 @@ class BookingListingController extends Controller
                 session()->forget($key);
             }
         }
+
         return view('frontend.bookingListing', [
-            'bookings' => BookingTemplate::where('status', 1)->get(),
+           'bookings' => BookingTemplate::where('status', 1)->where('data', '!=', 'null')->get(),
             'username' => null
         ]);
     }

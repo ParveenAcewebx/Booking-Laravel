@@ -741,20 +741,6 @@ document.addEventListener("DOMContentLoaded", function () {
          if (templateId) {
             twostepform();
          }
-         $('.loader-block').removeClass('d-none');
-         let percent = 0;
-         let interval = setInterval(function () {
-            percent += 1;
-            jQuery(".loader-percent").text(percent + "%");
-            if (percent >= 100) {
-               clearInterval(interval);
-               jQuery(".loader-block").fadeOut(600, function () {
-                  jQuery(".site-wrapper").fadeIn(1000);
-               });
-            }
-         }, 30);
-
-
       }, 500);
    });
 
