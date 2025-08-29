@@ -177,3 +177,10 @@ span.select2-selection.select2-selection--single
     border-radius: 0;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
+
+.pre-button .fa.fa-chevron-left {
+    padding: 10px;
+  }
+  .next-button .fa.fa-chevron-right{
+      padding: 10px;
+  }

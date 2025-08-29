@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
    /* ================================== Get service data   =============================*/
 
-    $(document).on("input change", "input, select", function () {
+   $(document).on("input change", "input, select", function () {
       const field = this;
       field.classList.remove('border-danger');
       const $field = $(field);
@@ -17,31 +17,31 @@ document.addEventListener("DOMContentLoaded", function () {
          }
       }
    });
- function get_services_staff(selectedvalue) {
+   function get_services_staff(selectedvalue) {
 
-    $('.slot-list-wrapper').empty();
-    $('.calendar-wrap, .remove-all-slots').addClass('d-none');
-    
-    $('#bookslots').val('');
-    $('.select-slots').css('display', 'none');
+      $('.slot-list-wrapper').empty();
+      $('.calendar-wrap, .remove-all-slots').addClass('d-none');
 
-    var serviceId = selectedvalue.value;
-    if(serviceId ===''){
+      $('#bookslots').val('');
+      $('.select-slots').css('display', 'none');
+
+      var serviceId = selectedvalue.value;
+      if (serviceId === '') {
          $('.no-vendor-msg').addClass('d-none');
-    }else{
+      } else {
          $('.no-vendor-msg').removeClass('d-none');
 
-    }
-    var selectedStaff = document.querySelector('.selected_vendor').value;
-    $('.vendor-loder').removeClass('d-none');
-    $.ajax({
-        url: '/get/services/staff',
-        type: 'GET',
-        data: {
+      }
+      var selectedStaff = document.querySelector('.selected_vendor').value;
+      $('.vendor-loder').removeClass('d-none');
+      $.ajax({
+         url: '/get/services/staff',
+         type: 'GET',
+         data: {
             service_id: serviceId
-        },
-        dataType: 'json',
-        success: function (response) {
+         },
+         dataType: 'json',
+         success: function (response) {
             $('.vendor-loder').addClass('d-none');
             var select_service_staff = document.querySelector('.select_service_vendor');
             var staffSelect = document.querySelector('.service_vendor_form');
@@ -52,143 +52,143 @@ document.addEventListener("DOMContentLoaded", function () {
             defaultOption.textContent = '---Select Vendor---';
             staffSelect.appendChild(defaultOption);
             if (response && response.length > 0) {
-                var existingMsg = document.querySelector('.no-vendor-msg');
-                if (existingMsg) {
-                    existingMsg.remove();
-                }
-                staffSelect.disabled = false;
-                select_service_staff.classList.remove('d-none');
-                // Add each staff member to the dropdown
-                response.forEach(function (staff) {
-                    var option = document.createElement('option');
-                    option.value = staff.id;
-                    option.textContent = staff.name;
-                    staffSelect.appendChild(option);
-                    staffSelect.setAttribute('required', '');
-                });
-                if (selectedStaff) {
-                    var options = staffSelect.querySelectorAll('option');
-                    options.forEach(function (option) {
-                        if (option.value == selectedStaff) {
-                            option.selected = true;
-                        }
-                    });
-                }
+               var existingMsg = document.querySelector('.no-vendor-msg');
+               if (existingMsg) {
+                  existingMsg.remove();
+               }
+               staffSelect.disabled = false;
+               select_service_staff.classList.remove('d-none');
+               // Add each staff member to the dropdown
+               response.forEach(function (staff) {
+                  var option = document.createElement('option');
+                  option.value = staff.id;
+                  option.textContent = staff.name;
+                  staffSelect.appendChild(option);
+                  staffSelect.setAttribute('required', '');
+               });
+               if (selectedStaff) {
+                  var options = staffSelect.querySelectorAll('option');
+                  options.forEach(function (option) {
+                     if (option.value == selectedStaff) {
+                        option.selected = true;
+                     }
+                  });
+               }
             } else {
-                if (serviceId != '' && response && response.length === 0) {
-                    var vendorPlaceholder = document.querySelector('.select_service_vendor');
-                    if ($('.no-vendor-msg').length === 0) {
-                        vendorPlaceholder.insertAdjacentHTML('beforebegin', '<p class="no-vendor-msg">No Vendor available for this service.</p>');
-                    }
-                }
-                staffSelect.disabled = true;
-                select_service_staff.classList.add('d-none');
-                bookingcalendar.classList.add('d-none');
-                staffSelect.removeAttribute('required');
-                var noStaffOption = document.createElement('option');
-                noStaffOption.value = '';
-                noStaffOption.textContent = 'No Vendor available';
-                staffSelect.appendChild(noStaffOption);
+               if (serviceId != '' && response && response.length === 0) {
+                  var vendorPlaceholder = document.querySelector('.select_service_vendor');
+                  if ($('.no-vendor-msg').length === 0) {
+                     vendorPlaceholder.insertAdjacentHTML('beforebegin', '<p class="no-vendor-msg">No Vendor available for this service.</p>');
+                  }
+               }
+               staffSelect.disabled = true;
+               select_service_staff.classList.add('d-none');
+               bookingcalendar.classList.add('d-none');
+               staffSelect.removeAttribute('required');
+               var noStaffOption = document.createElement('option');
+               noStaffOption.value = '';
+               noStaffOption.textContent = 'No Vendor available';
+               staffSelect.appendChild(noStaffOption);
             }
-        },
-        error: function (xhr, status, error) {
+         },
+         error: function (xhr, status, error) {
             console.error("AJAX error:", status, error);
-        }
-    });
+         }
+      });
 
-    /* ================================== Reset callender data   =============================*/
-    function resetCalendar() {
-        const calendar = document.getElementById('calendar');
-        if (calendar) {
+      /* ================================== Reset callender data   =============================*/
+      function resetCalendar() {
+         const calendar = document.getElementById('calendar');
+         if (calendar) {
             const days = calendar.querySelectorAll('td');
             days.forEach(dayCell => {
-                dayCell.innerHTML = '';
-                dayCell.classList.remove('available', 'disabled', 'selected');
-                dayCell.style.backgroundColor = '';
-                dayCell.style.pointerEvents = '';
+               dayCell.innerHTML = '';
+               dayCell.classList.remove('available', 'disabled', 'selected');
+               dayCell.style.backgroundColor = '';
+               dayCell.style.pointerEvents = '';
             });
-        }
-    }
+         }
+      }
 
-    const today = new Date();
-    let year = today.getFullYear();
-    let month = today.getMonth();
-    let selectedDate = null;
-    let activeCalendar = null;
+      const today = new Date();
+      let year = today.getFullYear();
+      let month = today.getMonth();
+      let selectedDate = null;
+      let activeCalendar = null;
 
-    $(document).on("click", "#calendar td.available", function () {
-        if (!activeCalendar) return;
-        activeCalendar.clickDay(this);
-    });
+      //  $(document).on("click", "#calendar td.available", function () {
+      //      if (!activeCalendar) return;
+      //      activeCalendar.clickDay(this);
+      //  });
 
-    const availableDates = typeof availabledatesArray !== 'undefined' ? availabledatesArray : [];
+      const availableDates = typeof availabledatesArray !== 'undefined' ? availabledatesArray : [];
 
-    $('.service_vendor_form').on('change', function () {
-        let selectedValue = $(this).val();
-        $('.slot-list-wrapper').empty();
-        $('.remove-all-slots').addClass('d-none');
-        $('.select-slots').css('display', 'none');
-        $('#bookslots').val('');
-        if (selectedValue === "") {
+      $('.service_vendor_form').on('change', function () {
+         let selectedValue = $(this).val();
+         $('.slot-list-wrapper').empty();
+         $('.remove-all-slots').addClass('d-none');
+         $('.select-slots').css('display', 'none');
+         $('#bookslots').val('');
+         if (selectedValue === "") {
             $('.calendar-wrap').addClass('d-none');
             selectedValue = 0;
-        } else {
+         } else {
             selectedValue = selectedValue;
             $('.calendar-wrap').removeClass('d-none');
-        }
-        $.ajax({
+         }
+         $.ajax({
             url: '/get/vendor/get_booking_calender',
             type: 'GET',
             data: {
-                vendor_id: selectedValue
+               vendor_id: selectedValue
             },
             dataType: 'json',
             success: function (response) {
-                $('.availibility').addClass('d-none');
+               $('.availibility').addClass('d-none');
 
-                if (response.success === true && response.data && response.data[0]) {
-                    const workondayoff = response.data;
-                    const workingDays = response.data.map(item => item.Working_day);
+               if (response.success === true && response.data && response.data[0]) {
+                  const workondayoff = response.data;
+                  const workingDays = response.data.map(item => item.Working_day);
 
-                    resetCalendar();
+                  resetCalendar();
 
-                    // Destroy previous calendar instance before creating new
-                    if (activeCalendar) {
-                        activeCalendar.destroy();
-                        activeCalendar = null;
-                    }
+                  // Destroy previous calendar instance before creating new
+                  if (activeCalendar) {
+                     activeCalendar.destroy();
+                     activeCalendar = null;
+                  }
 
-                    if (selectedValue != 0) {
-                        activeCalendar = new Calendar(workingDays, workondayoff);
-                        $('.availibility').addClass('d-none');
-                        $('.calendar-wrap').removeClass('d-none');
-                        const bookslotsVal = $('#bookslots').val();
-                        const hasSlots = bookslotsVal && bookslotsVal.trim() !== '';
-                        $('.remove-all-slots').toggleClass('d-none', !hasSlots);
-                    } else {
-                        activeCalendar = new Calendar([], []);
-                        $('.calendar-wrap').addClass('d-none');
-                        $('.availibility').removeClass('d-none');
-                    }
-                } else {
-                    const workondayoff = 0;
-                    const workingDays = 0;
-                    resetCalendar();
+                  if (selectedValue != 0) {
+                     activeCalendar = new Calendar(workingDays, workondayoff);
+                     $('.availibility').addClass('d-none');
+                     $('.calendar-wrap').removeClass('d-none');
+                     const bookslotsVal = $('#bookslots').val();
+                     const hasSlots = bookslotsVal && bookslotsVal.trim() !== '';
+                     $('.remove-all-slots').toggleClass('d-none', !hasSlots);
+                  } else {
+                     activeCalendar = new Calendar([], []);
+                     $('.calendar-wrap').addClass('d-none');
+                     $('.availibility').removeClass('d-none');
+                  }
+               } else {
+                  const workondayoff = 0;
+                  const workingDays = 0;
+                  resetCalendar();
 
-                    if (activeCalendar) {
-                        activeCalendar.destroy();
-                        activeCalendar = null;
-                    }
+                  if (activeCalendar) {
+                     activeCalendar.destroy();
+                     activeCalendar = null;
+                  }
 
-                    activeCalendar = new Calendar(workingDays, workondayoff);
-                }
+                  activeCalendar = new Calendar(workingDays, workondayoff);
+               }
             },
-        });
-    });
+         });
+      });
 
-    /* ================================== Add staff data in the callender   =============================*/
-    class Calendar {
-        constructor(workingDays, workondayoff) {
+      /* ================================== Add staff data in the callender   =============================*/
+      class Calendar {
+         constructor(workingDays, workondayoff) {
             this.workingDays = workingDays || [];
             this.workOnoff = workondayoff || [];
             const now = new Date();
@@ -197,16 +197,16 @@ document.addEventListener("DOMContentLoaded", function () {
             this.draw();
             this.addNavigationListeners();
             this.addDayClickListener();
-        }
+         }
 
-        draw() {
+         draw() {
             this.drawDays();
-        }
+         }
 
-        drawDays() {
+         drawDays() {
             const monthNames = [
-                "January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"
+               "January", "February", "March", "April", "May", "June",
+               "July", "August", "September", "October", "November", "December"
             ];
 
             const startDay = new Date(this.year, this.month, 1).getDay();
@@ -214,149 +214,150 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const monthNameElem = document.getElementById("month-name");
             if (monthNameElem) {
-                monthNameElem.textContent = `${monthNames[this.month]} ${this.year}`;
+               monthNameElem.textContent = `${monthNames[this.month]} ${this.year}`;
             }
             const days = document.querySelectorAll('#calendar td');
             days.forEach(cell => {
-                cell.innerHTML = '';
-                cell.classList.remove('available', 'disabled', 'selected');
-                cell.style.backgroundColor = '';
-                cell.style.pointerEvents = '';
+               cell.innerHTML = '';
+               cell.classList.remove('available', 'disabled', 'selected');
+               cell.style.backgroundColor = '';
+               cell.style.pointerEvents = '';
             });
             const currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
             let dayIndex = 0;
 
             // Flatten dayoffs for all staff
             const allDayoffs = this.workOnoff.flatMap(staff =>
-                (staff.Dayoff || []).flat().map(d => new Date(d.date).toDateString())
+               (staff.Dayoff || []).flat().map(d => new Date(d.date).toDateString())
             );
             const hasAnyDayoff = allDayoffs.length > 0;
 
             for (let i = 0; i < days.length; i++) {
-                const cell = days[i];
-                if (i >= startDay && dayIndex < totalDays) {
-                    const dayNum = ++dayIndex;
-                    const fullDate = `${this.year}-${String(this.month + 1).padStart(2, "0")}-${String(dayNum).padStart(2, "0")}`;
-                    const dayDate = new Date(this.year, this.month, dayNum);
-                    cell.innerHTML = dayNum;
-                    const dayName = dayDate.toLocaleString('en-us', { weekday: 'long' }).toLowerCase();
+               const cell = days[i];
+               if (i >= startDay && dayIndex < totalDays) {
+                  const dayNum = ++dayIndex;
+                  const fullDate = `${this.year}-${String(this.month + 1).padStart(2, "0")}-${String(dayNum).padStart(2, "0")}`;
+                  const dayDate = new Date(this.year, this.month, dayNum);
+                  cell.innerHTML = dayNum;
+                  const dayName = dayDate.toLocaleString('en-us', { weekday: 'long' }).toLowerCase();
 
-                    // Collect which staff works on this weekday
-                    const staffWorking = this.workOnoff.map(staff => {
-                        const wd = staff.Working_day || {};
-                        const slot = wd[dayName];
-                        return slot && slot.start && !slot.start.includes("00:00:00");
-                    });
+                  // Collect which staff works on this weekday
+                  const staffWorking = this.workOnoff.map(staff => {
+                     const wd = staff.Working_day || {};
+                     const slot = wd[dayName];
+                     return slot && slot.start && !slot.start.includes("00:00:00");
+                  });
 
-                    const atLeastOneWorks = staffWorking.includes(true);
-                    let isDisabled = false;
+                  const atLeastOneWorks = staffWorking.includes(true);
+                  let isDisabled = false;
 
-                    if (dayDate < currentDate) {
-                        isDisabled = true;
-                    } else if (!atLeastOneWorks) {
-                        isDisabled = true;
-                    } else if (hasAnyDayoff) {
-                        const staffOnDayoff = this.workOnoff.filter(staff =>
-                            (staff.Dayoff || []).flat().some(d => new Date(d.date).toDateString() === dayDate.toDateString())
-                        );
-                        if (staffOnDayoff.length > 0) {
-                            const othersWork = this.workOnoff.some(staff => {
-                                const wd = staff.Working_day || {};
-                                const slot = wd[dayName];
-                                return slot && slot.start && !slot.start.includes("00:00:00") &&
-                                    !(staff.Dayoff || []).flat().some(d => new Date(d.date).toDateString() === dayDate.toDateString());
-                            });
-                            if (!othersWork) {
-                                isDisabled = true;
-                            }
+                  if (dayDate < currentDate) {
+                     isDisabled = true;
+                  } else if (!atLeastOneWorks) {
+                     isDisabled = true;
+                  } else if (hasAnyDayoff) {
+                     const staffOnDayoff = this.workOnoff.filter(staff =>
+                        (staff.Dayoff || []).flat().some(d => new Date(d.date).toDateString() === dayDate.toDateString())
+                     );
+                     if (staffOnDayoff.length > 0) {
+                        const othersWork = this.workOnoff.some(staff => {
+                           const wd = staff.Working_day || {};
+                           const slot = wd[dayName];
+                           return slot && slot.start && !slot.start.includes("00:00:00") &&
+                              !(staff.Dayoff || []).flat().some(d => new Date(d.date).toDateString() === dayDate.toDateString());
+                        });
+                        if (!othersWork) {
+                           isDisabled = true;
                         }
-                    }
+                     }
+                  }
 
-                    if (isDisabled) {
-                        cell.classList.add("disabled");
-                        cell.style.backgroundColor = "#d3d3d3";
-                        cell.style.pointerEvents = "none";
-                    } else {
-                        cell.classList.add("available");
-                        cell.style.backgroundColor = "rgb(18 163 46)";
-                    }
-                }
+                  if (isDisabled) {
+                     cell.classList.add("disabled");
+                     cell.style.backgroundColor = "#d3d3d3";
+                     cell.style.pointerEvents = "none";
+                  } else {
+                     cell.classList.add("available");
+                     cell.style.backgroundColor = "rgb(18 163 46)";
+                  }
+               }
             }
-        }
+         }
 
-        /* ================================== Calender button   =============================*/
-        addNavigationListeners() {
+         /* ================================== Calender button   =============================*/
+         addNavigationListeners() {
             const pre = document.querySelector('.pre-button');
             const next = document.querySelector('.next-button');
             if (pre) pre.addEventListener('click', () => this.changeMonth(-1));
             if (next) next.addEventListener('click', () => this.changeMonth(1));
-        }
+         }
 
-        /* ================================== Calender change month  =============================*/
-        changeMonth(direction) {
+         /* ================================== Calender change month  =============================*/
+         changeMonth(direction) {
             this.month += direction;
             if (this.month < 0) {
-                this.month = 11;
-                this.year--;
+               this.month = 11;
+               this.year--;
             } else if (this.month > 11) {
-                this.month = 0;
-                this.year++;
+               this.month = 0;
+               this.year++;
             }
             this.drawDays();
-        }
+         }
 
-        addDayClickListener() {
+         addDayClickListener() {
             const calendar = document.getElementById('calendar');
-            if (calendar) {
-                calendar.addEventListener('click', e => {
-                    const dayElem = e.target;
-                    if (dayElem.tagName === 'TD' && dayElem.classList.contains("available")) {
-                        this.clickDay(dayElem);
-                    }
-                });
-            }
-        }
-
-        clickDay(dayElem) {
+            if (!calendar) return;
+            const newCalendar = calendar.cloneNode(true);
+            calendar.parentNode.replaceChild(newCalendar, calendar);
+            newCalendar.addEventListener('click', e => {
+               const dayElem = e.target;
+               if (dayElem.tagName === 'TD' && dayElem.classList.contains("available")) {
+                  this.clickDay(dayElem);
+               }
+            });
+         }
+         clickDay(dayElem) {
+            document.querySelector('.selected')?.classList.remove('selected');
             const day = parseInt(dayElem.innerHTML);
             selectedDate = `${this.year}-${String(this.month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-            document.querySelector('.selected')?.classList.remove('selected');
             dayElem.classList.add('selected');
             this.BookeAslot(selectedDate);
-        }
+         }
 
-        /* ================================== Booke  slotes  =============================*/
-        BookeAslot(date) {
+
+         /* ================================== Booke  slotes  =============================*/
+         BookeAslot(date) {
             if (!date) return;
             const serviceId = document.querySelector('.get_service_staff').value;
             const vendorId = document.querySelector('.service_vendor_form').value;
             $.ajax({
-                url: '/get/slotbooked',
-                method: 'GET',
-                data: {
-                    dates: date,
-                    serviceid: serviceId,
-                    vendorid: vendorId,
-                },
-                success: function (response) {
-                    let sessionsHTML = '';
-                    if (response && response.staffdata.length > 0) {
-                        const formattedDate = response.date;
-                        const price = `${response.serviceCurrency}${response.price}`;
-                        $('.availibility').removeClass('d-none');
-                        const date = response.date;
-                        const staffOffIds = response.staff_off_ids ? response.staff_off_ids.split(',').map(id => id.trim()) : [];
-                        sessionsHTML += `<div class="date-section mb-3">
+               url: '/get/slotbooked',
+               method: 'GET',
+               data: {
+                  dates: date,
+                  serviceid: serviceId,
+                  vendorid: vendorId,
+               },
+               success: function (response) {
+                  let sessionsHTML = '';
+                  if (response && response.staffdata.length > 0) {
+                     const formattedDate = response.date;
+                     const price = `${response.serviceCurrency}${response.price}`;
+                     $('.availibility').removeClass('d-none');
+                     const date = response.date;
+                     const staffOffIds = response.staff_off_ids ? response.staff_off_ids.split(',').map(id => id.trim()) : [];
+                     sessionsHTML += `<div class="date-section mb-3">
                             <h5 class="date-header text-lg font-semibold mb-2">${formattedDate}</h5>
                             <div class="d-flex gap-4 pb-2 overflow-auto mx-auto max-w-800px" style="scrollbar-width: thin;">
                             <div class="d-flex gap-4 pb-2 w-max min-w-full" style="-ms-overflow-style: none; scrollbar-width: thin;">`;
-                        if (response && response.merged_slots?.length > 0) {
-                            response.merged_slots.forEach((slot) => {
-                                let slotStaffIds = slot.available_staff_ids;
-                                if (staffOffIds.length > 0) {
-                                    slotStaffIds = slotStaffIds.filter(id => !staffOffIds.includes(String(id)));
-                                }
-                                sessionsHTML += `
+                     if (response && response.merged_slots?.length > 0) {
+                        response.merged_slots.forEach((slot) => {
+                           let slotStaffIds = slot.available_staff_ids;
+                           if (staffOffIds.length > 0) {
+                              slotStaffIds = slotStaffIds.filter(id => !staffOffIds.includes(String(id)));
+                           }
+                           sessionsHTML += `
                                     <div class="rounded-lg p-2 bg-white border border-gray-300 cursor-pointer m-2 slot-card" style="min-width: 170px; max-width: 100%;" 
                                         data-date="${formattedDate}" 
                                         data-price="${price}"
@@ -369,34 +370,34 @@ document.addEventListener("DOMContentLoaded", function () {
                                         <p class="text-sm text-gray-600 m-0">Duration: ${formatDuration(response.duration)}</p>
                                         <p class="text-sm text-gray-600 m-0">Price: ${response.serviceCurrency}${response.price}</p>
                                     </div>`
-                            });
-                        } else {
-                            sessionsHTML = `<p class="text-danger text-center">No available slots found for this date ${date}.</p>`;
-                            $('.availibility').removeClass('d-none');
-                            $('.availibility').removeClass('hidden');
-                        }
-                        sessionsHTML += `</div></div></div>`;
-                    } else {
-                        sessionsHTML = `<p class="text-sm text-red-500">No available slots found for this date.</p>`;
-                    }
-                    $('.availibility').html(sessionsHTML);
-                    bindSlotClickEvent();
-                },
-                error: function () {
-                    alert('Error fetching session details');
-                }
+                        });
+                     } else {
+                        sessionsHTML = `<p class="text-danger text-center">No available slots found for this date ${date}.</p>`;
+                        $('.availibility').removeClass('d-none');
+                        $('.availibility').removeClass('hidden');
+                     }
+                     sessionsHTML += `</div></div></div>`;
+                  } else {
+                     sessionsHTML = `<p class="text-sm text-red-500">No available slots found for this date.</p>`;
+                  }
+                  $('.availibility').html(sessionsHTML);
+                  bindSlotClickEvent();
+               },
+               error: function () {
+                  alert('Error fetching session details');
+               }
             });
-        }
+         }
 
-        /* ================================== Destroy previous calendar listeners =============================*/
-        destroy() {
+         /* ================================== Destroy previous calendar listeners =============================*/
+         destroy() {
             const calendar = document.getElementById('calendar');
             if (calendar) {
-                const newCalendar = calendar.cloneNode(true);
-                calendar.parentNode.replaceChild(newCalendar, calendar);
+               const newCalendar = calendar.cloneNode(true);
+               calendar.parentNode.replaceChild(newCalendar, calendar);
             }
-        }
-    }
+         }
+      }
       /* ================================== Calculate service duration function  =============================*/
       function formatDuration(minutes) {
          const hrs = Math.floor(minutes / 60);
@@ -559,7 +560,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (bookedslootes) {
                isValid = true;
             } else {
-            $('.select-slots').removeClass('d-none');
+               $('.select-slots').removeClass('d-none');
                $('.select-slots').css('display', 'block');
                $('.select-slots').html('<p class="text-sm text-red-600 font-medium mt-1 p-4 border border-gray-300 shadow-md rounded-l text-danger ">Please select a date and select atleast one slot.</p>');
                isValid = false;
@@ -741,18 +742,18 @@ document.addEventListener("DOMContentLoaded", function () {
             twostepform();
          }
          $('.loader-block').removeClass('d-none');
-            let percent = 0;
-            let interval = setInterval(function () {
-               percent += 1;
-               jQuery(".loader-percent").text(percent + "%");
-               if (percent >= 100) {
-                  clearInterval(interval);
-                  jQuery(".loader-block").fadeOut(600, function () {
-                     jQuery(".site-wrapper").fadeIn(1000);
-                  });
-               }
-            }, 30);
-  
+         let percent = 0;
+         let interval = setInterval(function () {
+            percent += 1;
+            jQuery(".loader-percent").text(percent + "%");
+            if (percent >= 100) {
+               clearInterval(interval);
+               jQuery(".loader-block").fadeOut(600, function () {
+                  jQuery(".site-wrapper").fadeIn(1000);
+               });
+            }
+         }, 30);
+
 
       }, 500);
    });
