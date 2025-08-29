@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>{{ get_setting('site_title', config('app.name', 'Universal Booking Solution')) }}</title>
+
+  <!-- Favicon -->
   <link rel="icon" href="{{ get_setting('favicon') ? asset('storage/' . get_setting('favicon')) : asset('assets/images/favicon.ico') }}" type="image/x-icon">
-  <!-- Tailwind CSS -->
+
+  <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="{{ asset('assets/css/frontend/custom.css') }}?v={{ time() }}">
 
-
-  <!-- Tailwind Custom Config -->
+  <!-- Custom Tailwind Config -->
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -30,24 +32,14 @@
     };
   </script>
 
-  <!-- Preline JS -->
-  <script src="https://unpkg.com/preline@latest/dist/preline.js"></script>
-  <script src="{{ asset('assets/js/frontend/custom.js') }}?v={{ time() }}"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="{{ asset('assets/js/frontend/calendar.js') }}?v={{ time() }}"></script>
-
-  <!-- Bootstrap JS (choose only one version, based on what you're using) -->
-  <!-- For Bootstrap 4 -->
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-  <!-- (Optional) Alpine.js for more interactivity -->
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ asset('assets/css/frontend/custom.css') }}?v={{ time() }}">
 </head>
 
 <body class="bg-gray-50 text-neutral-900 dark:bg-neutral-900 dark:text-white">
 
   @unless($isIframe ?? false)
-  @include('frontend.layouts.header')
+    @include('frontend.layouts.header')
   @endunless
 
   <main class="mx-auto">
@@ -55,9 +47,25 @@
   </main>
 
   @unless($isIframe ?? false)
-  @include('frontend.layouts.footer')
+    @include('frontend.layouts.footer')
   @endunless
 
-</body>
+  <!-- JS ORDER MATTERS -->
+  <!-- jQuery FIRST -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+  <!-- Bootstrap (only keep if you really use Bootstrap JS components) -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- Preline JS (depends on Tailwind, safe here) -->
+  <script src="https://unpkg.com/preline@latest/dist/preline.js"></script>
+
+  <!-- Custom JS (AFTER jQuery & Bootstrap) -->
+  <script src="{{ asset('assets/js/frontend/custom.js') }}?v={{ time() }}"></script>
+  <script src="{{ asset('assets/js/frontend/calendar.js') }}?v={{ time() }}"></script>
+
+  <!-- Alpine.js (last, since it initializes DOM behaviors) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+</body>
 </html>
