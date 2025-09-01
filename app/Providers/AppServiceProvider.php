@@ -60,7 +60,7 @@ class AppServiceProvider extends ServiceProvider
             $servicesForm .= '<option value="">---Select Vendor---</option>';
             $servicesForm .= "</select>";
             $servicesForm .= "</div>";
-            $servicesForm .=  '<input type="hidden" name="calendarEmpty" id="calendarEmpty" value="0"><div class="calendar-wrap hidden d-none">
+            $servicesForm .=  '<div class="showMessage hidden d-none">No Available dates for this Vendor.</div><div class="calendar-wrap hidden d-none">
                     <div class="w-full flex items-center justify-between d-flex w-100 justify-content-between">
                         <div class="pre-button flex items-center justify-center">
                             <i class="fa fa-chevron-left"></i>

@@ -62,12 +62,14 @@
                             console.log('Staff exists and dates available');
                             activeCalendar = new Calendar(workingDays, workondayoff);
                             $('.availibility').addClass('hidden');
+                            $('.showMessage').addClass('hidden');
                             $('.calendar-wrap').removeClass('hidden');
                         } else {
                             console.log('Staff exists but no available dates');
                             activeCalendar = new Calendar([], []); // empty calendar
                             $('.calendar-wrap').addClass('hidden');
                             $('.availibility').removeClass('hidden');
+                            $('.showMessage').removeClass('hidden');
                         }
 
                         updateUIState();
