@@ -30,14 +30,6 @@ class AppServiceProvider extends ServiceProvider
             })) {
                 return " No services available at the moment";
             }
-            $services = Service::all();
-            $c = $class;
-
-            if ($services->isEmpty() || $services->every(function ($service) {
-                return $service->status !== 1;
-            })) {
-                return " No services available at the moment";
-            }
 
             $selectedService = $shortcodeAttrs['service'] ?? '';
             $selectedvendor  = $shortcodeAttrs['vendor'] ?? '';
@@ -68,7 +60,7 @@ class AppServiceProvider extends ServiceProvider
             $servicesForm .= '<option value="">---Select Vendor---</option>';
             $servicesForm .= "</select>";
             $servicesForm .= "</div>";
-            $servicesForm .=  '<div class="calendar-wrap hidden d-none">
+            $servicesForm .=  '<input type="hidden" name="calendarEmpty" id="calendarEmpty" value="0"><div class="calendar-wrap hidden d-none">
                     <div class="w-full flex items-center justify-between d-flex w-100 justify-content-between">
                         <div class="pre-button flex items-center justify-center">
                             <i class="fa fa-chevron-left"></i>

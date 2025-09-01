@@ -340,7 +340,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             }
 
                             // ---------- checkboxes ----------
-                            let checkboxElements = $('input[type="checkbox"][name="' + formattedKey + '[]"');
+                            let checkboxElements = $('input[type="checkbox"][name="' + formattedKey + '"');
                             if (checkboxElements.length > 0) {
                                 let valuesToCheck = [];
                                 if (Array.isArray(val)) {
