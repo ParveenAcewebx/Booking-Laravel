@@ -229,8 +229,8 @@
                         const price = `${response?.serviceCurrency || ''}${response?.price || ''}`;
                         const duration = parseInt(response?.duration, 10) || 0;
                         const staffOffIds = response.staff_off_ids ? response.staff_off_ids.split(',') : [];
-                        const formatDates = response?.changeDate || '';
-                        alert(formattedDate);
+                        // const formatDates = response?.changeDate || '';
+                        // alert(formatDates);
                         $('.select-slots').addClass('hidden');
 
                         if (response?.merged_slots?.length > 0) {

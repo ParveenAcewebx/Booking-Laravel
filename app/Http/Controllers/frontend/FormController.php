@@ -189,37 +189,8 @@ class FormController extends Controller
 
     public function getBookingSlot(Request $request)
     {
+        // dd('sdfsfdsf');
         $date = $request->input('dates');
-
-        // Saved format
-        $savedFormat = get_setting('date_format', 'Y-m-d');
-        // $formatMap = [
-        //     'DD-FF-YYYY' => 'd-m-Y',
-        //     'FF-DD-YYYY' => 'm-d-Y',
-        //     'YYYY-FF-DD' => 'Y-m-d',
-        // ];
-        $formatMap = [
-            'd-m-Y' => 'DD-FF-YYYY',
-            'm-d-Y' => 'FF-DD-YYYY',
-            'Y-m-d' => 'YYYY-FF-DD',
-        ];
-
-        // Output format (for display)
-        $dateFormat = $formatMap[$savedFormat][$date] ?? 'Y-m-d';
-        dd($dateFormat , '---' . $savedFormat);
-        $formattedDates = null;
-
-        if (!empty($date)) {
-            try {
-                // First parse with known input format (Y-m-d from DB or request)
-                $parsed = Carbon::createFromFormat($formatMap[$savedFormat], $date);
-                $formattedDates = $parsed->format($dateFormat);
-            } catch (\Exception $e) {
-                $formattedDates = $date; // fallback
-            }
-        }
-            dd($formattedDates);
-
         $formattedDate = Carbon::createFromFormat('Y-m-d', $date)->format('F j, Y');
         $weekday = strtolower(Carbon::createFromFormat('Y-m-d', $date)->format('l'));
 
@@ -392,7 +363,7 @@ class FormController extends Controller
         }
 
         return response()->json([
-            'date'            => $formattedDates,
+            'date'            => $formattedDate,
             'price'           => $servicePrice,
             'serviceCurrency' => $serviceCurrency,
             'slotleft'        => $mergedSlots->count(),
