@@ -323,6 +323,7 @@ document.addEventListener("DOMContentLoaded", function () {
             selectedDate = `${this.year}-${String(this.month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
             dayElem.classList.add('selected');
             this.BookeAslot(selectedDate);
+            $('.select-slots').addClass('d-none');
          }
 
 

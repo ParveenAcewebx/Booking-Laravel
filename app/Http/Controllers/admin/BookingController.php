@@ -108,7 +108,7 @@ class BookingController extends Controller
 
     public function bookingAdd()
     {
-        $alltemplates = BookingTemplate::where('status', 1)->get();
+        $alltemplates = BookingTemplate::where('status', 1)->where('data', '!=', 'null')->get();
         $allusers = $this->allUsers;
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
