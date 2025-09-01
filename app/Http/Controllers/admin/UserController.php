@@ -302,7 +302,7 @@ class UserController extends Controller
                 return redirect()->intended('/admin/dashboard');
             } elseif ($user->hasRole('Customer') && $user->status == 0) {
                 Auth::logout();
-                return redirect('/login')->with('error', 'You do not have permissions to access this area.');
+                return redirect('/login')->with('error', 'Your account is inactive. Please contact support.');
             } else {
                 return redirect('/');
             }
