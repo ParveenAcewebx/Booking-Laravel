@@ -529,8 +529,8 @@ document.addEventListener("DOMContentLoaded", function () {
          }
       });
 
-      let radio_other_name = $(".radio_other").attr("name");
-      $(document).on("change", ".radio_other", function () {
+     
+      $(document).on("change", "input[type=radio]", function () {
          let radiobutton = $(this).val();
          let relatedInput = $(this).closest(".mb-3").find(".other_radiobox_input");
          if (radiobutton == '__other__') {
