@@ -31,7 +31,7 @@ class BookingTemplateController extends Controller
 
         if ($request->ajax()) {
             // preload booking count to avoid N+1 queries
-            $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by', 'slug', 'status'])
+            $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by', 'slug', 'status','data'])
                 ->with('user')
                 ->withCount('bookings');
 
@@ -80,9 +80,11 @@ class BookingTemplateController extends Controller
 
                     // view button
                     if (auth()->user()->hasRole('Administrator') || Auth::user()->can('view templates')) {
-                        $btn .= '<a href="' . url('/form/' . $row->slug) . '" class="btn btn-icon btn-info ml-1" title="View Booking" target="_blank">
-                            <i class="feather icon-eye"></i>
-                        </a>';
+                        if (!empty($row->data)) {
+                            $btn .= '<a href="' . url('/form/' . $row->slug) . '" class="btn btn-icon btn-info ml-1" title="View Booking" target="_blank">
+                                        <i class="feather icon-eye"></i>
+                                    </a>';
+                        }
                     }
 
                     return $btn;
