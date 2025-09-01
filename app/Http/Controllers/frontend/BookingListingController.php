@@ -20,7 +20,7 @@ class BookingListingController extends Controller
 
         return view('frontend.bookingListing', [
            'bookings' => BookingTemplate::where('status', 1)->where('data', '!=', 'null')->get(),
-            'username' => null
+           'username' => null
         ]);
     }
 }

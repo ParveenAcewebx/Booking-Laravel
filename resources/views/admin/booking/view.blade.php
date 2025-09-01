@@ -40,7 +40,7 @@
                         <div class="invoice-box">
                             <!-- User Information Section -->
                             <div class="info-section mb-4">
-                            @if(!empty($userinfo['first_name']) && !empty($userinfo['last_name']))
+                                @if(!empty($userinfo['first_name']) && !empty($userinfo['last_name']))
                                 <h6 class="info-title text-primary">User Information</h6>
                                 <div class="user-info">
                                     @if(!empty($userinfo['first_name']) && !empty($userinfo['last_name']))
@@ -67,7 +67,7 @@
 
 
                             <!-- Service/Vendor Information Section -->
-                            @if(!empty($serviceverndor['serivename']) && !empty($serviceverndor['vendorname']))
+                            @if(!empty($serviceverndor['serivename']))
                             <div class="info-section mb-4">
                                 <h6 class="info-title text-primary">Service / Vendor Information</h6>
                                 <div class="service-vendor-info">
@@ -80,6 +80,10 @@
                                     @if(!empty($serviceverndor['vendorname']))
                                     <div class="info-item">
                                         <strong>Vendor Name:</strong> <span class="font-weight-bold">{{ htmlspecialchars($serviceverndor['vendorname']) }}</span>
+                                    </div>
+                                    @else
+                                    <div class="info-item">
+                                        <strong>Vendor Name:</strong> <span class="font-weight-bold">No Vendor Assigned For This Service</span>
                                     </div>
                                     @endif
                                 </div>
