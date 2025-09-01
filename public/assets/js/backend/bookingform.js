@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       var selectedStaff = document.querySelector('.selected_vendor').value;
       $('.vendor-loder').removeClass('d-none');
+        $('.showMessage').addClass('d-none');
       $.ajax({
          url: '/get/services/staff',
          type: 'GET',
@@ -82,6 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
                   }
                }
                staffSelect.disabled = true;
+               $('.showMessage').addClass('d-none');
                select_service_staff.classList.add('d-none');
                bookingcalendar.classList.add('d-none');
                staffSelect.removeAttribute('required');
@@ -159,12 +161,29 @@ document.addEventListener("DOMContentLoaded", function () {
                   }
 
                   if (selectedValue != 0) {
-                     activeCalendar = new Calendar(workingDays, workondayoff);
-                     $('.availibility').addClass('d-none');
-                     $('.calendar-wrap').removeClass('d-none');
-                     const bookslotsVal = $('#bookslots').val();
-                     const hasSlots = bookslotsVal && bookslotsVal.trim() !== '';
-                     $('.remove-all-slots').toggleClass('d-none', !hasSlots);
+
+                  const anyAvailableDates = workondayoff.some(staff => {
+                        const wd = staff.Working_day || {};
+                        return Object.keys(wd).some(dayName => {
+                           const slot = wd[dayName];
+                           return slot && slot.start && !slot.start.includes("00:00:00");
+                        });
+                  });
+
+                  if (anyAvailableDates) {
+                        $('.showMessage').addClass('d-none');
+                        activeCalendar = new Calendar(workingDays, workondayoff);
+                        $('.availibility').addClass('d-none');
+                        $('.calendar-wrap').removeClass('d-none');
+                        const bookslotsVal = $('#bookslots').val();
+                        const hasSlots = bookslotsVal && bookslotsVal.trim() !== '';
+                        $('.remove-all-slots').toggleClass('d-none', !hasSlots);
+                  } else {
+                        activeCalendar = new Calendar([], []);
+                        $('.calendar-wrap').addClass('d-none');
+                        $('.availibility').removeClass('d-none');
+                        $('.showMessage').removeClass('d-none');
+                  }
                   } else {
                      activeCalendar = new Calendar([], []);
                      $('.calendar-wrap').addClass('d-none');
@@ -552,21 +571,25 @@ document.addEventListener("DOMContentLoaded", function () {
       /* ================================== Form validation =============================*/
       function validateRequiredFields(step) {
          let isValid = true;
-         const requiredFields = step.querySelectorAll('[required]');
-         const current_step = step.getAttribute('id');
-         const calendarWrapExists = $('#' + current_step).find('.calendar-wrap').length > 0;
-         const service_vendor_form = $('.service_vendor_form').val();
-         if (calendarWrapExists && service_vendor_form) {
-            let bookedslootes = $('#bookslots').val();
-            if (bookedslootes) {
-               isValid = true;
+          const requiredFields = step.querySelectorAll('[required]');
+        const current_step = step.getAttribute('id');
+    
+        const noVendorElement = $('#' + current_step).find('.vendor-placeholder .no-vendor-text');
+        const noVendorAssigned = noVendorElement.length > 0;
+    
+        const calendarWrap = $('#' + current_step).find('.calendar-wrap');
+    
+        // Only validate calendar if it's in the DOM AND visible
+        if (!noVendorAssigned && calendarWrap.length && calendarWrap.is(':visible')) {
+            const bookedSlots = $('#' + current_step + ' #bookslots').val();
+            if (!bookedSlots) {
+                $('#' + current_step).find('.select-slots').html('<p class="text-sm text-red-600 font-medium mt-1 p-4 border border-gray-300 shadow-md rounded-l text-danger">Please select a date and at least one slot.</p>');
+                isValid = false;
+                $('.select-slots').removeClass('d-none').show();
             } else {
-               $('.select-slots').removeClass('d-none');
-               $('.select-slots').css('display', 'block');
-               $('.select-slots').html('<p class="text-sm text-red-600 font-medium mt-1 p-4 border border-gray-300 shadow-md rounded-l text-danger ">Please select a date and select atleast one slot.</p>');
-               isValid = false;
+                $('#' + current_step).find('.select-slots').empty();
             }
-         }
+        }
          requiredFields.forEach(field => {
             if (field.type === 'checkbox') {
                const checkboxGroup = step.querySelectorAll(`input[name="${field.name}"]`);
@@ -708,13 +731,10 @@ document.addEventListener("DOMContentLoaded", function () {
          const serviceValue = $('#get_service_staff').val();
          const vendorValue = $('#service_vendor_form').val();
          if (!isEmpty(serviceValue) && !isEmpty(vendorValue) && isEmpty(bookslotsValue)) {
-            // $('.submit').prop('disabled', true);
-            // $('.next').prop('disabled', true);
-            // $('.select-slots').removeClass('d-none');
+
          } else {
             $('.select-slots').addClass('d-none');
-            // $('.submit').prop('disabled', false);
-            // $('.next').prop('disabled', false);
+              $('.showMessage').addClass('d-none');
          }
       }
       /* ================================== Slot validation =============================*/

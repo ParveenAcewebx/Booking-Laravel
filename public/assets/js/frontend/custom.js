@@ -504,20 +504,18 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    let radio_other_name = $(".radio_other").attr("name");
-    $(document).on("change", "input[name='" + radio_other_name + "']", function () {
+    $(document).on("change", ".radio_other", function () {
         let radiobutton = $(this).val();
         let relatedInput = $(this).closest(".mb-6").find(".other_radiobox_input");
-        if (radiobutton == '__other__') {
-            if (relatedInput) {
-                $(relatedInput).removeClass('hidden');
-            }
+
+        if (radiobutton === '__other__') {
+            relatedInput.removeClass('hidden');
         } else {
-            $(relatedInput).addClass('hidden').val('');
+            relatedInput.addClass('hidden').val('');
         }
     });
     setTimeout(function () {
-        $("input[name='" + radio_other_name + "']:checked").each(function () {
+           $(".radio_other:checked").each(function () {
             let radiobutton = $(this).val();
             let relatedInput = $(this).closest(".mb-6").find(".other_radiobox_input");
             if (radiobutton == '__other__') {
