@@ -5,6 +5,9 @@ namespace App\Providers;
 use App\Helpers\Shortcode;
 use Illuminate\Support\ServiceProvider;
 use App\Models\Service;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Config;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Artisan;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,6 +25,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Set Timezone Based On Global Settings From Admin Panel
+        if (Schema::hasTable('settings')) {
+            $settings = Setting::pluck('value', 'key')->toArray();
+            if (!empty($settings['timezone'])) {
+                Config::set('app.timezone', $settings['timezone']);
+                date_default_timezone_set($settings['timezone']);
+            }
+        }
+        
         Shortcode::register('services', function ($shortcodeAttrs, $class) {
             $services = Service::all();
             $c = $class;

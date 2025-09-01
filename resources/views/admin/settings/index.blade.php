@@ -145,7 +145,10 @@
                                 <label class="form-label">Timezone</label>
                                 <select name="timezone" class="form-control select-user">
                                     @foreach($timezones as $timezone)
-                                        <option value="{{ $timezone }}" {{ (old('timezone') ?? $settings['timezone'] ?? '') == $timezone ? 'selected' : '' }}>{{ $timezone }}</option>
+                                        <option value="{{ $timezone }}"
+                                            {{ (old('timezone') ?? $settings['timezone'] ?? 'Asia/Kolkata') == $timezone ? 'selected' : '' }}>
+                                            {{ $timezone }}
+                                        </option>
                                     @endforeach
                                 </select>
                                 @error('timezone')
