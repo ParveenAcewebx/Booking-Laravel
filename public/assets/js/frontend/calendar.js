@@ -48,16 +48,31 @@
                     resetCalendar();
 
                     if (selectedValue != 0) {
-                        console.log('staff exsists');
-                        // 🔥 Create new calendar and keep reference
-                        activeCalendar = new Calendar(workingDays, workondayoff);
 
-                        $('.availibility').addClass('hidden');
-                        $('.calendar-wrap').removeClass('hidden');
+                        // 🔥 Check if any date is available for all months
+                        const anyAvailableDates = workondayoff.some(staff => {
+                            const wd = staff.Working_day || {};
+                            return Object.keys(wd).some(dayName => {
+                                const slot = wd[dayName];
+                                return slot && slot.start && !slot.start.includes("00:00:00");
+                            });
+                        });
+
+                        if (anyAvailableDates) {
+                            console.log('Staff exists and dates available');
+                            activeCalendar = new Calendar(workingDays, workondayoff);
+                            $('.availibility').addClass('hidden');
+                            $('.calendar-wrap').removeClass('hidden');
+                        } else {
+                            console.log('Staff exists but no available dates');
+                            activeCalendar = new Calendar([], []); // empty calendar
+                            $('.calendar-wrap').addClass('hidden');
+                            $('.availibility').removeClass('hidden');
+                        }
+
                         updateUIState();
                     } else {
-                        console.log('not exsist');
-
+                        console.log('Vendor not selected or not exists');
                         activeCalendar = new Calendar([],[]); // empty calendar
                         $('.calendar-wrap').addClass('hidden');
                         $('.availibility').removeClass('hidden');
@@ -69,8 +84,6 @@
             });
         });
 
-
-        // Calendar class
         class Calendar {
             constructor(workingDays, workondayoff) {
                 this.workingDays = workingDays || [];
@@ -241,8 +254,6 @@
                 });
             }
         }
-
-        // Format duration
         function formatDuration(minutes) {
             if (!minutes || minutes <= 0) return '0 minutes';
             const hrs = Math.floor(minutes / 60);

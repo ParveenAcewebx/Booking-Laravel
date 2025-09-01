@@ -49,12 +49,14 @@ document.addEventListener("DOMContentLoaded", function () {
         let isValid = true;
         const requiredFields = step.querySelectorAll('[required]');
         const current_step = step.getAttribute('id');
-
+    
         const noVendorElement = $('#' + current_step).find('.vendor-placeholder .no-vendor-text');
         const noVendorAssigned = noVendorElement.length > 0;
-
+    
         const calendarWrap = $('#' + current_step).find('.calendar-wrap');
-        if (!noVendorAssigned && calendarWrap.length) {
+    
+        // Only validate calendar if it's in the DOM AND visible
+        if (!noVendorAssigned && calendarWrap.length && calendarWrap.is(':visible')) {
             const bookedSlots = $('#' + current_step + ' #bookslots').val();
             if (!bookedSlots) {
                 $('#' + current_step).find('.select-slots').html('<p class="text-sm text-red-600 font-medium mt-1 p-4 border border-gray-300 shadow-md rounded-l text-danger">Please select a date and at least one slot.</p>');
@@ -63,7 +65,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 $('#' + current_step).find('.select-slots').empty();
             }
         }
-
+    
+        // Loop through all required fields
         requiredFields.forEach(field => {
             if (field.tagName.toLowerCase() === 'select') {
                 if (!field.value || field.value.trim() === "") {
@@ -84,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 return;
             }
-
+    
             if (field.type === 'checkbox') {
                 const checkboxes = step.querySelectorAll(`input[name="${field.name}"]`);
                 const checked = Array.from(checkboxes).some(c => c.checked);
@@ -117,9 +120,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (err) err.remove();
             }
         });
-
+    
         return isValid;
     }
+    
 
 
     function handleNextButtonClick() {
