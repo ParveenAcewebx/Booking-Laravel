@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
         $('.availibility,.calendar-wrap,.remove-all-slots').addClass('hidden');
         $('input[name="bookslots"]').val('');
         $('.slot-item').remove();
-
+        $('.showMessage').addClass('hidden');
         $.ajax({
             url: '/get/services/staff',
             type: 'GET',

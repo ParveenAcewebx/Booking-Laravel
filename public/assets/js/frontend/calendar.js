@@ -78,6 +78,8 @@
                         activeCalendar = new Calendar([],[]); // empty calendar
                         $('.calendar-wrap').addClass('hidden');
                         $('.availibility').removeClass('hidden');
+                        $('.showMessage').addClass('hidden');
+
                     }
                 },
                 error: function () {
