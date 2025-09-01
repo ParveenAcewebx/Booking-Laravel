@@ -114,7 +114,7 @@ class BookingTemplateController extends Controller
                 session()->flash('success', "Booking Template Updated Successfully.");
             } else {
                 $template = BookingTemplate::create([
-                    'data' => json_encode($data),
+                    'data' => !empty($data) ? json_encode($data) : '',
                     'template_name' => $templatename,
                     'status' => $status,
                     'created_by' => auth()->user()->id ?? 'NULL'
@@ -123,7 +123,7 @@ class BookingTemplateController extends Controller
             }
         } else {
             $template = BookingTemplate::create([
-                'data' => json_encode($data),
+                'data' => !empty($data) ? json_encode($data) : '',
                 'template_name' => $templatename,
                 'status' => $status,
                 'created_by' => auth()->user()->id ?? 'NULL',
