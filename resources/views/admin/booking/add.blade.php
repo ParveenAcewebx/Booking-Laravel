@@ -33,7 +33,7 @@
                         </div>
                         <div class="card-body">
                             <!-- Modal for Template Selection -->
-                            <div class="modal fade" id="bookingTemplateModal" tabindex="-1" aria-labelledby="bookingTemplateModalLabel" aria-hidden="true">
+                            <div class="modal fade" id="bookingTemplateModal" tabindex="-1" aria-labelledby="bookingTemplateModalLabel">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
