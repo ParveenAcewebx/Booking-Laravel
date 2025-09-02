@@ -213,6 +213,11 @@ class StaffController extends Controller
 
     public function edit(User $staff)
     {
+        $user = User::findOrFail($staff->id);
+        $userroles = $user->roles;
+        if($userroles[0]->name!= 'Staff'){
+          return redirect('admin/user/'.$staff->id.'/edit');
+        }
         $roles = Role::where('name', 'Staff')->first();
         $phoneCountries = config('phone_countries');
         $weekDays = config('constants.week_days');

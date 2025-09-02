@@ -36,8 +36,9 @@ class UserController extends Controller
             $isImpersonating = session()->has('impersonate_original_user') || Cookie::get('impersonate_original_user');
             $statusLabels = array_flip(config('constants.status'));
 
-            $query = User::with(['roles', 'staff'])->select('users.*');
-
+            $query = User::with(['roles'])->whereDoesntHave('roles', function ($q) {
+                $q->where('name', 'staff');
+            })->select('users.*');
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('name', function ($row) {
@@ -179,6 +180,9 @@ class UserController extends Controller
         $user->unsetRelation('roles')->unsetRelation('permissions');
         $phoneCountries = config('phone_countries');
         $roles = $user->roles;
+        if ($roles[0]->name == 'Staff') {
+            return redirect('admin/staff/' . $id . '/edit');
+        }
         $currentRole = null;
 
         $allusers =  $this->allUsers;
@@ -194,8 +198,8 @@ class UserController extends Controller
         }
 
         $primaryStaff = Staff::where('user_id', $id)
-        ->where('primary_staff', 1)
-        ->first();
+            ->where('primary_staff', 1)
+            ->first();
         return view('admin.user.edit', [
             'user' => $user,
             'allRoles' => Role::where('status', 1)->get(),
