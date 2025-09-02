@@ -772,6 +772,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
 
                         $("#bookingTemplateModal").modal("hide");
+                        BookingFunction();
                         $('.loader-block').removeClass('d-none');
                         let percent = 0;
                         let interval = setInterval(function () {

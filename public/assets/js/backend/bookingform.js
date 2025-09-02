@@ -756,13 +756,5 @@ document.addEventListener("DOMContentLoaded", function () {
       );
    }
    /* ================================== Onclick load template and run function =============================*/
-   $('#loadTemplateBtn').on('click', function () {
-      setTimeout(function () {
-         var templateId = $("#bookingTemplateId").val();
-         if (templateId) {
-            twostepform();
-         }
-      }, 500);
-   });
-
+   window.BookingFunction = twostepform;
 });
