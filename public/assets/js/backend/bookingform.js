@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
             selectedValue = 0;
          } else {
             selectedValue = selectedValue;
-            $('.calendar-wrap').removeClass('d-none');
+            // $('.calendar-wrap').removeClass('d-none');
          }
          $.ajax({
             url: '/get/vendor/get_booking_calender',
