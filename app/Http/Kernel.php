@@ -36,6 +36,8 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\VendorStaffMiddleware::class,
+
         ],
 
         'api' => [
@@ -68,5 +70,6 @@ class Kernel extends HttpKernel
         'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         'checkCustomerRole' => \App\Http\Middleware\CheckCustomerRole::class,
+        'VendorRoleCheck' => \App\Http\Middleware\VendorStaffMiddleware::class,
     ];
 }

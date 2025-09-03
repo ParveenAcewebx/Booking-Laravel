@@ -142,7 +142,22 @@ class APIControllerV1 extends Controller
             ], 422);
         }
 
-        $bookings = Booking::where('vendor_id', $vendorId)->get();
+        // Get all vendor IDs associated with this user
+        $vendorIds = VendorStaffAssociation::where('user_id', $vendorId)
+            ->pluck('vendor_id')
+            ->toArray();
+
+        // If no vendors found
+        if (empty($vendorIds)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No Vendors Found For This User',
+                'data' => [],
+            ], 404);
+        }
+
+        // Get bookings
+        $bookings = Booking::whereIn('vendor_id', $vendorIds)->get();
 
         if ($bookings->isEmpty()) {
             return response()->json([
@@ -158,6 +173,7 @@ class APIControllerV1 extends Controller
             'data' => $bookings,
         ], 200);
     }
+
 
     // Booking by Service
     public function searchBookingByServiceId($serviceId)

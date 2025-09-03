@@ -15,6 +15,7 @@ use App\Http\Controllers\admin\StaffController;
 use App\Http\Controllers\admin\VendorController;
 use App\Http\Controllers\admin\SettingsController;
 use App\Http\Controllers\frontend\UserProfileController;
+use App\Http\Controllers\frontend\VendorInformationController;
 use App\Helpers\Shortcode;
 
 /*
@@ -203,3 +204,11 @@ Route::post('/profile/update', [UserProfileController::class, 'UserUpdate'])->na
 Route::post('/store/session', [FormController::class, 'storeSession'])->name('session.store');
 Route::get('/get/session', [FormController::class, 'getSession'])->name('session.get');
 Route::post('/form/session/destroyed', [FormController::class, 'sessiondestroy'])->name('session.destryoed');
+Route::middleware(['VendorRoleCheck'])->group(function () {
+    Route::get('/vendor-information', [VendorInformationController::class, 'view']) ->middleware('VendorRoleCheck')->name('vendor.view');
+});
+
+
+
+
+

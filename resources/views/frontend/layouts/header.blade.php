@@ -25,6 +25,11 @@
                 {{ request()->routeIs('booking.listing') ? 'before:absolute before:-bottom-1.5 before:w-full before:h-1 before:bg-yellow-400' : '' }}">
           Bookings
         </a>
+        @if($isVendorStaff)
+            <a href="{{ url('/vendor-information') }}" class="relative font-medium text-white">
+                Vendorinfo
+            </a>
+        @endif
       </div>
       <!-- Buttons & Mobile Toggle -->
       <div class="flex items-center gap-2 relative" x-data="{ open: false }">
