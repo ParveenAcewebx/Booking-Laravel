@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Models\VendorStaffAssociation;
 use App\Http\Controllers\Controller;
+use App\Models\VendorServiceAssociation;
 
 class APIControllerV1 extends Controller
 {
@@ -185,7 +186,8 @@ class APIControllerV1 extends Controller
             ], 422);
         }
 
-        $bookings = Booking::where('service_id', $serviceId)->get();
+        $getVendorIds = VendorServiceAssociation::where('service_id', $serviceId)->get()->pluck('vendor_id')->toArray();
+        $bookings = Booking::whereIn('vendor_id', $getVendorIds)->get();
 
         if ($bookings->isEmpty()) {
             return response()->json([
