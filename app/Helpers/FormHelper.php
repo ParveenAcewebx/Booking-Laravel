@@ -72,10 +72,10 @@ class FormHelper
                 'input' => 'mt-1 block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 focus:border-blue-500 focus:ring-blue-500 text-sm shadow-sm',
                 'select' => 'mt-1 block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 focus:border-blue-500 focus:ring-blue-500 text-sm shadow-sm',
                 'textarea' => 'mt-1 block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 focus:border-blue-500 focus:ring-blue-500 text-sm shadow-sm',
-                'checkboxWrapper' => 'flex items-center mb-2 space-x-2',
+                'checkboxWrapper' => 'relative block items-center mb-2 space-x-1',
                 'checkbox' => 'h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500',
                 'checkboxLabel' => 'text-sm font-medium text-gray-700',
-                'radioWrapper' => 'flex items-center mb-2 space-x-2',
+                'radioWrapper' => 'relative block items-center mb-2 space-x-1',
                 'radio' => 'h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500',
                 'radioLabel' => 'text-sm font-medium text-gray-700',
                 'file' => 'block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-gray-100 file:py-2 file:px-4 file:text-sm file:font-semibold file:text-gray-700 hover:file:bg-gray-200',
@@ -257,8 +257,8 @@ class FormHelper
                                   </div>
                                   <input type='text' name='dynamic[{$name}_other]' class='{$c['input']} {$c['hidden']} mt-1 other_radiobox_input' placeholder='Please specify' value='" . htmlspecialchars($otherVal) . "'>";
                         }
-                        $html .= "<p class='radio-error-message text-red-500 text-xs mt-1'></p>
-                        </div>";
+                        $html .= "
+                        </div><p class='radio-error-message text-red-500 text-xs mt-1'></p>";
                         break;
 
                     case 'textarea':

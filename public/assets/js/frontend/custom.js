@@ -31,6 +31,10 @@ document.addEventListener("DOMContentLoaded", function () {
             const checkboxParent = $(field).closest('.mb-6')[0];
             $(checkboxParent).find('.checkbox-error-message').remove();
         }
+        if (field.type === 'radio') {
+            const checkboxParent = $(field).closest('.mb-6')[0];
+            $(checkboxParent).find('.radio-error-message').remove();
+        }
 
         if (field.classList.contains('service_vendor_form') && field.value) {
             const placeholder = field.parentNode.querySelector('.vendor-placeholder');
@@ -102,10 +106,34 @@ document.addEventListener("DOMContentLoaded", function () {
                     isValid = false;
                 } else {
                     field.classList.remove('border-red-500');
-                    const err = field.parentElement.querySelector('.checkbox-error-message');
-                    if (err) err.remove();
+                    // const err = field.parentElement.querySelector('.checkbox-error-message');
+                    // if (err) err.remove();
                 }
-            } else if (!field.value.trim()) {
+            } else if (field.type === 'radio') {
+                const radios = step.querySelectorAll(`input[name="${field.name}"]`);
+                const checked = Array.from(radios).some(r => r.checked);
+        
+                radios.forEach(rb => {
+                    // Remove old error
+                    const oldErr = rb.parentElement.querySelector('.radio-error-message');
+                    if (oldErr) oldErr.remove();
+        
+                    if (!checked) {
+                        rb.classList.add('border-red-500');
+                        const err = document.createElement('p');
+                        err.className = 'radio-error-message text-red-500 text-xs mt-1';
+                        err.textContent = 'This field is required';
+                        rb.parentElement.appendChild(err);
+                        isValid = false;
+                    } else {
+                        rb.classList.remove('border-red-500');
+                        const err = field.parentElement.querySelector('.radio-error-message');
+                        if (err) err.remove();
+
+                    }
+                });
+                return;
+            }else if (!field.value.trim()) {
                 field.classList.add('border-red-500');
                 if (!field.nextElementSibling || !field.nextElementSibling.classList.contains('error-message')) {
                     const err = document.createElement('p');

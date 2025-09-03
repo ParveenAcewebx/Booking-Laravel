@@ -10,6 +10,9 @@ document.addEventListener("DOMContentLoaded", function () {
       if (field.type === 'checkbox') {
          $field.closest('.form-group, .mb-3').find('.checkbox-error-message').remove();
       }
+      if (field.type === 'radio') {
+         $field.closest('.form-group, .mb-3').find('.radio-error-message').remove();
+      }
       if (field.classList.contains('service_vendor_form') && field.value) {
          const placeholder = $field.closest('.form-group, .mb-3').find('.vendor-placeholder');
          if (placeholder.length) {
