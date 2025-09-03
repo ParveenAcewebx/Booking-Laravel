@@ -144,11 +144,11 @@ class BookingController extends Controller
             }
         }
         $booking = Booking::create([
-            'booking_template_id' => $request->booking_template_id,
-            'customer_id' => $request->customer_id,
-            'booking_datetime' => $request->booking_datetime ?? date('Y-m-d H:i:s'),
-            'booking_data' => json_encode($bookingData),
-            'selected_staff' => '',
+            'booking_template_id'       => $request->booking_template_id,
+            'customer_id'               => $request->customer_id,
+            'booking_datetime'          => $request->booking_datetime ?? date('Y-m-d H:i:s'),
+            'booking_data'              => json_encode($bookingData),
+            'selected_staff'            => '',
             'bookslots'                 => $request->input('bookslots'),
             'service_id'                => $bookingData['service'] ?? NULL,
             'vendor_id' => !empty($bookingData['vendor']) ? $bookingData['vendor'] : null,

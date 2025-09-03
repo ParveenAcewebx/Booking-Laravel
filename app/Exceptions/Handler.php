@@ -2,6 +2,8 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
+
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -26,5 +28,25 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof AuthenticationException) {
+
+            $authHeader = $request->header('Authorization');
+
+            if (empty($authHeader)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Token Required',
+                ], 401);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Token Expired Or Invalid. Please Create a New Token.',
+                ], 401);
+            }
+        }
     }
 }

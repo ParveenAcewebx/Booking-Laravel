@@ -2,117 +2,177 @@
 
 namespace App\Http\Controllers\API\V1;
 
-
-
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\form;
 use App\Models\Booking;
+use App\Models\BookingTemplate;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use Illuminate\Validation\ValidationException;
+use App\Models\VendorStaffAssociation;
 use App\Http\Controllers\Controller;
 
 class APIControllerV1 extends Controller
 {
-    public function loginUserAPI(Request $request){
-            try {
-                $validatedData = $request->validate([
-                    'email' => 'required|email|exists:users,email',  
-                    'password' => 'required|min:6',                   
-                ]);
-                $user = User::where('email', $request->email)->first();
-                if (!$user || !Hash::check($request->password, $user->password)) {
-                    return response()->json([
-                        'message' => 'Wrong credentials',
-                        
-                    ]);
-                }
-                $token = $user->createToken('API Token')->plainTextToken;
+    // Login API
+    public function loginUserAPI(Request $request)
+    {
+        try {
+            $request->validate([
+                'email' => 'required|email|exists:users,email',
+                'password' => 'required|min:6',
+            ]);
+
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user || !Hash::check($request->password, $user->password)) {
                 return response()->json([
-                    'message' => 'Login successful',
-                    'token' =>  $token,
-                ]);
-            }catch(ValidationException $e) {
-        
-                return response()->json([
-                    'message' => 'Validation failed',
-                    'errors' => $e->errors(),  
-                ], 422); 
+                    'success' => false,
+                    'message' => 'Wrong credentials',
+                ], 401);
             }
-        
+
+            $user->tokens()->delete();
+            $token = $user->createToken('API Token')->plainTextToken;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User Login Successfully',
+                'token' => $token,
+            ], 200);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation Failed',
+                'errors' => $e->errors(),
+            ], 422);
+        }
     }
-    public function getForm(Request $request, $id){
-            $form = Form::find($id);
-            if (!$form) {
-                return response()->json([
-                    'message' => 'Form not found.',
-                ], 404); 
-            }
-            $formData = json_decode($form->data, true); 
-            $array = json_decode($form->data, true);
 
-            $output_array = [];
-                $current_step = [
-                    'heading' => 'Booking 1',
-                    'description' => 'Step 1 description',
-                    'fields' => []
-                ];
+    // Fetch all active booking templates
+    public function bookingTemplates()
+    {
+        $bookings = BookingTemplate::where('status', '1')->get();
 
-            $counter = 1; 
+        if ($bookings->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No Active Booking Templates Found',
+                'data' => [],
+            ], 404);
+        }
 
-            foreach ($array as $item) {
-                
-                if ($item['type'] != 'newsection') {
-                    $current_step['fields'][] = $item;
-                }
-                
-                if ($item['type'] == 'newsection') {
-                    $output_array[] = $current_step;
-
-                    $counter++;
-                    
-                    $current_step = [
-                        'heading' => 'Booking ' . $counter,
-                        'description' => 'Step ' . $counter . ' description',
-                        'fields' => []
-                    ];
-                }
-            }
-
-            if ($current_step) {
-                $output_array[] = $current_step;
-            }
-
-        return response()->json($output_array );  
-           
-    }  
+        return response()->json([
+            'success' => true,
+            'message' => 'Booking Templates Fetched Successfully',
+            'data' => $bookings,
+        ], 200);
+    }
 
     // Fetch all bookings
     public function index()
     {
         $bookings = Booking::all();
+
+        if ($bookings->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No Bookings Found',
+                'data' => [],
+            ], 404);
+        }
+
         return response()->json([
             'success' => true,
+            'message' => 'Bookings Fetched Successfully',
             'data' => $bookings,
         ], 200);
     }
-    
+
     // Fetch a specific booking by ID
     public function show($id)
     {
         $booking = Booking::find($id);
+
         if (!$booking) {
             return response()->json([
                 'success' => false,
-                'message' => 'Booking not found!',
+                'message' => 'Booking Not Found!',
             ], 404);
         }
+
         return response()->json([
             'success' => true,
+            'message' => 'Bookings Data Fetched Successfully',
             'data' => $booking,
+        ], 200);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User Logged Out Successfully',
+        ], 200);
+    }
+
+    public function searchBookingByVendorId($vendorId)
+    {
+        $bookings = Booking::where('vendor_id', $vendorId)->get();
+
+        if ($bookings->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No Bookings Found For This Vendor',
+                'data' => [],
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bookings Data Fetched Successfully',
+            'data' => $bookings,
+        ], 200);
+    }
+
+    public function searchBookingByServiceId($serviceId)
+    {
+        $bookings = Booking::where('service_id', $serviceId)->get();
+
+        if ($bookings->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No Bookings Found For This Service',
+                'data' => [],
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bookings Data Fetched Successfully',
+            'data' => $bookings,
+        ], 200);
+    }
+
+    public function searchBookingByStaffId($staffId)
+    {
+        $vendorIds = VendorStaffAssociation::where('user_id', $staffId)->pluck('vendor_id');
+
+        $bookings = Booking::whereIn('vendor_id', $vendorIds)->get();
+
+        if ($bookings->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No Bookings Found For This Staff',
+                'data' => [],
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bookings Data Fetched Successfully',
+            'data' => $bookings->toArray(),
         ], 200);
     }
 }
