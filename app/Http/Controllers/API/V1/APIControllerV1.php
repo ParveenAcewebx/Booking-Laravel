@@ -91,6 +91,13 @@ class APIControllerV1 extends Controller
     // Fetch a specific booking by ID
     public function show($id)
     {
+        if (!$id || !is_numeric($id)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid Booking ID',
+            ], 422);
+        }
+
         $booking = Booking::find($id);
 
         if (!$booking) {
@@ -102,13 +109,21 @@ class APIControllerV1 extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Bookings Data Fetched Successfully',
+            'message' => 'Booking Data Fetched Successfully',
             'data' => $booking,
         ], 200);
     }
 
+    // Logout API
     public function logout(Request $request)
     {
+        if (!$request->user()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized Access',
+            ], 401);
+        }
+
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
@@ -117,8 +132,16 @@ class APIControllerV1 extends Controller
         ], 200);
     }
 
+    // Booking by Vendor
     public function searchBookingByVendorId($vendorId)
     {
+        if (!$vendorId || !is_numeric($vendorId)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid Vendor ID',
+            ], 422);
+        }
+
         $bookings = Booking::where('vendor_id', $vendorId)->get();
 
         if ($bookings->isEmpty()) {
@@ -136,8 +159,16 @@ class APIControllerV1 extends Controller
         ], 200);
     }
 
+    // Booking by Service
     public function searchBookingByServiceId($serviceId)
     {
+        if (!$serviceId || !is_numeric($serviceId)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid Service ID',
+            ], 422);
+        }
+
         $bookings = Booking::where('service_id', $serviceId)->get();
 
         if ($bookings->isEmpty()) {
@@ -155,10 +186,17 @@ class APIControllerV1 extends Controller
         ], 200);
     }
 
+    // Booking by Staff
     public function searchBookingByStaffId($staffId)
     {
-        $vendorIds = VendorStaffAssociation::where('user_id', $staffId)->pluck('vendor_id');
+        if (!$staffId || !is_numeric($staffId)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid Staff ID',
+            ], 422);
+        }
 
+        $vendorIds = VendorStaffAssociation::where('user_id', $staffId)->pluck('vendor_id');
         $bookings = Booking::whereIn('vendor_id', $vendorIds)->get();
 
         if ($bookings->isEmpty()) {
