@@ -1,42 +1,18 @@
 @extends('frontend.layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4 py-8" x-data="{ tab: 'templates' }">
+<div class="container mx-auto px-4 py-8" x-data="{ tab: 'bookings' }">
     <!-- Page Header -->
     <div class="mb-8 text-center">
         <h1 class="text-3xl font-bold text-gray-800">Vendor Dashboard</h1>
-        <p class="text-gray-600 mt-2">Manage templates, staff, and bookings in one place</p>
+        <p class="text-gray-600 mt-2">Manage services, staff, and bookings in one place</p>
     </div>
 
     <div class="flex gap-6">
         <!-- Sidebar Tabs -->
         <div class="w-1/4 bg-white shadow rounded-2xl p-4">
             <ul class="space-y-2">
-                <li>
-                    <button 
-                        @click="tab = 'templates'" 
-                        :class="tab === 'templates' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'" 
-                        class="w-full px-4 py-2 rounded-lg text-left">
-                        Booking Templates
-                    </button>
-                </li>
-                
-                 <li>
-                    <button 
-                        @click="tab = 'services'" 
-                        :class="tab === 'services' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'" 
-                        class="w-full px-4 py-2 rounded-lg text-left">
-                       Services
-                    </button>
-                </li>
-                <li>
-                    <button 
-                        @click="tab = 'staff'" 
-                        :class="tab === 'staff' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'" 
-                        class="w-full px-4 py-2 rounded-lg text-left">
-                        Staff Members
-                    </button>
-                </li>
+                <!-- Bookings (now first tab) -->
                 <li>
                     <button 
                         @click="tab = 'bookings'" 
@@ -45,38 +21,82 @@
                         Bookings
                     </button>
                 </li>
+
+                <!-- Services -->
+                <li>
+                    <button 
+                        @click="tab = 'services'" 
+                        :class="tab === 'services' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'" 
+                        class="w-full px-4 py-2 rounded-lg text-left">
+                       Services
+                    </button>
+                </li>
+
+                <!-- Staff -->
+                <li>
+                    <button 
+                        @click="tab = 'staff'" 
+                        :class="tab === 'staff' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'" 
+                        class="w-full px-4 py-2 rounded-lg text-left">
+                        Staff Members
+                    </button>
+                </li>
             </ul>
         </div>
 
         <!-- Tab Content -->
         <div class="w-3/4 bg-white shadow rounded-2xl p-6">
-            <!-- Templates Tab -->
-            <div x-show="tab === 'templates'">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Booking Templates</h2>
+            
+            <!-- Bookings Tab (Default) -->
+            <div x-show="tab === 'bookings'">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Bookings</h2>
                 <div class="space-y-4">
-                  @if($bookingtemplatedata && $bookingtemplatedata->count() > 0)
-                   @foreach($bookingtemplatedata as $templatedata)
-                    <a href="form/{{$templatedata->slug}}">
-                    <div class="p-4 border rounded-lg flex justify-between items-center hover:shadow mb-4">
-                        <div>
-                            <h3 class="font-medium text-gray-800">{{$templatedata->template_name}}</h3>
-                            <p class="text-sm text-gray-500"><strong>Created Date </strong>{{$templatedata->created_at}}</p>
-                            <p class="text-sm text-gray-500"><strong>Status </strong>{{$templatedata->status == 1 ? 'Active' : 'Inactive';}}</p>
-                        </div>
-                        <!-- <button class="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600">Edit</button> -->
-                    </div>
-                </a>
-                    @endforeach
-                   @endif
-                </div>
-                <div class="mt-4">
-                    <!-- <button class="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">+ Add New Template</button> -->
+                    @if($bookingdata->count() > 0)
+                        @foreach($bookingdata as $booking)
+                        <a href="#">
+                            <div class="p-4 border rounded-lg hover:shadow mb-3">
+                                <h3 class="font-medium text-gray-800">
+                                    {{-- Customer Name --}}
+                                    {{ $booking->first_name ?? json_decode($booking->booking_data)->first_name ?? 'Unknown' }}
+                                    {{ $booking->last_name ?? json_decode($booking->booking_data)->last_name ?? '' }}
+                                    
+                                    {{-- Service --}}
+                                    - {{ $booking->service->name ?? '' }}
+
+                                    {{-- Template Name --}}
+                                    @if($booking->template)
+                                        <span class="text-sm text-gray-500"> (Template: {{ $booking->template->template_name }})</span>
+                                    @endif
+                                </h3>
+
+                                <p class="text-sm text-gray-500">
+                                    Date: {{ \Carbon\Carbon::parse($booking->booking_datetime)->format('Y-m-d') }} |
+                                    Time: {{ \Carbon\Carbon::parse($booking->booking_datetime)->format('h:i A') }}
+                                </p>
+
+                                <p class="text-sm text-gray-500">
+                                    Email: {{ $booking->email ?? json_decode($booking->booking_data)->email ?? 'N/A' }} |
+                                    Phone: {{ $booking->phone_number ?? json_decode($booking->booking_data)->phone ?? 'N/A' }}
+                                </p>
+
+                                <span class="inline-block mt-2 px-2 py-1 text-xs rounded 
+                                    {{ $booking->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700' }}">
+                                    {{ ucfirst($booking->status) }}
+                                </span>
+                            </div>
+                        </a>
+                        @endforeach
+                    @else
+                        <p class="text-gray-500">No bookings found.</p>
+                    @endif
                 </div>
             </div>
 
+            <!-- Services Tab -->
             <div x-show="tab === 'services'">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Services</h2>
-                @if($servicedata && $servicedata->count() > 0)
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Services</h2>
+                {{-- Services list here --}}
+                 @if($servicedata && $servicedata->count() > 0)
                  @foreach($servicedata as $services_data)
                  <a href="{{$services_data->id}}">
                     <div class="space-y-4 mb-4">
@@ -108,14 +128,15 @@
                     </div>
                         </a>
                     @endforeach
+                    @else
+                      <p class="text-gray-500">No Service found.</p>
                 @endif
-                    <div class="mt-4">
-                        <!-- <button class="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">+ Add New Booking</button> -->
-                    </div>
             </div>
+
             <!-- Staff Tab -->
             <div x-show="tab === 'staff'">
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">Staff Members</h2>
+                {{-- Staff list here --}}
                 <div class="space-y-4">
                   @if($staffdata && $staffdata->count() > 0)
                   @foreach($staffdata as $staff) 
@@ -134,6 +155,8 @@
                     </div>
                     </a>
                     @endforeach
+                    @else
+                     <p class="text-gray-500">No Staff Member found.</p>
                 @endif
                 </div>
                 <div class="mt-4">
@@ -141,48 +164,6 @@
                 </div>
             </div>
 
-            <!-- Bookings Tab -->
-            <div x-show="tab === 'bookings'">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Bookings</h2>
-                <div class="space-y-4">
-                    @if($bookingdata->count() > 0)
-                        @foreach($bookingdata as $booking)
-                        <a href="{{$booking->id}}">
-                            <div class="p-4 border rounded-lg hover:shadow mb-3">
-                                <h3 class="font-medium text-gray-800">
-                                    {{-- Customer Name --}}
-                                    {{ $booking->first_name ?? json_decode($booking->booking_data)->first_name ?? 'Unknown' }}
-                                    {{ $booking->last_name ?? json_decode($booking->booking_data)->last_name ?? '' }}
-                                    {{ $booking->service->name ??'' }}
-                                </h3>
-
-                                <p class="text-sm text-gray-500">
-                                    {{-- Date & Time --}}
-                                    Date: {{ \Carbon\Carbon::parse($booking->booking_datetime)->format('Y-m-d') }} |
-                                    Time: {{ \Carbon\Carbon::parse($booking->booking_datetime)->format('h:i A') }}
-                                </p>
-
-                                <p class="text-sm text-gray-500">
-                                    Email: {{ $booking->email ?? json_decode($booking->booking_data)->email ?? 'N/A' }} |
-                                    Phone: {{ $booking->phone_number ?? json_decode($booking->booking_data)->phone ?? 'N/A' }}
-                                </p>
-
-                                <span class="inline-block mt-2 px-2 py-1 text-xs rounded 
-                                    {{ $booking->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700' }}">
-                                    {{ ucfirst($booking->status) }}
-                                </span>
-                            </div>
-                            </a>
-                        @endforeach
-                    @else
-                        <p class="text-gray-500">No bookings found.</p>
-                    @endif
-
-                </div>
-                <div class="mt-4">
-                    <!-- <button class="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">+ Add New Booking</button> -->
-                </div>
-            </div>
         </div>
     </div>
 </div>
