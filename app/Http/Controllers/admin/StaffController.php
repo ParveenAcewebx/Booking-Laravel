@@ -48,10 +48,11 @@ class StaffController extends Controller
                     return '<h6 class="m-b-0">' . e($row->name) . '</h6><p class="m-b-0">' . e($row->email) . '</p>';
                 })
                 ->addColumn('services', function ($row) {
-                    if (!$row->services || empty($row->services)) {
-                        return '<span class="badge badge-secondary">' . $row->services . '</span>';
+                    if (empty($row->services) || $row->services->isEmpty()) {
+                        return '<span class="badge badge-secondary">No Services</span>';
                     }
-                    return collect($row->services)->map(function ($service) {
+                
+                    return $row->services->map(function ($service) {
                         return '<span class="badge badge-info mr-1">' . e($service->name) . '</span>';
                     })->implode(' ');
                 })
