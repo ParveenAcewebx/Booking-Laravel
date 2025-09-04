@@ -194,6 +194,13 @@ class APIControllerV1 extends Controller
     // Booking by Staff
     public function searchBookingByStaffId($staffId)
     {
+        if (!$staffId || !is_numeric($staffId)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid Staff ID',
+            ], 422);
+        }
+
         $vendorIds = VendorStaffAssociation::where('user_id', $staffId)->pluck('vendor_id');
         if ($vendorIds->isEmpty()) {
             return response()->json(['success' => false, 'message' => 'No Vendors Found For This Staff'], 404);
@@ -209,5 +216,49 @@ class APIControllerV1 extends Controller
             'message' => 'Bookings Data Fetched Successfully',
             'data'    => $bookings
         ], 200);
+    }
+
+    public function searchStaffById($id)
+    {
+        if (!$id || !is_numeric($id)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid Staff ID',
+            ], 422);
+        }
+
+        $user = User::with('roles')->find($id);
+
+        if (!$user) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'User not found',
+            ], 404);
+        }
+
+        if (!$user->hasRole('Staff')) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'This ID does not have Staff permission',
+            ], 403);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Staff Fetched Successfully',
+            'data'   => [
+                'id'             => $user->id,
+                'name'           => $user->name,
+                'email'          => $user->email,
+                'phone_code'     => $user->phone_code,
+                'phone_number'   => $user->phone_number,
+                'email_verified_at' => $user->email_verified_at,
+                'status'         => $user->status,
+                'created_at'     => $user->created_at,
+                'updated_at'     => $user->updated_at,
+                'avatar'         => $user->avatar,
+                'role'           => $user->roles->pluck('name')->first(),
+            ],
+        ]);
     }
 }
