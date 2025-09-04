@@ -39,4 +39,8 @@ class Service extends Model
     {
         return $this->hasMany(StaffServiceAssociation::class, 'service_id');
     }
+    public function vendors()
+    {
+        return $this->hasMany(VendorServiceAssociation::class, 'service_id', 'id');
+    }
 }

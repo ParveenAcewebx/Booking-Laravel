@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BookingTemplate;
 use App\Models\Booking;
+use App\Models\Vendor;
 use App\Models\Category;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
@@ -72,11 +73,12 @@ class ServiceController extends Controller
         $staffUsers = User::role('staff')->get();
         $defaultStatus = config('constants.status');
         $currencies = config('constants.currencies');
+        $activeVendor = Vendor::where('status', config('constants.status.active'))->get();
         $appointmentStats = config('constants.appointment_status');
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
-        return view('admin.service.add', compact('categories', 'staffUsers', 'defaultStatus', 'currencies', 'appointmentStats', 'loginUser'));
+        return view('admin.service.add', compact('categories', 'staffUsers', 'defaultStatus', 'currencies', 'appointmentStats', 'loginUser', 'activeVendor'));
     }
 
     public function servicestore(Request $request)
@@ -103,7 +105,6 @@ class ServiceController extends Controller
             'stripe_live_secret_key' => 'nullable|string',
             'payment__is_live'       => 'nullable|boolean',
         ]);
-
         if ($request->hasFile('thumbnail')) {
             $data['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
         }
@@ -132,7 +133,15 @@ class ServiceController extends Controller
         $data['duration'] = $request->duration;
         $data['currency'] = $request->currency;
         $data['price'] = $request->price ? $request->price : '0.00';
-        Service::create($data);
+        $serviceId = Service::create($data);
+        $getVendorId = $request->input('vendor', []);
+        foreach ($getVendorId as $vendorId) {
+            VendorServiceAssociation::create([
+                'service_id' => $serviceId->id,
+                'vendor_id' => $vendorId
+            ]);
+        }
+
         // $lastServiceId = $service->id;
         // $staffMembers = $request->input('staff_member', []);
         // foreach ($staffMembers as $staffId) {
@@ -161,6 +170,8 @@ class ServiceController extends Controller
         $appointmentStats = config('constants.appointment_status');
         $statuses = config('constants.status');
         $loginId = getOriginalUserId();
+        $activeVendor = Vendor::where('status', config('constants.status.active'))->get();
+        $getVendorIds = VendorServiceAssociation::where('service_id', $service->id)->pluck('vendor_id')->toArray();
         $loginUser = $loginId ? User::find($loginId) : null;
         $associatedStaffIds = $service->staffAssociations()->pluck('staff_member')->toArray();
 
@@ -172,7 +183,9 @@ class ServiceController extends Controller
             'appointmentStats',
             'statuses',
             'loginUser',
-            'associatedStaffIds'
+            'associatedStaffIds',
+            'getVendorIds',
+            'activeVendor'
         ));
     }
 
@@ -262,8 +275,19 @@ class ServiceController extends Controller
         $service->gallery = json_encode(array_values($finalGallery));
         $service->save();
 
-        // Handle staff associations
-        // $newStaffIds = $request->input('staff_member', []);
+        $newVendorIds = $request->input('vendor', []);
+        $existingVendorIds = $service->vendors()->pluck('vendor_id')->toArray();
+
+        VendorServiceAssociation::where('service_id', $id)
+            ->whereNotIn('vendor_id', $newVendorIds)
+            ->delete();
+
+        foreach (array_diff($newVendorIds, $existingVendorIds) as $vendorId) {
+            VendorServiceAssociation::create([
+                'service_id' => $id,
+                'vendor_id'  => $vendorId,
+            ]);
+        }
         // $existingStaffIds = $service->getAssignedStaffIds();
 
         // $toAdd = array_diff($newStaffIds, $existingStaffIds);

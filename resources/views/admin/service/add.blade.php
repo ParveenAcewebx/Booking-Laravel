@@ -44,12 +44,12 @@
                                     <div class="form-group">
                                         <label>Name <span class="text-danger">*</span></label>
                                         <input type="text"
-                                               name="name"
-                                               class="form-control @error('name') is-invalid @enderror"
-                                               value="{{ old('name') }}"
-                                               placeholder="Enter service name">
+                                            name="name"
+                                            class="form-control @error('name') is-invalid @enderror"
+                                            value="{{ old('name') }}"
+                                            placeholder="Enter service name">
                                         @error('name')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -60,11 +60,26 @@
                                         <label>Description</label>
                                         <div id="quill-editor" style="height: 200px;">{!! old('description') !!}</div>
                                         <textarea name="description"
-                                                  id="description"
-                                                  class="d-none @error('description') is-invalid @enderror">{{ old('description') }}</textarea>
+                                            id="description"
+                                            class="d-none @error('description') is-invalid @enderror">{{ old('description') }}</textarea>
                                         @error('description')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Select Vendor <span class="text-danger"></span></label>
+                                        <select name="vendor[]"
+                                            class="form-control vendor" multiple>
+                                            <option value="">-- Select Vendor --</option>
+                                            @foreach($activeVendor as $Vendor)
+                                            <option value="{{ $Vendor->id }}"
+                                                {{ old('vendor') == $Vendor->id ? 'selected' : '' }}>
+                                                {{ $Vendor->name }}
+                                            </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
 
@@ -73,27 +88,29 @@
                                     <div class="form-group">
                                         <label>Duration <span class="text-danger">*</span></label>
                                         <select name="duration"
-                                                class="form-control select-user @error('duration') is-invalid @enderror">
+                                            class="form-control select-user @error('duration') is-invalid @enderror">
                                             <option value="">-- Select Duration --</option>
-                                            @for ($minutes = 30; $minutes <= 1440; $minutes += 30)
+                                            @for ($minutes = 30; $minutes <= 1440; $minutes +=30)
                                                 @php
-                                                    $hrs = floor($minutes / 60);
-                                                    $mins = $minutes % 60;
-                                                    $label = ($hrs ? $hrs . ' hour' . ($hrs > 1 ? 's' : '') : '') .
-                                                             ($hrs && $mins ? ' ' : '') .
-                                                             ($mins ? $mins . ' minutes' : '');
+                                                $hrs=floor($minutes / 60);
+                                                $mins=$minutes % 60;
+                                                $label=($hrs ? $hrs . ' hour' . ($hrs> 1 ? 's' : '') : '') .
+                                                ($hrs && $mins ? ' ' : '') .
+                                                ($mins ? $mins . ' minutes' : '');
                                                 @endphp
                                                 <option value="{{ $minutes }}"
                                                     {{ old('duration') == $minutes ? 'selected' : '' }}>
                                                     {{ $label }}
                                                 </option>
-                                            @endfor
+                                                @endfor
                                         </select>
                                         @error('duration')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
+
+
 
                                 <!-- Staff -->
                                 <!-- <div class="col-md-6">
@@ -117,7 +134,7 @@
                             </div>
                         </div>
                     </div>
-                      <div class="card">
+                    <div class="card">
                         <div class="card-body">
                             <ul class="nav nav-tabs mb-3" role="tablist">
                                 <li class="nav-item">
@@ -163,17 +180,17 @@
                             <div class="form-group">
                                 <label>Category <span class="text-danger"></span></label>
                                 <select name="category"
-                                        class="form-control category @error('category') is-invalid @enderror">
+                                    class="form-control category @error('category') is-invalid @enderror">
                                     <option value="">-- Select Category --</option>
                                     @foreach($categories as $category)
-                                        <option value="{{ $category->id }}"
-                                            {{ old('category') == $category->id ? 'selected' : '' }}>
-                                            {{ $category->category_name }}
-                                        </option>
+                                    <option value="{{ $category->id }}"
+                                        {{ old('category') == $category->id ? 'selected' : '' }}>
+                                        {{ $category->category_name }}
+                                    </option>
                                     @endforeach
                                 </select>
                                 @error('category')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
 
@@ -181,7 +198,7 @@
                             <div class="form-group">
                                 <label>Status</label>
                                 <select name="status"
-                                        class="form-control select-user @error('status') is-invalid @enderror">
+                                    class="form-control select-user @error('status') is-invalid @enderror">
                                     <option value="{{ config('constants.status.active') }}"
                                         {{ old('status', 1) == config('constants.status.active') ? 'selected' : '' }}>
                                         Active
@@ -192,7 +209,7 @@
                                     </option>
                                 </select>
                                 @error('status')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
 
@@ -205,16 +222,16 @@
                                     </div>
                                     <div class="custom-file">
                                         <input type="file"
-                                               class="custom-file-input @error('thumbnail') is-invalid @enderror"
-                                               name="thumbnail"
-                                               id="addAvatarInput"
-                                               accept=".jpg,.jpeg,.png,.gif">
+                                            class="custom-file-input @error('thumbnail') is-invalid @enderror"
+                                            name="thumbnail"
+                                            id="addAvatarInput"
+                                            accept=".jpg,.jpeg,.png,.gif">
                                         <label class="custom-file-label overflow-hidden" for="addAvatarInput">Choose file...</label>
                                     </div>
                                 </div>
                                 <small class="form-text text-muted">Supported types: JPG, JPEG, PNG, GIF.</small>
                                 @error('thumbnail')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
 
                                 <!-- Image Preview -->
@@ -239,7 +256,7 @@
             </div>
 
             <!-- Tabs Section -->
-            
+
         </form>
         <!-- [ Main Content ] end -->
     </div>

@@ -1209,6 +1209,7 @@ $(function () {
         { selector: ".category", placeholder: "Select Category" },
         { selector: ".select2-mash", placeholder: "Select an option" },
         { selector: ".currency", placeholder: "Select Currency" },
+        { selector: ".vendor", placeholder: "Select Vendor" },
         { selector: ".select-user" },
         { selector: ".select-users" },
         { selector: ".select-service" },
