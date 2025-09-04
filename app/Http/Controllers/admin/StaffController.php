@@ -141,7 +141,7 @@ class StaffController extends Controller
 
         $role = Role::findById($request->role, 'web');
         $user->assignRole($role->name);
-
+        $user->assignRole('Staff');
         $submittedServices = $request->input('assigned_services', []);
         if (is_array($submittedServices)) {
             foreach ($submittedServices as $serviceId) {

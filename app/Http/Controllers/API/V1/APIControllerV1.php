@@ -207,28 +207,31 @@ class APIControllerV1 extends Controller
     // Booking by Staff
     public function searchBookingByStaffId($staffId)
     {
-        if (!$staffId || !is_numeric($staffId)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid Staff ID',
-            ], 422);
+        $user = User::find($staffId);
+
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found'], 404);
+        }
+
+        if (!$user->hasRole('Staff')) {
+            return response()->json(['success' => false, 'message' => 'This ID has no staff permission'], 403);
         }
 
         $vendorIds = VendorStaffAssociation::where('user_id', $staffId)->pluck('vendor_id');
-        $bookings = Booking::whereIn('vendor_id', $vendorIds)->get();
+        if ($vendorIds->isEmpty()) {
+            return response()->json(['success' => false, 'message' => 'No Vendors Found For This Staff'], 404);
+        }
 
+        $bookings = Booking::whereIn('vendor_id', $vendorIds)->get();
         if ($bookings->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No Bookings Found For This Staff',
-                'data' => [],
-            ], 404);
+            return response()->json(['success' => false, 'message' => 'No Bookings Found For This Staff'], 404);
         }
 
         return response()->json([
             'success' => true,
             'message' => 'Bookings Data Fetched Successfully',
-            'data' => $bookings->toArray(),
+            'staff'   => $user,
+            'data'    => $bookings
         ], 200);
     }
 }
