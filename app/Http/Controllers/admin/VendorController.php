@@ -174,13 +174,17 @@ class VendorController extends Controller
                 'phone_number'  => $request->phone_number,
                 'status'        => config('constants.status.active'),
             ]);
-            // try {        
-            //     Mail::to($user->email)->send(view('admin.vendor.partials.email', compact('user', 'randomPassword')));
-            //     \Log::info('Email sent successfully to ' . $user->email);
-            // } catch (\Exception $e) {
-            //     \Log::error('Failed to send email to ' . $user->email . ': ' . $e->getMessage());
-            //     return back()->withInput()->with('error', 'Email sending failed: ' . $e->getMessage());
-            // }
+           try {        
+                Mail::send('admin.vendor.partials.email', compact('user', 'randomPassword'), function ($message) use ($user) {
+                    $message->to($user->email)->subject('Welcome to Our Platform');
+                });
+                \Log::info('Email sent successfully to ' . $user->email);
+            } catch (\Exception $e) {
+                \Log::error('Failed to send email to ' . $user->email . ': ' . $e->getMessage());
+                // return back()->withInput()->with('error', 'Email sending failed: ' . $e->getMessage());
+            }
+
+
             $user->assignRole('Staff');
             $vendor = Vendor::create([
                 'name'        => $request->username,
