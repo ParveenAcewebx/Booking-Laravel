@@ -450,6 +450,7 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'You are already logged in as this user.');
         }
 
+    
         if (!session()->has('impersonate_original_user') && !Cookie::get('impersonate_original_user')) {
             session(['impersonate_original_user' => $currentUser->id]);
             Cookie::queue('impersonate_original_user', $currentUser->id, 60 * 24 * 7); // 7 days
@@ -458,19 +459,25 @@ class UserController extends Controller
         $userToSwitch = User::findOrFail($id);
         Auth::login($userToSwitch);
 
+        $userToSwitch = User::with('staff')->findOrFail($id); // Load staff relation if exists
+
+        // Check if staff and primary_staff = 1
+        if ($userToSwitch->staff && $userToSwitch->staff->primary_staff == 1) {
+            return redirect('/vendor-information'); 
+        }
+
         return redirect('/admin');
     }
 
     public function switchBack()
     {
         $originalUserId = session('impersonate_original_user') ?? Cookie::get('impersonate_original_user');
-        // dd($originalUserId);
         if ($originalUserId) {
             $originalUser = User::find($originalUserId);
 
             if ($originalUser) {
                 Auth::login($originalUser);
-
+        
                 session()->forget('impersonate_original_user');
                 Cookie::queue(Cookie::forget('impersonate_original_user'));
 

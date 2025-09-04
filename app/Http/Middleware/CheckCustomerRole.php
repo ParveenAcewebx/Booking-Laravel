@@ -19,7 +19,9 @@ class CheckCustomerRole
     public function handle(Request $request, Closure $next): Response
     {
         $requestUri = $request->getRequestUri();
-        if ($requestUri === '/admin/switch-back') {
+        $user = auth()->user();
+
+        if (str_starts_with($requestUri, '/admin/switch-back')) {
             $originalUserId = session('impersonate_original_user') ?? Cookie::get('impersonate_original_user');
             if ($originalUserId) {
                 $originalUser = User::find($originalUserId);
@@ -27,13 +29,19 @@ class CheckCustomerRole
                     Auth::login($originalUser);
                     session()->forget('impersonate_original_user');
                     Cookie::queue(Cookie::forget('impersonate_original_user'));
+                    if ($user->hasRole('Staff') && $user->staff && $user->staff->primary_staff == 1) {
+                        return redirect('/admin/staffs');
+                    }
                     return redirect('/admin');
                 }
             }
         }
-        if (auth()->user()->hasRole('Customer')) {
+
+        if ($user->hasRole('Customer')) {
             return redirect()->route('home');
         }
+
+
         return $next($request);
     }
 }

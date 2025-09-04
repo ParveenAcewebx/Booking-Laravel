@@ -9,6 +9,7 @@ use App\Models\Service;
 use App\Models\Vendor;
 use App\Models\VendorAssociation;
 use App\Models\StaffServiceAssociation;
+use Illuminate\Support\Facades\Cookie;
 use App\Models\VendorStaffAssociation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,11 +33,15 @@ class StaffController extends Controller
 
     public function index(Request $request)
     {
+        // Get original user if impersonating
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
             $currentUser = Auth::user();
+            $isImpersonating = session()->has('impersonate_original_user') || Cookie::get('impersonate_original_user');
+
+            // Query Staff users with roles and services
             $query = User::with(['roles', 'services'])
                 ->whereHas('roles', function ($q) {
                     $q->where('name', 'Staff');
@@ -48,19 +53,16 @@ class StaffController extends Controller
                     return '<h6 class="m-b-0">' . e($row->name) . '</h6><p class="m-b-0">' . e($row->email) . '</p>';
                 })
                 ->addColumn('services', function ($row) {
-                    if (empty($row->services) || $row->services->isEmpty()) {
+                    if ($row->services->isEmpty()) {
                         return '<span class="badge badge-secondary">No Services</span>';
                     }
-                
-                    return $row->services->map(function ($service) {
-                        return '<span class="badge badge-info mr-1">' . e($service->name) . '</span>';
-                    })->implode(' ');
+                    return $row->services->map(fn($service) =>
+                        '<span class="badge badge-info mr-1">' . e($service->name) . '</span>'
+                    )->implode(' ');
                 })
                 ->editColumn('created_at', function ($row) {
                     return $row->created_at
-                        ? $row->created_at->format(
-                            get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
-                        )
+                        ? $row->created_at->format(get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i'))
                         : '';
                 })
                 ->addColumn('status', function ($row) {
@@ -68,36 +70,57 @@ class StaffController extends Controller
                         ? '<span class="badge badge-success">Active</span>'
                         : '<span class="badge badge-danger">Inactive</span>';
                 })
-                ->addColumn('action', function ($row) use ($currentUser) {
+                ->addColumn('action', function ($row) use ($currentUser, $isImpersonating) {
                     $btn = '';
 
+                    // Edit button
                     if ($currentUser->can('edit staffs')) {
-                        $btn .= '<a href="' . route('staff.edit', [$row->id]) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit User">
-                                <i class="fas fa-pencil-alt"></i>
-                             </a> ';
+                        $btn .= '<a href="' . route('staff.edit', $row->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit User">
+                                    <i class="fas fa-pencil-alt"></i>
+                                 </a> ';
                     }
 
+                    // Delete button
                     if ($currentUser->can('delete staffs') && Auth::id() != $row->id) {
                         if ($row->staff && $row->staff->primary_staff == 1) {
                             $btn .= '<button type="button" class="btn btn-icon btn-secondary" title="Please First Delete Vendor" disabled>
-                                    <i class="feather icon-trash-2"></i>
-                                 </button>';
-                        } else {
-                            $btn .= '<form action="' . route('staff.destroy', [$row->id]) . '" method="POST" style="display:inline;" id="deleteStaff-' . $row->id . '">
-                                    ' . csrf_field() . '
-                                    <input type="hidden" name="_method" value="DELETE">
-                                    <button type="button" onclick="return deleteStaff(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Staff">
                                         <i class="feather icon-trash-2"></i>
-                                    </button>
-                                </form>';
+                                     </button>';
+                        } else {
+                            $btn .= '<form action="' . route('staff.destroy', $row->id) . '" method="POST" style="display:inline;" id="deleteStaff-' . $row->id . '">
+                                        ' . csrf_field() . '
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="button" onclick="return deleteStaff(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Staff">
+                                            <i class="feather icon-trash-2"></i>
+                                        </button>
+                                     </form>';
                         }
                     }
+
+                    // Impersonation buttons
+                    if ($isImpersonating && Auth::id() === $row->id) {
+                        $btn .= '<form method="POST" action="' . route('user.switch.back') . '" style="display:inline;">
+                                    ' . csrf_field() . '
+                                    <button type="submit" class="btn btn-icon btn-dark" data-toggle="tooltip" title="Switch Back">
+                                        <i class="feather icon-log-out"></i>
+                                    </button>
+                                 </form>';
+                    } elseif (!$isImpersonating && $currentUser->hasRole('Administrator') && $currentUser->id !== $row->id && $row->staff->primary_staff == 1) {
+                        $btn .= '<form method="POST" action="' . route('user.switch', $row->id) . '" style="display:inline;">
+                                    ' . csrf_field() . '
+                                    <button type="submit" class="btn btn-icon btn-dark" data-toggle="tooltip" title="Switch User">
+                                        <i class="fas fa-random"></i>
+                                    </button>
+                                 </form>';
+                    }
+
                     return $btn;
                 })
-
                 ->rawColumns(['name', 'services', 'status', 'action'])
                 ->make(true);
         }
+
+        // Load view for non-AJAX
         return view('admin.staff.index', compact('loginUser'));
     }
 
