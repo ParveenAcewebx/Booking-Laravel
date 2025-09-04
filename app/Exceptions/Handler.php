@@ -33,20 +33,27 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof AuthenticationException) {
+            // If it's an API request, return JSON
+            if ($request->expectsJson() || $request->is('api/*')) {
+                $authHeader = $request->header('Authorization');
 
-            $authHeader = $request->header('Authorization');
-
-            if (empty($authHeader)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Token Required',
-                ], 401);
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Token Expired Or Invalid. Please Create a New Token.',
-                ], 401);
+                if (empty($authHeader)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Token Required',
+                    ], 401);
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Token Expired Or Invalid. Please Create a New Token.',
+                    ], 401);
+                }
             }
+
+            // Otherwise, redirect frontend users to login
+            return redirect()->guest(route('login'));
         }
+
+        return parent::render($request, $exception);
     }
 }
