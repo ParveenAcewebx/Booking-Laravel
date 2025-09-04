@@ -143,22 +143,9 @@ class APIControllerV1 extends Controller
             ], 422);
         }
 
-        // Get all vendor IDs associated with this user
-        $vendorIds = VendorStaffAssociation::where('user_id', $vendorId)
-            ->pluck('vendor_id')
-            ->toArray();
-
-        // If no vendors found
-        if (empty($vendorIds)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No Vendors Found For This User',
-                'data' => [],
-            ], 404);
-        }
 
         // Get bookings
-        $bookings = Booking::whereIn('vendor_id', $vendorIds)->get();
+        $bookings = Booking::where('vendor_id', $vendorId)->get();
 
         if ($bookings->isEmpty()) {
             return response()->json([
@@ -207,16 +194,6 @@ class APIControllerV1 extends Controller
     // Booking by Staff
     public function searchBookingByStaffId($staffId)
     {
-        $user = User::find($staffId);
-
-        if (!$user) {
-            return response()->json(['success' => false, 'message' => 'User not found'], 404);
-        }
-
-        if (!$user->hasRole('Staff')) {
-            return response()->json(['success' => false, 'message' => 'This ID has no staff permission'], 403);
-        }
-
         $vendorIds = VendorStaffAssociation::where('user_id', $staffId)->pluck('vendor_id');
         if ($vendorIds->isEmpty()) {
             return response()->json(['success' => false, 'message' => 'No Vendors Found For This Staff'], 404);
@@ -230,7 +207,6 @@ class APIControllerV1 extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Bookings Data Fetched Successfully',
-            'staff'   => $user,
             'data'    => $bookings
         ], 200);
     }
