@@ -13,7 +13,8 @@ class BookingTemplate extends Model
         'template_name',
         'created_by',
         'slug',
-        'status'
+        'status',
+        'vendor_id'
     ];
     public function user()
     {

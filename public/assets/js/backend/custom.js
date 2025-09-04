@@ -532,6 +532,7 @@ $(function ($) {
         e.preventDefault();
         const inputElement = $("#bookingTemplatesname");
         const status = $('.select-template-status').val();
+        const vendorId = $('.select-template-vendor').val();
 
         const inputValue = inputElement.val().trim();
         const errorMessageElement = $("#bookingTemplatesname-error");
@@ -554,7 +555,7 @@ $(function ($) {
         $.ajax({
             url: "/admin/template/save",
             method: "POST",
-            data: { data, templatename: inputValue, templatestatus: status, templateid, _token: csrfToken },
+            data: { data, templatename: inputValue, templatestatus: status, templateid, _token: csrfToken,vendorid:vendorId },
             success: () => window.location.href = `${window.location.origin}/admin/templates`,
             error: (xhr) => console.error(xhr.responseText),
         });

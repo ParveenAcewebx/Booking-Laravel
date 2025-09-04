@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Vendor;
 use App\Models\BookingTemplate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -103,12 +104,14 @@ class BookingTemplateController extends Controller
         $templatename = $request->input('templatename');
         $templateid = $request->input('templateid');
         $status = $request->input('templatestatus');
+        $vendorId = $request->input('vendorid');
         if (!empty($templateid)) {
             $template = BookingTemplate::find($templateid);
             if ($template) {
                 $template->data = $data ? $data : "";
                 $template->template_name = $templatename;
                 $template->status = $status;
+                $template->vendor_id = $vendorId;
                 if (empty($template->slug)) {
                     $template->slug = Str::uuid();
                 }
@@ -119,6 +122,7 @@ class BookingTemplateController extends Controller
                     'data' => !empty($data) ? json_encode($data) : '',
                     'template_name' => $templatename,
                     'status' => $status,
+                    'vendor_id' => $vendorId,
                     'created_by' => auth()->user()->id ?? 'NULL'
                 ]);
                 session()->flash('success', "Booking Template Added Successfully.");
@@ -129,6 +133,7 @@ class BookingTemplateController extends Controller
                 'template_name' => $templatename,
                 'status' => $status,
                 'created_by' => auth()->user()->id ?? 'NULL',
+                'vendor_id' => $vendorId,
                 'slug' => Str::uuid(),
             ]);
             session()->flash('success', "Booking Template Added Successfully.");
@@ -151,11 +156,12 @@ class BookingTemplateController extends Controller
         $template = BookingTemplate::find($id);
         $loginId = getOriginalUserId();
         $loginUser = null;
+        $activeVendor = Vendor::where('status', config('constants.status.active'))->get();
 
         if ($loginId) {
             $loginUser = User::find($loginId);
         }
-        return view('admin.booking-template.edit', ['templates' => $template, 'allusers' => $allusers, 'loginUser' => $loginUser]);
+        return view('admin.booking-template.edit', ['templates' => $template, 'allusers' => $allusers, 'loginUser' => $loginUser,'activeVendor' => $activeVendor]);
     }
 
     public function templateAdd()
@@ -164,11 +170,11 @@ class BookingTemplateController extends Controller
         $allusers  = $this->allUsers;
         $loginId = getOriginalUserId();
         $loginUser = null;
-
+        $activeVendor = Vendor::where('status', config('constants.status.active'))->get();
         if ($loginId) {
             $loginUser = User::find($loginId);
         }
-        return view('admin.booking-template.add', compact('allusers', 'loginUser', 'query'));
+        return view('admin.booking-template.add', compact('allusers', 'loginUser', 'query','activeVendor'));
     }
 
     public function copytemplate(Request $request)

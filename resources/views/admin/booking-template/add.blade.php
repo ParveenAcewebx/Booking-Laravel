@@ -31,12 +31,27 @@
 					</div>
 					<div class="card-body">
 						<div class="row">
-							<div class="col-sm-6">
+							<div class="col-sm-12">
 								<div class="form-group">
 									<label class="floating-label" for="">Booking Template Name <span class="text-danger">*</span></label>
 									<div>
 										<input type="text" id="bookingTemplatesname" class="form-control" placeholder="Enter name">
 									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Select Vendor <span class="text-danger"></span></label>
+									<select name="vendor"
+										class="form-control vendor select-template-vendor">
+										<option value="">-- Select Vendor --</option>
+										@foreach($activeVendor as $Vendor)
+										<option value="{{ $Vendor->id }}"
+											{{ old('vendor') == $Vendor->id ? 'selected' : '' }}>
+											{{ $Vendor->name }}
+										</option>
+										@endforeach
+									</select>
 								</div>
 							</div>
 							<div class="col-sm-6">
