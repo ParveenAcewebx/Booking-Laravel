@@ -31,7 +31,6 @@ class BookingTemplateController extends Controller
         $loginUser = $loginId ? User::find($loginId) : null;
 
         if ($request->ajax()) {
-            // preload booking count to avoid N+1 queries
             $query = BookingTemplate::select(['id', 'template_name', 'created_at', 'created_by', 'slug', 'status','data'])
                 ->with('user')
                 ->withCount('bookings');

@@ -14,9 +14,14 @@ use App\Http\Controllers\frontend\BookingListingController;
 use App\Http\Controllers\admin\StaffController;
 use App\Http\Controllers\admin\VendorController;
 use App\Http\Controllers\admin\SettingsController;
-use App\Http\Controllers\frontend\UserProfileController;
-use App\Http\Controllers\frontend\VendorInformationController;
+use App\Http\Controllers\admin\EmailTemplateController;
+use App\Http\Controllers\frontend\Vendor\VendorInformationController;
+use App\Http\Controllers\frontend\Vendor\VendorProfileController;
+use App\Http\Controllers\frontend\Vendor\VendorBookingController;
+use App\Http\Controllers\frontend\Vendor\VendorServiceController;
+use App\Http\Controllers\frontend\Vendor\VendorStaffController;
 use App\Helpers\Shortcode;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -169,6 +174,9 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
         Route::delete('/category/{category}', [CategoryController::class, 'destroy'])->name('category.destroy');
     });
 
+    Route::middleware('permission:view emails')->group(function () {
+        Route::get('/emails', [EmailTemplateController::class, 'index'])->name('emails.list');
+    });
     Route::middleware('permission:view staffs')->group(function () {
         Route::get('/staffs', [StaffController::class, 'index'])->name('staff.list');
     });
@@ -199,16 +207,41 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
 // Front profile 
 Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 
-Route::get('/profile', [UserProfileController::class, 'userEdit'])->name('Userprofile');
-Route::post('/profile/update', [UserProfileController::class, 'UserUpdate'])->name('ProfileUpdate');
 Route::post('/store/session', [FormController::class, 'storeSession'])->name('session.store');
 Route::get('/get/session', [FormController::class, 'getSession'])->name('session.get');
 Route::post('/form/session/destroyed', [FormController::class, 'sessiondestroy'])->name('session.destryoed');
+
+// Route::get('/profile', [UserProfileController::class, 'userEdit'])->name('Userprofile');
+Route::post('/profile/update', [VendorProfileController::class, 'UserprofileUpdate'])->name('ProfileUpdate');
 Route::middleware(['VendorRoleCheck'])->group(function () {
-    Route::get('/vendor-information', [VendorInformationController::class, 'view']) ->middleware('VendorRoleCheck')->name('vendor.view');
+   
+    Route::get('/dashboard/profile', [VendorInformationController::class, 'view'])->middleware('VendorRoleCheck')->name('vendor.dashboard.view');
+
+    // Bookings
+    Route::get('/dashboard/bookings', [VendorBookingController::class, 'view'])->name('vendor.bookings.view');
+
+    // Services
+    Route::get('/dashboard/services', [VendorServiceController::class, 'view'])->name('vendor.services.view');
+
+    // Staff
+    Route::get('/dashboard/staff', [VendorStaffController::class, 'view'])->name('vendor.staff.view');
+
+    // Vendor Dashboard
+    // Route::get('/dashboard', [VendorInformationController::class, 'view'])->middleware('VendorRoleCheck')->name('vendor.view');
+    
+    //  Bookings
+    Route::delete('/bookings/{id}', [VendorBookingController::class, 'bookingdestroy'])->name('vendor.booking.destroy');
+    //  Services 
+    Route::post('/services', [VendorServiceController::class, 'ServiceCreate'])->name('vendor.services.store');
+    Route::get('/services/{id}/edit', [VendorServiceController::class, 'edit'])->name('vendor.services.edit');
+    Route::put('/services/{id}', [VendorServiceController::class, 'ServiceUpdate'])->name('vendor.services.update');
+    Route::delete('/services/{id}', [VendorServiceController::class, 'Servicedestroy'])->name('vendor.services.destroy');
+
+    //  Staff
+    Route::post('/staff', [VendorStaffController::class, 'staffCreate'])->name('vendor.staff.store');
+    Route::put('/staff/{id}', [VendorStaffController::class, 'staffUpdate'])->name('vendor.staff.update');
+    Route::delete('/staff/{id}', [VendorStaffController::class, 'staffDestroy'])->name('vendor.staff.destroy');
+    
 });
-
-
-
 
 

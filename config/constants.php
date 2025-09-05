@@ -72,6 +72,11 @@ return [
             'slug' => 'vendors',
             'roles' => ['view vendors', 'create vendors', 'edit vendors', 'delete vendors']
         ],
+        'emails' => [
+            'name' => "Manage Emails",
+            'slug' => 'emails',
+            'roles' => ['view emails', 'create emails', 'edit emails', 'delete emails']
+        ],
         'settings' => [
             'name' => "Settings",
             'slug' => 'settings',

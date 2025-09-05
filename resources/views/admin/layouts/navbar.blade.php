@@ -187,6 +187,28 @@
                     </li>
                     @endcanany
 
+                    {{-- Email Templates --}}
+                    @canany(['view emails', 'create emails', 'edit emails', 'delete emails'])
+                    <li class="nav-item pcoded-hasmenu {{ request()->routeIs('emails.*') ? 'pcoded-trigger' : '' }}">
+                        <a href="#!" class="nav-link">
+                            <span class="pcoded-micon"><i class="fas fa-user-tie"></i></span>
+                            <span class="pcoded-mtext">Manage Emails</span>
+                        </a>
+                        <ul class="pcoded-submenu" @if(request()->routeIs('emails.*')) style="display:block;" @endif>
+                            @can('create emails')
+                            <li class="{{ request()->routeIs('#') ? 'active' : '' }}">
+                                <a href="#">Add Email</a>
+                            </li>
+                            @endcan
+                            @can('view emails')
+                            <li class="{{ request()->routeIs('emails.list') ? 'active' : '' }}">
+                                <a href="{{ route('emails.list') }}">All Emails</a>
+                            </li>
+                            @endcan
+                        </ul>
+                    </li>
+                    @endcanany
+
                     {{-- Bookings --}}
                     @canany(['view bookings', 'create bookings', 'edit bookings', 'delete bookings'])
                     <li class="nav-item pcoded-hasmenu {{ request()->routeIs('booking.*') ? 'pcoded-trigger' : '' }}">

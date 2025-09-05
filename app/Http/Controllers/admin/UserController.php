@@ -459,11 +459,10 @@ class UserController extends Controller
         $userToSwitch = User::findOrFail($id);
         Auth::login($userToSwitch);
 
-        $userToSwitch = User::with('staff')->findOrFail($id); // Load staff relation if exists
+        $userToSwitch = User::with('staff')->findOrFail($id);
 
-        // Check if staff and primary_staff = 1
         if ($userToSwitch->staff && $userToSwitch->staff->primary_staff == 1) {
-            return redirect('/vendor-information'); 
+            return redirect('/dashboard/profile'); 
         }
 
         return redirect('/admin');

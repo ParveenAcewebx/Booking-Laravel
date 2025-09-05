@@ -1,4 +1,4 @@
-  <header class="sticky top-0 z-50 bg-gray-900 backdrop-blur-lg border-b dark:bg-neutral-900/80 dark:border-neutral-700">
+<header class="sticky top-0 z-50 bg-gray-900 backdrop-blur-lg border-b dark:bg-neutral-900/80 dark:border-neutral-700">
     <nav class="max-w-7xl mx-auto flex items-center justify-between p-4 md:px-6">
       <!-- Logo -->
       <a href="{{ route('home') }}" class="flex items-center space-x-3 text-xl font-semibold text-black dark:text-white">
@@ -25,11 +25,6 @@
                 {{ request()->routeIs('booking.listing') ? 'before:absolute before:-bottom-1.5 before:w-full before:h-1 before:bg-yellow-400' : '' }}">
           Bookings
         </a>
-        @if($isVendorStaff)
-            <a href="{{ url('/vendor-information') }}" class="relative font-medium text-white">
-                Vendorinfo
-            </a>
-        @endif
       </div>
       <!-- Buttons & Mobile Toggle -->
       <div class="flex items-center gap-2 relative" x-data="{ open: false }">
@@ -60,7 +55,7 @@
                @if(auth()->user()->hasRole('Administrator')) 
                 <a href="{{ route('profile') }}" class="block px-4 py-2 text-sm font-medium">Profile</a>
                 @else
-                 <a href="{{ route('Userprofile') }}" class="block px-4 py-2 text-sm font-medium">Profile</a>
+                 <a href="{{ route('vendor.dashboard.view') }}" class="block px-4 py-2 text-sm font-medium">Dashboard</a>
                 @endif
             </li>
             

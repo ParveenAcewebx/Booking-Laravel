@@ -53,12 +53,12 @@ document.addEventListener("DOMContentLoaded", function () {
         let isValid = true;
         const requiredFields = step.querySelectorAll('[required]');
         const current_step = step.getAttribute('id');
-    
+
         const noVendorElement = $('#' + current_step).find('.vendor-placeholder .no-vendor-text');
         const noVendorAssigned = noVendorElement.length > 0;
-    
+
         const calendarWrap = $('#' + current_step).find('.calendar-wrap');
-    
+
         // Only validate calendar if it's in the DOM AND visible
         if (!noVendorAssigned && calendarWrap.length && calendarWrap.is(':visible')) {
             const bookedSlots = $('#' + current_step + ' #bookslots').val();
@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 $('#' + current_step).find('.select-slots').empty();
             }
         }
-    
+
         // Loop through all required fields
         requiredFields.forEach(field => {
             if (field.tagName.toLowerCase() === 'select') {
@@ -91,41 +91,41 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 return;
             }
-    
+
             if (field.type === 'checkbox') {
                 const checkboxes = step.querySelectorAll(`input[name="${field.name}"]`);
                 const checked = Array.from(checkboxes).some(c => c.checked);
-            
+
                 const otherCheckbox = Array.from(checkboxes).find(cb => cb.value.toLowerCase() === "other");
                 const lastCheckbox = checkboxes[checkboxes.length - 1];
-            
+
                 const targetElement = otherCheckbox ? otherCheckbox.parentElement : lastCheckbox.parentElement;
-            
+
                 const oldErr = targetElement.parentElement.querySelector('.checkbox-error-message');
                 if (oldErr) oldErr.remove();
-            
+
                 if (!checked) {
                     checkboxes.forEach(cb => cb.classList.add('border-red-500'));
                     const err = document.createElement('p');
                     err.className = 'checkbox-error-message text-red-500 text-xs mt-1';
                     err.textContent = 'This field is required';
-                    targetElement.insertAdjacentElement('afterend', err); 
+                    targetElement.insertAdjacentElement('afterend', err);
                     isValid = false;
                 } else {
                     checkboxes.forEach(cb => cb.classList.remove('border-red-500'));
                 }
-            
+
             } else if (field.type === 'radio') {
                 const radios = step.querySelectorAll(`input[name="${field.name}"]`);
                 const checked = Array.from(radios).some(r => r.checked);
-            
+
                 const otherRadio = Array.from(radios).find(r => r.value.toLowerCase() === "other");
                 const lastRadio = radios[radios.length - 1];
                 const targetElement = otherRadio ? otherRadio.parentElement : lastRadio.parentElement;
-            
+
                 const oldErr = targetElement.parentElement.querySelector('.radio-error-message');
                 if (oldErr) oldErr.remove();
-            
+
                 if (!checked) {
                     radios.forEach(rb => rb.classList.add('border-red-500'));
                     const err = document.createElement('p');
@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 return;
             }
-                      
+
             else if (!field.value.trim()) {
                 field.classList.add('border-red-500');
                 if (!field.nextElementSibling || !field.nextElementSibling.classList.contains('error-message')) {
@@ -154,10 +154,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (err) err.remove();
             }
         });
-    
+
         return isValid;
     }
-    
+
 
 
     function handleNextButtonClick() {
@@ -549,7 +549,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
     setTimeout(function () {
-           $(".radio_other:checked").each(function () {
+        $(".radio_other:checked").each(function () {
             let radiobutton = $(this).val();
             let relatedInput = $(this).closest(".mb-6").find(".other_radiobox_input");
             if (radiobutton == '__other__') {
@@ -567,3 +567,146 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }, 1000);
 });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById('bookingTemplateModal');
+    const openBtns = document.querySelectorAll('.open-popup');
+    const closeBtn = document.getElementById('closeModal');
+    const fbEditor = $('#build-wrap');
+    let formBuilderInstance;
+
+    function initFormBuilder(data = []) {
+        if (!fbEditor.length || formBuilderInstance) return;
+
+        const fields = [
+            { label: "Next Step", attrs: { type: "newsection" }, icon: '<i class="fa-solid fa-section"></i>' },
+            { label: "ShortCode", attrs: { type: "shortcodeblock" }, icon: '<i class="fa fa-code"></i>' }
+        ];
+
+        const templates = {
+            newsection: fieldData => ({
+                field: `<div id="${fieldData.name}" class="section border p-2 rounded mb-2">
+                          <div class="section-content"></div>
+                          <div class="section-navigation mt-2">
+                            <button class="prev-btn hidden">Previous</button>
+                            <button class="next-btn">Next</button>
+                          </div>
+                        </div>`
+            }),
+            shortcodeblock: fieldData => {
+                const uniqueId = 'shortcode-select-' + Date.now();
+                return {
+                    field: `<div class="shortcode-block mb-2">
+                              <select id="${uniqueId}" name="shortcode" class="w-full border border-gray-300 rounded p-2">
+                                <option value="">Select a shortcode</option>
+                              </select>
+                            </div>`,
+                    onRender: () => {
+                        $.get("/admin/shortcodes/list", shortcodes => {
+                            shortcodes.forEach(code => $(`#${uniqueId}`).append(`<option value="[${code}]">[${code}]</option>`));
+                        });
+                    },
+                    onSave: () => {
+                        fieldData.value = $(`#${uniqueId}`).val() || '';
+                    }
+                };
+            }
+        };
+
+        formBuilderInstance = fbEditor.formBuilder({
+            fields,
+            templates,
+            disableFields: ['autocomplete', 'button'],
+            controlPosition: 'left'
+        });
+
+        if (data.length) formBuilderInstance.actions.setData(data);
+    }
+
+    function resetModal() {
+        const form = document.getElementById('templateForm');
+        if (form) form.reset();
+        if (formBuilderInstance) formBuilderInstance.actions.setData([]); // safer
+        const errorMessageElement = document.getElementById('bookingTemplatesname-error');
+        if (errorMessageElement) errorMessageElement.remove();
+    }
+
+    openBtns.forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.querySelector('div').classList.remove('scale-95'), 10);
+            if (!formBuilderInstance) initFormBuilder();
+        });
+    });
+
+    closeBtn.addEventListener('click', () => {
+        modal.querySelector('div').classList.add('scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            resetModal();
+        }, 300);
+    });
+
+    window.addEventListener('click', e => {
+        if (e.target === modal) {
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                resetModal();
+            }, 300);
+        }
+    });
+
+    // Live error removal when typing/changing
+    const inputElement = document.getElementById('bookingTemplatesname');
+    inputElement.addEventListener('input', () => {
+        const errorMessageElement = document.getElementById('bookingTemplatesname-error');
+        if (errorMessageElement) errorMessageElement.remove();
+    });
+
+    // Save template
+    document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('save-template')) {
+            const name = inputElement.value.trim();
+    
+            // Remove old error message if it exists
+            const errorMessageElement = document.getElementById('bookingTemplatesname-error');
+            if (errorMessageElement) {
+                errorMessageElement.remove();
+            }
+    
+            // Validate empty field
+            if (!name) {
+                const errorSpan = document.createElement('span');
+                errorSpan.id = 'bookingTemplatesname-error';
+                errorSpan.style.color = 'red';
+                errorSpan.textContent = 'The Template name cannot be empty.';
+                inputElement.parentNode.appendChild(errorSpan);
+                inputElement.focus();
+                return;
+            }
+    
+            // If valid → save
+            const data = formBuilderInstance ? formBuilderInstance.actions.getData() : [];
+            $.post("/admin/template/save", {
+                _token: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                templatename: name,
+                templatestatus: document.querySelector('.select-template-status').value,
+                vendorid: document.querySelector('.select-template-vendor').value,
+                data: data
+            }).done(() => {
+                modal.querySelector('div').classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    resetModal();
+                }, 200);
+            }).fail(err => {
+                console.error(err);
+                alert('Error saving template.');
+            });
+        }
+    });
+});
+
