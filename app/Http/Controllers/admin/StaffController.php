@@ -105,13 +105,15 @@ class StaffController extends Controller
                                         <i class="feather icon-log-out"></i>
                                     </button>
                                  </form>';
-                    } elseif (!$isImpersonating && $currentUser->hasRole('Administrator') && $currentUser->id !== $row->id && $row->staff->primary_staff == 1) {
+                    } elseif (!$isImpersonating && $currentUser->hasRole('Administrator') && $currentUser->id !== $row->id ) {
+                        if ($row->staff && $row->staff->primary_staff == 1) {
                         $btn .= '<form method="POST" action="' . route('user.switch', $row->id) . '" style="display:inline;">
                                     ' . csrf_field() . '
                                     <button type="submit" class="btn btn-icon btn-dark" data-toggle="tooltip" title="Switch User">
                                         <i class="fas fa-random"></i>
                                     </button>
                                  </form>';
+                        }
                     }
 
                     return $btn;
@@ -165,7 +167,6 @@ class StaffController extends Controller
 
         $role = Role::findById($request->role, 'web');
         $user->assignRole($role->name);
-        $user->assignRole('Staff');
         $submittedServices = $request->input('assigned_services', []);
         if (is_array($submittedServices)) {
             foreach ($submittedServices as $serviceId) {
