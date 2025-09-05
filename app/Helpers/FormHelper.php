@@ -213,10 +213,9 @@ class FormHelper
 
                             $html .= "<div class='{$c['checkboxWrapper']}'>
                                     <input type='checkbox' name='{$inputName}[]' value='" . htmlspecialchars($val) . "' class='{$c['checkbox']}' $isChecked $requiredAttr>
-                                    <label class='{$c['checkboxLabel']}'>" . htmlspecialchars($lbl) . ($required ? ' <span class="text-red-500">*</span>' : '') . "</label>
-                                  
+                                    <label class='{$c['checkboxLabel']}'>" . htmlspecialchars($lbl) . "</label>
                                     </div>
-                                        <p class='checkbox-error-message text-red-500 text-xs mt-1'></p>";
+                                        ";
                         }
                         if ($other === 'true') {
                             $isOtherChecked = in_array('__other__', $valueArr) ? 'checked' : '';

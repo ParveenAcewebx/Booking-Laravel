@@ -95,45 +95,51 @@ document.addEventListener("DOMContentLoaded", function () {
             if (field.type === 'checkbox') {
                 const checkboxes = step.querySelectorAll(`input[name="${field.name}"]`);
                 const checked = Array.from(checkboxes).some(c => c.checked);
+            
+                const otherCheckbox = Array.from(checkboxes).find(cb => cb.value.toLowerCase() === "other");
+                const lastCheckbox = checkboxes[checkboxes.length - 1];
+            
+                const targetElement = otherCheckbox ? otherCheckbox.parentElement : lastCheckbox.parentElement;
+            
+                const oldErr = targetElement.parentElement.querySelector('.checkbox-error-message');
+                if (oldErr) oldErr.remove();
+            
                 if (!checked) {
-                    field.classList.add('border-red-500');
-                    if (!field.parentElement.querySelector('.checkbox-error-message')) {
-                        const err = document.createElement('p');
-                        err.className = 'checkbox-error-message text-red-500 text-xs mt-1';
-                        err.textContent = 'This field is required';
-                        field.parentElement.appendChild(err);
-                    }
+                    checkboxes.forEach(cb => cb.classList.add('border-red-500'));
+                    const err = document.createElement('p');
+                    err.className = 'checkbox-error-message text-red-500 text-xs mt-1';
+                    err.textContent = 'This field is required';
+                    targetElement.insertAdjacentElement('afterend', err); 
                     isValid = false;
                 } else {
-                    field.classList.remove('border-red-500');
-                    // const err = field.parentElement.querySelector('.checkbox-error-message');
-                    // if (err) err.remove();
+                    checkboxes.forEach(cb => cb.classList.remove('border-red-500'));
                 }
+            
             } else if (field.type === 'radio') {
                 const radios = step.querySelectorAll(`input[name="${field.name}"]`);
                 const checked = Array.from(radios).some(r => r.checked);
-        
-                radios.forEach(rb => {
-                    // Remove old error
-                    const oldErr = rb.parentElement.querySelector('.radio-error-message');
-                    if (oldErr) oldErr.remove();
-        
-                    if (!checked) {
-                        rb.classList.add('border-red-500');
-                        const err = document.createElement('p');
-                        err.className = 'radio-error-message text-red-500 text-xs mt-1';
-                        err.textContent = 'This field is required';
-                        rb.parentElement.appendChild(err);
-                        isValid = false;
-                    } else {
-                        rb.classList.remove('border-red-500');
-                        const err = field.parentElement.querySelector('.radio-error-message');
-                        if (err) err.remove();
-
-                    }
-                });
+            
+                const otherRadio = Array.from(radios).find(r => r.value.toLowerCase() === "other");
+                const lastRadio = radios[radios.length - 1];
+                const targetElement = otherRadio ? otherRadio.parentElement : lastRadio.parentElement;
+            
+                const oldErr = targetElement.parentElement.querySelector('.radio-error-message');
+                if (oldErr) oldErr.remove();
+            
+                if (!checked) {
+                    radios.forEach(rb => rb.classList.add('border-red-500'));
+                    const err = document.createElement('p');
+                    err.className = 'radio-error-message text-red-500 text-xs mt-1';
+                    err.textContent = 'This field is required';
+                    targetElement.insertAdjacentElement('afterend', err); // ✅ below "Other" or last option
+                    isValid = false;
+                } else {
+                    radios.forEach(rb => rb.classList.remove('border-red-500'));
+                }
                 return;
-            }else if (!field.value.trim()) {
+            }
+                      
+            else if (!field.value.trim()) {
                 field.classList.add('border-red-500');
                 if (!field.nextElementSibling || !field.nextElementSibling.classList.contains('error-message')) {
                     const err = document.createElement('p');

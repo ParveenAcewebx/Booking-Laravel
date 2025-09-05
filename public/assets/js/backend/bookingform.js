@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       var selectedStaff = document.querySelector('.selected_vendor').value;
       $('.vendor-loder').removeClass('d-none');
-        $('.showMessage').addClass('d-none');
+      $('.showMessage').addClass('d-none');
       $.ajax({
          url: '/get/services/staff',
          type: 'GET',
@@ -165,15 +165,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
                   if (selectedValue != 0) {
 
-                  const anyAvailableDates = workondayoff.some(staff => {
+                     const anyAvailableDates = workondayoff.some(staff => {
                         const wd = staff.Working_day || {};
                         return Object.keys(wd).some(dayName => {
                            const slot = wd[dayName];
                            return slot && slot.start && !slot.start.includes("00:00:00");
                         });
-                  });
+                     });
 
-                  if (anyAvailableDates) {
+                     if (anyAvailableDates) {
                         $('.showMessage').addClass('d-none');
                         activeCalendar = new Calendar(workingDays, workondayoff);
                         $('.availibility').addClass('d-none');
@@ -181,12 +181,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         const bookslotsVal = $('#bookslots').val();
                         const hasSlots = bookslotsVal && bookslotsVal.trim() !== '';
                         $('.remove-all-slots').toggleClass('d-none', !hasSlots);
-                  } else {
+                     } else {
                         activeCalendar = new Calendar([], []);
                         $('.calendar-wrap').addClass('d-none');
                         $('.availibility').removeClass('d-none');
                         $('.showMessage').removeClass('d-none');
-                  }
+                     }
                   } else {
                      activeCalendar = new Calendar([], []);
                      $('.calendar-wrap').addClass('d-none');
@@ -532,7 +532,7 @@ document.addEventListener("DOMContentLoaded", function () {
          }
       });
 
-     
+
       $(document).on("change", "input[type=radio]", function () {
          let radiobutton = $(this).val();
          let relatedInput = $(this).closest(".mb-3").find(".other_radiobox_input");
@@ -574,63 +574,75 @@ document.addEventListener("DOMContentLoaded", function () {
       /* ================================== Form validation =============================*/
       function validateRequiredFields(step) {
          let isValid = true;
-          const requiredFields = step.querySelectorAll('[required]');
-        const current_step = step.getAttribute('id');
-    
-        const noVendorElement = $('#' + current_step).find('.vendor-placeholder .no-vendor-text');
-        const noVendorAssigned = noVendorElement.length > 0;
-    
-        const calendarWrap = $('#' + current_step).find('.calendar-wrap');
-    
-        // Only validate calendar if it's in the DOM AND visible
-        if (!noVendorAssigned && calendarWrap.length && calendarWrap.is(':visible')) {
+         const requiredFields = step.querySelectorAll('[required]');
+         const current_step = step.getAttribute('id');
+
+         const noVendorElement = $('#' + current_step).find('.vendor-placeholder .no-vendor-text');
+         const noVendorAssigned = noVendorElement.length > 0;
+
+         const calendarWrap = $('#' + current_step).find('.calendar-wrap');
+
+         // Only validate calendar if it's in the DOM AND visible
+         if (!noVendorAssigned && calendarWrap.length && calendarWrap.is(':visible')) {
             const bookedSlots = $('#' + current_step + ' #bookslots').val();
             if (!bookedSlots) {
-                $('#' + current_step).find('.select-slots').html('<p class="text-sm text-red-600 font-medium mt-1 p-4 border border-gray-300 shadow-md rounded-l text-danger">Please select a date and at least one slot.</p>');
-                isValid = false;
-                $('.select-slots').removeClass('d-none').show();
+               $('#' + current_step).find('.select-slots').html('<p class="text-sm text-red-600 font-medium mt-1 p-4 border border-gray-300 shadow-md rounded-l text-danger">Please select a date and at least one slot.</p>');
+               isValid = false;
+               $('.select-slots').removeClass('d-none').show();
             } else {
-                $('#' + current_step).find('.select-slots').empty();
+               $('#' + current_step).find('.select-slots').empty();
             }
-        }
+         }
          requiredFields.forEach(field => {
             if (field.type === 'checkbox') {
                const checkboxGroup = step.querySelectorAll(`input[name="${field.name}"]`);
                const checkedCheckboxes = Array.from(checkboxGroup).filter(checkbox => checkbox.checked);
+           
+               // Find "Other" or last checkbox
+               const otherCheckbox = Array.from(checkboxGroup).find(cb => cb.value.toLowerCase() === "other");
+               const lastCheckbox = checkboxGroup[checkboxGroup.length - 1];
+               const targetElement = otherCheckbox ? otherCheckbox.parentElement : lastCheckbox.parentElement;
+           
+               // Remove old error
+               let errorMessage = targetElement.parentElement.querySelector('.checkbox-error-message');
+               if (errorMessage) errorMessage.remove();
+           
                if (checkedCheckboxes.length === 0) {
-                  field.classList.add('border-danger');
-                  let errorMessage = field.parentElement.querySelector('.checkbox-error-message');
-                  if (!errorMessage) {
-                     errorMessage = document.createElement('p');
-                     errorMessage.classList.add('checkbox-error-message', 'text-danger', 'text-xs', 'mt-1');
-                     errorMessage.textContent = 'This field is required';
-                     field.parentElement.appendChild(errorMessage);
-                  }
-                  isValid = false;
+                   checkboxGroup.forEach(cb => cb.classList.add('border-danger'));
+                   errorMessage = document.createElement('p');
+                   errorMessage.classList.add('checkbox-error-message', 'text-danger', 'text-xs', 'mt-1');
+                   errorMessage.textContent = 'This field is required';
+                   targetElement.insertAdjacentElement('afterend', errorMessage); // ✅ after "Other" or last
+                   isValid = false;
                } else {
-                  field.classList.remove('border-danger');
-                  let errorMessage = field.parentElement.querySelector('.checkbox-error-message');
-                  if (errorMessage) errorMessage.remove();
+                   checkboxGroup.forEach(cb => cb.classList.remove('border-danger'));
                }
-            } else if (field.type === 'radio') {
+           
+           } else if (field.type === 'radio') {
                const radioGroup = step.querySelectorAll(`input[name="${field.name}"]`);
                const isChecked = Array.from(radioGroup).some(radio => radio.checked);
+           
+               // Find "Other" or last radio
+               const otherRadio = Array.from(radioGroup).find(r => r.value.toLowerCase() === "other");
+               const lastRadio = radioGroup[radioGroup.length - 1];
+               const targetElement = otherRadio ? otherRadio.parentElement : lastRadio.parentElement;
+           
+               // Remove old error
+               let errorMessage = targetElement.parentElement.querySelector('.radio-error-message');
+               if (errorMessage) errorMessage.remove();
+           
                if (!isChecked) {
-                  field.classList.add('border-danger');
-                  let errorMessage = field.parentElement.querySelector('.radio-error-message');
-                  if (!errorMessage) {
-                     errorMessage = document.createElement('p');
-                     errorMessage.classList.add('radio-error-message', 'text-danger', 'text-xs', 'mt-1');
-                     errorMessage.textContent = 'This field is required';
-                     field.parentElement.appendChild(errorMessage);
-                  }
-                  isValid = false;
+                   radioGroup.forEach(rb => rb.classList.add('border-danger'));
+                   errorMessage = document.createElement('p');
+                   errorMessage.classList.add('radio-error-message', 'text-danger', 'text-xs', 'mt-1');
+                   errorMessage.textContent = 'This field is required';
+                   targetElement.insertAdjacentElement('afterend', errorMessage); // ✅ after "Other" or last
+                   isValid = false;
                } else {
-                  field.classList.remove('border-danger');
-                  let errorMessage = field.parentElement.querySelector('.radio-error-message');
-                  if (errorMessage) errorMessage.remove();
+                   radioGroup.forEach(rb => rb.classList.remove('border-danger'));
                }
-            } else if (field.type === 'email') {
+           }
+            else if (field.type === 'email') {
                if (!field.checkValidity()) {
                   field.classList.add('border-danger');
                   let errorMessage = field.nextElementSibling && field.nextElementSibling.classList.contains('error-message') ?
@@ -737,7 +749,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
          } else {
             $('.select-slots').addClass('d-none');
-              $('.showMessage').addClass('d-none');
+            $('.showMessage').addClass('d-none');
          }
       }
       /* ================================== Slot validation =============================*/
