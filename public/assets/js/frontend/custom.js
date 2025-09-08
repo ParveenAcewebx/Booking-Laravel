@@ -570,32 +570,44 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 document.addEventListener("DOMContentLoaded", function () {
-    const modal = document.getElementById('bookingTemplateModal');
-    const openBtns = document.querySelectorAll('.open-popup');
-    const closeBtn = document.getElementById('closeModal');
-    const fbEditor = $('#build-wrap');
+    const modal = document.getElementById("bookingTemplateModal");
+    const bookingSection = document.querySelector(".booking-section");
+    const bookingHeader = document.querySelector(".booking-header");
+    const noBookings = document.querySelector(".no-bookings");
+    const openBtns = document.querySelectorAll(".open-popup");
+    const closeBtn = document.getElementById("closeModal");
+
+    const fbEditor = $("#build-wrap");
     let formBuilderInstance;
 
     function initFormBuilder(data = []) {
         if (!fbEditor.length || formBuilderInstance) return;
 
         const fields = [
-            { label: "Next Step", attrs: { type: "newsection" }, icon: '<i class="fa-solid fa-section"></i>' },
-            { label: "ShortCode", attrs: { type: "shortcodeblock" }, icon: '<i class="fa fa-code"></i>' }
+            {
+                label: "Next Step",
+                attrs: { type: "newsection" },
+                icon: '<i class="fa-solid fa-section"></i>',
+            },
+            {
+                label: "ShortCode",
+                attrs: { type: "shortcodeblock" },
+                icon: '<i class="fa fa-code"></i>',
+            },
         ];
 
         const templates = {
-            newsection: fieldData => ({
+            newsection: (fieldData) => ({
                 field: `<div id="${fieldData.name}" class="section border p-2 rounded mb-2">
                           <div class="section-content"></div>
                           <div class="section-navigation mt-2">
                             <button class="prev-btn hidden">Previous</button>
                             <button class="next-btn">Next</button>
                           </div>
-                        </div>`
+                        </div>`,
             }),
-            shortcodeblock: fieldData => {
-                const uniqueId = 'shortcode-select-' + Date.now();
+            shortcodeblock: (fieldData) => {
+                const uniqueId = "shortcode-select-" + Date.now();
                 return {
                     field: `<div class="shortcode-block mb-2">
                               <select id="${uniqueId}" name="shortcode" class="w-full border border-gray-300 rounded p-2">
@@ -603,110 +615,126 @@ document.addEventListener("DOMContentLoaded", function () {
                               </select>
                             </div>`,
                     onRender: () => {
-                        $.get("/admin/shortcodes/list", shortcodes => {
-                            shortcodes.forEach(code => $(`#${uniqueId}`).append(`<option value="[${code}]">[${code}]</option>`));
+                        $.get("/admin/shortcodes/list", (shortcodes) => {
+                            shortcodes.forEach((code) =>
+                                $(`#${uniqueId}`).append(
+                                    `<option value="[${code}]">[${code}]</option>`
+                                )
+                            );
                         });
                     },
                     onSave: () => {
-                        fieldData.value = $(`#${uniqueId}`).val() || '';
-                    }
+                        fieldData.value = $(`#${uniqueId}`).val() || "";
+                    },
                 };
-            }
+            },
         };
 
         formBuilderInstance = fbEditor.formBuilder({
             fields,
             templates,
-            disableFields: ['autocomplete', 'button'],
-            controlPosition: 'left'
+            disableFields: ["autocomplete", "button"],
+            controlPosition: "left",
         });
 
         if (data.length) formBuilderInstance.actions.setData(data);
     }
 
     function resetModal() {
-        const form = document.getElementById('templateForm');
+        const form = document.getElementById("templateForm");
         if (form) form.reset();
-        if (formBuilderInstance) formBuilderInstance.actions.setData([]); // safer
-        const errorMessageElement = document.getElementById('bookingTemplatesname-error');
+        if (formBuilderInstance) formBuilderInstance.actions.setData([]);
+        const errorMessageElement = document.getElementById(
+            "bookingTemplatesname-error"
+        );
         if (errorMessageElement) errorMessageElement.remove();
     }
 
-    openBtns.forEach(btn => {
-        btn.addEventListener('click', function (e) {
+    // Open Template Form
+    openBtns.forEach((btn) => {
+        btn.addEventListener("click", function (e) {
             e.preventDefault();
-            modal.classList.remove('hidden');
-            setTimeout(() => modal.querySelector('div').classList.remove('scale-95'), 10);
+            if (bookingSection) bookingSection.classList.add("hidden");
+            if (bookingHeader) bookingHeader.classList.add("hidden");
+            if (noBookings) noBookings.classList.add("hidden");
+
+            modal.classList.remove("hidden");
             if (!formBuilderInstance) initFormBuilder();
         });
     });
 
-    closeBtn.addEventListener('click', () => {
-        modal.querySelector('div').classList.add('scale-95');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            resetModal();
-        }, 300);
+    // Close Template Form
+    closeBtn.addEventListener("click", () => {
+        modal.classList.add("hidden");
+        if (bookingSection) bookingSection.classList.remove("hidden");
+        if (bookingHeader) bookingHeader.classList.remove("hidden");
+        if (noBookings) noBookings.classList.remove("hidden");
+        resetModal();
     });
 
-    window.addEventListener('click', e => {
-        if (e.target === modal) {
-            modal.querySelector('div').classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                resetModal();
-            }, 300);
-        }
+    const inputElement = document.getElementById("bookingTemplatesname");
+
+    // Remove error on typing
+    inputElement.addEventListener("input", () => {
+        const oldErr = document.getElementById("bookingTemplatesname-error");
+        if (oldErr) oldErr.remove();
     });
 
-    // Live error removal when typing/changing
-    const inputElement = document.getElementById('bookingTemplatesname');
-    inputElement.addEventListener('input', () => {
-        const errorMessageElement = document.getElementById('bookingTemplatesname-error');
-        if (errorMessageElement) errorMessageElement.remove();
-    });
-
-    // Save template
-    document.addEventListener('click', function (e) {
-        if (e.target.classList.contains('save-template')) {
+    // Validation & Save
+    document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("save-template")) {
             const name = inputElement.value.trim();
-    
-            // Remove old error message if it exists
-            const errorMessageElement = document.getElementById('bookingTemplatesname-error');
-            if (errorMessageElement) {
-                errorMessageElement.remove();
-            }
-    
-            // Validate empty field
+
             if (!name) {
-                const errorSpan = document.createElement('span');
-                errorSpan.id = 'bookingTemplatesname-error';
-                errorSpan.style.color = 'red';
-                errorSpan.textContent = 'The Template name cannot be empty.';
+                const errorSpan = document.createElement("span");
+                errorSpan.id = "bookingTemplatesname-error";
+                errorSpan.style.color = "red";
+                errorSpan.textContent = "The Template name cannot be empty.";
                 inputElement.parentNode.appendChild(errorSpan);
                 inputElement.focus();
                 return;
             }
-    
-            // If valid → save
-            const data = formBuilderInstance ? formBuilderInstance.actions.getData() : [];
+
+            const data = formBuilderInstance
+                ? formBuilderInstance.actions.getData()
+                : [];
             $.post("/admin/template/save", {
-                _token: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                _token: document
+                    .querySelector('meta[name="csrf-token"]')
+                    .getAttribute("content"),
                 templatename: name,
-                templatestatus: document.querySelector('.select-template-status').value,
-                vendorid: document.querySelector('.select-template-vendor').value,
-                data: data
-            }).done(() => {
-                modal.querySelector('div').classList.add('scale-95');
-                setTimeout(() => {
-                    modal.classList.add('hidden');
+                templatestatus: document.querySelector(
+                    ".select-template-status"
+                ).value,
+                vendorid: document.querySelector(".select-template-vendor")
+                    .value,
+                data: data,
+            })
+                .done(() => {
+                    modal.classList.add("hidden");
+                    if (bookingSection)
+                        bookingSection.classList.remove("hidden");
+                    if (bookingHeader) bookingHeader.classList.remove("hidden");
+                    if (noBookings) noBookings.classList.remove("hidden");
                     resetModal();
-                }, 200);
-            }).fail(err => {
-                console.error(err);
-                alert('Error saving template.');
-            });
+
+                    toastr.options = {
+                        closeButton: true,
+                        progressBar: true,
+                        positionClass: "toast-top-right",
+                        preventDuplicates: false,
+                        onclick: null,
+                        showDuration: "300",
+                        hideDuration: "500",
+                        timeOut: "3000",
+                    };
+
+                    toastr.success("Booking Template saved successfully!");
+                })
+                .fail((err) => {
+                    console.error(err);
+                    toastr.error("Error saving template.");
+                });
         }
     });
 });
-

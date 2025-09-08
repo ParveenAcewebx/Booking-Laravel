@@ -11,6 +11,7 @@ class EmailTemplate extends Model
         'title',
         'slug',
         'status',
+        'macro',
         'subject',
         'email_content',
         'dummy_template',

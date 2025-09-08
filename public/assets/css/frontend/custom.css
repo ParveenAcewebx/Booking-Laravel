@@ -113,24 +113,24 @@ table#calendar {
     display: none;
 }
 
-
 ul.frmb.stage-wrap {
     margin-left: 10px !important;
 }
-button.clear-all {
+button.clear-all, button.no.btn.btn-danger.btn-sm {
     background-color: #e74c3c !important;
-    display: none !important;
  
 }
-button.clear-all,button.save-template{
+button.clear-all,button.save-template,button.no.btn.btn-danger.btn-sm,button.yes.btn.btn-success.btn-sm{
     color: white !important;
 }
-button.save-template {
-    margin-top: 10px !important;
-    width: 277px !important;
-    border-radius: 2px !important;
+button.save-template, button.yes.btn.btn-success.btn-sm {
     background-color: #0073aa !important;
 }
-button.get-data {
-    display: none !important;
+.form-builder-dialog.positioned, button.yes.btn.btn-success.btn-sm {
+    left: 672.888px !important;
+}
+
+button.no.btn.btn-danger.btn-sm,button.yes.btn.btn-success.btn-sm {
+    padding: 3px 5px;
+    border-radius: 4px;
 }
