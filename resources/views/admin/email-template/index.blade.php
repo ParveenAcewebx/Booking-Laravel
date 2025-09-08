@@ -8,17 +8,17 @@
                 <div class="row align-items-center">
                     <div class="col-md-10">
                         <div class="page-header-title">
-                            <h5>All Email Templates</h5>
+                            <h5>All Email</h5>
                         </div>
                         <ul class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="feather icon-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="#">Email Templates</a></li>
-                            <li class="breadcrumb-item"><a href="#">All Email Templates</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('emails.list') }}">Email</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('emails.list') }}">All Email</a></li>
                         </ul>
                     </div>
                     <div class="col-md-2">
                         <div class="page-header-titles float-right">
-                            <a href="#" class="btn btn-primary float-right p-2">Add New Email Template</a>
+                            <a href="{{ route('emails.create') }}" class="btn btn-primary float-right p-2">Add New Email</a>
                         </div>
                     </div>
                 </div>
@@ -34,7 +34,7 @@
                             <table class="table table-striped nowrap" id="emailTemplatesTable" width="100%">
                                 <thead>
                                     <tr>
-                                        <th style="display:none;">ID</th> {{-- Hidden but sortable --}}
+                                        <th style="display:none;">ID</th> 
                                         <th>Title</th>
                                         <th>Slug</th>
                                         <th>Subject</th>
@@ -61,11 +61,12 @@
             processing: true,
             serverSide: true,
             ajax: "{{ route('emails.list') }}",
-            columns: [
-                {
+            order: [[0, 'desc']],
+            columns: [{
                     data: 'id',
-                    name: 'id'
-                },{
+                    name: 'id',
+                    visible: false
+                }, {
                     data: 'title',
                     name: 'title'
                 },
@@ -99,6 +100,30 @@
                 }
             ]
         });
+
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "4000",
+            "positionClass": "toast-top-right"
+        };
+
+        // Toastr messages from session
+        @if(session('success'))
+        toastr.success("{{ session('success') }}");
+        @endif
+
+        @if(session('error'))
+        toastr.error("{{ session('error') }}");
+        @endif
+
+        @if(session('info'))
+        toastr.info("{{ session('info') }}");
+        @endif
+
+        @if(session('warning'))
+        toastr.warning("{{ session('warning') }}");
+        @endif
 
     });
 </script>

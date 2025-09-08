@@ -401,6 +401,54 @@ function deleteService(id, event) {
         }
     });
 }
+
+
+// Template delete alert
+function deleteEmailTemplate(id) {
+    event.preventDefault();
+    swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this Email!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            var template = document.getElementById("delete-email-" + id);
+            var templateData = new FormData(template);
+            fetch(template.action, {
+                method: "DELETE",
+                body: templateData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        swal("Email Deleted Successfully.", {
+                            icon: "success",
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        swal("There was an errors!", {
+                            icon: "error",
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    swal("There was an errors!", {
+                        icon: "error",
+                    });
+                });
+        }
+    });
+}
 $(function ($) {
     const templateSelect = $("#bookingTemplates");
     const fbEditor = $("#build-wrap");
@@ -555,7 +603,7 @@ $(function ($) {
         $.ajax({
             url: "/admin/template/save",
             method: "POST",
-            data: { data, templatename: inputValue, templatestatus: status, templateid, _token: csrfToken,vendorid:vendorId },
+            data: { data, templatename: inputValue, templatestatus: status, templateid, _token: csrfToken, vendorid: vendorId },
             success: () => window.location.href = `${window.location.origin}/admin/templates`,
             error: (xhr) => console.error(xhr.responseText),
         });
@@ -1122,6 +1170,7 @@ document.addEventListener("DOMContentLoaded", function () {
         theme: "snow",
     });
 
+
     const hiddenTextarea = document.querySelector("#description");
     if (hiddenTextarea) {
         if (hiddenTextarea.value) {
@@ -1130,6 +1179,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
         document.querySelector("form").addEventListener("submit", function () {
             hiddenTextarea.value = quill.root.innerHTML;
+        });
+    }
+
+
+    const emailContentField = document.querySelector("#email_content");
+
+    if (emailContentField && emailContentField.value) {
+        quill.clipboard.dangerouslyPasteHTML(emailContentField.value);
+    }
+
+    const form = document.querySelector("form");
+    if (form) {
+        form.addEventListener("submit", function () {
+            let html = quill.root.innerHTML.trim();
+
+            if (html === "<p><br></p>") {
+                html = "";
+            }
+
+            emailContentField.value = html;
         });
     }
 });
@@ -1331,4 +1400,9 @@ $(document).ready(function () {
 });
 /* ------------------------ End Services Thumbnail Function  ---------------------------- */
 
+document.getElementById('slug').addEventListener('input', function () {
+    let val = this.value;
+    // force lowercase + replace spaces with underscores
+    this.value = val.toLowerCase().replace(/\s+/g, '_');
+});
 

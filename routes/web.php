@@ -177,6 +177,19 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     Route::middleware('permission:view emails')->group(function () {
         Route::get('/emails', [EmailTemplateController::class, 'index'])->name('emails.list');
     });
+
+    Route::middleware('permission:create emails')->group(function () {
+        Route::get('/emails/add', [EmailTemplateController::class, 'create'])->name('emails.create');
+        Route::post('/emails/store', [EmailTemplateController::class, 'store'])->name('emails.store');
+    });
+
+    Route::middleware('permission:edit emails')->group(function () {
+        Route::get('/email/{email}/edit', [EmailTemplateController::class, 'edit'])->name('emails.edit');
+        Route::put('/email/{email}', [EmailTemplateController::class, 'update'])->name('emails.update');
+    });
+    Route::middleware('permission:delete emails')->group(function () {
+        Route::delete('/emails/{emails}', [EmailTemplateController::class, 'destroy'])->name('emails.destroy');
+    });
     Route::middleware('permission:view staffs')->group(function () {
         Route::get('/staffs', [StaffController::class, 'index'])->name('staff.list');
     });
@@ -214,7 +227,7 @@ Route::post('/form/session/destroyed', [FormController::class, 'sessiondestroy']
 // Route::get('/profile', [UserProfileController::class, 'userEdit'])->name('Userprofile');
 Route::post('/profile/update', [VendorProfileController::class, 'UserprofileUpdate'])->name('ProfileUpdate');
 Route::middleware(['VendorRoleCheck'])->group(function () {
-   
+
     Route::get('/dashboard/profile', [VendorInformationController::class, 'view'])->middleware('VendorRoleCheck')->name('vendor.dashboard.view');
 
     // Bookings
@@ -228,7 +241,7 @@ Route::middleware(['VendorRoleCheck'])->group(function () {
 
     // Vendor Dashboard
     // Route::get('/dashboard', [VendorInformationController::class, 'view'])->middleware('VendorRoleCheck')->name('vendor.view');
-    
+
     //  Bookings
     Route::delete('/bookings/{id}', [VendorBookingController::class, 'bookingdestroy'])->name('vendor.booking.destroy');
     //  Services 
@@ -241,7 +254,4 @@ Route::middleware(['VendorRoleCheck'])->group(function () {
     Route::post('/staff', [VendorStaffController::class, 'staffCreate'])->name('vendor.staff.store');
     Route::put('/staff/{id}', [VendorStaffController::class, 'staffUpdate'])->name('vendor.staff.update');
     Route::delete('/staff/{id}', [VendorStaffController::class, 'staffDestroy'])->name('vendor.staff.destroy');
-    
 });
-
-

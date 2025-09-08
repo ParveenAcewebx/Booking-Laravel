@@ -196,8 +196,8 @@
                         </a>
                         <ul class="pcoded-submenu" @if(request()->routeIs('emails.*')) style="display:block;" @endif>
                             @can('create emails')
-                            <li class="{{ request()->routeIs('#') ? 'active' : '' }}">
-                                <a href="#">Add Email</a>
+                            <li class="{{ request()->routeIs('emails.create') ? 'active' : '' }}">
+                                <a href="{{ route('emails.create') }}">Add Email</a>
                             </li>
                             @endcan
                             @can('view emails')
