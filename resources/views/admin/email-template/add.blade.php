@@ -113,19 +113,17 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label>Email Content <span class="text-danger">*</span></label>
-                                        <div id="quill-editor" style="height: 200px;"
-                                            class="@error('email_content') border border-danger @enderror">
-                                            {!! old('email_content') !!}
-                                        </div>
-                                        <textarea name="email_content" id="email_content" class="d-none">
-                                        {{ old('email_content') }}
-                                        </textarea>
+                                        <label>Email Content</label>
+                                        <div id="quill-editor" style="height: 200px;">{!! old('email_content') !!}</div>
+                                        <textarea name="email_content"
+                                            id="email_content"
+                                            class="d-none @error('email_content') is-invalid @enderror">{{ old('email_content') }}</textarea>
                                         @error('email_content')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
+
 
                             </div>
                         </div>
@@ -170,4 +168,5 @@
         </form>
     </div>
 </div>
+
 @endsection

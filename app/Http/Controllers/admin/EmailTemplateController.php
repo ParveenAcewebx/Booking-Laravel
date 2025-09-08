@@ -30,7 +30,7 @@ class EmailTemplateController extends Controller
                         : '<span class="badge badge-danger">Inactive</span>';
                 })
                 ->addColumn('email_content', function ($row) {
-                    return strip_tags($row->email_content);
+                    return $row->email_content;
                 })
                 ->addColumn('action', function ($row) {
                     $btn = '';
@@ -53,7 +53,7 @@ class EmailTemplateController extends Controller
 
                     return $btn;
                 })
-                ->rawColumns(['status_label', 'action'])
+                ->rawColumns(['status_label', 'action','email_content'])
                 ->make(true);
         }
 
@@ -69,6 +69,7 @@ class EmailTemplateController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->email_content);
         $validated = $request->validate([
             'title'          => 'required|string|max:255|unique:email_templates,title',
             'slug'           => 'required|string|max:255|unique:email_templates,slug',
@@ -86,7 +87,7 @@ class EmailTemplateController extends Controller
                 'macro'          => $validated['macro'],
                 'subject'        => $validated['subject'] ?? null,
                 'dummy_template' => $validated['dummy_template'] ?? null,
-                'email_content'  => $validated['email_content'],
+                'email_content'  => $request->email_content,
                 'status'         => $validated['status'],
             ]);
 
