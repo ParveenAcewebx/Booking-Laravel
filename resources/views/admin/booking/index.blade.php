@@ -25,15 +25,42 @@
 			</div>
 		</div>
 
+		{{-- 🔎 Filters --}}
+
+
 		<div class="row">
 			<div class="col-lg-12">
+
 				<div class="card user-profile-list">
 					<div class="card-body">
+						<div class="row mb-3 justify-content-end">
+							<div class="col-md-2 col-sm-6">
+								<select id="filter-template" class="form-control select-template-name">
+									<option value="">-- Select Template --</option>
+									@foreach($templates as $template)
+									<option value="{{ $template->id }}">{{ $template->template_name }}</option>
+									@endforeach
+								</select>
+							</div>
+
+							<div class="col-md-2 col-sm-6">
+								<select id="filter-customer" class="form-control select-users">
+									<option value="">-- Select Booked By --</option>
+									@foreach($customers as $customer)
+									<option value="{{ $customer->id }}">{{ $customer->name }}</option>
+									@endforeach
+								</select>
+							</div>
+
+							<div class="col-md-1 col-sm-4">
+								<button id="reset-filters" class="btn btn-primary float-right p-2 w-100">Reset</button>
+							</div>
+						</div>
 						<div class="dt-responsive table-responsive">
 							<table id="booking-list-table" class="table table-striped nowrap" width="100%">
 								<thead>
 									<tr>
-										<th style="display:none;">ID</th> {{-- hidden but sortable --}}
+										<th style="display:none;">ID</th>
 										<th>Template Name</th>
 										<th>Booked By</th>
 										<th>Created Date</th>
@@ -53,15 +80,21 @@
 
 <script>
 	$(function() {
-		$('#booking-list-table').DataTable({
+		let table = $('#booking-list-table').DataTable({
 			processing: true,
 			serverSide: true,
-			ajax: "{{ route('booking.list') }}",
+			ajax: {
+				url: "{{ route('booking.list') }}",
+				data: function(d) {
+					d.template_id = $('#filter-template').val();
+					d.customer_id = $('#filter-customer').val();
+				}
+			},
 			columns: [{
 					data: 'id',
 					name: 'id',
 					visible: false
-				}, 
+				},
 				{
 					data: 'template_name',
 					name: 'template_name'
@@ -95,28 +128,18 @@
 				[10, 25, 50, 100]
 			],
 		});
-		toastr.options = {
-			"closeButton": true,
-			"progressBar": true,
-			"timeOut": "4000",
-			"positionClass": "toast-top-right"
-		};
 
-		@if(session('success'))
-		toastr.success("{{ session('success') }}");
-		@endif
+		// 🔎 Reload table on filter change
+		$('#filter-template, #filter-customer').change(function() {
+			table.ajax.reload();
+		});
 
-		@if(session('error'))
-		toastr.error("{{ session('error') }}");
-		@endif
-
-		@if(session('info'))
-		toastr.info("{{ session('info') }}");
-		@endif
-
-		@if(session('warning'))
-		toastr.warning("{{ session('warning') }}");
-		@endif
+		// 🔄 Reset both filters
+		$('#reset-filters').click(function() {
+			$('#filter-template').val('').trigger('change'); // trigger change for select2/select-user
+			$('#filter-customer').val('').trigger('change');
+			table.ajax.reload();
+		});
 	});
 </script>
 @endsection

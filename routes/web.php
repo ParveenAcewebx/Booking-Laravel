@@ -227,31 +227,32 @@ Route::post('/form/session/destroyed', [FormController::class, 'sessiondestroy']
 // Route::get('/profile', [UserProfileController::class, 'userEdit'])->name('Userprofile');
 Route::post('/profile/update', [VendorProfileController::class, 'UserprofileUpdate'])->name('ProfileUpdate');
 Route::middleware(['VendorRoleCheck'])->group(function () {
-
+   
     Route::get('/dashboard/profile', [VendorInformationController::class, 'view'])->middleware('VendorRoleCheck')->name('vendor.dashboard.view');
 
     // Bookings
     Route::get('/dashboard/bookings', [VendorBookingController::class, 'view'])->name('vendor.bookings.view');
 
-    // Services
-    Route::get('/dashboard/services', [VendorServiceController::class, 'view'])->name('vendor.services.view');
-
-    // Staff
-    Route::get('/dashboard/staff', [VendorStaffController::class, 'view'])->name('vendor.staff.view');
-
-    // Vendor Dashboard
-    // Route::get('/dashboard', [VendorInformationController::class, 'view'])->middleware('VendorRoleCheck')->name('vendor.view');
-
     //  Bookings
     Route::delete('/bookings/{id}', [VendorBookingController::class, 'bookingdestroy'])->name('vendor.booking.destroy');
     //  Services 
-    Route::post('/services', [VendorServiceController::class, 'ServiceCreate'])->name('vendor.services.store');
+    Route::get('/dashboard/services', [VendorServiceController::class, 'view'])->name('vendor.services.view');
+     Route::get('/dashboard/services/add', [VendorServiceController::class, 'add'])->name('vendor.services.add');
     Route::get('/services/{id}/edit', [VendorServiceController::class, 'edit'])->name('vendor.services.edit');
+    
+    Route::post('/services', [VendorServiceController::class, 'ServiceCreate'])->name('vendor.services.store');
+   
     Route::put('/services/{id}', [VendorServiceController::class, 'ServiceUpdate'])->name('vendor.services.update');
     Route::delete('/services/{id}', [VendorServiceController::class, 'Servicedestroy'])->name('vendor.services.destroy');
 
     //  Staff
+    Route::get('/dashboard/staff', [VendorStaffController::class, 'view'])->name('vendor.staff.view');
+    Route::get('/dashboard/staff/add', [VendorStaffController::class, 'add'])->name('vendor.staff.add');
     Route::post('/staff', [VendorStaffController::class, 'staffCreate'])->name('vendor.staff.store');
+     Route::get('/staff/edit/{id}', [VendorStaffController::class, 'edit'])->name('vendor.staff.edit');
     Route::put('/staff/{id}', [VendorStaffController::class, 'staffUpdate'])->name('vendor.staff.update');
     Route::delete('/staff/{id}', [VendorStaffController::class, 'staffDestroy'])->name('vendor.staff.destroy');
+   
 });
+
+

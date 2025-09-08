@@ -32,6 +32,9 @@ class EmailTemplateController extends Controller
                 ->addColumn('email_content', function ($row) {
                     return $row->email_content;
                 })
+                ->addColumn('dummy_template', function ($row) {
+                    return $row->dummy_template;
+                })
                 ->addColumn('action', function ($row) {
                     $btn = '';
 
@@ -53,7 +56,7 @@ class EmailTemplateController extends Controller
 
                     return $btn;
                 })
-                ->rawColumns(['status_label', 'action','email_content'])
+                ->rawColumns(['status_label', 'action','email_content','dummy_template'])
                 ->make(true);
         }
 

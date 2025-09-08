@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Helpers\FormHelper;
 use Illuminate\Http\Request;
 use App\Models\Booking;
+use App\Models\EmailTemplate;
 use App\Models\BookingTemplate;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -35,43 +36,28 @@ class BookingController extends Controller
 
     public function index(Request $request)
     {
-        $loginId = getOriginalUserId();
-        $loginUser = $loginId ? User::find($loginId) : null;
-
         if ($request->ajax()) {
             $bookings = Booking::with(['template', 'customer'])
                 ->select('bookings.*');
+
+            if ($request->has('template_id') && $request->template_id != '') {
+                $bookings->where('booking_template_id', $request->template_id);
+            }
+
+            if ($request->has('customer_id') && $request->customer_id != '') {
+                $bookings->where('customer_id', $request->customer_id);
+            }
 
             return DataTables::of($bookings)
                 ->addColumn('template_name', function ($booking) {
                     return $booking->template ? $booking->template->template_name : '';
                 })
-                ->filterColumn('template_name', function ($query, $keyword) {
-                    $query->whereHas('template', function ($q) use ($keyword) {
-                        $q->where('template_name', 'like', "%{$keyword}%");
-                    });
-                })
-                ->orderColumn('template_name', function ($query, $order) {
-                    $query->join('booking_templates', 'booking_templates.id', '=', 'bookings.booking_template_id')
-                        ->orderBy('booking_templates.template_name', $order);
-                })
                 ->addColumn('booked_by', function ($booking) {
                     return $booking->customer ? $booking->customer->name : '';
                 })
-                ->filterColumn('booked_by', function ($query, $keyword) {
-                    $query->whereHas('customer', function ($q) use ($keyword) {
-                        $q->where('name', 'like', "%{$keyword}%");
-                    });
-                })
-                ->orderColumn('booked_by', function ($query, $order) {
-                    $query->join('users as customers', 'customers.id', '=', 'bookings.customer_id')
-                        ->orderBy('customers.name', $order);
-                })
                 ->editColumn('created_at', function ($booking) {
                     return $booking->created_at
-                        ? $booking->created_at->format(
-                            get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
-                        )
+                        ? $booking->created_at->format('Y-m-d H:i')
                         : '';
                 })
                 ->editColumn('status', function ($booking) {
@@ -79,31 +65,27 @@ class BookingController extends Controller
                 })
                 ->addColumn('action', function ($booking) {
                     $btn = '';
-
-                    if (auth()->user()->can('edit bookings')) {
-                        $btn .= '<a href="' . route('booking.view', $booking->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="View Booking">
+                    $btn .= '<a href="' . route('booking.view', $booking->id) . '" class="btn btn-icon btn-success" title="View Booking">
                               <i class="feather icon-eye"></i>
                             </a> ';
-                    }
-
-                    if (auth()->user()->can('delete bookings')) {
-                        $btn .= '<form action="' . route('booking.delete', $booking->id) . '" method="POST" id="deleteBooking-' . $booking->id . '" style="display:inline-block;">
+                    $btn .= '<form action="' . route('booking.delete', $booking->id) . '" method="POST" style="display:inline-block;">
                                 <input type="hidden" name="_method" value="DELETE">
                                 ' . csrf_field() . '
-                                <button type="button" onclick="return deleteBooking(' . $booking->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Booking">
+                                <button type="button" onclick="return deleteBooking(' . $booking->id . ')" class="btn btn-icon btn-danger" title="Delete Booking">
                                     <i class="feather icon-trash-2"></i>
                                 </button>
                             </form>';
-                    }
-
                     return $btn;
                 })
                 ->rawColumns(['status', 'action'])
                 ->make(true);
         }
 
-        return view('admin.booking.index', compact('loginUser'));
+        $templates = BookingTemplate::all();
+        $customers = User::whereHas('roles')->get(); 
+        return view('admin.booking.index', compact('templates', 'customers'));
     }
+
 
 
     public function bookingAdd()

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Staff;
 use App\Models\Vendor;
+use App\Models\EmailTemplate;
 use App\Models\VendorStaffAssociation;
 use App\Models\Service;
 use App\Models\VendorServiceAssociation;
@@ -174,15 +175,21 @@ class VendorController extends Controller
                 'phone_number'  => $request->phone_number,
                 'status'        => config('constants.status.active'),
             ]);
-           try {        
-                Mail::send('admin.vendor.partials.email', compact('user', 'randomPassword'), function ($message) use ($user) {
-                    $message->to($user->email)->subject('Welcome to Our Platform');
-                });
-                \Log::info('Email sent successfully to ' . $user->email);
-            } catch (\Exception $e) {
-                \Log::error('Failed to send email to ' . $user->email . ': ' . $e->getMessage());
-                // return back()->withInput()->with('error', 'Email sending failed: ' . $e->getMessage());
-            }
+            //    try {        
+            //         Mail::send('admin.vendor.partials.email', compact('user', 'randomPassword'), function ($message) use ($user) {
+            //             $message->to($user->email)->subject('Welcome to Our Platform');
+            //         });
+            //         \Log::info('Email sent successfully to ' . $user->email);
+            //     } catch (\Exception $e) {
+            //         \Log::error('Failed to send email to ' . $user->email . ': ' . $e->getMessage());
+            //         // return back()->withInput()->with('error', 'Email sending failed: ' . $e->getMessage());
+            //     }
+            // EmailTemplate::
+            // sendEmailTemplate('welcome_vendor_login_email', $user->email, [
+            //     '{NAME}'     => $user->name,
+            //     '{EMAIL}'    => $user->email,
+            //     '{PASSWORD}' => $randomPassword,
+            // ]);
 
 
             $user->assignRole('Staff');

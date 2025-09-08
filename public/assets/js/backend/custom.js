@@ -1283,7 +1283,9 @@ $(function () {
         { selector: ".select-user" },
         { selector: ".select-users" },
         { selector: ".select-service" },
-        { selector: ".select-status" }
+        { selector: ".select-status" },
+        { selector: ".select-template-name" , placeholder: "Select Template Name"},
+        { selector: ".select-users" , placeholder: "Select Booked By"}
 
     ];
 

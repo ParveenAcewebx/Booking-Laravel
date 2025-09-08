@@ -35,140 +35,10 @@
             <!-- Header -->
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-semibold text-gray-800">Services</h2>
-                <button @click="showForm = !showForm; editService = null" 
-                        class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
-                    <span x-text="showForm ? 'Cancel' : '+ Add New Service'"></span>
-                </button>
+                <a href="{{route('vendor.services.add')}}"class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">+ Add New Service</a>
             </div>
 
-            <!-- Add/Edit Service Form -->
-            <div x-show="showForm" x-transition class="mb-6">
-                <form :action="editService ? '{{ url('services') }}/' + editService.id : '{{ route('vendor.services.store') }}'" 
-                      method="POST" enctype="multipart/form-data" class="space-y-4 p-4 border rounded-lg bg-gray-50">
-                    @csrf
-                    <template x-if="editService">
-                        <input type="hidden" name="_method" value="PUT">
-                    </template>
-
-                    <!-- Service Name -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-600">Service Name <span class="text-red-500">*</span></label>
-                        <input type="text" name="name" x-model="editService ? editService.name : ''"
-                               class="w-full mt-1 p-3 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
-                    </div>
-
-                    <!-- Description -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-600">Description</label>
-                        <textarea name="description" x-model="editService ? editService.description : ''"
-                                  class="w-full mt-1 p-3 border rounded-md focus:ring-2 focus:ring-indigo-500" rows="3"></textarea>
-                    </div>
-
-                    <!-- Duration -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-600">Duration (minutes)</label>
-                        <select name="duration" x-model="editService ? editService.duration : ''"
-                                class="w-full mt-1 p-3 border rounded-md focus:ring-2 focus:ring-indigo-500">
-                            <option value="">-- Select Duration --</option>
-                            @for ($minutes = 30; $minutes <= 1440; $minutes += 30)
-                                @php
-                                    $hrs = floor($minutes / 60);
-                                    $mins = $minutes % 60;
-                                    $label = ($hrs ? $hrs . ' hour' . ($hrs > 1 ? 's' : '') : '') .
-                                             ($hrs && $mins ? ' ' : '') .
-                                             ($mins ? $mins . ' minutes' : '');
-                                @endphp
-                                <option value="{{ $minutes }}">{{ $label }}</option>
-                            @endfor
-                        </select>
-                    </div>
-
-                    <!-- Category -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-600">Category</label>
-                        <select name="category" class="w-full mt-1 p-3 border rounded-md focus:ring-2 focus:ring-indigo-500">
-                            <option value="">-- Select Category --</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" 
-                                    x-bind:selected="editService ? editService.category == {{ $category->id }} : false">
-                                    {{ $category->category_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Price & Currency -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-600">Currency</label>
-                        <select name="currency" x-model="editService ? editService.currency : '₹'" 
-                                class="w-full mt-1 p-3 border rounded-md focus:ring-2 focus:ring-indigo-500">
-                            @foreach($currencies as $code => $currency)
-                                <option value="{{ $currency['symbol'] }}">{{ $code }}</option>
-                            @endforeach
-                        </select>
-
-                        <label class="block text-sm font-medium text-gray-600 mt-2">Price</label>
-                        <input type="text" name="price" x-model="editService ? editService.price : ''"
-                               class="w-full mt-1 p-3 border rounded-md focus:ring-2 focus:ring-indigo-500"
-                               inputmode="decimal"
-                               pattern="^\d*\.?\d{0,3}$"
-                               oninput="this.value = this.value.replace(/[^0-9.]/g,'').replace(/^(\d+(\.\d{0,3})?).*$/,'$1');"
-                               placeholder="e.g., 100 or 100.50">
-                    </div>
-
-                    <!-- Status -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-600">Status</label>
-                        <select name="status" x-model="editService ? editService.status : '1'" 
-                                class="w-full mt-1 p-3 border rounded-md focus:ring-2 focus:ring-indigo-500">
-                            <option value="1">Active</option>
-                            <option value="0">Inactive</option>
-                        </select>
-                    </div>
-
-                    <!-- Thumbnail -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-600">Featured Image</label>
-                        <input type="file" name="thumbnail" class="w-full mt-1 p-2 border rounded-md">
-                        <template x-if="editService && editService.thumbnail">
-                            <div class="relative w-20 h-20 mt-2">
-                                <img :src="editService.thumbnail" class="w-20 h-20 rounded shadow">
-                                <button type="button" @click="editService.thumbnail = null"
-                                        class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-600">&times;</button>
-                            </div>
-                        </template>
-                        <input type="hidden" name="remove_thumbnail" :value="!editService.thumbnail ? 1 : 0">
-                    </div>
-
-                    <!-- Gallery -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-600">Gallery Images</label>
-                        <input type="file" name="gallery[]" multiple class="w-full mt-1 p-2 border rounded-md">
-                        <template x-if="editService && editService.gallery">
-                            <div class="flex gap-2 mt-2 flex-wrap">
-                                <template x-for="(img, index) in JSON.parse(editService.gallery)" :key="index">
-                                    <div class="relative w-16 h-16">
-                                        <img :src="img" class="w-16 h-16 rounded shadow">
-                                        <button type="button"
-                                                @click="editService.gallery = JSON.stringify(JSON.parse(editService.gallery).filter((_, i) => i !== index))"
-                                                class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs hover:bg-red-600">&times;</button>
-                                        <input type="hidden" name="existing_gallery[]" :value="img.replace(/^\/?storage\//,'')">
-                                    </div>
-                                </template>
-                            </div>
-                        </template>
-                    </div>
-
-                    <!-- Form Actions -->
-                    <div class="flex justify-end gap-3">
-                        <button type="button" @click="showForm = false; editService = null"
-                                class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-                                x-text="editService ? 'Update Service' : 'Save Service'"></button>
-                    </div>
-
-                </form>
-            </div>
+           
 
             <!-- Service List -->
             <div x-show="!showForm" class="space-y-4">
@@ -208,11 +78,7 @@
                             @endif
                             <!-- Actions -->
                             <div class="flex gap-2 mt-3">
-                                <button type="button" @click="showForm = true;
-                                        editService = {{ json_encode($services_data->toArray()) }};
-                                        if(editService.thumbnail) editService.thumbnail = '/storage/' + editService.thumbnail;
-                                        if(editService.gallery) editService.gallery = JSON.stringify(JSON.parse(editService.gallery).map(img => '/storage/' + img));"
-                                        class="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600">Edit</button>
+                                <a href="{{route('vendor.services.edit',$servicedata[0]->id)}}"class="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600">Edit</a>
                                 <form action="{{ route('vendor.services.destroy', $services_data->id) }}" method="POST" onsubmit="return confirm('Are you sure?');">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600">Delete</button>

@@ -191,8 +191,8 @@
                     @canany(['view emails', 'create emails', 'edit emails', 'delete emails'])
                     <li class="nav-item pcoded-hasmenu {{ request()->routeIs('emails.*') ? 'pcoded-trigger' : '' }}">
                         <a href="#!" class="nav-link">
-                            <span class="pcoded-micon"><i class="fas fa-user-tie"></i></span>
-                            <span class="pcoded-mtext">Manage Emails</span>
+                        <span class="pcoded-micon"><i class="fas fa-envelope"></i></span>
+                        <span class="pcoded-mtext">Manage Emails</span>
                         </a>
                         <ul class="pcoded-submenu" @if(request()->routeIs('emails.*')) style="display:block;" @endif>
                             @can('create emails')

@@ -19,17 +19,51 @@ use App\Models\StaffServiceAssociation;
 
 class VendorServiceController extends Controller
 {
+    public $vendorId;
+    public $vendorServices;
+    public $vendorServiceNames;
+    public $phoneCountries;
+    public $weekDays;
+    public $currencies;
+    public $CurrentUserId;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $currentUserId = Auth::id();
+            $this->CurrentUserId= $currentUserId;
+            $this->vendorId = VendorStaffAssociation::where('user_id', $currentUserId)->value('vendor_id');
+            if ($this->vendorId) {
+                $this->vendorServices = VendorServiceAssociation::where('vendor_id', $this->vendorId)->pluck('service_id');
+                $this->vendorServiceNames = Service::whereIn('id', $this->vendorServices)
+                    ->get()
+                    ->map(function ($item) {
+                        return [
+                            'id' => $item->id,
+                            'name' => $item->name,
+                        ];
+                    });
+            } else {
+                $this->vendorServices = collect();
+                $this->vendorServiceNames = collect();
+            }
+
+            $this->currencies     = config('constants.currencies');
+            $this->weekDays       = config('constants.week_days');
+            $this->phoneCountries = config('phone_countries');
+          return $next($request);
+        });
+    }
+/*=============================== service list =========================*/
+
  public function view(){
        // Check if user is logged in
     if (Auth::check()) {
         $currentUserId = Auth::user()->id;
-        // Get vendor ID of logged-in user
-        $vendorId = VendorStaffAssociation::where('user_id', $currentUserId)->value('vendor_id');
-
+        $vendorId = $this->vendorId;
         if ($vendorId) {
-            // Get all staff (excluding current user) under the same vendor
             $userIds = VendorStaffAssociation::where('vendor_id', $vendorId)
-                        ->where('user_id', '!=', $currentUserId)
+                        ->where('user_id', '!=', $this->CurrentUserId)
                         ->pluck('user_id')
                         ->toArray();
 
@@ -38,7 +72,6 @@ class VendorServiceController extends Controller
                         ->get();
 
             $staffid = $staffdata->pluck('id');
-           
             if ($staffid) {
                 $staffServices = StaffServiceAssociation::whereIn('staff_member', $staffid)->with('service:id,name')->get()->groupBy('staff_member')->map(function ($items) {
                     return $items->map(function ($item) {
@@ -64,12 +97,9 @@ class VendorServiceController extends Controller
             $serviceIds = VendorServiceAssociation::with('vendor')
                         ->where('vendor_id', $vendorId)
                         ->pluck('service_id');
-
             $servicedata = Service::whereIn('id', $serviceIds)->get();
-
             // Categories
             $categories = Category::select('id', 'category_name')->get();
-
             // Bookings
             $bookingdata = Booking::where('vendor_id', $vendorId)->get();
             $bookingTemplateIds = $bookingdata->pluck('booking_template_id')->unique();
@@ -78,11 +108,10 @@ class VendorServiceController extends Controller
             if ($bookingTemplateIds->isNotEmpty()) {
                 $bookingtemplatedata = BookingTemplate::whereIn('id', $bookingTemplateIds)->get();
             }
-
             // Constants
-            $currencies     = config('constants.currencies');
-            $weekDays       = config('constants.week_days');
-            $phoneCountries = config('phone_countries');
+            $currencies     =$this->currencies;
+            $weekDays       = $this->weekDays;
+            $phoneCountries = $this->phoneCountries;
 
             return view('frontend.vendor.tabs.services.service', compact(
                 'staffdata',
@@ -100,6 +129,31 @@ class VendorServiceController extends Controller
 
      }
 }
+/*=============================== service add =========================*/
+public function add(){
+     $categories = Category::select('id', 'category_name')->get();
+    $currencies     =$this->currencies ;
+    $servicedata = Service::where('id')->get();
+    return view('frontend.vendor.tabs.services.add',compact(
+            'categories',
+            'currencies',
+        ));
+    }
+
+/*=============================== service edit =========================*/
+public function edit($id){
+    $serviceIds=$id;
+    $categories = Category::select('id', 'category_name')->get();
+    $currencies     =$this->currencies ;
+    $servicedata = Service::where('id', $serviceIds)->get();
+    return view('frontend.vendor.tabs.services.edit',compact(
+        'categories',
+        'currencies',
+        'servicedata',
+    ));
+}
+
+/*=============================== service create =========================*/
      public function ServiceCreate(Request $request)
 {
     $request->validate([

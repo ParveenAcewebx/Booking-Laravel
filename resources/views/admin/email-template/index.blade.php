@@ -30,11 +30,11 @@
             <div class="col-lg-12">
                 <div class="card user-profile-list">
                     <div class="card-body">
-                        <div class="dt-responsive">
+                        <div class="dt-responsive table-responsive">
                             <table class="table table-striped nowrap" id="emailTemplatesTable" width="100%">
                                 <thead>
                                     <tr>
-                                        <th style="display:none;">ID</th> 
+                                        <th style="display:none;">ID</th>
                                         <th>Title</th>
                                         <th>Slug</th>
                                         <th>Subject</th>
@@ -61,7 +61,9 @@
             processing: true,
             serverSide: true,
             ajax: "{{ route('emails.list') }}",
-            order: [[0, 'desc']],
+            order: [
+                [0, 'desc']
+            ],
             columns: [{
                     data: 'id',
                     name: 'id',
