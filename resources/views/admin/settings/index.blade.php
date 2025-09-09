@@ -236,61 +236,57 @@
                 </div>
                 <div class="col-md-6 col-xl-4">
                  <div class="card">
-                        <h5 class="card-header">Mail smtp Credential</h5>
+                        <h5 class="card-header">SMTP Details</h5>
                             <div class="card-body">
-                              <div class="mb-3">
+                              <div class="mb-3 d-none">
                                 <label for="mail_mailer" class="form-label">Mail Mailer</label>
                                 <input type="text" name="mail_mailer" id="mail_mailer" class="form-control"
-                                    value="{{ old('mail_mailer', $settings['mailer'] ?? '') }}"
+                                    value="{{ old('mail_mailer', $settings['mailer'] ?? 'smtp') }}"
                                     placeholder="smtp">
                             </div>
 
                             <div class="mb-3">
-                                <label for="mail_host" class="form-label">Mail Host</label>
+                                <label for="mail_host" class="form-label">SMTP Host NAME</label>
                                 <input type="text" name="mail_host" id="mail_host" class="form-control"
                                     value="{{ old('mail_host', $settings['host'] ?? '') }}"
                                     placeholder="smtp.gmail.com">
                             </div>
-
                             <div class="mb-3">
-                                <label for="mail_port" class="form-label">Mail Port</label>
-                                <input type="number" name="mail_port" id="mail_port" class="form-control"
-                                    value="{{ old('mail_port', $settings['port'] ?? '') }}"
-                                    placeholder="587">
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="mail_username" class="form-label">Mail Username</label>
+                                <label for="mail_username" class="form-label">SMT Mail User Name</label>
                                 <input type="text" name="mail_username" id="mail_username" class="form-control"
                                     value="{{ old('mail_username', $settings['username'] ?? '') }}"
                                     placeholder="admin@example.com">
                             </div>
-
                             <div class="mb-3">
-                                <label for="mail_password" class="form-label">Mail Password</label>
+                                <label for="mail_password" class="form-label">SMTP Password</label>
                                 <input type="password" name="mail_password" id="mail_password" class="form-control"
                                     value="{{ old('mail_password', $settings['password'] ?? '') }}"
                                     placeholder="Your Password">
                             </div>
-
                             <div class="mb-3">
+                                <label for="mail_port" class="form-label">Port</label>
+                                <input type="number" name="mail_port" id="mail_port" class="form-control"
+                                    value="{{ old('mail_port', $settings['port'] ?? '') }}"
+                                    placeholder="587">
+                            </div>
+                            <div class="mb-3 d-none">
                                 <label for="mail_encryption" class="form-label">Mail Encryption</label>
                                 <input type="text" name="mail_encryption" id="mail_encryption" class="form-control"
-                                    value="{{ old('mail_encryption', $settings['encryption'] ?? '') }}"
+                                    value="{{ old('mail_encryption', $settings['encryption'] ?? 'tls') }}"
                                     placeholder="tls">
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-3 d-none">
                                 <label for="mail_from_address" class="form-label">Mail From Address</label>
                                 <input type="email" name="mail_from_address" id="mail_from_address" class="form-control"
-                                    value="{{ old('mail_from_address', $settings['from_address'] ?? '') }}"
+                                    value="{{ old('mail_from_address', $settings['from_address'] ?? 'admin@example.com') }}"
                                     placeholder="admin@example.com">
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-3 d-none">
                                 <label for="mail_from_name" class="form-label">Mail From Name</label>
                                 <input type="text" name="mail_from_name" id="mail_from_name" class="form-control"
-                                    value="{{ old('mail_from_name', $settings['from_name'] ?? '') }}"
+                                    value="{{ old('mail_from_name', $settings['from_name'] ?? 'laravel') }}"
                                     placeholder="App Name">
                             </div>
 

@@ -39,7 +39,7 @@
                                         <th>Slug</th>
                                         <th>Subject</th>
                                         <th>Email Content</th>
-                                        <th>Dummy Template</th>
+                                        <th>Macro</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -85,8 +85,8 @@
                     name: 'email_content'
                 },
                 {
-                    data: 'dummy_template',
-                    name: 'dummy_template'
+                    data: 'macro',
+                    name: 'macro'
                 },
                 {
                     data: 'status_label',
