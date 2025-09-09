@@ -68,10 +68,13 @@ class BookingController extends Controller
                     $btn .= '<a href="' . route('booking.view', $booking->id) . '" class="btn btn-icon btn-success" title="View Booking">
                               <i class="feather icon-eye"></i>
                             </a> ';
-                    $btn .= '<form action="' . route('booking.delete', $booking->id) . '" method="POST" style="display:inline-block;">
+                    $btn .= '<form id="deleteBooking-' . $booking->id . '" 
+                                    action="' . route('booking.delete', $booking->id) . '" 
+                                    method="POST" style="display:inline-block;">
                                 <input type="hidden" name="_method" value="DELETE">
                                 ' . csrf_field() . '
-                                <button type="button" onclick="return deleteBooking(' . $booking->id . ')" class="btn btn-icon btn-danger" title="Delete Booking">
+                                <button type="button" onclick="return deleteBooking(' . $booking->id . ', event)" 
+                                        class="btn btn-icon btn-danger" title="Delete Booking">
                                     <i class="feather icon-trash-2"></i>
                                 </button>
                             </form>';
