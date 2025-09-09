@@ -1402,12 +1402,6 @@ $(document).ready(function () {
 });
 /* ------------------------ End Services Thumbnail Function  ---------------------------- */
 
-document.getElementById('slug').addEventListener('input', function () {
-    let val = this.value;
-    // force lowercase + replace spaces with underscores
-    this.value = val.toLowerCase().replace(/\s+/g, '_');
-});
-
 function bulkDelete(url) {
     // Select All checkbox
     $('#selectAll').on('click', function () {

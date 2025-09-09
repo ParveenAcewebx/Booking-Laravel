@@ -168,5 +168,12 @@
         </form>
     </div>
 </div>
+<script>
+    document.getElementById('slug').addEventListener('input', function () {
+    let val = this.value;
+    // force lowercase + replace spaces with underscores
+    this.value = val.toLowerCase().replace(/\s+/g, '_');
+});
 
+</script>
 @endsection
