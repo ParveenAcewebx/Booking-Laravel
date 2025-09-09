@@ -206,7 +206,7 @@ public function edit($id){
             'service_id' => $service->id,
         ]);
     }
-    return redirect()->route('vendor.services.view')->with('success', 'Service added successfully.');
+    return redirect()->route('vendor.services.view')->with('success', 'Service Added Successfully.');
 }
 
 public function ServiceUpdate(Request $request, $id)
@@ -263,12 +263,12 @@ public function ServiceUpdate(Request $request, $id)
     }
     $service->gallery = json_encode(array_values($gallery));
     $service->save();
-    return redirect()->route('vendor.services.view')->with('success', 'Service updated successfully.');
+    return redirect()->route('vendor.services.view')->with('success', 'Service Updated Successfully.');
 }
 
    public function Servicedestroy($id){
         $service = Service::findOrFail($id);
         $service->delete();
-        return redirect()->route('vendor.services.view')->with('success', 'Service deleted successfully.');
+        return redirect()->route('vendor.services.view')->with('success', 'Service Deleted Successfully.');
     }
 }

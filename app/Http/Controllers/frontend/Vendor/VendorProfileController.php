@@ -47,6 +47,6 @@ class VendorProfileController extends Controller
             'phone_number' => $validated['phone_number'],
             'avatar' => $avatarPath,
         ]);
-        return redirect()->route('vendor.dashboard.view')->with('success', 'Profile updated successfully.');
+        return redirect()->route('vendor.dashboard.view')->with('success', 'Profile Updated Successfully.');
     }
 }

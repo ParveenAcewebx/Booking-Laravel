@@ -253,7 +253,7 @@ class VendorStaffController extends Controller{
                         'vendor_id' => $vendorId,
                     ]);
                 }
-                return redirect()->route('vendor.staff.view')->with('success', 'Staff Created successfully.');
+                return redirect()->route('vendor.staff.view')->with('success', 'Staff Created Successfully.');
             }
 
             /*======================================== stafff Edit ====================================*/
@@ -426,14 +426,14 @@ class VendorStaffController extends Controller{
                 );
             }
 
-            return redirect()->route('vendor.staff.view')->with('success', 'Staff updated successfully.');
+            return redirect()->route('vendor.staff.view')->with('success', 'Staff Updated Successfully.');
         }
         /*=================== staff delete =======================*/
         public function staffDestroy($id)
         {
             $staff = User::findOrFail($id);
             $staff->delete();               
-            return redirect()->route('vendor.staff.view')->with('success', 'Staff member deleted successfully.');
+            return redirect()->route('vendor.staff.view')->with('success', 'Staff Deleted Successfully.');
         }
 
 

@@ -108,6 +108,6 @@ class VendorBookingController extends Controller
     {
         $booking = Booking::findOrFail($id);
         $booking->delete();
-        return redirect()->route('vendor.bookings.view')->with('success', 'Booking deleted successfully.');
+        return redirect()->route('vendor.bookings.view')->with('success', 'Booking Deleted Successfully.');
     }
 }
