@@ -283,7 +283,7 @@
                             <div class="mb-3">
                                 <label for="mail_from_address" class="form-label">Mail From Address</label>
                                 <input type="email" name="mail_from_address" id="mail_from_address" class="form-control"
-                                    value="{{ old('mail_from_address', $setting['from_address'] ?? '') }}"
+                                    value="{{ old('mail_from_address', $settings['from_address'] ?? '') }}"
                                     placeholder="admin@example.com">
                             </div>
 
