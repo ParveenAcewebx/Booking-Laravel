@@ -19,6 +19,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/getBookingByServiceId/{id}', [APIControllerV1::class, 'searchBookingByServiceId']);
     Route::get('/getBookingByStaffId/{id}', [APIControllerV1::class, 'searchBookingByStaffId']);
     Route::get('/getStaffById/{id}', [APIControllerV1::class, 'searchStaffById']);
+    Route::get('/getServiceById/{id}', [APIControllerV1::class, 'searchServiceById']);
 });
 
 

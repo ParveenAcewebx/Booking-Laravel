@@ -18,7 +18,7 @@
                     </div>
                     <div class="col-md-2">
                         <div class="page-header-titles float-right">
-                            <a href="{{ route('emails.create') }}" class="btn btn-primary float-right p-2">Add New Email</a>
+                            <a href="{{ route('emails.create') }}" class="btn btn-primary float-right p-2">Add Email</a>
                         </div>
                     </div>
                 </div>
