@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Setting;
 use App\Models\User;
-
 class SettingsController extends Controller
 {
     public function index()
@@ -27,7 +26,6 @@ class SettingsController extends Controller
         ];
         $timezones = \DateTimeZone::listIdentifiers();
         $settings = Setting::pluck('value', 'key')->toArray();
-
         return view('admin.settings.index', compact('phoneCountries', 'dateFormats', 'timeFormats', 'timezones', 'settings','loginUser'));
     }
 
@@ -43,6 +41,15 @@ class SettingsController extends Controller
             'site_title' => 'required|string',
             'website_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif',
             'favicon' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+
+            'mail_mailer' => 'nullable|string',
+            'mail_host' => 'nullable|string',
+            'mail_port' => 'nullable|integer',
+            'mail_username' => 'nullable|string',
+            'mail_password' => 'nullable|string',
+            'mail_encryption' => 'nullable|string|in:tls,ssl,null',
+            'mail_from_address' => 'nullable|email',
+            'mail_from_name' => 'nullable|string',
         ]);
 
         $settings = [
@@ -88,7 +95,26 @@ class SettingsController extends Controller
                 ['value' => $value]
             );
         }
+        if ($request->filled('mail_host') || $request->filled('mail_port') || $request->filled('mail_username') || $request->filled('mail_password') ||$request->filled('mail_from_address'))
+        {
+         $smtpSettings = [
+            'mailer' => $request['mail_mailer'],
+            'host' => $request['mail_host'],
+            'port' => $request['mail_port'],
+            'username' => $request['mail_username'],
+            'password' => $request['mail_password'],
+            'encryption' => $request['mail_encryption'],
+            'from_address' => $request['mail_from_address'],
+            'from_name' => $request['mail_from_name'],
+        ];
 
+        foreach ($smtpSettings as $key => $value) {
+            Setting::updateOrCreate(
+                ['key' => $key],
+                ['value' => $value]
+            );
+        }
+        }
         return back()->with('success', 'Settings Updated Successfully.');
     }
 }

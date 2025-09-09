@@ -75,11 +75,6 @@ class UserController extends Controller
                     }
 
                     if ($currentUser->can('delete users') && Auth::id() != $row->id) {
-                        if ($row->staff && $row->staff->primary_staff == 1) {
-                            $btn .= '<button type="button" class="btn btn-icon btn-secondary" data-toggle="tooltip" title="Please First Delete Vendor" disabled>
-                    <i class="feather icon-trash-2"></i>
-                 </button>';
-                        } else {
                             $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">';
                             $btn .= csrf_field();
                             $btn .= method_field('DELETE');
@@ -87,9 +82,7 @@ class UserController extends Controller
                     <i class="feather icon-trash-2"></i>
                  </button>';
                             $btn .= '</form>';
-                        }
                     }
-
 
                     if ($isImpersonating && Auth::id() === $row->id) {
                         $btn .= '<form method="POST" action="' . route('user.switch.back') . '" style="display:inline;">
@@ -99,12 +92,14 @@ class UserController extends Controller
                                 </button>
                             </form>';
                     } elseif (!$isImpersonating && $currentUser->hasRole('Administrator') && $currentUser->id !== $row->id) {
+                        if($row->status == config('constants.status.active')){
                         $btn .= '<form method="POST" action="' . route('user.switch', $row->id) . '" style="display:inline;">
                                 ' . csrf_field() . '
                                 <button type="submit" class="btn btn-icon btn-dark" data-toggle="tooltip" title="Switch User">
                                     <i class="fas fa-random"></i>
                                 </button>
                             </form>';
+                        }
                     }
 
                     return $btn;

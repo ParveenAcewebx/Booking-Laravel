@@ -56,7 +56,8 @@ class StaffController extends Controller
                     if ($row->services->isEmpty()) {
                         return '<span class="badge badge-secondary">No Services</span>';
                     }
-                    return $row->services->map(fn($service) =>
+                    return $row->services->map(
+                        fn($service) =>
                         '<span class="badge badge-info mr-1">' . e($service->name) . '</span>'
                     )->implode(' ');
                 })
@@ -105,9 +106,9 @@ class StaffController extends Controller
                                         <i class="feather icon-log-out"></i>
                                     </button>
                                  </form>';
-                    } elseif (!$isImpersonating && $currentUser->hasRole('Administrator') && $currentUser->id !== $row->id ) {
+                    } elseif (!$isImpersonating && $currentUser->hasRole('Administrator') && $currentUser->id !== $row->id  && $row->status == config('constants.status.active')) {
                         if ($row->staff && $row->staff->primary_staff == 1) {
-                        $btn .= '<form method="POST" action="' . route('user.switch', $row->id) . '" style="display:inline;">
+                            $btn .= '<form method="POST" action="' . route('user.switch', $row->id) . '" style="display:inline;">
                                     ' . csrf_field() . '
                                     <button type="submit" class="btn btn-icon btn-dark" data-toggle="tooltip" title="Switch User">
                                         <i class="fas fa-random"></i>
@@ -183,8 +184,8 @@ class StaffController extends Controller
                 $start = $data['start'] ?? '00:00';
                 $end = $data['end'] ?? '00:00';
                 if ($start == '00:00' || $end == '00:00') {
-                        $start = $end = '00:00';
-                    }
+                    $start = $end = '00:00';
+                }
 
                 $workingHours[$day] = [
                     'start' => $start,
@@ -240,8 +241,8 @@ class StaffController extends Controller
     {
         $user = User::findOrFail($staff->id);
         $userroles = $user->roles;
-        if($userroles[0]->name!= 'Staff'){
-          return redirect('admin/user/'.$staff->id.'/edit');
+        if ($userroles[0]->name != 'Staff') {
+            return redirect('admin/user/' . $staff->id . '/edit');
         }
         $roles = Role::where('name', 'Staff')->first();
         $phoneCountries = config('phone_countries');
@@ -365,11 +366,11 @@ class StaffController extends Controller
 
         foreach ($weekDays as $day) {
             $data = $request->working_days[$day] ?? [];
-            
+
             $start = $data['start'] ?? '00:00';
             $end = $data['end'] ?? '00:00';
             if ($start == '00:00' || $end == '00:00') {
-            $start = $end = '00:00';
+                $start = $end = '00:00';
             }
             $workingHours[$day] = [
                 'start' => $start,
