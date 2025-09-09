@@ -16,10 +16,13 @@
                             <li class="breadcrumb-item"><a href="{{ route('emails.list') }}">All Email</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-2">
-                        <div class="page-header-titles float-right">
-                            <a href="{{ route('emails.create') }}" class="btn btn-primary float-right p-2">Add Email</a>
-                        </div>
+                    <div class="col-md-2 text-right">
+                        @can('create emails')
+                        <a href="{{ route('emails.create') }}" class="btn btn-primary btn-sm mr-2">Add User</a>
+                        @endcan
+                        @can('delete emails')
+                        <button id="bulkEmailsDeleteBtn" class="btn btn-danger btn-sm" disabled>Delete</button>
+                        @endcan
                     </div>
                 </div>
             </div>
@@ -34,6 +37,7 @@
                             <table class="table table-striped nowrap" id="emailTemplatesTable" width="100%">
                                 <thead>
                                     <tr>
+                                        <th><input type="checkbox" id="selectAll"></th>
                                         <th style="display:none;">ID</th>
                                         <th>Title</th>
                                         <th>Slug</th>
@@ -57,75 +61,37 @@
 
 <script>
     $(document).ready(function() {
-        $('#emailTemplatesTable').DataTable({
+        let table = $('#emailTemplatesTable').DataTable({
             processing: true,
             serverSide: true,
             ajax: "{{ route('emails.list') }}",
             order: [
-                [0, 'desc']
+                [1, 'desc']
             ],
             columns: [{
                     data: 'id',
-                    name: 'id',
-                    visible: false
-                }, {
-                    data: 'title',
-                    name: 'title'
+                    render: function(data) {
+                        return `<input type="checkbox" class="selectRow" value="${data}">`;
+                    },
+                    orderable: false,searchable: false
                 },
-                {
-                    data: 'slug',
-                    name: 'slug'
-                },
-                {
-                    data: 'subject',
-                    name: 'subject'
-                },
-                {
-                    data: 'email_content',
-                    name: 'email_content'
-                },
-                {
-                    data: 'macro',
-                    name: 'macro'
-                },
-                {
-                    data: 'status_label',
-                    name: 'status',
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false,
-                    searchable: false
-                }
+                {data: 'id',name: 'id',visible: false},
+                {data: 'title',name: 'title'},
+                {data: 'slug',name: 'slug'},
+                {data: 'subject',name: 'subject'},
+                {data: 'email_content',name: 'email_content'},
+                {data: 'macro', name: 'macro'},
+                {data: 'status_label',name: 'status',orderable: false,searchable: false},
+                {data: 'action',name: 'action', orderable: false,searchable: false}
             ]
         });
 
-        toastr.options = {
-            "closeButton": true,
-            "progressBar": true,
-            "timeOut": "4000",
-            "positionClass": "toast-top-right"
-        };
+        toastr.options = { closeButton: true, progressBar: true, timeOut: 4000, positionClass: "toast-top-right" };
 
-        // Toastr messages from session
-        @if(session('success'))
-        toastr.success("{{ session('success') }}");
-        @endif
+        @if(session('success')) toastr.success("{{ session('success') }}"); @endif
+        @if(session('error')) toastr.error("{{ session('error') }}"); @endif
 
-        @if(session('error'))
-        toastr.error("{{ session('error') }}");
-        @endif
-
-        @if(session('info'))
-        toastr.info("{{ session('info') }}");
-        @endif
-
-        @if(session('warning'))
-        toastr.warning("{{ session('warning') }}");
-        @endif
+        bulkDelete("{{ route('emails.bulk-delete') }}");
 
     });
 </script>

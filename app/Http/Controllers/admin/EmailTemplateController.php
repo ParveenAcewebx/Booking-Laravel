@@ -156,4 +156,16 @@ class EmailTemplateController extends Controller
         }
         return response()->json(['success' => false, 'message' => 'Email Template not found.']);
     }
+
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids');
+    
+        if (!$ids || !is_array($ids)) {
+            return response()->json(['success' => false, 'message' => 'No Records Selected.'], 400);
+        }
+    
+        EmailTemplate::whereIn('id', $ids)->delete();
+        return response()->json(['success' => true, 'message' => 'Selected Emails Deleted Successfully.']);
+    }
 }

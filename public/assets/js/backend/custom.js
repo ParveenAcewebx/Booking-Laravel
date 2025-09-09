@@ -1408,3 +1408,243 @@ document.getElementById('slug').addEventListener('input', function () {
     this.value = val.toLowerCase().replace(/\s+/g, '_');
 });
 
+function bulkDelete(url) {
+    // Select All checkbox
+    $('#selectAll').on('click', function () {
+        $('.selectRow').each(function () {
+            if (!$(this).is(':disabled')) {
+                $(this).prop('checked', $('#selectAll').prop('checked'));
+            }
+        });
+        toggleBulkDeleteButton();
+    });
+
+    // Individual row checkbox
+    $(document).on('change', '.selectRow', function () {
+        if (!this.checked) $('#selectAll').prop('checked', false);
+        toggleBulkDeleteButton();
+    });
+
+    function toggleBulkDeleteButton() {
+        const selectedRows = $('.selectRow:checked').length;
+        $('#bulkDeleteBtn,#bulkCategoryDeleteBtn,#bulkServiceDeleteBtn,#bulkEmailsDeleteBtn,#bulkBookingsDeleteBtn').prop('disabled', selectedRows === 0);
+    }
+
+    // Bulk delete click
+    $('#bulkDeleteBtn').on('click', function () {
+        let selectedIds = $('.selectRow:checked').map(function () {
+            return $(this).val();
+        }).get();
+
+        if (selectedIds.length === 0) return;
+
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you cannot recover these users!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        ids: selectedIds
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            swal(response.message, { icon: "success" }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            swal(response.message || "There was an error!", { icon: "error" });
+                        }
+                    },
+                    error: function (xhr) {
+                        let msg = "An error occurred while deleting records.";
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        swal(msg, { icon: "error" });
+                    }
+                });
+            }
+        });
+    });
+
+    $('#bulkCategoryDeleteBtn').on('click', function () {
+        let selectedIds = $('.selectRow:checked').map(function () {
+            return $(this).val();
+        }).get();
+
+        if (selectedIds.length === 0) return;
+
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you cannot recover these categorys!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        ids: selectedIds
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            swal(response.message, { icon: "success" }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            swal(response.message || "There was an error!", { icon: "error" });
+                        }
+                    },
+                    error: function (xhr) {
+                        let msg = "An error occurred while deleting records.";
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        swal(msg, { icon: "error" });
+                    }
+                });
+            }
+        });
+    });
+
+    $('#bulkServiceDeleteBtn').on('click', function () {
+        let selectedIds = $('.selectRow:checked').map(function () {
+            return $(this).val();
+        }).get();
+
+        if (selectedIds.length === 0) return;
+
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you cannot recover these services!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        ids: selectedIds
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            swal(response.message, { icon: "success" }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            swal(response.message || "There was an error!", { icon: "error" });
+                        }
+                    },
+                    error: function (xhr) {
+                        let msg = "An error occurred while deleting records.";
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        swal(msg, { icon: "error" });
+                    }
+                });
+            }
+        });
+    });
+
+    $('#bulkEmailsDeleteBtn').on('click', function () {
+        let selectedIds = $('.selectRow:checked').map(function () {
+            return $(this).val();
+        }).get();
+
+        if (selectedIds.length === 0) return;
+
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you cannot recover these Emails!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        ids: selectedIds
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            swal(response.message, { icon: "success" }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            swal(response.message || "There was an error!", { icon: "error" });
+                        }
+                    },
+                    error: function (xhr) {
+                        let msg = "An error occurred while deleting records.";
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        swal(msg, { icon: "error" });
+                    }
+                });
+            }
+        });
+    });
+
+    $('#bulkBookingsDeleteBtn').on('click', function () {
+        let selectedIds = $('.selectRow:checked').map(function () {
+            return $(this).val();
+        }).get();
+
+        if (selectedIds.length === 0) return;
+
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you cannot recover these Bookings!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        ids: selectedIds
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            swal(response.message, { icon: "success" }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            swal(response.message || "There was an error!", { icon: "error" });
+                        }
+                    },
+                    error: function (xhr) {
+                        let msg = "An error occurred while deleting records.";
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        swal(msg, { icon: "error" });
+                    }
+                });
+            }
+        });
+    });
+    
+    toggleBulkDeleteButton();
+}

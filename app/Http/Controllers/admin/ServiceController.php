@@ -306,4 +306,17 @@ class ServiceController extends Controller
         // }
         return redirect()->route('service.list')->with('success', 'Service Updated Successfully!');
     }
+
+
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids');
+    
+        if (!$ids || !is_array($ids)) {
+            return response()->json(['success' => false, 'message' => 'No Records Selected.'], 400);
+        }
+
+        Service::whereIn('id', $ids)->delete();    
+        return response()->json(['success' => true, 'message' => 'Selected Services Deleted Successfully.']);
+    }
 }

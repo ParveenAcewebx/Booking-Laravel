@@ -85,7 +85,7 @@ class BookingController extends Controller
         }
 
         $templates = BookingTemplate::all();
-        $customers = User::whereHas('roles')->get(); 
+        $customers = User::whereHas('roles')->get();
         return view('admin.booking.index', compact('templates', 'customers'));
     }
 
@@ -347,5 +347,17 @@ class BookingController extends Controller
                 'message' => 'Render error: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        if (!$ids || !is_array($ids)) {
+            return response()->json(['success' => false, 'message' => 'No Records Selected.'], 400);
+        }
+
+        Booking::whereIn('id', $ids)->delete();
+        return response()->json(['success' => true, 'message' => 'Selected Bookings Deleted Successfully.']);
     }
 }
