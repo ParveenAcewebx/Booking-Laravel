@@ -95,8 +95,8 @@ class SettingsController extends Controller
                 ['value' => $value]
             );
         }
-        if ($request->filled('mail_host') || $request->filled('mail_port') || $request->filled('mail_username') || $request->filled('mail_password') ||$request->filled('mail_from_address'))
-        {
+       
+        
          $smtpSettings = [
             'mailer' => $request['mail_mailer'],
             'host' => $request['mail_host'],
@@ -114,7 +114,7 @@ class SettingsController extends Controller
                 ['value' => $value]
             );
         }
-        }
+        
         return back()->with('success', 'Settings Updated Successfully.');
     }
 }

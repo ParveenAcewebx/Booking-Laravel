@@ -1,17 +1,13 @@
 <?php
-
 namespace Database\Seeders;
-
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-
 class SettingsTableSeeder extends Seeder
 {
     public function run(): void
     {
         $now = Carbon::now();
-
         DB::table('settings')->insert([
             [
                 'key' => 'date_format',
@@ -85,6 +81,70 @@ class SettingsTableSeeder extends Seeder
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
+            [
+                'key'=>'mailer',
+                'value'=>'smtp',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'key'=>'host',
+                'value'=>'smtp.gmail.com',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'key'=>'port',
+                'value'=>'587',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'key'=>'username',
+                'value'=>'keshav.acewebx@gmail.com',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'key'=>'password',
+                'value'=>'jknqaqfjtadvjmdb',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+             [
+                'key'=>'encryption',
+                'value'=>'tls',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'key'=>'from_address',
+                'value'=>'keshav.acewebx@gmail.com',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'key'=>'from_name',
+                'value'=>'laravel',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
         ]);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
