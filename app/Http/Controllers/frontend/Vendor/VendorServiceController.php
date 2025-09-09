@@ -97,7 +97,7 @@ class VendorServiceController extends Controller
             $serviceIds = VendorServiceAssociation::with('vendor')
                         ->where('vendor_id', $vendorId)
                         ->pluck('service_id');
-            $servicedata = Service::whereIn('id', $serviceIds)->get();
+            $servicedata = Service::whereIn('id', $serviceIds)->paginate(3);
             // Categories
             $categories = Category::select('id', 'category_name')->get();
             // Bookings

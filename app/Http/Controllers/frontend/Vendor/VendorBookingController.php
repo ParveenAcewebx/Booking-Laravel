@@ -20,91 +20,93 @@ use App\Models\StaffServiceAssociation;
 
 class VendorBookingController extends Controller
 {
-    public function view(){
-       // Check if user is logged in
-    if (Auth::check()) {
-        $currentUserId = Auth::user()->id;
-        $activeVendor = Vendor::where('status', config('constants.status.active'))->get();
-        // Get vendor ID of logged-in user
-        $vendorId = VendorStaffAssociation::where('user_id', $currentUserId)->value('vendor_id');
-
-        if ($vendorId) {
-            // Get all staff (excluding current user) under the same vendor
-            $userIds = VendorStaffAssociation::where('vendor_id', $vendorId)
-                        ->where('user_id', '!=', $currentUserId)
-                        ->pluck('user_id')
-                        ->toArray();
-
-            $staffdata = User::whereIn('id', $userIds)
-                        ->orderBy('id', 'desc')
-                        ->get();
-
-            $staffid = $staffdata->pluck('id');
+    public function view()
+    {
+        // Check if user is logged in
+        if (Auth::check()) {
+            $currentUserId = Auth::user()->id;
+            $activeVendor = Vendor::where('status', config('constants.status.active'))->get();
+            // Get vendor ID of logged-in user
+            $vendorId = VendorStaffAssociation::where('user_id', $currentUserId)->value('vendor_id');
            
-            if ($staffid) {
-                $staffServices = StaffServiceAssociation::whereIn('staff_member', $staffid)->with('service:id,name')->get()->groupBy('staff_member')->map(function ($items) {
-                    return $items->map(function ($item) {
-                        return [
-                            'id'   => optional($item->service)->id,
-                            'name' => optional($item->service)->name,
-                        ];
-                    })->filter(function ($service) {
-                        return !is_null($service['id']);
-                    })->toArray();
-                });
+            if ($vendorId) {
+                // Get all staff (excluding current user) under the same vendor
+                $userIds = VendorStaffAssociation::where('vendor_id', $vendorId)
+                    ->where('user_id', '!=', $currentUserId)
+                    ->pluck('user_id')
+                    ->toArray();
+
+                $staffdata = User::whereIn('id', $userIds)
+                    ->orderBy('id', 'desc')
+                    ->get();
+
+                $staffid = $staffdata->pluck('id');
+
+                if ($staffid) {
+                    $staffServices = StaffServiceAssociation::whereIn('staff_member', $staffid)->with('service:id,name')->get()->groupBy('staff_member')->map(function ($items) {
+                        return $items->map(function ($item) {
+                            return [
+                                'id'   => optional($item->service)->id,
+                                'name' => optional($item->service)->name,
+                            ];
+                        })->filter(function ($service) {
+                            return !is_null($service['id']);
+                        })->toArray();
+                    });
 
                     $StaffworkdaysDayoff = Staff::whereIn('user_id', $staffid)->get()->map(function ($staff) {
                         return [
                             'user_id'   => $staff->user_id,
-                            'work_days' => json_decode($staff->work_hours, true), 
-                            'days_off'  => json_decode($staff->days_off, true),   
+                            'work_days' => json_decode($staff->work_hours, true),
+                            'days_off'  => json_decode($staff->days_off, true),
                         ];
                     });
+                }
+
+                // Get vendor services
+                $serviceIds = VendorServiceAssociation::with('vendor')
+                    ->where('vendor_id', $vendorId)
+                    ->pluck('service_id');
+
+                $servicedata = Service::whereIn('id', $serviceIds)->get();
+
+                // Categories
+                $categories = Category::select('id', 'category_name')->get();
+
+                // Bookings
+                $bookingdata = Booking::where('created_by', $vendorId)->paginate(3);
+                // dd($bookingdata);
+                $bookingTemplateIds = $bookingdata->pluck('booking_template_id')->unique();
+
+                $bookingtemplatedata = collect();
+                if ($bookingTemplateIds->isNotEmpty()) {
+                    $bookingtemplatedata = BookingTemplate::whereIn('id', $bookingTemplateIds)->get();
+                }
+
+                // Constants
+                $currencies     = config('constants.currencies');
+                $weekDays       = config('constants.week_days');
+                $phoneCountries = config('phone_countries');
+
+                return view('frontend.vendor.tabs.bookings.booking', compact(
+                    'staffdata',
+                    'StaffworkdaysDayoff',
+                    'staffServices',
+                    'weekDays',
+                    'phoneCountries',
+                    'servicedata',
+                    'categories',
+                    'currencies',
+                    'bookingdata',
+                    'bookingtemplatedata',
+                    'activeVendor'
+                ));
             }
-
-            // Get vendor services
-            $serviceIds = VendorServiceAssociation::with('vendor')
-                        ->where('vendor_id', $vendorId)
-                        ->pluck('service_id');
-
-            $servicedata = Service::whereIn('id', $serviceIds)->get();
-
-            // Categories
-            $categories = Category::select('id', 'category_name')->get();
-
-            // Bookings
-            $bookingdata = Booking::where('vendor_id', $vendorId)->get();
-            $bookingTemplateIds = $bookingdata->pluck('booking_template_id')->unique();
-
-            $bookingtemplatedata = collect();
-            if ($bookingTemplateIds->isNotEmpty()) {
-                $bookingtemplatedata = BookingTemplate::whereIn('id', $bookingTemplateIds)->get();
-            }
-
-            // Constants
-            $currencies     = config('constants.currencies');
-            $weekDays       = config('constants.week_days');
-            $phoneCountries = config('phone_countries');
-
-            return view('frontend.vendor.tabs.bookings.booking', compact(
-                'staffdata',
-                'StaffworkdaysDayoff',
-                'staffServices',
-                'weekDays',
-                'phoneCountries',
-                'servicedata',
-                'categories',
-                'currencies',
-                'bookingdata',
-                'bookingtemplatedata',
-                'activeVendor'
-            ));
         }
-
-     }
     }
 
-     public function bookingdestroy($id){
+    public function bookingdestroy($id)
+    {
         $booking = Booking::findOrFail($id);
         $booking->delete();
         return redirect()->route('vendor.bookings.view')->with('success', 'Booking deleted successfully.');

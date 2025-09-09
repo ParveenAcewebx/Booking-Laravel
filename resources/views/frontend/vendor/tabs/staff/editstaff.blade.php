@@ -328,5 +328,16 @@ function deleteRow(button){
             row.remove();
         }
 }
+$(document).on('change', 'select[name^="working_days"][name$="[start]"]', function() {
+    const $start = $(this);
+    const selectedIndex = this.selectedIndex;
+    const $end = $start.closest('div').find('select[name$="[end]"]');
+    $end.find('option').prop('disabled', false);
+    $end.find('option').each(function(index) {
+        if (index <= selectedIndex) {
+            $(this).prop('disabled', true);
+        }
+    });
+});
 </script>
 @endpush

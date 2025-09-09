@@ -64,6 +64,9 @@
                 @empty
                     <p class="text-sm text-gray-500">No Staff Found</p>
                 @endforelse
+                 <div class="mt-6">
+                    {{ $staffdata->links('pagination::tailwind') }}
+                </div>
             </div>
         </div>
     </div>

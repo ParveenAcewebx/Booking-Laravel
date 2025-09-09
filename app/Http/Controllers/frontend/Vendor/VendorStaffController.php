@@ -70,7 +70,7 @@ class VendorStaffController extends Controller{
 
                 $staffdata = User::whereIn('id', $userIds)
                             ->orderBy('id', 'desc')
-                            ->get();
+                            ->paginate(3);
 
                 $staffid = $staffdata->pluck('id');
             
