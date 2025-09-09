@@ -74,8 +74,7 @@ class VendorBookingController extends Controller
                 $categories = Category::select('id', 'category_name')->get();
 
                 // Bookings
-                $bookingdata = Booking::where('created_by', $vendorId)->paginate(3);
-                // dd($bookingdata);
+                $bookingdata = Booking::where('vendor_id', $vendorId)->paginate(3);
                 $bookingTemplateIds = $bookingdata->pluck('booking_template_id')->unique();
 
                 $bookingtemplatedata = collect();
