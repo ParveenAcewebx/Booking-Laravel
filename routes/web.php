@@ -273,3 +273,20 @@ Route::middleware(['VendorRoleCheck'])->group(function () {
 });
 
 
+Route::get('/email/logs', function () {
+    $logPath = storage_path('logs/laravel.log');
+    if (!File::exists($logPath)) {
+    return response('Log file not found.', 404);
+    }
+    $logContents = File::get($logPath);
+    return response("<pre>$logContents</pre>");
+});
+Route::get('/check-smtp', function () {
+    $smtp = config('mail.mailers.smtp');
+
+    if ($smtp['host'] && $smtp['username'] && $smtp['password']) {
+        return $smtp;
+    }
+
+    return 'SMTP is NOT properly configured.';
+});
