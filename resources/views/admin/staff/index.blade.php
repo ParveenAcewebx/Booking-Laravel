@@ -18,13 +18,15 @@
                             <li class="breadcrumb-item"><a href="{{ route('staff.list') }}">All Staff</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-2 text-right">
+                    <div class="col-md-2">
+                        <div class="page-header-titles float-right">
                         @can('create staffs')
-                            <a href="{{ route('staff.create') }}" class="btn btn-primary btn-sm">Add Staff</a>
+                            <a href="{{ route('staff.create') }}" class="btn btn-primary btn-sm p-2">Add Staff</a>
                         @endcan
                         @can('delete staffs')
-                            <button id="bulkStaffsDeleteBtn" class="btn btn-danger btn-sm" disabled>Delete</button>
+                            <button id="bulkStaffsDeleteBtn" class="btn btn-danger btn-sm p-2" disabled>Delete</button>
                         @endcan
+                        </div>
                     </div>
                 </div>
             </div>

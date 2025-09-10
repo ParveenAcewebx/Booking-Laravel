@@ -16,13 +16,15 @@
                             <li class="breadcrumb-item"><a href="{{ route('booking.list') }}">All Bookings</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-2 text-right">
+                    <div class="col-md-2">
+                        <div class="page-header-titles float-right">
                         @can('create bookings')
-                            <a href="{{ route('booking.add') }}" class="btn btn-primary btn-sm mr-2">Add Booking</a>
-                        @endcan
-                        @can('delete bookings')
-                            <button id="bulkBookingsDeleteBtn" class="btn btn-danger btn-sm" disabled>Delete</button>
-                        @endcan
+                            <a href="{{ route('booking.add') }}" class="btn btn-primary btn-sm mr-2 p-2">Add Booking</a>
+                            @endcan
+                            @can('delete bookings')
+                            <button id="bulkBookingsDeleteBtn" class="btn btn-danger btn-sm p-2" disabled>Delete</button>
+                            @endcan
+                        </div>
                     </div>
                 </div>
             </div>
@@ -38,7 +40,7 @@
                                 <select id="filter-template" class="form-control select-template-name">
                                     <option value="">-- Select Template --</option>
                                     @foreach($templates as $template)
-                                        <option value="{{ $template->id }}">{{ $template->template_name }}</option>
+                                    <option value="{{ $template->id }}">{{ $template->template_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -46,7 +48,7 @@
                                 <select id="filter-customer" class="form-control select-users">
                                     <option value="">-- Select Booked By --</option>
                                     @foreach($customers as $customer)
-                                        <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                                    <option value="{{ $customer->id }}">{{ $customer->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -79,52 +81,88 @@
 </div>
 
 <script>
-$(function() {
-    // Initialize DataTable
-    let table = $('#booking-list-table').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: "{{ route('booking.list') }}",
-            data: function(d) {
-                d.template_id = $('#filter-template').val();
-                d.customer_id = $('#filter-customer').val();
-            }
-        },
-        columns: [
-            { data: 'id', name: 'id', visible: false },
-            { 
-                data: 'id',
-                render: function(data) {
-                    return `<input type="checkbox" class="selectRow" value="${data}">`;
-                },
-                orderable: false,
-                searchable: false
+    $(function() {
+        // Initialize DataTable
+        let table = $('#booking-list-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('booking.list') }}",
+                data: function(d) {
+                    d.template_id = $('#filter-template').val();
+                    d.customer_id = $('#filter-customer').val();
+                }
             },
-            { data: 'template_name', name: 'template_name' },
-            { data: 'booked_by', name: 'booked_by' },
-            { data: 'created_at', name: 'created_at' },
-            { data: 'status', name: 'status', orderable: false, searchable: false },
-            { data: 'action', name: 'action', orderable: false, searchable: false }
-        ],
-        order: [[0, 'desc']], // sort by 'created_at' (adjust column index)
-        lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+            columns: [{
+                    data: 'id',
+                    name: 'id',
+                    visible: false
+                },
+                {
+                    data: 'id',
+                    render: function(data) {
+                        return `<input type="checkbox" class="selectRow" value="${data}">`;
+                    },
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: 'template_name',
+                    name: 'template_name'
+                },
+                {
+                    data: 'booked_by',
+                    name: 'booked_by'
+                },
+                {
+                    data: 'created_at',
+                    name: 'created_at'
+                },
+                {
+                    data: 'status',
+                    name: 'status',
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                }
+            ],
+            order: [
+                [0, 'desc']
+            ], // sort by 'created_at' (adjust column index)
+            lengthMenu: [
+                [10, 25, 50, 100],
+                [10, 25, 50, 100]
+            ],
+        });
+
+        // Filters
+        $('#filter-template, #filter-customer').change(function() {
+            table.ajax.reload();
+        });
+        $('#reset-filters').click(function() {
+            $('#filter-template').val('').trigger('change');
+            $('#filter-customer').val('').trigger('change');
+            table.ajax.reload();
+        });
+
+        // Toastr notifications
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            timeOut: 4000,
+            positionClass: "toast-top-right"
+        };
+        @if(session('success')) toastr.success("{{ session('success') }}");
+        @endif
+        @if(session('error')) toastr.error("{{ session('error') }}");
+        @endif
+        bulkDelete("{{ route('booking.bulk-delete') }}");
+
     });
-
-    // Filters
-    $('#filter-template, #filter-customer').change(function() { table.ajax.reload(); });
-    $('#reset-filters').click(function() {
-        $('#filter-template').val('').trigger('change');
-        $('#filter-customer').val('').trigger('change');
-        table.ajax.reload();
-    });
-
-    // Toastr notifications
-    toastr.options = { closeButton: true, progressBar: true, timeOut: 4000, positionClass: "toast-top-right" };
-    @if(session('success')) toastr.success("{{ session('success') }}"); @endif
-    @if(session('error')) toastr.error("{{ session('error') }}"); @endif
-    bulkDelete("{{ route('booking.bulk-delete') }}");
-
-});
 </script>
 @endsection

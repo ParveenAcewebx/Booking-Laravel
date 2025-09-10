@@ -16,13 +16,15 @@
                             <li class="breadcrumb-item"><a href="{{ route('user.list') }}">All Users</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-2 text-right">
+                    <div class="col-md-2">
+                        <div class="page-header-titles float-right">
                         @can('create users')
-                            <a href="{{ route('user.add') }}" class="btn btn-primary btn-sm mr-2">Add User</a>
+                            <a href="{{ route('user.add') }}" class="btn btn-primary btn-sm mr-2 p-2">Add User</a>
                         @endcan
                         @can('delete users')
-                            <button id="bulkDeleteBtn" class="btn btn-danger btn-sm" disabled>Delete</button>
+                            <button id="bulkDeleteBtn" class="btn btn-danger btn-sm p-2" disabled>Delete</button>
                         @endcan
+                        </div>
                     </div>
                 </div>
             </div>

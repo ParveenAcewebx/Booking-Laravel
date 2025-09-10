@@ -16,13 +16,15 @@
                             <li class="breadcrumb-item"><a href="{{ route('emails.list') }}">All Email</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-2 text-right">
+                    <div class="col-md-2">
+                        <div class="page-header-titles float-right">
                         @can('create emails')
-                        <a href="{{ route('emails.create') }}" class="btn btn-primary btn-sm mr-2">Add User</a>
+                        <a href="{{ route('emails.create') }}" class="btn btn-primary btn-sm mr-2 p-2">Add Email</a>
                         @endcan
                         @can('delete emails')
-                        <button id="bulkEmailsDeleteBtn" class="btn btn-danger btn-sm" disabled>Delete</button>
+                        <button id="bulkEmailsDeleteBtn" class="btn btn-danger btn-sm p-2" disabled>Delete</button>
                         @endcan
+                        </div>
                     </div>
                 </div>
             </div>

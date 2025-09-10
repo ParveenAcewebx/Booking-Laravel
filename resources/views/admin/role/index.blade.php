@@ -20,7 +20,7 @@
                     <div class="col-md-2">
                         <div class="page-header-titles float-right">
                             @can('create roles')
-                                <a href="{{ route('roles.add') }}" class="btn btn-primary p-2">Add Role</a>
+                                <a href="{{ route('roles.add') }}" class="btn btn-primary mr-2 p-2">Add Role</a>
                             @endcan
                             @can('delete roles')
                                 <button id="bulkRolesDeleteBtn" class="btn btn-danger p-2" disabled>Delete</button>

@@ -16,13 +16,15 @@
                             <li class="breadcrumb-item"><a href="{{ route('vendors.list') }}">All Vendors</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-2 text-right">
-                        @can('create users')
-                            <a href="{{ route('vendors.add') }}" class="btn btn-primary btn-sm mr-2">Add Vendor</a>
+                    <div class="col-md-2">
+                        <div class="page-header-titles float-right">
+                        @can('create vendors')
+                            <a href="{{ route('vendors.add') }}" class="btn btn-primary btn-sm mr-2 p-2">Add Vendor</a>
                         @endcan
-                        @can('delete users')
-                            <button id="bulkVendorsDeleteBtn" class="btn btn-danger btn-sm" disabled>Delete</button>
+                        @can('delete vendors')
+                            <button id="bulkVendorsDeleteBtn" class="btn btn-danger btn-sm p-2" disabled>Delete</button>
                         @endcan
+                        </div>
                     </div>
                 </div>
             </div>

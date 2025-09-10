@@ -19,9 +19,16 @@
                             <li class="breadcrumb-item"><a href="{{ route('category.list') }}">All Categories</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-2 text-right">
-                        <a href="{{ route('category.create') }}" class="btn btn-primary btn-sm mr-2">Add Category</a>
-                        <button id="bulkCategoryDeleteBtn" class="btn btn-danger btn-sm" disabled>Delete</button>
+
+                    <div class="col-md-2">
+                        <div class="page-header-titles float-right">
+                            @can('create categories')
+                            <a href="{{ route('category.create') }}" class="btn btn-primary btn-sm mr-2 p-2">Add Category</a>
+                            @endcan
+                            @can('delete categories')
+                            <button id="bulkCategoryDeleteBtn" class="btn btn-danger btn-sm p-2" disabled>Delete</button>
+                            @endcan
+                        </div>
                     </div>
                 </div>
             </div>

@@ -24,14 +24,14 @@ class SmtpConfigServiceProvider extends ServiceProvider
              $settings = Setting::pluck('value', 'key')->toArray();
         if ($settings) {
         $mailConfig = [
-                'mail.default' => $settings['mailer'] ?? config('mail.default'),
-                'mail.mailers.smtp.host' => $settings['host'] ?? config('mail.mailers.smtp.host'),
-                'mail.mailers.smtp.port' => $settings['port'] ?? config('mail.mailers.smtp.port'),
-                'mail.mailers.smtp.username' => $settings['username'] ?? config('mail.mailers.smtp.username'),
-                'mail.mailers.smtp.password' => $settings['password'] ?? config('mail.mailers.smtp.password'),
-                'mail.mailers.smtp.encryption' => $settings['encryption'] ?? config('mail.mailers.smtp.encryption'),
-                'mail.from.address' => $settings['from_address'] ?? config('mail.from.address'),
-                'mail.from.name' => $settings['from_name'] ?? config('mail.from.name'),
+               'mail.default' => $settings['mailer'],
+                'mail.mailers.smtp.host' => $settings['host'],
+                'mail.mailers.smtp.port' => $settings['port'],
+                'mail.mailers.smtp.username' => $settings['username'] ,
+                'mail.mailers.smtp.password' => $settings['password'] ,
+                'mail.mailers.smtp.encryption' => $settings['encryption'],
+                'mail.from.address' => $settings['from_address'],
+                'mail.from.name' => $settings['from_name'],
             ];
             config($mailConfig);
         }
