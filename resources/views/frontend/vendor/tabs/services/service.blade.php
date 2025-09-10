@@ -1,19 +1,19 @@
 @extends('frontend.layouts.app')
 
 @section('content')
-
+<div class="container mx-auto px-4 py-8" x-data="{ showForm: false, editService: null }">
 <div class="mb-8 text-center">
     <h1 class="text-3xl font-bold text-gray-800">Vendor Dashboard</h1>
     <p class="text-gray-600 mt-2">Manage services, staff, and bookings in one place</p>
 </div>
 
-<div class="container mx-auto px-4 py-8 flex gap-6">
+<div class="container mx-auto  flex gap-6">
 
     <!-- Sidebar -->
     <x-vendor-sidebar />
 
     <!-- Main Content -->
-    <div class="w-3/4 bg-white shadow rounded-2xl p-6" x-data="{ showForm: false, editService: null }">
+    <div class="w-3/4 bg-white shadow rounded-2xl p-6" >
 
         {{-- Services Tab --}}
         @if(Request::routeIs('vendor.services.view'))
@@ -46,21 +46,10 @@
                     @if($duration < 60) {{ $duration }} minutes @elseif($duration % 60==0) {{ $duration / 60 }}
                         hour{{ $duration >= 120 ? 's' : '' }} @else {{ intdiv($duration, 60) }}
                         hour{{ intdiv($duration, 60) > 1 ? 's' : '' }} {{ $duration % 60 }} minutes @endif </p>
-                        @if($services_data->thumbnail)
-                        <p><strong>Featured Image:</strong></p>
-                        <img src="/storage/{{ $services_data->thumbnail }}" class="w-20 h-20 rounded shadow mb-2">
-                        @endif
-                        @if($services_data->gallery)
-                        <p><strong>Gallery:</strong></p>
-                        <div class="flex gap-2 flex-wrap">
-                            @foreach(json_decode($services_data->gallery, true) as $img)
-                            <img src="/storage/{{ $img }}" class="w-16 h-16 rounded shadow">
-                            @endforeach
-                        </div>
-                        @endif
+                      
                         <!-- Actions -->
                         <div class="flex gap-2 mt-3">
-                            <a href="{{route('vendor.services.edit',$servicedata[0]->id)}}"
+                            <a href="{{route('vendor.services.edit',$services_data->id)}}"
                                 class="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600">Edit</a>
                             <form action="{{ route('vendor.services.destroy', $services_data->id) }}" method="POST"
                                 onsubmit="return confirm('Are you sure?');">

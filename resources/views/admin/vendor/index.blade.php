@@ -16,18 +16,19 @@
                             <li class="breadcrumb-item"><a href="{{ route('vendors.list') }}">All Vendors</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-2">
-                        <div class="page-header-titles float-right">
-                            @can('create users')
-                            <a href="{{ route('vendors.add') }}" class="btn btn-primary float-right p-2">Add Vendor</a>
-                            @endcan
-                        </div>
+                    <div class="col-md-2 text-right">
+                        @can('create users')
+                            <a href="{{ route('vendors.add') }}" class="btn btn-primary btn-sm mr-2">Add Vendor</a>
+                        @endcan
+                        @can('delete users')
+                            <button id="bulkVendorsDeleteBtn" class="btn btn-danger btn-sm" disabled>Delete</button>
+                        @endcan
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Vendor Table -->
+        <!-- Vendors Table -->
         <div class="row">
             <div class="col-lg-12">
                 <div class="card user-profile-list">
@@ -37,6 +38,7 @@
                                 <thead>
                                     <tr>
                                         <th style="display: none;">ID</th>
+                                        <th><input type="checkbox" id="selectAll"></th>
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Services</th>
@@ -54,34 +56,38 @@
     </div>
 </div>
 
-<script>
-    $(function() {
-        $('#vendors-table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('vendors.list') }}",
-            columns: [
-                { data: 'id', name: 'id', visible: false },
-                { data: 'name', name: 'name' },
-                { data: 'email', name: 'email' },
-                { data: 'services', name: 'services', orderable: false, searchable: false },
-                { data: 'status', name: 'status', orderable: false, searchable: false },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
-            ],
-            order: [[0, 'desc']]
-        });
+<script type="text/javascript">
+$(function() {
 
-        toastr.options = {
-            closeButton: true,
-            progressBar: true,
-            timeOut: 4000,
-            positionClass: "toast-top-right"
-        };
-
-        @if(session('success')) toastr.success("{{ session('success') }}"); @endif
-        @if(session('error')) toastr.error("{{ session('error') }}"); @endif
-        @if(session('info')) toastr.info("{{ session('info') }}"); @endif
-        @if(session('warning')) toastr.warning("{{ session('warning') }}"); @endif
+    // Initialize DataTable
+    var table = $('#vendors-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('vendors.list') }}",
+        columns: [
+            { data: 'id', name: 'id', visible: false },
+            { data: null, name: 'select', orderable: false, searchable: false,
+              render: function(data, type, row) {
+                  return '<input type="checkbox" class="selectRow" value="' + row.id + '">';
+              }
+            },
+            { data: 'name', name: 'vendors.name' },
+            { data: 'email', name: 'vendors.email' },
+            { data: 'services', name: 'services', orderable: false, searchable: false },
+            { data: 'status', name: 'vendors.status', orderable: false, searchable: false },
+            { data: 'action', name: 'action', orderable: false, searchable: false }
+        ],
+        order: [[0, 'desc']],
+        lengthMenu: [[10,25,50,100],[10,25,50,100]]
     });
+
+    // Toastr Notifications
+    toastr.options = { closeButton: true, progressBar: true, timeOut: 4000, positionClass: "toast-top-right" };
+
+    @if(session('success')) toastr.success("{{ session('success') }}"); @endif
+    @if(session('error')) toastr.error("{{ session('error') }}"); @endif
+    // Bulk delete handler
+    bulkDelete("{{ route('vendors.bulk-delete') }}");
+});
 </script>
 @endsection

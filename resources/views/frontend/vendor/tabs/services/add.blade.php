@@ -1,23 +1,26 @@
 @extends('frontend.layouts.app')
 
 @section('content')
-
+<div class="container mx-auto px-4 py-8" x-data="{ showForm: false, editService: null }">
 <div class="mb-8 text-center">
     <h1 class="text-3xl font-bold text-gray-800">Vendor Dashboard</h1>
     <p class="text-gray-600 mt-2">Manage services, staff, and bookings in one place</p>
 </div>
 
-<div class="container mx-auto px-4 py-8 flex gap-6">
+<div class="container mx-auto  flex gap-6">
     <x-vendor-sidebar />
     <div class="w-3/4 bg-white shadow rounded-2xl p-6">
+         <h2 class="text-2xl font-bold mb-6 text-gray-800">Add Service</h2>
         <form action="{{ route('vendor.services.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             <!-- Service Name -->
-            <div>
+            <div class="form-group">
                 <label class="block text-sm font-medium text-gray-600">Service Name <span class="text-red-500">*</span></label>
-                <input type="text" name="name" value="{{ old('name') }}"
-                       class="w-full mt-1 p-3 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
+                <input type="text" name="name" value="{{ old('name') }}"class="w-full mt-1 p-3 border rounded-md focus:ring-2 focus:ring-indigo-500 {{ $errors->has('name') ? 'border-red-500' : '' }}">
+            @error('name')
+                <div class="text-red-500 mt-2 error_message">{{ $message }}</div>
+            @enderror
             </div>
 
             <!-- Description -->

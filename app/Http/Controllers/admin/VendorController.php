@@ -184,15 +184,15 @@ class VendorController extends Controller
             //         \Log::error('Failed to send email to ' . $user->email . ': ' . $e->getMessage());
             //         // return back()->withInput()->with('error', 'Email sending failed: ' . $e->getMessage());
             //     }
-        
+
             $macros = [
                 '{NAME}' => $user->name,
                 '{EMAIL}' => $user->email,
                 '{PASSWORD}' => $randomPassword,
                 '{SITE_TITLE}' => 'Ace Universal Booking Solution',
             ];
-            
-            sendVendorTemplateEmail('welcome_vendor_login_email', $user->email, $macros);    
+
+            sendVendorTemplateEmail('welcome_vendor_login_email', $user->email, $macros);
 
             $user->assignRole('Staff');
             $vendor = Vendor::create([
@@ -567,5 +567,38 @@ class VendorController extends Controller
         $vendor->delete();
 
         return response()->json(['success' => true, 'message' => 'Vendor Deleted Successfully.']);
+    }
+
+
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        if (!$ids || !is_array($ids)) {
+            return response()->json(['success' => false, 'message' => 'No records selected.']);
+        }
+
+        foreach ($ids as $userId) {
+            $vendor = Vendor::find($userId);
+
+            $associations = VendorStaffAssociation::where('vendor_id', $userId)->get();
+            foreach ($associations as $association) {
+                // Check if this user is primary staff
+                $isPrimary = Staff::where('user_id', $association->user_id)
+                    ->where('primary_staff', 1)
+                    ->exists();
+
+                if ($isPrimary) {
+                    Staff::where('user_id', $association->user_id)->delete();
+                    User::where('id', $association->user_id)->delete();
+                }
+            }
+            if ($vendor->thumbnail && Storage::disk('public')->exists($vendor->thumbnail)) {
+                Storage::disk('public')->delete($vendor->thumbnail);
+            }
+            $vendor->delete();
+        }
+
+        return response()->json(['success' => true, 'message' => 'Selected Vendors Deleted Successfully.']);
     }
 }

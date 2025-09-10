@@ -37,13 +37,15 @@ class RoleController extends Controller
     {
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
+
         if ($request->ajax()) {
             $roles = Role::with(['permissions', 'users'])->select('id', 'name', 'status');
+
             return DataTables::of($roles)
                 ->addIndexColumn()
+
                 ->addColumn('permissions', function ($role) {
                     $groupedPermissions = [];
-
                     foreach ($role->permissions as $permission) {
                         $parts = preg_split('/[\s_]+/', $permission->name);
                         $entity = strtolower(end($parts));
@@ -55,47 +57,57 @@ class RoleController extends Controller
                         $html .= '<span class="badge badge-light-success" data-toggle="tooltip" title="' . e(implode(', ', $permissions)) . '">' .
                             ucfirst($entity) . ' (' . count($permissions) . ')</span>';
                     }
-
                     return $html ?: '';
                 })
+
+                ->addColumn('checkbox', function ($role) {
+                    if ($role->users->count() == 0) {
+                        return '<input type="checkbox" class="selectRow" value="' . $role->id . '">';
+                    }
+                    return '<input type="checkbox" class="selectRow" value="' . $role->id . '" disabled title="Role assigned to users">';
+                })
+
                 ->editColumn('status', function ($role) {
                     return $role->status == config('constants.status.active')
                         ? '<span class="badge badge-success">Active</span>'
                         : '<span class="badge badge-danger">Inactive</span>';
                 })
+
                 ->addColumn('action', function ($role) {
                     $btn = '';
 
                     if (auth()->user()->can('edit roles')) {
                         $btn .= '<a href="' . route('roles.edit', $role->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit Role">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </a> ';
+                                <i class="fas fa-pencil-alt"></i>
+                            </a> ';
                     }
 
                     if (auth()->user()->can('delete roles')) {
                         if ($role->users->count() == 0) {
-                            // show delete button only if no users assigned
                             $btn .= '<form action="' . route('roles.delete', $role->id) . '" method="POST" id="delete-role-' . $role->id . '" style="display:inline;">
-                                        ' . csrf_field() . '
-                                        <input type="hidden" name="_method" value="DELETE">
-                                        <button type="button" onclick="deleteRole(' . $role->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Role">
-                                            <i class="feather icon-trash-2"></i>
-                                        </button>
-                                    </form>';
+                                    ' . csrf_field() . '
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="button" onclick="deleteRole(' . $role->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Role">
+                                        <i class="feather icon-trash-2"></i>
+                                    </button>
+                                </form>';
                         } else {
                             $btn .= '<button type="button" class="btn btn-icon btn-secondary" data-toggle="tooltip" title="Cannot delete: role assigned to users" disabled>
-                                        <i class="feather icon-trash-2"></i>
-                                    </button>';
+                                    <i class="feather icon-trash-2"></i>
+                                </button>';
                         }
                     }
 
                     return $btn;
                 })
-                ->rawColumns(['permissions', 'status', 'action'])
+
+                ->rawColumns(['permissions', 'status', 'checkbox', 'action'])
                 ->make(true);
         }
+
         return view('admin.role.index', compact('loginUser'));
     }
+
 
     public function roleAdd()
     {
@@ -185,5 +197,27 @@ class RoleController extends Controller
             return response()->json(['success' => true]);
         }
         return response()->json(['success' => false, 'message' => 'Role not found.']);
+    }
+
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        if (!$ids || !is_array($ids)) {
+            return response()->json(['success' => false, 'message' => 'No Records Selected.'], 400);
+        }
+
+        $roles = Role::whereIn('id', $ids)->get();
+
+        if ($roles->isEmpty()) {
+            return response()->json(['success' => false, 'message' => 'No Users Found.']);
+        }
+
+        foreach ($roles as $role) {
+            $role->permissions()->detach();
+            $role->delete();
+        }
+
+        return response()->json(['success' => true, 'message' => 'Selected Users Deleted Successfully.']);
     }
 }

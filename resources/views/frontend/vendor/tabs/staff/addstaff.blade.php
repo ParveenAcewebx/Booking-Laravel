@@ -46,19 +46,23 @@
 
                     <!-- Staff Info -->
                     <div x-show="innerTab === 'info'" class="space-y-4">
-                        <div>
+                        <div class="form-group">
                             <label class="block font-medium mb-1">Name</label>
-                            <input type="text" name="name" :value="editStaff ? editStaff[0].name : ''"
-                                class="w-full border p-2 rounded focus:ring focus:ring-indigo-200" required>
+                            <input type="text" name="name"value="{{ old('name') }}"class="w-full border p-2 rounded focus:ring focus:ring-indigo-200 {{ $errors->has('name') ? 'border-red-500' : '' }}">
+                            @error('name')
+                                <div class="text-red-500 mt-2 error_message">{{ $message }}</div>
+                            @enderror
                         </div>
 
-                        <div>
+                        <div class="form-group">
                             <label class="block font-medium mb-1">Email</label>
-                            <input type="email" name="email" :value="editStaff ? editStaff[0].email : ''"
-                                class="w-full border p-2 rounded focus:ring focus:ring-indigo-200" required>
+                            <input type="email" name="email"value="{{ old('email') }}"class="w-full border p-2 rounded focus:ring focus:ring-indigo-200 {{ $errors->has('email') ? 'border-red-500' : '' }}">
+                            @error('email')
+                                <div class="text-red-500 mt-2 error_message">{{ $message }}</div>
+                            @enderror
                         </div>
 
-                        <div>
+                        <div class="form-group">
                             <label class="block font-medium mb-1">Phone</label>
                             <div class="flex gap-2">
                                 <select name="code" class="border p-2 rounded focus:ring focus:ring-indigo-200">
@@ -69,22 +73,27 @@
                                     </option>
                                     @endforeach
                                 </select>
-                                <input type="text" name="phone_number"
-                                    :value="editStaff ? editStaff[0].phone_number : ''"
-                                    class="flex-1 border p-2 rounded focus:ring focus:ring-indigo-200" required>
-                            </div>
+                                <input type="text" name="phone_number" value="{{ old('phone_number') }}"class="flex-1 border p-2 rounded focus:ring focus:ring-indigo-200 {{ $errors->has('phone_number') ? 'border-red-500' : '' }}">
+                            </div class="form-group">
+                             @error('phone_number')
+                                <div class="text-red-500 mt-2 error_message">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
-                            <div>
+                            <div class="form-group">
                                 <label class="block font-medium mb-1">Password</label>
-                                <input type="password" name="password" :required="!editStaff"
-                                    class="w-full border p-2 rounded">
+                                <input type="password" name="password"class="w-full border p-2 rounded {{ $errors->has('password') ? 'border-red-500' : '' }}">
+                                @error('password')
+                                    <div class="text-red-500 mt-2 error_message">{{ $message }}</div>
+                                @enderror
                             </div>
-                            <div>
+                            <div class="form-group">
                                 <label class="block font-medium mb-1">Confirm Password</label>
-                                <input type="password" name="password_confirmation" :required="!editStaff"
-                                    class="w-full border p-2 rounded">
+                                <input type="password" name="password_confirmation"class="w-full border p-2 rounded {{ $errors->has('password_confirmation') ? 'border-red-500' : '' }}">
+                                @error('password_confirmation')
+                                    <div class="text-red-500 mt-2 error_message">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -168,36 +177,15 @@
                         class="space-y-4">
                         <div class="flex justify-between items-center">
                             <h6 class="font-semibold text-gray-700">Day Offs</h6>
-                            <button type="button"
+                             <button type="button"
                                 class="px-3 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700"
-                                @click="dayOffs.push({ offs: '', date: '' })">
+                                onclick="addDayOff()">
                                 + Add
                             </button>
                         </div>
-
-                        <template x-for="(dayOff, index) in dayOffs" :key="index">
-                            <div class="bg-gray-50 border rounded p-4">
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block font-medium text-gray-700">Day(s) Off</label>
-                                        <input type="text" :name="`day_offs[${index}][offs]`" x-model="dayOff.offs"
-                                            class="w-full border rounded p-2" required>
-                                    </div>
-                                    <div>
-                                        <label class="block font-medium text-gray-700">Date Range</label>
-                                        <input type="text" :name="`day_offs[${index}][date]`" x-model="dayOff.date"
-                                            class="w-full border rounded p-2 date-range-picker" required>
-                                    </div>
-                                </div>
-
-                                <!-- Delete Button -->
-                                <button type="button"
-                                    class="mt-4 px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
-                                    @click="dayOffs.splice(index, 1)">
-                                    Delete
-                                </button>
-                            </div>
-                        </template>
+                        <div id="dayOffContainer">
+                        </div>
+                        
                     </div>
 
 
@@ -215,50 +203,14 @@
     </div>
 </div>
 @endsection
-
 @push('scripts')
+
 <script>
-$(document).ready(function() {
-    $('.assigned-services').select2({
-        placeholder: "Select Services",
-        allowClear: true,
-        width: '100%'
-    });
-    $('.date-range-picker').each(function() {
-        initializeDateRangePicker($(this));
-    });
 
-    // Initialize on dynamically added inputs when they are focused
-    $(document).on('focus', '.date-range-picker', function() {
-        if (!$(this).data('daterangepicker')) { // check if not already initialized
-            initializeDateRangePicker($(this));
-            $(this).data('daterangepicker').show();
-        }
-    });
+let dayOffIndex = 0;
 
-    function initializeDateRangePicker($element) {
-        $element.daterangepicker({
-            autoUpdateInput: false,
-            locale: {
-                format: 'MMMM D, YYYY'
-            }
-        }).on('apply.daterangepicker', function(ev, picker) {
-            $(this).val(picker.startDate.format('MMMM D, YYYY') + ' - ' + picker.endDate.format(
-                'MMMM D, YYYY'));
-        });
-    }
-    
-});
-$(document).on('change', 'select[name^="working_days"][name$="[start]"]', function() {
-    const $start = $(this);
-    const selectedIndex = this.selectedIndex;
-    const $end = $start.closest('div').find('select[name$="[end]"]');
-    $end.find('option').prop('disabled', false);
-    $end.find('option').each(function(index) {
-        if (index <= selectedIndex) {
-            $(this).prop('disabled', true);
-        }
-    });
-});
 </script>
+
+
+
 @endpush

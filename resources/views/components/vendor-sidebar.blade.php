@@ -1,4 +1,5 @@
-<div class="w-1/4 bg-white shadow rounded-2xl p-4">
+<div class="w-1/4">
+    <div class="bg-white shadow p-4 rounded-2xl">
     <ul class="space-y-2">
         @foreach([
             'vendor.dashboard.view' => 'Profile', 
@@ -15,4 +16,5 @@
             </li>
         @endforeach
     </ul>
+    </div>
 </div>

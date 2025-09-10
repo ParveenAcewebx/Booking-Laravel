@@ -36,52 +36,66 @@ class StaffController extends Controller
         // Get original user if impersonating
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
-
+    
         if ($request->ajax()) {
             $currentUser = Auth::user();
             $isImpersonating = session()->has('impersonate_original_user') || Cookie::get('impersonate_original_user');
-
-            // Query Staff users with roles and services
-            $query = User::with(['roles', 'services'])
+    
+            $query = User::with(['roles', 'services', 'staff'])
                 ->whereHas('roles', function ($q) {
                     $q->where('name', 'Staff');
                 });
-
+    
             return DataTables::of($query)
                 ->addIndexColumn()
-                ->addColumn('name', function ($row) {
-                    return '<h6 class="m-b-0">' . e($row->name) . '</h6><p class="m-b-0">' . e($row->email) . '</p>';
+    
+                // Checkbox column
+                ->addColumn('checkbox', function ($row) {
+                    if ($row->staff && $row->staff->primary_staff == 1) {
+                        return '<input type="checkbox" class="selectRow" value="' . $row->id . '" disabled>';
+                    }
+                    return '<input type="checkbox" class="selectRow" value="' . $row->id . '">';
                 })
+    
+                ->addColumn('name', function ($row) {
+                    return '<h6 class="m-b-0">' . e($row->name) . '</h6>
+                            <p class="m-b-0">' . e($row->email) . '</p>';
+                })
+    
                 ->addColumn('services', function ($row) {
                     if ($row->services->isEmpty()) {
                         return '<span class="badge badge-secondary">No Services</span>';
                     }
-                    return $row->services->map(
-                        fn($service) =>
+                    return $row->services->map(fn($service) => 
                         '<span class="badge badge-info mr-1">' . e($service->name) . '</span>'
                     )->implode(' ');
                 })
+    
                 ->editColumn('created_at', function ($row) {
                     return $row->created_at
                         ? $row->created_at->format(get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i'))
                         : '';
                 })
+    
+                // Status badge
                 ->addColumn('status', function ($row) {
                     return $row->status == config('constants.status.active')
                         ? '<span class="badge badge-success">Active</span>'
                         : '<span class="badge badge-danger">Inactive</span>';
                 })
+    
+                // Action buttons
                 ->addColumn('action', function ($row) use ($currentUser, $isImpersonating) {
                     $btn = '';
-
-                    // Edit button
+    
+                    // Edit
                     if ($currentUser->can('edit staffs')) {
                         $btn .= '<a href="' . route('staff.edit', $row->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit User">
                                     <i class="fas fa-pencil-alt"></i>
                                  </a> ';
                     }
-
-                    // Delete button
+    
+                    // Delete
                     if ($currentUser->can('delete staffs') && Auth::id() != $row->id) {
                         if ($row->staff && $row->staff->primary_staff == 1) {
                             $btn .= '<button type="button" class="btn btn-icon btn-secondary" title="Please First Delete Vendor" disabled>
@@ -97,8 +111,8 @@ class StaffController extends Controller
                                      </form>';
                         }
                     }
-
-                    // Impersonation buttons
+    
+                    // Impersonation
                     if ($isImpersonating && Auth::id() === $row->id) {
                         $btn .= '<form method="POST" action="' . route('user.switch.back') . '" style="display:inline;">
                                     ' . csrf_field() . '
@@ -106,26 +120,29 @@ class StaffController extends Controller
                                         <i class="feather icon-log-out"></i>
                                     </button>
                                  </form>';
-                    } elseif (!$isImpersonating && $currentUser->hasRole('Administrator') && $currentUser->id !== $row->id  && $row->status == config('constants.status.active')) {
+                    } elseif (!$isImpersonating && $currentUser->hasRole('Administrator') && $currentUser->id !== $row->id && $row->status == config('constants.status.active')) {
                         if ($row->staff && $row->staff->primary_staff == 1) {
                             $btn .= '<form method="POST" action="' . route('user.switch', $row->id) . '" style="display:inline;">
-                                    ' . csrf_field() . '
-                                    <button type="submit" class="btn btn-icon btn-dark" data-toggle="tooltip" title="Switch User">
-                                        <i class="fas fa-random"></i>
-                                    </button>
-                                 </form>';
+                                        ' . csrf_field() . '
+                                        <button type="submit" class="btn btn-icon btn-dark" data-toggle="tooltip" title="Switch User">
+                                            <i class="fas fa-random"></i>
+                                        </button>
+                                     </form>';
                         }
                     }
-
+    
                     return $btn;
                 })
-                ->rawColumns(['name', 'services', 'status', 'action'])
+    
+                // Important: allow HTML rendering for checkbox and other columns
+                ->rawColumns(['checkbox', 'name', 'services', 'status', 'action'])
                 ->make(true);
         }
-
+    
         // Load view for non-AJAX
         return view('admin.staff.index', compact('loginUser'));
     }
+    
 
     public function add()
     {
@@ -447,5 +464,34 @@ class StaffController extends Controller
 
             return response()->json(['success' => false, 'message' => 'User not found.']);
         }
+    }
+
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        if (!$ids || !is_array($ids)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No records selected.'
+            ], 400);
+        }
+
+        foreach ($ids as $id) {
+            $user = User::find($id);
+            if ($user) {
+                $user->delete();
+
+                // Delete related records
+                Staff::where('user_id', $id)->delete();
+                // StaffServiceAssociation::where('staff_member', $id)->delete();
+                // VendorStaffAssociation::where('user_id', $id)->delete();
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Selected Staffs Deleted Successfully.'
+        ]);
     }
 }

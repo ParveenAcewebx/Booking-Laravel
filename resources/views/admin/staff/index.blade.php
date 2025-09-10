@@ -3,6 +3,8 @@
 @section('content')
 <div class="pcoded-main-container">
     <div class="pcoded-content">
+
+        <!-- Page Header -->
         <div class="page-header">
             <div class="page-block">
                 <div class="row align-items-center">
@@ -16,12 +18,13 @@
                             <li class="breadcrumb-item"><a href="{{ route('staff.list') }}">All Staff</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-2">
-                        <div class="page-header-titles float-right">
-                            @can('create staffs')
-                            <a href="{{ route('staff.create') }}" class="btn btn-primary float-right p-2">Add Staff</a>
-                            @endcan
-                        </div>
+                    <div class="col-md-2 text-right">
+                        @can('create staffs')
+                            <a href="{{ route('staff.create') }}" class="btn btn-primary btn-sm">Add Staff</a>
+                        @endcan
+                        @can('delete staffs')
+                            <button id="bulkStaffsDeleteBtn" class="btn btn-danger btn-sm" disabled>Delete</button>
+                        @endcan
                     </div>
                 </div>
             </div>
@@ -33,9 +36,10 @@
                 <div class="card user-profile-list">
                     <div class="card-body">
                         <div class="dt-responsive">
-                            <table class="table table-striped nowrap" id="users-table" width="100%">
+                            <table class="table table-striped nowrap" id="staff-table" width="100%">
                                 <thead>
                                     <tr>
+                                        <th><input type="checkbox" id="selectAll"></th>
                                         <th style="display:none;">ID</th>
                                         <th>Name</th>
                                         <th>Services</th>
@@ -51,67 +55,40 @@
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 
 <script type="text/javascript">
-    $(function() {
-        $('#users-table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('staff.list') }}",
-            columns: [{
-                    data: 'id',
-                    name: 'users.id',
-                    visible: false
-                },
-                {
-                    data: 'name',
-                    name: 'users.name'
-                },
-                {
-                    data: 'services',
-                    name: 'services',
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: 'created_at',
-                    name: 'users.created_at'
-                },
-                {
-                    data: 'status',
-                    name: 'users.status',
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false,
-                    searchable: false
-                }
-            ],
-            order: [
-                [0, 'desc']
-            ]
-        });
-
-        toastr.options = {
-            "closeButton": true,
-            "progressBar": true,
-            "timeOut": "4000",
-            "positionClass": "toast-top-right"
-        };
-
-        @if(session('success')) toastr.success("{{ session('success') }}");
-        @endif
-        @if(session('error')) toastr.error("{{ session('error') }}");
-        @endif
-        @if(session('info')) toastr.info("{{ session('info') }}");
-        @endif
-        @if(session('warning')) toastr.warning("{{ session('warning') }}");
-        @endif
+$(function() {
+    var table = $('#staff-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('staff.list') }}",
+        columns: [
+            { data: 'checkbox', name: 'checkbox', orderable: false, searchable: false },
+            { data: 'id', name: 'users.id', visible: false },
+            { data: 'name', name: 'users.name' },
+            { data: 'services', name: 'services', orderable: false, searchable: false },
+            { data: 'created_at', name: 'users.created_at' },
+            { data: 'status', name: 'users.status', orderable: false, searchable: false },
+            { data: 'action', name: 'action', orderable: false, searchable: false }
+        ],
+        order: [[1, 'desc']]
     });
+
+    // Toastr notifications
+    toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "timeOut": "4000",
+        "positionClass": "toast-top-right"
+    };
+
+    @if(session('success')) toastr.success("{{ session('success') }}"); @endif
+    @if(session('error')) toastr.error("{{ session('error') }}"); @endif
+
+    bulkDelete("{{ route('staff.bulk-delete') }}");
+});
 </script>
 @endsection

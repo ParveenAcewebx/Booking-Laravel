@@ -1,7 +1,6 @@
 @extends('admin.layouts.app')
 
 @section('content')
-
 <div class="pcoded-main-container">
     <div class="pcoded-content">
         <div class="page-header">
@@ -17,27 +16,29 @@
                             <li class="breadcrumb-item"><a href="{{ route('template.list') }}">All Booking Templates</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-2">
-                        <div class="page-header-titles float-right">
-                            @can('create templates')
-                            <a href="{{ route('template.add') }}" class="btn btn-primary float-right p-2">Add New Template</a>
-                            @endcan
-                        </div>
+                    <div class="col-md-2 text-right">
+                        @can('create templates')
+                            <a href="{{ route('template.add') }}" class="btn btn-primary btn-sm mr-2">Add New Template</a>
+                        @endcan
+                        @can('delete templates')
+                            <button id="bulkTemplateDeleteBtn" class="btn btn-danger btn-sm" disabled>Delete</button>
+                        @endcan
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Main Content -->
+        <!-- Booking Templates Table -->
         <div class="row">
             <div class="col-lg-12">
                 <div class="card user-profile-list">
                     <div class="card-body">
                         <div class="dt-responsive">
-                            <table class="table table-striped nowrap" id="booking-templates-table" width="100%">
+                            <table class="table table-striped nowrap" id="templates-table" width="100%">
                                 <thead>
                                     <tr>
-                                        <th style="display:none;">ID</th> {{-- Hidden but sortable --}}
+                                        <th style="display: none;">ID</th>
+                                        <th><input type="checkbox" id="selectAll"></th>
                                         <th>Name</th>
                                         <th>Created By</th>
                                         <th>Created Date</th>
@@ -52,80 +53,35 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
 <script type="text/javascript">
-    $(function() {
-        $('#booking-templates-table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('template.list') }}",
-            columns: [{
-                    data: 'id',
-                    name: 'id',
-                    visible: false
-                }, 
-                {
-                    data: 'template_name',
-                    name: 'template_name',
-                    orderable: true,
-                    searchable: true
-                },
-                {
-                    data: 'created_by',
-                    name: 'created_by'
-                },
-                {
-                    data: 'created_at',
-                    name: 'created_at'
-                },
-                {
-                    data: 'status',
-                    name: 'status',
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false,
-                    searchable: false
-                },
-            ],
-            order: [
-                [0, 'desc']
-            ], 
-            lengthMenu: [
-                [10, 25, 50, 100],
-                [10, 25, 50, 100]
-            ],
-        });
-        toastr.options = {
-            "closeButton": true,
-            "progressBar": true,
-            "timeOut": "4000",
-            "positionClass": "toast-top-right"
-        };
+$(function() {
 
-        // Toastr messages from session
-        @if(session('success'))
-        toastr.success("{{ session('success') }}");
-        @endif
-
-        @if(session('error'))
-        toastr.error("{{ session('error') }}");
-        @endif
-
-        @if(session('info'))
-        toastr.info("{{ session('info') }}");
-        @endif
-
-        @if(session('warning'))
-        toastr.warning("{{ session('warning') }}");
-        @endif
+    // Initialize DataTable
+    var table = $('#templates-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('template.list') }}",
+        columns: [
+            { data: 'id', name: 'id', visible: false },
+            { data: 'checkbox', name: 'checkbox', orderable: false, searchable: false },
+            { data: 'template_name', name: 'template_name' },
+            { data: 'created_by', name: 'created_by' },
+            { data: 'created_at', name: 'created_at' },
+            { data: 'status', name: 'status', orderable: false, searchable: false },
+            { data: 'action', name: 'action', orderable: false, searchable: false }
+        ],
+        order: [[0, 'desc']],
+        lengthMenu: [[10,25,50,100],[10,25,50,100]]
     });
-</script>
 
+    toastr.options = { closeButton: true, progressBar: true, timeOut: 4000, positionClass: "toast-top-right" };
+
+    @if(session('success')) toastr.success("{{ session('success') }}"); @endif
+    @if(session('error')) toastr.error("{{ session('error') }}"); @endif
+    bulkDelete("{{ route('template.bulk-delete') }}");
+});
+</script>
 @endsection

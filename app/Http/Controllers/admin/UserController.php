@@ -30,20 +30,33 @@ class UserController extends Controller
     {
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
-
+    
         if ($request->ajax()) {
             $currentUser = Auth::user();
             $isImpersonating = session()->has('impersonate_original_user') || Cookie::get('impersonate_original_user');
             $statusLabels = array_flip(config('constants.status'));
-
-            $query = User::with(['roles'])->whereDoesntHave('roles', function ($q) {
-                $q->where('name', 'staff');
-            })->select('users.*');
+    
+            $query = User::with(['roles'])
+                ->whereDoesntHave('roles', function ($q) {
+                    $q->where('name', 'staff'); // exclude staff if needed
+                })
+                ->select('users.*');
+    
             return DataTables::of($query)
                 ->addIndexColumn()
+    
+                // ✅ Checkbox column (only show if deletable)
+                ->addColumn('checkbox', function ($row) use ($currentUser) {
+                    if (Auth::id() != $row->id) {
+                        return '<input type="checkbox" class="selectRow" value="' . $row->id . '">';
+                    }
+                    return '<input type="checkbox" class="selectRow" value="' . $row->id . '" disabled>';
+                })
+    
                 ->addColumn('name', function ($row) {
                     return '<h6 class="m-b-0">' . e($row->name) . '</h6><p class="m-b-0">' . e($row->email) . '</p>';
                 })
+    
                 ->editColumn('created_at', function ($row) {
                     return $row->created_at
                         ? $row->created_at->format(
@@ -51,65 +64,73 @@ class UserController extends Controller
                         )
                         : '';
                 })
+    
                 ->addColumn('roles', function ($row) {
                     return $row->roles->pluck('name')->map(function ($role) {
                         return '<span class="badge badge-primary">' . e($role) . '</span>';
                     })->implode(' ');
                 })
+    
                 ->addColumn('status', function ($row) use ($statusLabels) {
                     return $row->status == config('constants.status.active')
                         ? '<span class="badge badge-success">Active</span>'
                         : '<span class="badge badge-danger">Inactive</span>';
                 })
+    
                 ->addColumn('action', function ($row) use ($currentUser, $isImpersonating) {
                     $btn = '';
-
+    
+                    // Edit
                     if (Auth::id() == $row->id) {
                         $btn .= '<a href="' . route('profile') . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit User">
-                                <i class="fas fa-pencil-alt"></i>
-                             </a> ';
+                                    <i class="fas fa-pencil-alt"></i>
+                                 </a> ';
                     } elseif ($currentUser->can('edit users')) {
                         $btn .= '<a href="' . route('user.edit', [$row->id]) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit User">
-                                <i class="fas fa-pencil-alt"></i>
-                             </a> ';
+                                    <i class="fas fa-pencil-alt"></i>
+                                 </a> ';
                     }
-
+    
+                    // Delete
                     if ($currentUser->can('delete users') && Auth::id() != $row->id) {
-                            $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">';
-                            $btn .= csrf_field();
-                            $btn .= method_field('DELETE');
-                            $btn .= '<button type="button" onclick="return deleteUser(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete User">
-                    <i class="feather icon-trash-2"></i>
-                 </button>';
-                            $btn .= '</form>';
+                        $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">';
+                        $btn .= csrf_field();
+                        $btn .= method_field('DELETE');
+                        $btn .= '<button type="button" onclick="return deleteUser(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete User">
+                                    <i class="feather icon-trash-2"></i>
+                                 </button>';
+                        $btn .= '</form>';
                     }
-
+    
+                    // Impersonation
                     if ($isImpersonating && Auth::id() === $row->id) {
-                        $btn .= '<form method="POST" action="' . route('user.switch.back') . '" style="display:inline;">
-                                ' . csrf_field() . '
-                                <button type="submit" class="btn btn-icon btn-dark" data-toggle="tooltip" title="Switch Back">
-                                    <i class="feather icon-log-out"></i>
-                                </button>
-                            </form>';
+                        $btn .= '<form method="POST" action="' . route('user.switch.back') . '" style="display:inline;">'
+                            . csrf_field() . '
+                            <button type="submit" class="btn btn-icon btn-dark" data-toggle="tooltip" title="Switch Back">
+                                <i class="feather icon-log-out"></i>
+                            </button>
+                        </form>';
                     } elseif (!$isImpersonating && $currentUser->hasRole('Administrator') && $currentUser->id !== $row->id) {
-                        if($row->status == config('constants.status.active')){
-                        $btn .= '<form method="POST" action="' . route('user.switch', $row->id) . '" style="display:inline;">
-                                ' . csrf_field() . '
+                        if ($row->status == config('constants.status.active')) {
+                            $btn .= '<form method="POST" action="' . route('user.switch', $row->id) . '" style="display:inline;">'
+                                . csrf_field() . '
                                 <button type="submit" class="btn btn-icon btn-dark" data-toggle="tooltip" title="Switch User">
                                     <i class="fas fa-random"></i>
                                 </button>
                             </form>';
                         }
                     }
-
+    
                     return $btn;
                 })
-                ->rawColumns(['name', 'roles', 'status', 'action'])
+    
+                ->rawColumns(['checkbox', 'name', 'roles', 'status', 'action'])
                 ->make(true);
         }
-
+    
         return view('admin.user.index', compact('loginUser'));
     }
+    
 
 
     public function userAdd()

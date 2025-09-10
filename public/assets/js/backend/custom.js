@@ -1421,7 +1421,7 @@ function bulkDelete(url) {
 
     function toggleBulkDeleteButton() {
         const selectedRows = $('.selectRow:checked').length;
-        $('#bulkDeleteBtn,#bulkCategoryDeleteBtn,#bulkServiceDeleteBtn,#bulkEmailsDeleteBtn,#bulkBookingsDeleteBtn').prop('disabled', selectedRows === 0);
+        $('#bulkDeleteBtn,#bulkVendorsDeleteBtn,#bulkCategoryDeleteBtn,#bulkServiceDeleteBtn,#bulkEmailsDeleteBtn,#bulkBookingsDeleteBtn,#bulkStaffsDeleteBtn,#bulkTemplateDeleteBtn,#bulkRolesDeleteBtn').prop('disabled', selectedRows === 0);
     }
 
     // Bulk delete click
@@ -1639,6 +1639,179 @@ function bulkDelete(url) {
             }
         });
     });
+
+    $('#bulkStaffsDeleteBtn').on('click', function () {
+        let selectedIds = $('.selectRow:checked').map(function () {
+            return $(this).val();
+        }).get();
+
+        if (selectedIds.length === 0) return;
+
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you cannot recover these Staffs!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        ids: selectedIds
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            swal(response.message, { icon: "success" }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            swal(response.message || "There was an error!", { icon: "error" });
+                        }
+                    },
+                    error: function (xhr) {
+                        let msg = "An error occurred while deleting records.";
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        swal(msg, { icon: "error" });
+                    }
+                });
+            }
+        });
+    });
     
+    $('#bulkTemplateDeleteBtn').on('click', function () {
+        let selectedIds = $('.selectRow:checked').map(function () {
+            return $(this).val();
+        }).get();
+
+        if (selectedIds.length === 0) return;
+
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you cannot recover these Templates!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        ids: selectedIds
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            swal(response.message, { icon: "success" }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            swal(response.message || "There was an error!", { icon: "error" });
+                        }
+                    },
+                    error: function (xhr) {
+                        let msg = "An error occurred while deleting records.";
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        swal(msg, { icon: "error" });
+                    }
+                });
+            }
+        });
+    });
+    
+
+    $('#bulkRolesDeleteBtn').on('click', function () {
+        let selectedIds = $('.selectRow:checked').map(function () {
+            return $(this).val();
+        }).get();
+
+        if (selectedIds.length === 0) return;
+
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you cannot recover these Roles!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        ids: selectedIds
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            swal(response.message, { icon: "success" }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            swal(response.message || "There was an error!", { icon: "error" });
+                        }
+                    },
+                    error: function (xhr) {
+                        let msg = "An error occurred while deleting records.";
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        swal(msg, { icon: "error" });
+                    }
+                });
+            }
+        });
+    });
+
+    
+    $('#bulkVendorsDeleteBtn').on('click', function () {
+        let selectedIds = $('.selectRow:checked').map(function () {
+            return $(this).val();
+        }).get();
+
+        if (selectedIds.length === 0) return;
+
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you cannot recover these Vendors!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        ids: selectedIds
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            swal(response.message, { icon: "success" }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            swal(response.message || "There was an error!", { icon: "error" });
+                        }
+                    },
+                    error: function (xhr) {
+                        let msg = "An error occurred while deleting records.";
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        swal(msg, { icon: "error" });
+                    }
+                });
+            }
+        });
+    });
     toggleBulkDeleteButton();
 }

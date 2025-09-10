@@ -69,6 +69,7 @@
   <!-- Custom JS -->
   <script src="{{ asset('assets/js/frontend/custom.js') }}?v={{ time() }}"></script>
   <script src="{{ asset('assets/js/frontend/calendar.js') }}?v={{ time() }}"></script>
+  <script src="{{ asset('assets/js/frontend/vendor/vendor.js') }}?v={{ time() }}"></script>
   @stack('scripts')
 
 </body>

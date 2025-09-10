@@ -55,9 +55,9 @@
         </div>
     </div>
 </div>
+
 <script type="text/javascript">
 $(function() {
-
     // Initialize DataTable
     var table = $('#users-table').DataTable({
         processing: true,
@@ -65,11 +65,7 @@ $(function() {
         ajax: "{{ route('user.list') }}",
         columns: [
             { data: 'id', name: 'id', visible: false },
-            { data: null, name: 'select', orderable: false, searchable: false,
-              render: function(data, type, row) {
-                  return '<input type="checkbox" class="selectRow" value="' + row.id + '">';
-              }
-            },
+            { data: 'checkbox', name: 'checkbox', orderable: false, searchable: false },
             { data: 'name', name: 'users.name' },
             { data: 'created_at', name: 'users.created_at' },
             { data: 'roles', name: 'roles.name', orderable: false, searchable: true },
@@ -80,11 +76,12 @@ $(function() {
         lengthMenu: [[10,25,50,100],[10,25,50,100]]
     });
 
+    // Toastr setup
     toastr.options = { closeButton: true, progressBar: true, timeOut: 4000, positionClass: "toast-top-right" };
-
     @if(session('success')) toastr.success("{{ session('success') }}"); @endif
     @if(session('error')) toastr.error("{{ session('error') }}"); @endif
 
+    // Bulk delete
     bulkDelete("{{ route('user.bulk-delete') }}");
 });
 </script>

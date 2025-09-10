@@ -173,7 +173,7 @@ public function edit($id){
         'name'        => $request->name,
         'description' => $request->description,
         'category'    => $request->category,
-        'price'       => $request->price,
+        'price'       => $request->price ??'0.00',
         'currency'    => $request->currency ?? '₹',
         'duration'    => $request->duration,
         'status'      => $request->status,
@@ -228,7 +228,7 @@ public function ServiceUpdate(Request $request, $id)
     $service->description = $request->description;
     $service->category    = $request->category;
     $service->currency    = $request->currency;
-    $service->price       = $request->price;
+    $service->price       = $request->price ?? '0.00';
     $service->duration    = $request->duration;
     $service->status      = $request->status;
 

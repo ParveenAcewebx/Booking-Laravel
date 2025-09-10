@@ -99,6 +99,8 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
     Route::middleware('permission:delete templates')->group(function () {
         Route::delete('/template/{formid}/delete', [BookingTemplateController::class, 'templateDelete'])->name('template.delete');
+        Route::post('/template/bulk-delete', [BookingTemplateController::class, 'bulkDelete'])->name('template.bulk-delete'); // Bulk Delete
+
     });
     // Routes for viewing data (view users, view templates, etc.)
     Route::middleware('permission:view bookings')->group(function () {
@@ -130,6 +132,8 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
     Route::middleware('permission:delete roles')->group(function () {
         Route::delete('/roles/{id}/delete', [RoleController::class, 'roleDelete'])->name('roles.delete');
+        Route::post('/roles/bulk-delete', [RoleController::class, 'bulkDelete'])->name('roles.bulk-delete'); // Bulk Delete
+
     });
     Route::middleware('permission:edit services')->group(function () {
         Route::get('/service/{service}/edit', [ServiceController::class, 'serviceEdit'])->name('service.edit');
@@ -162,6 +166,8 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
     Route::middleware('permission:delete vendors')->group(function () {
         Route::delete('/vendor/{id}/delete', [VendorController::class, 'destroy'])->name('vendors.delete');
+        Route::post('/vendor/bulk-delete', [VendorController::class, 'bulkDelete'])->name('vendors.bulk-delete'); // Bulk Delete
+
     });
 
     Route::middleware('permission:view categories')->group(function () {
@@ -212,6 +218,8 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
     Route::middleware('permission:delete staffs')->group(function () {
         Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->name('staff.destroy');
+        Route::post('/staff/bulk-delete', [StaffController::class, 'bulkDelete'])->name('staff.bulk-delete'); // Bulk Delete
+
     });
     Route::middleware('permission:access settings')->group(function () {
         Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
