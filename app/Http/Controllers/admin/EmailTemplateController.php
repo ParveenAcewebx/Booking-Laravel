@@ -74,11 +74,11 @@ class EmailTemplateController extends Controller
     {
         // dd($request->email_content);
         $validated = $request->validate([
-            'title'          => 'required|string|max:255|unique:email_templates,title',
-            'slug'           => 'required|string|max:255|unique:email_templates,slug',
-            'macro'          => 'required|string|max:255|unique:email_templates,macro',
-            'subject'        => 'nullable|string|max:255',
-            'dummy_template' => 'nullable|string|max:255',
+            'title'          => 'required|string|unique:email_templates,title',
+            'slug'           => 'required|string|unique:email_templates,slug',
+            'macro'          => 'required|string|unique:email_templates,macro',
+            'subject'        => 'nullable|string',
+            'dummy_template' => 'nullable|string',
             'email_content'  => 'required|string',
             'status'         => 'required|in:' . config('constants.status.active') . ',' . config('constants.status.inactive'),
         ]);
@@ -111,19 +111,19 @@ class EmailTemplateController extends Controller
         return view('admin.email-template.edit', compact('getEmailId'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request,$id)
     {
+        // dd('sdfdsf');
         $template = EmailTemplate::findOrFail($id);
         $validated = $request->validate([
-            'title'          => 'required|string|max:255|unique:email_templates,title,' . $template->id,
-            'slug'           => 'required|string|max:255|unique:email_templates,slug,' . $template->id,
-            'macro'          => 'required|string|max:255|unique:email_templates,macro,' . $template->id,
-            'subject'        => 'nullable|string|max:255',
-            'dummy_template' => 'nullable|string|max:255',
+            'title'          => 'required|string|unique:email_templates,title,' . $template->id,
+            'slug'           => 'required|string|unique:email_templates,slug,' . $template->id,
+            'macro'          => 'required|string|unique:email_templates,macro,' . $template->id,
+            'subject'        => 'nullable|string',
+            'dummy_template' => 'nullable|string',
             'email_content'  => 'required|string',
             'status'         => 'required|in:' . config('constants.status.active') . ',' . config('constants.status.inactive'),
         ]);
-
         try {
             // Update template
             $template->update([
