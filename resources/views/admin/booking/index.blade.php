@@ -1,5 +1,4 @@
 @extends('admin.layouts.app')
-
 @section('content')
 <div class="pcoded-main-container">
     <div class="pcoded-content">
@@ -18,7 +17,7 @@
                     </div>
                     <div class="col-md-2">
                         <div class="page-header-titles float-right">
-                        @can('create bookings')
+                            @can('create bookings')
                             <a href="{{ route('booking.add') }}" class="btn btn-primary btn-sm mr-2 p-2">Add Booking</a>
                             @endcan
                             @can('delete bookings')
@@ -30,7 +29,6 @@
             </div>
         </div>
 
-        {{-- Filters --}}
         <div class="row">
             <div class="col-lg-12">
                 <div class="card user-profile-list">
@@ -52,6 +50,13 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            <div class="col-md-2 col-sm-6">
+                                <div class="input-group">
+                                    <input type="text" id="filter-start-date" class="form-control" placeholder="Select Date" autocomplete="off">
+                                </div>
+                            </div>
+
                             <div class="col-md-1 col-sm-4">
                                 <button id="reset-filters" class="btn btn-primary float-right w-100">Reset</button>
                             </div>
@@ -78,10 +83,8 @@
         </div>
     </div>
 </div>
-
 <script>
     $(function() {
-        // Initialize DataTable
         let table = $('#booking-list-table').DataTable({
             processing: true,
             serverSide: true,
@@ -90,6 +93,7 @@
                 data: function(d) {
                     d.template_id = $('#filter-template').val();
                     d.customer_id = $('#filter-customer').val();
+                    d.start_date = $('#filter-start-date').val();
                 }
             },
             columns: [{
@@ -126,36 +130,44 @@
             ],
             order: [
                 [0, 'desc']
-            ], // sort by 'created_at' (adjust column index)
+            ],
             lengthMenu: [
                 [10, 25, 50, 100],
                 [10, 25, 50, 100]
             ],
         });
 
-        // Filters
-        $('#filter-template, #filter-customer').change(function() {
-            table.ajax.reload();
-        });
-        $('#reset-filters').click(function() {
-            $('#filter-template').val('').trigger('change');
-            $('#filter-customer').val('').trigger('change');
+        $('#filter-start-date').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('YYYY-MM-DD'));
             table.ajax.reload();
         });
 
-        // Toastr notifications
+        $('#filter-start-date').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+            table.ajax.reload();
+        });
+
+        $('#filter-template, #filter-customer').change(function() {
+            table.ajax.reload();
+        });
+
+        $('#reset-filters').click(function() {
+            $('#filter-template').val('').trigger('change');
+            $('#filter-customer').val('').trigger('change');
+            $('#filter-start-date').val('');
+            table.ajax.reload();
+        });
+
         toastr.options = {
             closeButton: true,
             progressBar: true,
             timeOut: 4000,
             positionClass: "toast-top-right"
         };
-        @if(session('success')) toastr.success("{{ session('success') }}");
-        @endif
-        @if(session('error')) toastr.error("{{ session('error') }}");
-        @endif
-        bulkDelete("{{ route('booking.bulk-delete') }}");
+        @if(session('success')) toastr.success("{{ session('success') }}"); @endif
+        @if(session('error')) toastr.error("{{ session('error') }}"); @endif
 
+        bulkDelete("{{ route('booking.bulk-delete') }}");
     });
 </script>
 @endsection

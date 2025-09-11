@@ -10,6 +10,13 @@ setTimeout(() => {
     }
 }, 5000);
 
+$('#filter-start-date').daterangepicker({
+    singleDatePicker: true,
+    showDropdowns: true,
+    autoUpdateInput: false,
+    locale: { format: 'YYYY-MM-DD' }
+});
+
 // Template delete alert
 function deleteTemplate(id) {
     event.preventDefault();

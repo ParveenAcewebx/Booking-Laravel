@@ -39,15 +39,19 @@ class BookingController extends Controller
         if ($request->ajax()) {
             $bookings = Booking::with(['template', 'customer'])
                 ->select('bookings.*');
-
+    
             if ($request->has('template_id') && $request->template_id != '') {
                 $bookings->where('booking_template_id', $request->template_id);
             }
-
+    
             if ($request->has('customer_id') && $request->customer_id != '') {
                 $bookings->where('customer_id', $request->customer_id);
             }
-
+    
+            if ($request->has('start_date') && $request->start_date != '') {
+                $bookings->whereDate('created_at', '=', $request->start_date);
+            }
+    
             return DataTables::of($bookings)
                 ->addColumn('template_name', function ($booking) {
                     return $booking->template ? $booking->template->template_name : '';
@@ -77,16 +81,16 @@ class BookingController extends Controller
                             </form>';
                     return $btn;
                 })
-                ->rawColumns(['status', 'action'])
+                ->rawColumns(['action'])
                 ->make(true);
         }
-
+    
         $templates = BookingTemplate::all();
         $customers = User::whereHas('roles')->get();
+    
         return view('admin.booking.index', compact('templates', 'customers'));
     }
-
-
+    
 
     public function bookingAdd()
     {
