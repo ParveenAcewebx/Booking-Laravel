@@ -1,20 +1,5 @@
 $(document).ready(function () {
-    const quill = new Quill('#editor', {
-        theme: 'snow'
-    });
-$('#description').val(quill.root.innerHTML);
 
-        // 🔁 Update hidden input when content changes
-        quill.on('text-change', function () {
-            var content = quill.root.innerHTML;
-            $('#description').val(content);
-        });
-
-        // 🔁 Ensure hidden input is updated on form submit
-        $('form').on('submit', function () {
-            var content = quill.root.innerHTML;
-            $('#description').val(content);
-        });
 
     /*============== staff validation form js  =========*/
     $('input').on('input', function () {
@@ -320,5 +305,21 @@ $('#description').val(quill.root.innerHTML);
         selectedGalleryFiles.forEach(file => dataTransfer.items.add(file));
         input.files = dataTransfer.files;
     }
+    const quill = new Quill('#editor', {
+        theme: 'snow'
+    });
+    $('#description').val(quill.root.innerHTML);
+
+    // 🔁 Update hidden input when content changes
+    quill.on('text-change', function () {
+        var content = quill.root.innerHTML;
+        $('#description').val(content);
+    });
+
+    // 🔁 Ensure hidden input is updated on form submit
+    $('form').on('submit', function () {
+        var content = quill.root.innerHTML;
+        $('#description').val(content);
+    });
 });
 

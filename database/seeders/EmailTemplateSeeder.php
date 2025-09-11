@@ -10,9 +10,9 @@ class EmailTemplateSeeder extends Seeder
     public function run(): void
     {
         EmailTemplate::updateOrCreate(
-            ['slug' => 'welcome_vendor_login_email'],
+            ['slug' => 'new_account_email'],
             [
-                'title'   => 'Welcome to Vendor Login Credentials',
+                'title'   => 'New Account Email',
                 'subject' => 'Welcome to {SITE_TITLE}',
                 'email_content'    => '
                     <p>Dear {NAME},<br /><br />
