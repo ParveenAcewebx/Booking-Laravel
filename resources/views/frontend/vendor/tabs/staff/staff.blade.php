@@ -25,7 +25,7 @@
                 @forelse($staffdata as $staff)
                     <div class="flex items-center justify-between p-4 border rounded-lg hover:shadow mb-4">
                         <div class="flex items-center gap-3">
-                            <img src="/storage/{{ $staff->avatar ?: 'https://via.placeholder.com/40' }}" alt="" class="w-10 h-10 rounded-full">
+                            <img src="{{ $staff->avatar ? '/storage/'.$staff->avatar : asset('assets/images/no-image-available.png') }}" alt="" class="w-10 h-10 rounded-full">
                             <div>
                                 <h3 class="font-medium text-gray-800">{{ $staff->name }}</h3>
                                 <p class="text-sm text-gray-500"><strong>Status:</strong> {{ $staff->status ? 'Active' : 'Inactive' }}</p>
