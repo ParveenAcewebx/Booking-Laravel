@@ -255,7 +255,7 @@ Route::middleware(['VendorRoleCheck'])->group(function () {
     //  Services 
     Route::get('/dashboard/services', [VendorServiceController::class, 'view'])->name('vendor.services.view');
      Route::get('/dashboard/services/add', [VendorServiceController::class, 'add'])->name('vendor.services.add');
-    Route::get('/services/{id}/edit', [VendorServiceController::class, 'edit'])->name('vendor.services.edit');
+    Route::get('/dashboard/services/{id}/edit', [VendorServiceController::class, 'edit'])->name('vendor.services.edit');
     
     Route::post('/services', [VendorServiceController::class, 'ServiceCreate'])->name('vendor.services.store');
    
@@ -265,8 +265,8 @@ Route::middleware(['VendorRoleCheck'])->group(function () {
     //  Staff
     Route::get('/dashboard/staff', [VendorStaffController::class, 'view'])->name('vendor.staff.view');
     Route::get('/dashboard/staff/add', [VendorStaffController::class, 'add'])->name('vendor.staff.add');
-    Route::post('/staff', [VendorStaffController::class, 'staffCreate'])->name('vendor.staff.store');
-     Route::get('/staff/edit/{id}', [VendorStaffController::class, 'edit'])->name('vendor.staff.edit');
+    Route::post('/dashboard/staff', [VendorStaffController::class, 'staffCreate'])->name('vendor.staff.store');
+     Route::get('/dashboard/staff/edit/{id}', [VendorStaffController::class, 'edit'])->name('vendor.staff.edit');
     Route::put('/staff/{id}', [VendorStaffController::class, 'staffUpdate'])->name('vendor.staff.update');
     Route::delete('/staff/{id}', [VendorStaffController::class, 'staffDestroy'])->name('vendor.staff.destroy');
    

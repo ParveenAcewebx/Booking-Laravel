@@ -97,7 +97,7 @@ class VendorServiceController extends Controller
             $serviceIds = VendorServiceAssociation::with('vendor')
                         ->where('vendor_id', $vendorId)
                         ->pluck('service_id');
-            $servicedata = Service::whereIn('id', $serviceIds)->paginate(3);
+            $servicedata = Service::whereIn('id', $serviceIds)->orderBy('id', 'desc')->paginate(3);
             // Categories
             $categories = Category::select('id', 'category_name')->get();
             // Bookings
@@ -156,29 +156,52 @@ public function edit($id){
 /*=============================== service create =========================*/
      public function ServiceCreate(Request $request)
 {
-    $request->validate([
-        'name'        => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'category'    => 'nullable|integer|exists:categories,id',
-        'price'       => 'nullable|numeric|min:0',
-        'currency'    => 'required|string|max:5',
-        'duration'    => 'nullable|integer|min:1',
-        'status'      => 'required|boolean',
-        'thumbnail'   => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-        'gallery.*'   => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-    ]);
+   $request->validate([
+    'name'                    => 'required|string|max:255',
+    'description'             => 'nullable|string',
+    'category'                => 'nullable|integer|exists:categories,id',
+    'price'                   => 'nullable|numeric|min:0',
+    'currency'                => 'required|string|max:5',
+    'duration'                => 'nullable|integer|min:1',
+    'status'                  => 'required|boolean',
+    'thumbnail'               => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+    'gallery.*'               => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+    'appointment_status'      => 'nullable|in:0,1',
+    'cancelling_unit'         => 'required|in:hours,days',
+    'cancelling_value'        => 'required|integer',
+    'redirect_url'            => 'nullable|url',
+    'payment_mode'            => 'nullable|in:on_site,stripe',
+    'payment_account'         => 'nullable|in:default,custom',
+    'stripe_test_site_key'    => 'nullable|string',
+    'stripe_test_secret_key'  => 'nullable|string',
+    'stripe_live_site_key'    => 'nullable|string',
+    'stripe_live_secret_key'  => 'nullable|string',
+    'payment__is_live'        => 'nullable|boolean',
+]);
+
 
     // Create service without thumbnail and gallery
     $service = Service::create([
-        'name'        => $request->name,
-        'description' => $request->description,
-        'category'    => $request->category,
-        'price'       => $request->price ??'0.00',
-        'currency'    => $request->currency ?? '₹',
-        'duration'    => $request->duration,
-        'status'      => $request->status,
-        'user_id'     => auth()->id(),
-    ]);
+    'name'                    => $request->name,
+    'description'             => $request->description ?? '',
+    'category'                => $request->category,
+    'price'                   => $request->price ?? 0.00,
+    'currency'                => $request->currency ?? '₹',
+    'duration'                => $request->duration ?? 30,
+    'status'                  => $request->status,
+    'appointment_status'      => $request->appointment_status ?? 0,
+    'cancelling_unit'         => $request->cancelling_unit ?? 'hours',
+    'cancelling_value'        => $request->cancelling_value ?? 1,
+    'redirect_url'            => $request->redirect_url ?? '',
+    'payment_mode'            => $request->payment_mode ?? 'on_site',
+    'payment_account'         => $request->payment_account ?? 'default',
+    'stripe_test_site_key'    => $request->stripe_test_site_key ?? '',
+    'stripe_test_secret_key'  => $request->stripe_test_secret_key ?? '',
+    'stripe_live_site_key'    => $request->stripe_live_site_key ?? '',
+    'stripe_live_secret_key'  => $request->stripe_live_secret_key ?? '',
+    'payment__is_live'        => $request->payment__is_live ?? 0,
+    'user_id'                 => auth()->id(),
+]);
 
     // Handle thumbnail upload
     if ($request->hasFile('thumbnail')) {
@@ -213,24 +236,50 @@ public function ServiceUpdate(Request $request, $id)
 {
     $service = Service::findOrFail($id);
     $request->validate([
-        'name'        => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'category'    => 'nullable|integer|exists:categories,id',
-        'currency'    => 'required|string|max:5',
-        'price'       => 'nullable|numeric|min:0',
-        'duration'    => 'required|integer|min:1',
-        'status'      => 'required|boolean',
-        'thumbnail'   => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-        'gallery.*'   => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        'name'                   => 'required|string|max:255',
+        'description'            => 'nullable|string',
+        'category'               => 'nullable|integer|exists:categories,id',
+        'currency'               => 'required|string|max:5',
+        'price'                  => 'nullable|numeric|min:0',
+        'duration'               => 'required|integer|min:1',
+        'status'                 => 'required|boolean',
+        'thumbnail'              => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        'gallery.*'              => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        'appointment_status'     => 'nullable|in:0,1',
+        'cancelling_unit'        => 'required|in:hours,days',
+        'cancelling_value'       => 'required|integer',
+        'redirect_url'           => 'nullable|url',
+        'payment_mode'           => 'nullable|in:on_site,stripe',
+        'payment_account'        => 'nullable|in:default,custom',
+        'stripe_test_site_key'   => 'nullable|string',
+        'stripe_test_secret_key' => 'nullable|string',
+        'stripe_live_site_key'   => 'nullable|string',
+        'stripe_live_secret_key' => 'nullable|string',
+        'payment__is_live'       => 'nullable|boolean',
     ]);
-    // Update basic fields
-    $service->name        = $request->name;
-    $service->description = $request->description;
-    $service->category    = $request->category;
-    $service->currency    = $request->currency;
-    $service->price       = $request->price ?? '0.00';
-    $service->duration    = $request->duration;
-    $service->status      = $request->status;
+        // Update basic fields
+        $service->name                    = $request->name;
+        $service->description             = $request->description;
+        $service->category                = $request->category;
+        $service->currency                = $request->currency;
+        $service->price                   = $request->price ?? '0.00';
+        $service->duration                = $request->duration ?? 30;
+        $service->status                  = $request->status;
+        $service->appointment_status      = $request->appointment_status ?? 0;
+        $service->cancelling_unit         = $request->cancelling_unit ?? 'hours';
+        $service->cancelling_value        = $request->cancelling_value ?? 1;
+        $service->redirect_url            = $request->redirect_url ?? '';
+
+        $service->payment_mode            = $request->payment_mode ?? 'on_site';
+        $service->payment_account         = $request->payment_account ?? 'default';
+
+        $service->stripe_test_site_key    = $request->filled('stripe_test_site_key') ? $request->stripe_test_site_key : null;
+        $service->stripe_test_secret_key  = $request->filled('stripe_test_secret_key') ? $request->stripe_test_secret_key : null;
+        $service->stripe_live_site_key    = $request->filled('stripe_live_site_key') ? $request->stripe_live_site_key : null;
+        $service->stripe_live_secret_key  = $request->filled('stripe_live_secret_key') ? $request->stripe_live_secret_key : null;
+
+        $service->payment__is_live        = $request->has('payment__is_live') ? (bool)$request->payment__is_live : false;
+
 
     // Handle thumbnail
     if ($request->hasFile('thumbnail')) {

@@ -60,9 +60,6 @@ class BookingController extends Controller
                         ? $booking->created_at->format('Y-m-d H:i')
                         : '';
                 })
-                ->editColumn('status', function ($booking) {
-                    return '<span class="badge badge-light-success">Active</span>';
-                })
                 ->addColumn('action', function ($booking) {
                     $btn = '';
                     $btn .= '<a href="' . route('booking.view', $booking->id) . '" class="btn btn-icon btn-success" title="View Booking">

@@ -48,13 +48,14 @@ if (!function_exists('sendVendorTemplateEmail')) {
             $subject = replaceMacros($template->subject, $macros, $allowedMacros);
             $body    = replaceMacros($template->email_content, $macros, $allowedMacros);
 
-            Mail::html($body, function ($message) use ($toEmail, $subject) {
+            Mail::send([], [], function ($message) use ($toEmail, $subject, $body) {
                 $message->to($toEmail)
                         ->subject($subject)
                         ->from(
                             get_setting('from_address', config('mail.from.address')),
                             get_setting('from_name', config('mail.from.name'))
-                        );
+                        )
+                        ->html($body);
             });
 
             \Log::info("✅ Email sent successfully to {$toEmail} using template: {$slug}");

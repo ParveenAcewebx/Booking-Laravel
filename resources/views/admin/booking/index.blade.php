@@ -66,7 +66,6 @@
                                         <th>Template Name</th>
                                         <th>Booked By</th>
                                         <th>Created Date</th>
-                                        <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -117,12 +116,6 @@
                 {
                     data: 'created_at',
                     name: 'created_at'
-                },
-                {
-                    data: 'status',
-                    name: 'status',
-                    orderable: false,
-                    searchable: false
                 },
                 {
                     data: 'action',
