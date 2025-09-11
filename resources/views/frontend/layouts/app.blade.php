@@ -23,6 +23,7 @@
 
   <!-- Custom CSS -->
   <link rel="stylesheet" href="{{ asset('assets/css/frontend/custom.css') }}?v={{ time() }}">
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
 
   <script>
     tailwind.config = {
@@ -70,6 +71,7 @@
   <script src="{{ asset('assets/js/frontend/custom.js') }}?v={{ time() }}"></script>
   <script src="{{ asset('assets/js/frontend/calendar.js') }}?v={{ time() }}"></script>
   <script src="{{ asset('assets/js/frontend/vendor/vendor.js') }}?v={{ time() }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
   @stack('scripts')
 
 </body>

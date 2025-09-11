@@ -22,7 +22,7 @@
                 <button type="button"
                     :class="tab === 'gallery' ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500'"
                     class="pb-2 text-sm font-semibold focus:outline-none" @click="tab = 'gallery'">Gallery</button>
-                    <button type="setting"
+                <button type="setting"
                     :class="tab === 'setting' ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500'"
                     class="pb-2 text-sm font-semibold focus:outline-none" @click="tab = 'setting'">Setting</button>
             </div>
@@ -47,7 +47,7 @@
                     <!-- Description -->
                     <div class="mt-4">
                         <label class="block text-sm font-medium text-gray-600">Description</label>
-                        <textarea name="description"
+                        <textarea name="description" id="editor"
                             class="w-full mt-1 p-3 border rounded-md focus:ring-2 focus:ring-indigo-500"
                             rows="3">{{ old('description') }}</textarea>
                     </div>
@@ -70,7 +70,7 @@
                     </div>
 
                     <!-- Category -->
-                   <div class="mt-4">
+                    <div class="mt-4">
                         <label class="block text-sm font-medium text-gray-600">Category</label>
                         <select name="category"
                             class="w-full mt-1 p-3 border rounded-md focus:ring-2 focus:ring-indigo-500">
@@ -83,7 +83,7 @@
                             @endforeach
                         </select>
                     </div>
-                      <!-- Status -->
+                    <!-- Status -->
 
                     <div class="mt-4">
                         <label class="block text-sm font-medium text-gray-600">Status</label>
@@ -113,121 +113,120 @@
                             class="w-full mt-1 p-3 border rounded-md focus:ring-2 focus:ring-indigo-500">
                     </div>
                 </div>
-                  
+
                 <div x-show="tab === 'gallery'" x-transition>
-                            <!-- Featured Image -->
+                    <!-- Featured Image -->
                     <div class="mt-4">
                         <label class="block text-sm font-medium text-gray-600">Featured Image</label>
                         <input type="file" name="thumbnail" class="w-full mt-1 p-2 border rounded-md" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
                     </div>
 
                     <!-- Gallery -->
-                   <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-600">Gallery Images</label>
-                        <input 
-                                type="file" 
-                                name="gallery[]" 
-                                multiple 
-                                class="w-full mt-1 p-2 border rounded-md" 
-                                accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif"
-                                id="gallery-input"
-                            >
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-600">Gallery Images</label>
+                        <input
+                            type="file"
+                            name="gallery[]"
+                            multiple
+                            class="w-full mt-1 p-2 border rounded-md"
+                            accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif"
+                            id="gallery-input">
 
-                            {{-- New Image Previews --}}
-                            <div class="flex gap-2 mt-4 flex-wrap" id="new-gallery-preview"></div>
+                        {{-- New Image Previews --}}
+                        <div class="flex gap-2 mt-4 flex-wrap" id="new-gallery-preview"></div>
+                    </div>
+                </div>
+
+                <div x-show="tab === 'setting'" x-transition>
+                    <div class="tab-pane active" id="settings" role="tabpanel">
+                        <div class="form-group mt-4">
+                            <label class="block text-sm font-medium text-gray-600">Default Appointment Status</label>
+                            <select name="appointment_status" class="w-full mt-1 p-2 border rounded-md" data-select2-id="14" tabindex="-1" aria-hidden="true">
+                                <option value="1">Approved</option>
+                                <option value="0" selected="" data-select2-id="16">Pending</option>
+                            </select>
+                        </div>
+                        <div class="form-group mt-4">
+                            <label class="block text-sm font-medium text-gray-600">Minimum Time Required Before Canceling</label>
+                            <div class="flex ">
+                                <div class="w-3/4 pr-1">
+                                    <select name="cancelling_unit" class="w-full mt-1 p-2 border rounded-md" id="cancelling_unit" data-select2-id="cancelling_unit" tabindex="-1" aria-hidden="true">
+                                        <option value="hours" data-select2-id="18">Hours</option>
+                                        <option value="days">Days</option>
+                                    </select>
+                                </div>
+                                <div class="w-3/4 pr-0 ">
+                                    <select name="cancelling_value" class="w-full mt-1 p-2 border rounded-md" id="cancelling_value" data-select2-id="cancelling_value" tabindex="-1" aria-hidden="true"></select>
+                                    <input type="hidden" id="cancel_value" value="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mt-4">
+                            <label class="block text-sm font-medium text-gray-600">Redirect URL After Booking</label>
+                            <input type="url" name="redirect_url" class="w-full mt-1 p-2 border rounded-md" value="" placeholder="https://example.com" pattern="https?://.*" title="Please enter a valid URL starting with http:// or https://">
+                        </div>
+                        <div class="form-group mt-4">
+                            <label class="block text-sm font-medium text-gray-600">Payment Mode</label>
+                            <select name="payment_mode" class="w-full mt-1 p-2 border rounded-md" id="payment_mode" data-select2-id="payment_mode" tabindex="-1" aria-hidden="true">
+                                <option value="on_site" data-select2-id="22">On Site</option>
+                                <option value="stripe">Stripe</option>
+                            </select>
+                        </div>
+
+
+                        <div class="stripe-options hidden">
+                            <div class="custom-control custom-radio block text-sm font-medium text-gray-600">
+                                <input type="radio" id="stripeDefault" name="payment_account" value="default" class="" checked>
+                                <label class="" for="stripeDefault">Use Default Stripe Account</label>
+                            </div>
+                            <div class="custom-control custom-radio">
+                                <input type="radio" id="stripeCustom" name="payment_account" value="custom" class="">
+                                <label class="" for="stripeCustom">Use Different Stripe Account</label>
+                            </div>
+
+                            <div class="stripe-credentials mt-3 hidden">
+
+                                <div class="custom-control custom-checkbox mb-3">
+                                    <input type="checkbox" class="" id="payment__is_live" name="payment__is_live" value="1">
+                                    <label class="custom-control-label" for="payment__is_live">Live Mode</label>
+                                </div>
+                                <div class="stripe-test">
+                                    <div class="form-group">
+                                        <label for="stripe_test_site_key">Test Site Key</label>
+                                        <input type="text" name="stripe_test_site_key" id="stripe_test_site_key" class="w-full mt-1 p-2 border rounded-md" value="{{ old('stripe_test_site_key') }}">
+                                        @error('stripe_test_site_key')
+                                        <div class="text-red-500 mt-2 error_message">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stripe_test_secret_key">Test Secret Key</label>
+                                        <input type="text" name="stripe_test_secret_key" id="stripe_test_secret_key" class="w-full mt-1 p-2 border rounded-md" value="{{ old('stripe_test_secret_key') }}">
+                                        @error('stripe_test_secret_key')
+                                        <div class="text-red-500 mt-2 error_message">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="stripe-live hidden">
+                                    <div class="form-group">
+                                        <label for="stripe_live_site_key">Live Site Key</label>
+                                        <input type="text" name="stripe_live_site_key" id="stripe_live_site_key" class="w-full mt-1 p-2 border rounded-md" value="{{ old('stripe_live_site_key') }}">
+                                        @error('stripe_live_site_key')
+                                        <div class="text-red-500 mt-2 error_message">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stripe_live_secret_key">Live Secret Key</label>
+                                        <input type="text" name="stripe_live_secret_key" id="stripe_live_secret_key" class="w-full mt-1 p-2 border rounded-md" value="{{ old('stripe_live_secret_key') }}">
+                                        @error('stripe_live_secret_key')
+                                        <div class="text-red-500 mt-2 error_message">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                <div x-show="tab === 'setting'" x-transition>
-                        <div class="tab-pane active" id="settings" role="tabpanel">
-                            <div class="form-group mt-4">
-                                <label class="block text-sm font-medium text-gray-600">Default Appointment Status</label>
-                                <select name="appointment_status" class="w-full mt-1 p-2 border rounded-md" data-select2-id="14" tabindex="-1" aria-hidden="true">
-                                        <option value="1">Approved</option>
-                                        <option value="0" selected="" data-select2-id="16">Pending</option>
-                                </select>
-                            </div>
-                            <div class="form-group mt-4">
-                                <label class="block text-sm font-medium text-gray-600">Minimum Time Required Before Canceling</label>
-                                <div class="flex ">
-                                    <div class="w-3/4 pr-1">
-                                        <select name="cancelling_unit" class="w-full mt-1 p-2 border rounded-md" id="cancelling_unit" data-select2-id="cancelling_unit" tabindex="-1" aria-hidden="true">
-                                            <option value="hours" data-select2-id="18">Hours</option>
-                                            <option value="days">Days</option>
-                                        </select>
-                                    </div>
-                                    <div class="w-3/4 pr-0 ">
-                                        <select name="cancelling_value" class="w-full mt-1 p-2 border rounded-md" id="cancelling_value" data-select2-id="cancelling_value" tabindex="-1" aria-hidden="true"></select>
-                                        <input type="hidden" id="cancel_value" value="">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group mt-4">
-                                <label class="block text-sm font-medium text-gray-600">Redirect URL After Booking</label>
-                                <input type="url" name="redirect_url" class="w-full mt-1 p-2 border rounded-md" value="" placeholder="https://example.com" pattern="https?://.*" title="Please enter a valid URL starting with http:// or https://">
-                            </div>
-                            <div class="form-group mt-4">
-                                <label class="block text-sm font-medium text-gray-600">Payment Mode</label>
-                                <select name="payment_mode" class="w-full mt-1 p-2 border rounded-md" id="payment_mode" data-select2-id="payment_mode" tabindex="-1" aria-hidden="true">
-                                    <option value="on_site" data-select2-id="22">On Site</option>
-                                    <option value="stripe">Stripe</option>
-                                </select>
-                             </div>
-
-                            
-                            <div class="stripe-options hidden">
-                                <div class="custom-control custom-radio block text-sm font-medium text-gray-600">
-                                    <input type="radio" id="stripeDefault" name="payment_account" value="default" class=""checked>
-                                    <label class="" for="stripeDefault">Use Default Stripe Account</label>
-                                </div>
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" id="stripeCustom" name="payment_account" value="custom" class="">
-                                    <label class="" for="stripeCustom">Use Different Stripe Account</label>
-                                </div>
-                                
-                                <div class="stripe-credentials mt-3 hidden">
-                                    
-                                    <div class="custom-control custom-checkbox mb-3">
-                                        <input type="checkbox" class="" id="payment__is_live" name="payment__is_live" value="1">
-                                        <label class="custom-control-label" for="payment__is_live">Live Mode</label>
-                                    </div>
-                                    <div class="stripe-test">
-                                        <div class="form-group">
-                                            <label for="stripe_test_site_key">Test Site Key</label>
-                                            <input type="text" name="stripe_test_site_key" id="stripe_test_site_key" class="w-full mt-1 p-2 border rounded-md" value="{{ old('stripe_test_site_key') }}">
-                                         @error('stripe_test_site_key')
-                                            <div class="text-red-500 mt-2 error_message">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="stripe_test_secret_key">Test Secret Key</label>
-                                            <input type="text" name="stripe_test_secret_key" id="stripe_test_secret_key" class="w-full mt-1 p-2 border rounded-md" value="{{ old('stripe_test_secret_key') }}">
-                                          @error('stripe_test_secret_key')
-                                            <div class="text-red-500 mt-2 error_message">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="stripe-live hidden">
-                                        <div class="form-group">
-                                            <label for="stripe_live_site_key">Live Site Key</label>
-                                            <input type="text" name="stripe_live_site_key" id="stripe_live_site_key" class="w-full mt-1 p-2 border rounded-md" value="{{ old('stripe_live_site_key') }}">
-                                        @error('stripe_live_site_key')
-                                            <div class="text-red-500 mt-2 error_message">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="stripe_live_secret_key">Live Secret Key</label>
-                                            <input type="text" name="stripe_live_secret_key" id="stripe_live_secret_key" class="w-full mt-1 p-2 border rounded-md" value="{{ old('stripe_live_secret_key') }}">
-                                            @error('stripe_live_secret_key')
-                                            <div class="text-red-500 mt-2 error_message">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    
                 </div>
                 <!-- Actions -->
                 <div class="flex justify-end gap-3">

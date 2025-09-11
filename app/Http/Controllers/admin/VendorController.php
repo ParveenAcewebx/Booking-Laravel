@@ -189,10 +189,10 @@ class VendorController extends Controller
                 '{NAME}' => $user->name,
                 '{EMAIL}' => $user->email,
                 '{PASSWORD}' => $randomPassword,
-                '{SITE_TITLE}' => 'Ace Universal Booking Solution',
+                '{SITE_TITLE}' => get_setting('site_title') ,
             ];
 
-            sendVendorTemplateEmail('welcome_vendor_login_email', $user->email, $macros);
+            sendVendorTemplateEmail('new_account_email', $user->email, $macros);
 
             $user->assignRole('Staff');
             $vendor = Vendor::create([
