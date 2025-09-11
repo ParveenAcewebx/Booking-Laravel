@@ -8,8 +8,20 @@ document.addEventListener("DOMContentLoaded", function () {
       $field.siblings('.error-message').remove();
       $field.closest('.form-group, .mb-3').find('.error-message').remove();
       if (field.type === 'checkbox') {
-         $field.closest('.form-group, .mb-3').find('.checkbox-error-message').remove();
-      }
+         const $groupWrapper = $field.closest('.form-group, .mb-3');
+         $groupWrapper.find('.checkbox-error-message').remove();
+     
+         const group = $groupWrapper.find('input[type="checkbox"][name="' + field.name + '"]');
+         const anyChecked = group.is(':checked');
+     
+         if (anyChecked) {
+             group.removeAttr('required');
+         } else {
+             group.removeAttr('required');
+             group.first().attr('required', true);
+         }
+     }
+     
       if (field.type === 'radio') {
          $field.closest('.form-group, .mb-3').find('.radio-error-message').remove();
       }

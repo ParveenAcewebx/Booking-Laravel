@@ -30,7 +30,18 @@ document.addEventListener("DOMContentLoaded", function () {
         if (field.type === 'checkbox') {
             const checkboxParent = $(field).closest('.mb-6')[0];
             $(checkboxParent).find('.checkbox-error-message').remove();
+        
+            const group = $(checkboxParent).find('input[type="checkbox"][name="' + field.name + '"]');
+            const anyChecked = group.is(':checked');
+        
+            if (anyChecked) {
+                group.removeAttr('required');
+            } else {
+                group.removeAttr('required');
+                group.first().attr('required', true);
+            }
         }
+        
         if (field.type === 'radio') {
             const checkboxParent = $(field).closest('.mb-6')[0];
             $(checkboxParent).find('.radio-error-message').remove();
