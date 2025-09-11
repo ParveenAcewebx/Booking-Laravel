@@ -61,7 +61,7 @@ class BookingController extends Controller
                 })
                 ->editColumn('created_at', function ($booking) {
                     return $booking->created_at
-                        ? $booking->created_at->format('Y-m-d H:i')
+                        ? $booking->created_at->format(get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i'))
                         : '';
                 })
                 ->addColumn('action', function ($booking) {

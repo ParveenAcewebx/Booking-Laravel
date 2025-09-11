@@ -36,8 +36,10 @@ class ServiceController extends Controller
                         ? '<span class="badge badge-success">Active</span>'
                         : '<span class="badge badge-danger">Inactive</span>';
                 })
-                ->addColumn('created_at', function ($row) {
-                    return  $row->created_at;
+                ->editColumn('created_at', function ($row) {
+                    return $row->created_at
+                        ? $row->created_at->format(get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i'))
+                        : '';
                 })
                 ->addColumn('action', function ($row) {
                     $btn = '';
