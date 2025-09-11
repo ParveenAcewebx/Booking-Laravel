@@ -118,7 +118,7 @@ class EmailTemplateController extends Controller
         $validated = $request->validate([
             'title'          => 'required|string|unique:email_templates,title,' . $template->id,
             'slug'           => 'required|string|unique:email_templates,slug,' . $template->id,
-            'macro'          => 'required|string|unique:email_templates,macro,' . $template->id,
+            'macro'          => 'required',
             'subject'        => 'nullable|string',
             'dummy_template' => 'nullable|string',
             'email_content'  => 'required|string',

@@ -189,10 +189,12 @@ class VendorController extends Controller
                 '{NAME}' => $user->name,
                 '{EMAIL}' => $user->email,
                 '{PASSWORD}' => $randomPassword,
-                '{SITE_TITLE}' => get_setting('site_title') ,
+                '{SITE_TITLE}' => get_setting('site_title'),
             ];
 
-            sendVendorTemplateEmail('new_account_email', $user->email, $macros);
+            sendVendorTemplateEmail('vendor_login_email_notification', $user->email, $macros);
+            sendAdminTemplateEmail('admin_new_user_notification',get_setting('owner_email'), $macros);
+
 
             $user->assignRole('Staff');
             $vendor = Vendor::create([

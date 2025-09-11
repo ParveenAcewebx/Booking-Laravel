@@ -67,3 +67,40 @@ if (!function_exists('sendVendorTemplateEmail')) {
         }
     }
 }
+
+if (!function_exists('sendAdminTemplateEmail')) {
+    function sendAdminTemplateEmail($slug, $toEmail, $macros = [])
+    {
+        try {
+            $template = EmailTemplate::where('slug', $slug)->first();
+
+            if (!$template) {
+                \Log::error("Email template not found for slug: {$slug}");
+                return false;
+            }
+
+            // macros ko explode karke array bna lo
+            $allowedMacros = array_map('trim', explode(',', $template->macro));
+
+            $subject = replaceMacros($template->subject, $macros, $allowedMacros);
+            $body    = replaceMacros($template->email_content, $macros, $allowedMacros);
+
+            Mail::send([], [], function ($message) use ($toEmail, $subject, $body) {
+                $message->to($toEmail)
+                        ->subject($subject)
+                        ->from(
+                            get_setting('from_address', config('mail.from.address')),
+                            get_setting('from_name', config('mail.from.name'))
+                        )
+                        ->html($body);
+            });
+
+            \Log::info("✅ Admin Email sent successfully to {$toEmail} using template: {$slug}");
+            return true;
+
+        } catch (\Exception $e) {
+            \Log::error("❌ Failed to send email to {$toEmail}: " . $e->getMessage());
+            return false;
+        }
+    }
+}
