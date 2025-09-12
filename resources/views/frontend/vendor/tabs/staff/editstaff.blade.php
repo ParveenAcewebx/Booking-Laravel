@@ -94,12 +94,28 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block font-medium mb-1">Profile Image</label>
-                            <input type="file" name="avatar" class="border p-2 rounded w-full">
-                            @if($staffdata[0]->avatar)
-                            <img src="{{ asset('storage/' . $staffdata[0]->avatar) }}" alt="Profile"
-                                class="w-20 h-20 rounded mt-2 border">
-                            @endif
+                            <label class="block text-sm font-medium text-gray-600">Profile Image</label>
+                            <input type="file" id="feature-input" name="avatar"
+                                class="w-full mt-1 p-2 border rounded-md"
+                                accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+
+                            <div class="flex gap-2 mt-4 flex-wrap" id="new-feature-preview">
+                                @if(!empty($staffdata[0]->avatar))
+                                <div class="relative w-24 h-24 inline-block existing-feature-wrapper">
+                                    <img src="{{ asset('storage/' . $staffdata[0]->avatar) }}"
+                                        class="w-24 h-24 rounded shadow object-cover border">
+                                    <button type="button"
+                                        class="absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-full shadow existing-delete-btn">
+                                        ✕
+                                    </button>
+                                    <input type="hidden" name="existing_thumbnail" value="{{ $staffdata[0]->avatar }}">
+                                    <!-- Hidden remove flag -->
+                                    <input type="hidden" name="remove_thumbnail" value="0" class="remove-thumbnail-flag">
+                                </div>
+                                @else
+                                <input type="hidden" name="remove_thumbnail" value="0" class="remove-thumbnail-flag">
+                                @endif
+                            </div>
                         </div>
                         <div>
                             <label class="block font-medium mb-1">Assigned Services</label>
@@ -279,7 +295,11 @@
 
 @push('scripts')
 <script>
-let dayOffIndex = {{count($dayOffsForForm)}};
+    let dayOffIndex = {
+        {
+            count($dayOffsForForm)
+        }
+    };
 </script>
 
 @endpush

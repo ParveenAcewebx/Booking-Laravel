@@ -98,14 +98,11 @@
                         </div>
 
                         <div>
-                            <label class="block font-medium mb-1">Profile Image</label>
-                            <input type="file" name="avatar" class="border p-2 rounded w-full">
-                            <template x-if="editStaff && editStaff[0].avatar">
-                                <img :src="`/storage/${editStaff[0].avatar}`" class="w-20 h-20 rounded mt-2 border"
-                                    alt="Profile">
-                            </template>
-                        </div>
+                        <label class="block text-sm font-medium text-gray-600">Profile Image</label>
+                        <input type="file" name="avatar"  id="feature-input" class="w-full mt-1 p-2 border rounded-md" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                        <div class="flex gap-2 mt-4 flex-wrap" id="new-feature-preview"></div>
 
+                    </div>
                         <div>
                             <label class="block font-medium mb-1">Assigned Services</label>
                             <select name="assigned_services[]" multiple class="assigned-services border rounded w-full">
