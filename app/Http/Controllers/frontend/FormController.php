@@ -17,7 +17,10 @@ use App\Models\VendorServiceAssociation;
 use App\Models\Vendor;
 use App\Models\Staff;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class FormController extends Controller
 {
@@ -80,11 +83,13 @@ class FormController extends Controller
                 $lastInsertedId = $existingUser->id;
             } else {
                 // Otherwise, create a new user
+                $randomPassword = Str::random(4) . rand(0, 9) . Str::random(2) . '!@#$%^&*()_+'[rand(0, 11)] . Str::random(2);
+
                 $user = User::create([
                     'name'         => $bookingData['first_name'] . ' ' . $bookingData['last_name'],
                     'email'        => $bookingData['email'] ?? null,
                     'phone_number' => $bookingData['phone'] ?? null,
-                    'password'     => bcrypt($request->password ?? 'password'),
+                    'password'     => Hash::make($randomPassword),
                     'avatar'       => '',
                     'status'       => $request->has('status')
                         ? config('constants.status.active')
@@ -93,11 +98,21 @@ class FormController extends Controller
 
                 $user->assignRole('customer');
                 $lastInsertedId = $user->id;
+
+                $macros = [
+                    '{NAME}' => $user->name,
+                    '{EMAIL}' => $user->email,
+                    '{PASSWORD}' => $randomPassword,
+                    '{SITE_TITLE}' => get_setting('site_title'),
+                ];
+
+                sendVendorTemplateEmail('vendor_login_email_notification', $user->email, $macros);
+                sendAdminTemplateEmail('admin_new_user_notification', get_setting('owner_email'), $macros);
             }
         }
 
         // Create booking
-        Booking::create([
+        $booking = Booking::create([
             'booking_template_id' => $template->id,
             'customer_id'         => auth()->id() ?? $lastInsertedId,
             'booking_datetime'    => $request->input('booking_datetime', now()),
@@ -111,7 +126,8 @@ class FormController extends Controller
             'service_id'          => $bookingData['service'] ?? null,
             'vendor_id'           => $bookingData['vendor'] ?? null,
         ]);
-
+        $bookingId = $booking->id;
+        $this->sendmailtocustom($template->id, $bookingId, $bookingData);
         return redirect()
             ->route('form.show', $template->slug)
             ->with([
@@ -415,5 +431,208 @@ class FormController extends Controller
                 'value' => $data
             ]
         ]);
+    }
+    public function sendmailtocustom($formid, $bookingId, $bookingData)
+    {
+        $booking = Booking::with('template')->findOrFail($bookingId);
+        $dynamicValues = json_decode($booking->booking_data, true) ?? [];
+
+        // Get related service & vendor
+        $service = isset($dynamicValues['service']) ? Service::find($dynamicValues['service']) : null;
+        $vendor = isset($dynamicValues['vendor']) ? Vendor::find($dynamicValues['vendor']) : null;
+        if ($service && $service->duration !== null) {
+            $hours = floor($service->duration / 60);
+            $minutes = $service->duration % 60;
+            $durationFormatted = $hours > 0
+                ? ($hours . ' hr' . ($hours > 1 ? 's' : '') . ($minutes > 0 ? ' ' . $minutes . ' min' : ''))
+                : ($minutes . ' min');
+        } else {
+            $durationFormatted = null;
+        }
+        // Build service/vendor info
+        $serviceverndor = [
+            'Service Name'      => $service?->name,
+            'Service Price'     => $service?->price,
+            'Service Currency'  => $service?->currency,
+            'Service Duration' => $durationFormatted,
+            'Vendor Name'       => $vendor?->name,
+        ];
+
+        // Get booking slots
+        $slotedetail = json_decode($booking->bookslots, true) ?? [];
+
+        // Get form structure
+        $formStructureJson = $booking->template->data ?? '[]';
+        $formStructureArray = array_filter(
+            json_decode($formStructureJson, true),
+            fn($item) => $item['type'] !== 'shortcodeblock'
+        );
+
+        // Build a map of field names to labels and options (for checkboxes, radios, selects)
+        $formFieldLabelMap = [];
+        $formFieldOptionsMap = []; // name => [value => label]
+
+        foreach ($formStructureArray as $field) {
+            if (!empty($field['name'])) {
+                $formFieldLabelMap[$field['name']] = $field['label'] ?? $field['name'];
+
+                // Build options map for select, checkbox-group, radio-group
+                if (in_array($field['type'], ['checkbox-group', 'radio-group', 'select'])) {
+                    $optionsMap = [];
+                    if (!empty($field['values']) && is_array($field['values'])) {
+                        foreach ($field['values'] as $option) {
+                            // Some forms might use 'value' or 'label' keys, handle both
+                            $optValue = $option['value'] ?? ($option['label'] ?? '');
+                            $optLabel = $option['label'] ?? $optValue;
+                            if ($optValue !== '') {
+                                $optionsMap[$optValue] = $optLabel;
+                            }
+                        }
+                    }
+                    $formFieldOptionsMap[$field['name']] = $optionsMap;
+                }
+            }
+        }
+
+        // Process additional info
+        $AdditionalInformation = [];
+        $excludedKeys = ['first_name', 'last_name', 'email', 'phone', 'service', 'vendor'];
+
+        $filteredDynamicValues = array_filter(
+            $dynamicValues,
+            fn($key) => !in_array($key, $excludedKeys),
+            ARRAY_FILTER_USE_KEY
+        );
+
+        $filteredKeys = array_keys($filteredDynamicValues);
+
+        $matchedFields = array_filter(
+            $formStructureArray,
+            fn($field) =>
+            !empty($field['name']) && in_array($field['name'], $filteredKeys)
+        );
+
+        foreach ($matchedFields as $field) {
+            $name = $field['name'];
+            $label = $formFieldLabelMap[$name] ?? $name;
+            $rawValue = $dynamicValues[$name] ?? '';
+
+            $value = '';
+
+            if ($field['type'] === 'checkbox-group') {
+                // Value is an array of keys
+                $values = (array) $rawValue;
+
+                // Remove 'other' if present, add _other values if any
+                if (in_array('other', $values)) {
+                    $values = array_diff($values, ['other']);
+                    $otherValues = (array) ($dynamicValues[$name . '_other'] ?? []);
+                    $values = array_merge($values, $otherValues);
+                }
+
+                // Map values to labels using options map if available
+                if (isset($formFieldOptionsMap[$name])) {
+                    $values = array_map(fn($v) => $formFieldOptionsMap[$name][$v] ?? $v, $values);
+                }
+
+                $value = implode(', ', $values);
+            } elseif ($field['type'] === 'radio-group' || $field['type'] === 'select') {
+                // Single value
+                $val = $rawValue;
+
+                if ($val === 'other' && !empty($dynamicValues[$name . '_other'])) {
+                    $val = $dynamicValues[$name . '_other'];
+                } elseif (isset($formFieldOptionsMap[$name][$val])) {
+                    $val = $formFieldOptionsMap[$name][$val];
+                }
+                $value = $val;
+            } else {
+                // Other field types use raw value directly
+                $value = $rawValue;
+            }
+
+            // Skip empty values
+            if (empty($value) && $value !== '0') {
+                continue;
+            }
+
+            $AdditionalInformation[$label] = $value;
+        }
+
+        // Fix booking datetime format
+        $formattedDateTime = $booking->booking_datetime
+            ? date('Y-m-d H:i', strtotime($booking->booking_datetime))
+            : '';
+
+        // Staff name → ID (optional)
+        $staffUser = User::where('name', $booking->selected_staff)->first();
+        $staffName = $staffUser?->name ?? $booking->selected_staff;
+
+        // Combine everything into one table data array
+        $bookingDetails = [
+            'Booking DateTime' => $formattedDateTime,
+        ];
+
+        // Merge service/vendor
+        $bookingDetails = array_merge($bookingDetails, $serviceverndor);
+
+        // Merge slot details
+        if (!empty($slotedetail) && is_array($slotedetail)) {
+            foreach ($slotedetail as $key => $value) {
+                $bookingDetails["Slot Detail " . ($key + 1)] = is_array($value) ? implode(', ', $value) : $value;
+            }
+        }
+
+        // Merge additional info
+        $bookingDetails = array_merge($bookingDetails, $AdditionalInformation);
+
+        // Build a set of already added labels to avoid duplicates
+        $addedLabels = array_map('strtolower', array_keys($bookingDetails));
+
+        // Add personal details with proper labels, avoiding duplicates and skipping auto-generated keys
+        foreach ($bookingData as $key => $value) {
+            // Skip keys like checkbox-group-xxxx, select-xxxx etc.
+            if (preg_match('/^(checkbox-group|select|radio-group)-\d+/', $key)) {
+                continue;
+            }
+
+            $label = $formFieldLabelMap[$key] ?? ucwords(str_replace('_', ' ', $key));
+
+            // Skip if label already exists
+            if (in_array(strtolower($label), $addedLabels)) {
+                continue;
+            }
+
+            // Skip empty values
+            if (empty($value) && $value !== '0') {
+                continue;
+            }
+
+            $bookingDetails[$label] = is_array($value) ? implode(', ', $value) : $value;
+            $addedLabels[] = strtolower($label);
+        }
+
+        // Determine name & email
+        if (!empty($bookingData['first_name'])) {
+            $name = $bookingData['first_name'] . ' ' . ($bookingData['last_name'] ?? '');
+            $email = $bookingData['email'] ?? '';
+        } elseif (Auth::check()) {
+            $name = Auth::user()->name;
+            $email = Auth::user()->email;
+        } else {
+            $name = '';
+            $email = '';
+        }
+
+        // Send email if possible
+        if (!empty($name) && !empty($email)) {
+            $macros = [
+                '{NAME}'         => $name,
+                '{SITE_TITLE}'   => get_setting('site_title'),
+                '{BOOKING_DATA}' => generateBookingDataTable($bookingDetails),
+            ];
+
+            newbooking('booking_confirmed_notification', $email, $macros);
+        }
     }
 }

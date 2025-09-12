@@ -45,7 +45,6 @@ class UserController extends Controller
             return DataTables::of($query)
                 ->addIndexColumn()
     
-                // ✅ Checkbox column (only show if deletable)
                 ->addColumn('checkbox', function ($row) use ($currentUser) {
                     if (Auth::id() != $row->id) {
                         return '<input type="checkbox" class="selectRow" value="' . $row->id . '">';
@@ -353,6 +352,15 @@ class UserController extends Controller
         $role_id = 4;
         $userRole = Role::find($role_id);
         $user->assignRole($userRole);
+
+        $macros = [
+            '{NAME}' =>$user->name,
+            '{EMAIL}' => $user->email,
+            '{SITE_TITLE}' => get_setting('site_title') ,
+        ];
+     
+        newcustomerregister('new_account_email_notification', $user->email, $macros);
+        sendAdminTemplateEmail('admin_new_user_notification',get_setting('owner_email'), $macros);
         return redirect('/login')->with('success', 'Registration successful! Please log in.');
     }
 
