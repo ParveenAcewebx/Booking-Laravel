@@ -91,21 +91,15 @@ $(document).ready(function () {
     });
     /*====================== service tab in setting ==================*/
     function populateCancellingValues(unit) {
-        var $valueSelect = $('#cancelling_value');
-        var selectedValue = $('#cancel_value').val();
-        $valueSelect.empty();
+        var $select = $('#cancelling_value');
+        $select.empty();
 
-        var max = unit === 'days' ? 30 : 24;
+        var max = (unit === 'hours') ? 24 : 30;
+        var savedValue = $('#cancel_value').val();
 
         for (var i = 1; i <= max; i++) {
-            $valueSelect.append($('<option>', {
-                value: i,
-                text: i
-            }));
-        }
-
-        if (selectedValue && selectedValue <= max) {
-            $valueSelect.val(selectedValue);
+            var isSelected = (savedValue == i) ? 'selected' : '';
+            $select.append('<option value="' + i + '" ' + isSelected + '>' + i + '</option>');
         }
     }
 
@@ -115,8 +109,9 @@ $(document).ready(function () {
 
     // On change of unit
     $('#cancelling_unit').on('change', function () {
-        // alert('sdfsf');
         var selectedUnit = $(this).val();
+        // reset hidden value when switching units
+        $('#cancel_value').val('');
         populateCancellingValues(selectedUnit);
     });
 
