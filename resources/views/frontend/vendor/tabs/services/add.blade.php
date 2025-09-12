@@ -111,6 +111,7 @@
                         <label class="block text-sm font-medium text-gray-600 mt-2">Price</label>
                         <input type="text" name="price" value="{{ old('price') }}"
                             class="w-full mt-1 p-3 border rounded-md focus:ring-2 focus:ring-indigo-500">
+
                     </div>
                 </div>
 
@@ -118,7 +119,9 @@
                     <!-- Featured Image -->
                     <div class="mt-4">
                         <label class="block text-sm font-medium text-gray-600">Featured Image</label>
-                        <input type="file" name="thumbnail" class="w-full mt-1 p-2 border rounded-md" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                        <input type="file" name="thumbnail"  id="feature-input" class="w-full mt-1 p-2 border rounded-md" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
+                        <div class="flex gap-2 mt-4 flex-wrap" id="new-feature-preview"></div>
+
                     </div>
 
                     <!-- Gallery -->

@@ -125,15 +125,27 @@
                     <!-- Featured Image -->
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-600">Featured Image</label>
-                        <input type="file" name="thumbnail" class="w-full mt-1 p-2 border rounded-md"
+                        <input type="file" id="feature-input" name="thumbnail"
+                            class="w-full mt-1 p-2 border rounded-md"
                             accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
-                        @if($servicedata[0]->thumbnail)
-                        <div class="relative w-20 h-20 mt-2">
-                            <img src="{{ asset('storage/' . $servicedata[0]->thumbnail) }}"
-                                class="w-20 h-20 rounded shadow">
-                            <input type="hidden" name="existing_thumbnail" value="{{ $servicedata[0]->thumbnail }}">
+
+                        <div class="flex gap-2 mt-4 flex-wrap" id="new-feature-preview">
+                            @if(!empty($servicedata[0]->thumbnail))
+                            <div class="relative w-24 h-24 inline-block existing-feature-wrapper">
+                                <img src="{{ asset('storage/' . $servicedata[0]->thumbnail) }}"
+                                    class="w-24 h-24 rounded shadow object-cover border">
+                                <button type="button"
+                                    class="absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-full shadow existing-delete-btn">
+                                    ✕
+                                </button>
+                                <input type="hidden" name="existing_thumbnail" value="{{ $servicedata[0]->thumbnail }}">
+                                <!-- Hidden remove flag -->
+                                <input type="hidden" name="remove_thumbnail" value="0" class="remove-thumbnail-flag">
+                            </div>
+                            @else
+                            <input type="hidden" name="remove_thumbnail" value="0" class="remove-thumbnail-flag">
+                            @endif
                         </div>
-                        @endif
                     </div>
 
                     <!-- Gallery -->
@@ -143,26 +155,24 @@
                             class="w-full mt-1 p-2 border rounded-md"
                             accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
 
-                        @if($servicedata[0]->gallery)
+                        <!-- Always have a container for gallery previews -->
                         <div class="flex gap-2 mt-2 flex-wrap" id="gallery-preview">
+                            @if(!empty($servicedata[0]->gallery))
                             @foreach(json_decode($servicedata[0]->gallery) as $key => $img)
-                            <div class="relative w-16 h-16 group" data-img="{{ str_replace('storage/', '', $img) }}">
+                            <div class="relative w-16 h-16 group existing-gallery-wrapper" data-img="{{ str_replace('storage/', '', $img) }}">
                                 <img src="{{ asset('storage/'.$img) }}" class="w-16 h-16 rounded shadow object-cover">
-
-                                {{-- Delete Button --}}
                                 <button type="button"
                                     class="absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-full"
                                     onclick="deleteGalleryImage(this)">
                                     ✕
                                 </button>
-                                {{-- Hidden input to keep existing images --}}
-                                <input type="hidden" name="existing_gallery[]"
-                                    value="{{ str_replace('storage/', '', $img) }}">
+                                <input type="hidden" name="existing_gallery[]" value="{{ str_replace('storage/', '', $img) }}">
                             </div>
                             @endforeach
+                            @endif
                         </div>
-                        @endif
                     </div>
+
                 </div>
                 <div x-show="tab === 'setting'" x-transition>
                     <div class="tab-pane active" id="settings" role="tabpanel">

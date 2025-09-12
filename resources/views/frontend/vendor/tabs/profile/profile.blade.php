@@ -28,7 +28,7 @@
                <div class="mb-4">
                   <label for="avatar" class="block text-sm font-medium text-gray-600">Profile Image</label>
                   <input type="file" id="avatar" name="avatar" 
-                     class="w-full mt-1 p-4 border rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500">
+                     class="w-full mt-1 p-4 border rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500" accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
                </div>
                <div class="flex justify-end mt-6">
                   <button type="submit" class="bg-indigo-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-indigo-700">
