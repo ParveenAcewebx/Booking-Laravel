@@ -450,14 +450,16 @@ class FormController extends Controller
             $durationFormatted = null;
         }
         // Build service/vendor info
-        $serviceverndor = [
-            'Service Name'      => $service?->name,
-            'Service Price'     => $service?->price,
-            'Service Currency'  => $service?->currency,
-            'Service Duration' => $durationFormatted,
-            'Vendor Name'       => $vendor?->name,
-        ];
-
+        if (!empty($service->name)) {
+            $serviceverndor = [
+                'Service Name'      => $service?->name,
+                'Service Price'     => $service?->currency . $service?->price,
+                'Service Duration' => $durationFormatted,
+                'Vendor Name'       => $vendor?->name,
+            ];
+        } else {
+            $serviceverndor = [];
+        }
         // Get booking slots
         $slotedetail = json_decode($booking->bookslots, true) ?? [];
 
@@ -577,11 +579,32 @@ class FormController extends Controller
         $bookingDetails = array_merge($bookingDetails, $serviceverndor);
 
         // Merge slot details
+
         if (!empty($slotedetail) && is_array($slotedetail)) {
             foreach ($slotedetail as $key => $value) {
-                $bookingDetails["Slot Detail " . ($key + 1)] = is_array($value) ? implode(', ', $value) : $value;
+                if (is_array($value)) {
+                    $slot = [];
+
+                    // Check if it's an associative array (e.g. ['start' => '10:00', 'end' => '11:00'])
+                    if (array_values($value) !== $value) {
+                        foreach ($value as $k => $v) {
+                            if (strtolower($k) === 'staff_ids') {
+                                continue; // ✅ Skip Staff_ids
+                            }
+                            $slot[] = ucfirst($k) . ': ' . (is_array($v) ? json_encode($v) : $v);
+                        }
+                        $bookingDetails["Slot Detail " . ($key + 1)] = implode(', ', $slot);
+                    } else {
+                        // It's a regular indexed array
+                        $bookingDetails["Slot Detail " . ($key + 1)] = implode(', ', $value);
+                    }
+                } else {
+                    // Not an array at all
+                    $bookingDetails["Slot Detail " . ($key + 1)] = $value;
+                }
             }
         }
+
 
         // Merge additional info
         $bookingDetails = array_merge($bookingDetails, $AdditionalInformation);
@@ -591,7 +614,10 @@ class FormController extends Controller
 
         // Add personal details with proper labels, avoiding duplicates and skipping auto-generated keys
         foreach ($bookingData as $key => $value) {
-            // Skip keys like checkbox-group-xxxx, select-xxxx etc.
+            if (in_array($key, ['service', 'vendor'])) {
+                continue;
+            }
+
             if (preg_match('/^(checkbox-group|select|radio-group)-\d+/', $key)) {
                 continue;
             }
@@ -632,7 +658,7 @@ class FormController extends Controller
                 '{BOOKING_DATA}' => generateBookingDataTable($bookingDetails),
             ];
 
-            newbooking('booking_confirmed_notification', $email, $macros);
+            newbooking('booking_confirmed', $email, $macros);
         }
     }
 }

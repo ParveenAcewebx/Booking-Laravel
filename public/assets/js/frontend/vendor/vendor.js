@@ -293,5 +293,76 @@ $(document).ready(function () {
         $('#description').val(quill.root.innerHTML);
     });
 
+    let selectedAvatarFile = null;
+
+const previewContainer = document.getElementById('profile-image-preview');
+const newPreviewContainer = document.getElementById('new-profile-preview');
+const removeFlag = document.getElementById('remove-avatar-flag');
+
+// Initialize delete button for existing avatar on page load
+function initExistingDeleteBtn() {
+    document.querySelectorAll('.existing-delete-btn').forEach(btn => {
+        btn.onclick = function() {
+            const wrapper = this.closest('.existing-avatar-wrapper');
+            if (!wrapper) return;
+            wrapper.remove();
+            selectedAvatarFile = null;
+            document.getElementById('avatar').value = "";
+            removeFlag.value = 1;
+        };
+    });
+}
+
+initExistingDeleteBtn();
+
+// Handle new avatar selection
+document.getElementById('avatar').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+
+    // Clear previous new preview
+    newPreviewContainer.innerHTML = '';
+    selectedAvatarFile = null;
+
+    if (!file || !file.type.startsWith('image/')) return;
+
+    selectedAvatarFile = file;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const wrapper = document.createElement('div');
+        wrapper.className = "relative w-24 h-24 new-avatar-preview";
+
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.className = "w-24 h-24 rounded shadow object-cover border";
+
+        const btn = document.createElement('button');
+        btn.type = "button";
+        btn.innerText = '✕';
+        btn.className = "absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-full";
+
+        btn.onclick = function() {
+            wrapper.remove();
+            selectedAvatarFile = null;
+            document.getElementById('avatar').value = "";
+            removeFlag.value = 1;
+        };
+
+        wrapper.appendChild(img);
+        wrapper.appendChild(btn);
+        newPreviewContainer.appendChild(wrapper);
+
+        // Reset remove flag when new file is selected
+        removeFlag.value = 0;
+
+        // Optionally hide existing avatar preview
+        document.querySelectorAll('.existing-avatar-wrapper').forEach(w => w.style.display = 'none');
+    };
+
+    reader.readAsDataURL(file);
+});
+
+
+
 });
 
