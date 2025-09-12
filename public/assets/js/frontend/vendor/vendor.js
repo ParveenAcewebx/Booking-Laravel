@@ -135,49 +135,41 @@ $(document).ready(function () {
     $('input[name="payment_account"]').on('change', toggleStripeCredentials);
     $('#payment__is_live').on('change', toggleStripeMode);
 
-    /*====================== delete gallery image (existing) ==================*/
     /*====================== Delete existing gallery images ==================*/
+    /* ================= Delete existing gallery image ================= */
     window.deleteGalleryImage = function (button) {
-        const container = button.closest('[data-img]');
-        if (!container) return;
+        const wrapper = button.closest('.existing-gallery-wrapper');
+        if (!wrapper) return;
 
-        // Get image path
-        const imagePath = container.getAttribute('data-img');
+        // Get the image path from hidden input
+        const hiddenInput = wrapper.querySelector('input[name="existing_gallery[]"]');
+        const imagePath = hiddenInput ? hiddenInput.value : null;
 
-        // Remove container visually
-        container.remove();
+        // Add hidden input to mark for deletion
+        if (imagePath) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'delete_gallery[]';
+            input.value = imagePath;
 
-        // Add hidden input to mark image for deletion
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'delete_gallery[]';
-        input.value = imagePath;
-
-        // Append to the form
-        document.querySelector('form').appendChild(input);
-    }
-
-
-    /*====================== New gallery uploads ==================*/
-    let selectedGalleryFiles = [];
-
-    $('#gallery-input').on('change', function (event) {
-        const newFiles = Array.from(event.target.files);
-
-        // Always ensure we have a preview container
-        let previewContainer = document.getElementById('gallery-preview');
-        if (!previewContainer) {
-            previewContainer = document.createElement('div');
-            previewContainer.id = 'gallery-preview';
-            previewContainer.className = 'flex gap-2 mt-2 flex-wrap';
-            document.querySelector('form').appendChild(previewContainer);
+            document.querySelector('form').appendChild(input);
         }
 
-        // Append new files without removing existing previews
+        // Remove the preview
+        wrapper.remove();
+    };
+
+
+    /* ================= Handle new uploads ================= */
+    let selectedGalleryFiles = [];
+
+    document.getElementById('gallery-input').addEventListener('change', function (event) {
+        const newFiles = Array.from(event.target.files);
+
         newFiles.forEach(file => {
             if (!file.type.startsWith('image/')) return;
 
-            const fileKey = file.name + "_" + file.size;
+            const fileKey = file.name + "_" + file.size; // unique key
             selectedGalleryFiles.push({ key: fileKey, file });
 
             const reader = new FileReader();
@@ -203,17 +195,18 @@ $(document).ready(function () {
 
                 wrapper.appendChild(img);
                 wrapper.appendChild(btn);
-                previewContainer.appendChild(wrapper);
+
+                document.getElementById('gallery-preview').appendChild(wrapper);
             };
             reader.readAsDataURL(file);
         });
 
-        // Reset the input to allow re-selecting the same file if needed
+        // reset input so same file can be reselected
         this.value = "";
         updateFileInput();
     });
 
-    // Function to update file input dynamically
+    /* ================= Sync hidden file input with selectedGalleryFiles ================= */
     function updateFileInput() {
         const input = document.getElementById('gallery-input');
         const dataTransfer = new DataTransfer();

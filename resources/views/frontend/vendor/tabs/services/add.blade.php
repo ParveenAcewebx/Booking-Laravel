@@ -136,7 +136,7 @@
                             id="gallery-input">
 
                         {{-- New Image Previews --}}
-                        <div class="flex gap-2 mt-4 flex-wrap" id="new-gallery-preview"></div>
+                        <div class="flex gap-2 mt-4 flex-wrap" id="gallery-preview"></div>
                     </div>
                 </div>
 
