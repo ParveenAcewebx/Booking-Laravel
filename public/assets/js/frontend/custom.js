@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     if (!steps.length || !prevButton || !nextButtons.length || !submitButtons.length) {
-        console.error('Required elements not found!');
+        // console.error('Required elements not found!');
         return;
     }
 
@@ -655,47 +655,52 @@ document.addEventListener("DOMContentLoaded", function () {
         const form = document.getElementById("templateForm");
         if (form) form.reset();
         if (formBuilderInstance) formBuilderInstance.actions.setData([]);
-        const errorMessageElement = document.getElementById(
-            "bookingTemplatesname-error"
-        );
+        const errorMessageElement = document.getElementById("bookingTemplatesname-error");
         if (errorMessageElement) errorMessageElement.remove();
     }
 
     // Open Template Form
-    openBtns.forEach((btn) => {
-        btn.addEventListener("click", function (e) {
-            e.preventDefault();
-            if (bookingSection) bookingSection.classList.add("hidden");
-            if (bookingHeader) bookingHeader.classList.add("hidden");
-            if (noBookings) noBookings.classList.add("hidden");
+    if (openBtns.length > 0) {
+        openBtns.forEach((btn) => {
+            btn.addEventListener("click", function (e) {
+                e.preventDefault();
+                if (bookingSection) bookingSection.classList.add("hidden");
+                if (bookingHeader) bookingHeader.classList.add("hidden");
+                if (noBookings) noBookings.classList.add("hidden");
 
-            modal.classList.remove("hidden");
-            if (!formBuilderInstance) initFormBuilder();
+                if (modal) modal.classList.remove("hidden");
+                if (!formBuilderInstance) initFormBuilder();
+            });
         });
-    });
+    }
 
     // Close Template Form
-    closeBtn.addEventListener("click", () => {
-        modal.classList.add("hidden");
-        if (bookingSection) bookingSection.classList.remove("hidden");
-        if (bookingHeader) bookingHeader.classList.remove("hidden");
-        if (noBookings) noBookings.classList.remove("hidden");
-        resetModal();
-    });
+    if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+            if (modal) modal.classList.add("hidden");
+            if (bookingSection) bookingSection.classList.remove("hidden");
+            if (bookingHeader) bookingHeader.classList.remove("hidden");
+            if (noBookings) noBookings.classList.remove("hidden");
+            resetModal();
+        });
+    }
 
     const inputElement = document.getElementById("bookingTemplatesname");
 
     // Remove error on typing
-    inputElement.addEventListener("input", () => {
-        const oldErr = document.getElementById("bookingTemplatesname-error");
-        if (oldErr) oldErr.remove();
-    });
+    if (inputElement) {
+        inputElement.addEventListener("input", () => {
+            const oldErr = document.getElementById("bookingTemplatesname-error");
+            if (oldErr) oldErr.remove();
+        });
+    }
 
     // Validation & Save
     document.addEventListener("click", function (e) {
         if (e.target.classList.contains("save-template")) {
-            const name = inputElement.value.trim();
+            if (!inputElement) return;
 
+            const name = inputElement.value.trim();
             if (!name) {
                 const errorSpan = document.createElement("span");
                 errorSpan.id = "bookingTemplatesname-error";
@@ -709,22 +714,19 @@ document.addEventListener("DOMContentLoaded", function () {
             const data = formBuilderInstance
                 ? formBuilderInstance.actions.getData()
                 : [];
+
             $.post("/admin/template/save", {
                 _token: document
                     .querySelector('meta[name="csrf-token"]')
                     .getAttribute("content"),
                 templatename: name,
-                templatestatus: document.querySelector(
-                    ".select-template-status"
-                ).value,
-                vendorid: document.querySelector(".select-template-vendor")
-                    .value,
+                templatestatus: document.querySelector(".select-template-status")?.value || "",
+                vendorid: document.querySelector(".select-template-vendor")?.value || "",
                 data: data,
             })
                 .done(() => {
-                    modal.classList.add("hidden");
-                    if (bookingSection)
-                        bookingSection.classList.remove("hidden");
+                    if (modal) modal.classList.add("hidden");
+                    if (bookingSection) bookingSection.classList.remove("hidden");
                     if (bookingHeader) bookingHeader.classList.remove("hidden");
                     if (noBookings) noBookings.classList.remove("hidden");
                     resetModal();

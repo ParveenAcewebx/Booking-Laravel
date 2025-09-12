@@ -7,7 +7,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\EmailTemplate;
 use App\Models\User;
 use App\Http\Controllers\Controller;
-Use Illuminate\Support\Str;
+use Illuminate\Support\Str;
 
 class EmailTemplateController extends Controller
 {
@@ -29,39 +29,49 @@ class EmailTemplateController extends Controller
                         ? '<span class="badge badge-success">Active</span>'
                         : '<span class="badge badge-danger">Inactive</span>';
                 })
-                ->addColumn('email_content', function ($row) {
-                    return $row->email_content;
-                })
                 ->addColumn('macro', function ($row) {
                     return $row->macro;
+                })
+                ->addColumn('checkbox', function ($row) {
+                    // Disable checkbox if active
+                    $disabled = $row->status == config('constants.status.active') ? 'disabled' : '';
+                    return '<input type="checkbox" class="selectRow" value="' . $row->id . '" ' . $disabled . '>';
                 })
                 ->addColumn('action', function ($row) {
                     $btn = '';
 
                     if (auth()->user()->can('edit emails')) {
                         $btn .= '<a href="' . route('emails.edit', $row->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit Email">
-                                <i class="fas fa-pencil-alt"></i>
-                             </a> ';
+                                    <i class="fas fa-pencil-alt"></i>
+                                 </a> ';
                     }
 
                     if (auth()->user()->can('delete emails')) {
-                        $btn .= '<form action="' . route('emails.destroy', $row->id) . '" method="POST" id="delete-email-' . $row->id . '" style="display:inline;">
-                                ' . csrf_field() . '
-                                <input type="hidden" name="_method" value="DELETE">
-                                <button type="button" onclick="deleteEmailTemplate(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Email">
-                                    <i class="feather icon-trash-2"></i>
-                                </button>
-                             </form>';
+                        if ($row->status == config('constants.status.active')) {
+                            // Disable delete if active
+                            $btn .= '<button type="button" class="btn btn-icon btn-secondary" disabled title="Active templates cannot be deleted">
+                                        <i class="feather icon-trash-2"></i>
+                                     </button>';
+                        } else {
+                            $btn .= '<form action="' . route('emails.destroy', $row->id) . '" method="POST" id="delete-email-' . $row->id . '" style="display:inline;">
+                                        ' . csrf_field() . '
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="button" onclick="deleteEmailTemplate(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Email">
+                                            <i class="feather icon-trash-2"></i>
+                                        </button>
+                                     </form>';
+                        }
                     }
 
                     return $btn;
                 })
-                ->rawColumns(['status_label', 'action','email_content','macro'])
+                ->rawColumns(['status_label', 'checkbox', 'action', 'macro'])
                 ->make(true);
         }
 
         return view('admin.email-template.index');
     }
+
 
     public function create()
     {
@@ -111,7 +121,7 @@ class EmailTemplateController extends Controller
         return view('admin.email-template.edit', compact('getEmailId'));
     }
 
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
         // dd('sdfdsf');
         $template = EmailTemplate::findOrFail($id);
@@ -160,11 +170,11 @@ class EmailTemplateController extends Controller
     public function bulkDelete(Request $request)
     {
         $ids = $request->input('ids');
-    
+
         if (!$ids || !is_array($ids)) {
             return response()->json(['success' => false, 'message' => 'No Records Selected.'], 400);
         }
-    
+
         EmailTemplate::whereIn('id', $ids)->delete();
         return response()->json(['success' => true, 'message' => 'Selected Emails Deleted Successfully.']);
     }

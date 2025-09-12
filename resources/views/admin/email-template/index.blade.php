@@ -35,7 +35,7 @@
             <div class="col-lg-12">
                 <div class="card user-profile-list">
                     <div class="card-body">
-                        <div class="dt-responsive table-responsive">
+                        <div class="dt-responsive">
                             <table class="table table-striped nowrap" id="emailTemplatesTable" width="100%">
                                 <thead>
                                     <tr>
@@ -44,7 +44,6 @@
                                         <th>Title</th>
                                         <th>Slug</th>
                                         <th>Subject</th>
-                                        <th>Email Content</th>
                                         <th>Macro</th>
                                         <th>Status</th>
                                         <th>Action</th>
@@ -67,24 +66,16 @@
             processing: true,
             serverSide: true,
             ajax: "{{ route('emails.list') }}",
-            order: [
-                [1, 'desc']
-            ],
-            columns: [{
-                    data: 'id',
-                    render: function(data) {
-                        return `<input type="checkbox" class="selectRow" value="${data}">`;
-                    },
-                    orderable: false,searchable: false
-                },
-                {data: 'id',name: 'id',visible: false},
-                {data: 'title',name: 'title'},
-                {data: 'slug',name: 'slug'},
-                {data: 'subject',name: 'subject'},
-                {data: 'email_content',name: 'email_content'},
-                {data: 'macro', name: 'macro'},
-                {data: 'status_label',name: 'status',orderable: false,searchable: false},
-                {data: 'action',name: 'action', orderable: false,searchable: false}
+            order: [[1, 'desc']],
+            columns: [
+                { data: 'checkbox', orderable: false, searchable: false },
+                { data: 'id', name: 'id', visible: false },
+                { data: 'title', name: 'title' },
+                { data: 'slug', name: 'slug' },
+                { data: 'subject', name: 'subject' },
+                { data: 'macro', name: 'macro' },
+                { data: 'status_label', name: 'status', orderable: false, searchable: false },
+                { data: 'action', name: 'action', orderable: false, searchable: false }
             ]
         });
 

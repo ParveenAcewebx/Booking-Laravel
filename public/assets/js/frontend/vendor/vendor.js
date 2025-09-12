@@ -115,6 +115,7 @@ $(document).ready(function () {
 
     // On change of unit
     $('#cancelling_unit').on('change', function () {
+        // alert('sdfsf');
         var selectedUnit = $(this).val();
         populateCancellingValues(selectedUnit);
     });
@@ -176,15 +177,17 @@ $(document).ready(function () {
         toggleStripeMode();
     });
 
-    // delete gallery image in service tab 
+    // ----------------------------
+    // Delete existing gallery image (from DB)
+    // ----------------------------
     function deleteGalleryImage(button) {
         const container = button.closest('[data-img]');
         const imagePath = container.getAttribute('data-img');
 
-        // Remove the image preview block
+        // Remove the preview block
         container.remove();
 
-        // Append hidden input to mark it for deletion
+        // Append hidden input to mark for deletion
         const input = document.createElement('input');
         input.type = 'hidden';
         input.name = 'delete_gallery[]';
@@ -193,118 +196,73 @@ $(document).ready(function () {
         document.querySelector('form').appendChild(input);
     }
     window.deleteGalleryImage = deleteGalleryImage;
-    let selectedFiles = [];
 
-    // Handle preview + delete of new images
-    document.getElementById('gallery-input').addEventListener('change', function (event) {
-        const previewContainer = document.getElementById('gallery-preview');
-        const files = Array.from(event.target.files);
-
-        selectedFiles = files; // Store files for submission
-
-        // Remove previous previews of new images
-        document.querySelectorAll('.new-preview').forEach(el => el.remove());
-
-        files.forEach((file, index) => {
-            if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-
-                reader.onload = function (e) {
-                    const wrapper = document.createElement('div');
-                    wrapper.classList.add('relative', 'w-16', 'h-16', 'new-preview');
-                    wrapper.setAttribute('data-index', index);
-
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.classList.add('w-16', 'h-16', 'rounded', 'shadow', 'object-cover');
-
-                    const delBtn = document.createElement('button');
-                    delBtn.type = 'button';
-                    delBtn.innerText = '✕';
-                    delBtn.classList.add('absolute', 'top-0', 'right-0', 'bg-red-600', 'text-white', 'text-xs', 'px-1', 'rounded-full');
-                    delBtn.onclick = function () {
-                        wrapper.remove();
-                        removeSelectedFile(index);
-                    };
-
-                    wrapper.appendChild(img);
-                    wrapper.appendChild(delBtn);
-                    previewContainer.appendChild(wrapper);
-                };
-
-                reader.readAsDataURL(file);
-            }
-        });
-
-    });
-
-    // Remove file from input selection
-    function removeSelectedFile(indexToRemove) {
-        selectedFiles.splice(indexToRemove, 1);
-
-        const fileInput = document.getElementById('gallery-input');
-        const dataTransfer = new DataTransfer();
-
-        selectedFiles.forEach(file => dataTransfer.items.add(file));
-        fileInput.files = dataTransfer.files;
-    }
-    // add service for gallery validation 
+    // ----------------------------
+    // Handle new image uploads + preview
+    // ----------------------------
     let selectedGalleryFiles = [];
+
     document.getElementById('gallery-input').addEventListener('change', function (event) {
         const newFiles = Array.from(event.target.files);
-        const previewContainer = document.getElementById('new-gallery-preview');
 
-        // Merge new files into existing ones
+        const previewContainer = document.getElementById('gallery-preview')
+            || document.getElementById('new-gallery-preview');
+
+        previewContainer.querySelectorAll('.new-preview').forEach(el => el.remove());
+
+        // Reset JS array each time you choose new files
+        selectedGalleryFiles = [];
+
         newFiles.forEach(file => {
             if (!file.type.startsWith('image/')) return;
 
-            // Check if file already added (by name + size)
-            const alreadyExists = selectedGalleryFiles.some(f => f.name === file.name && f.size === file.size);
-            if (!alreadyExists) {
-                selectedGalleryFiles.push(file);
+            const fileKey = file.name + "_" + file.size;
 
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = "relative w-16 h-16";
-                    wrapper.setAttribute('data-file', file.name + file.size); // Unique identifier
+            selectedGalleryFiles.push({ key: fileKey, file });
 
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.className = "w-16 h-16 rounded shadow object-cover";
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const wrapper = document.createElement('div');
+                wrapper.className = "relative w-16 h-16 inline-block mr-2 mb-2 new-preview"; // 👈 mark as new
+                wrapper.setAttribute('data-key', fileKey);
 
-                    const btn = document.createElement('button');
-                    btn.type = "button";
-                    btn.innerText = '✕';
-                    btn.className = "absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-full";
-                    btn.onclick = function () {
-                        wrapper.remove();
-                        // Remove file from array
-                        selectedGalleryFiles = selectedGalleryFiles.filter(f => f.name + f.size !== file.name + file.size);
-                        updateFileInput();
-                    };
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = "w-16 h-16 rounded shadow object-cover";
 
-                    wrapper.appendChild(img);
-                    wrapper.appendChild(btn);
-                    previewContainer.appendChild(wrapper);
+                const btn = document.createElement('button');
+                btn.type = "button";
+                btn.innerText = '✕';
+                btn.className = "absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-full";
+                btn.onclick = function () {
+                    wrapper.remove();
+                    selectedGalleryFiles = selectedGalleryFiles.filter(f => f.key !== fileKey);
+                    updateFileInput();
                 };
-                reader.readAsDataURL(file);
-            }
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(btn);
+                previewContainer.appendChild(wrapper);
+            };
+            reader.readAsDataURL(file);
         });
 
-        // Reset file input (so selecting the same file again triggers change)
         this.value = "";
         updateFileInput();
     });
 
-    // Function to update input's FileList with current selected files
+    // ----------------------------
+    // Sync FileList with our array
+    // ----------------------------
     function updateFileInput() {
         const input = document.getElementById('gallery-input');
         const dataTransfer = new DataTransfer();
 
-        selectedGalleryFiles.forEach(file => dataTransfer.items.add(file));
+        selectedGalleryFiles.forEach(obj => dataTransfer.items.add(obj.file));
         input.files = dataTransfer.files;
     }
+
+
     const quill = new Quill('#editor', {
         theme: 'snow'
     });
