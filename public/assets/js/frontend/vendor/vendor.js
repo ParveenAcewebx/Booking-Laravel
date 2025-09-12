@@ -1,30 +1,22 @@
-
 $(document).ready(function () {
 
-    /*============== staff validation form js  =========*/
+    /*============== staff validation form js ==========*/
     $('input').on('input', function () {
         const errorDiv = $(this).closest('.form-group').find('.error_message');
         if (errorDiv.length) errorDiv.remove();
         $(this).removeClass('is-invalid');
     });
 
-    /*==============  Assigned Services Select2  =========*/
-    $('.assigned-services').select2({
-        placeholder: "Select Services",
-        allowClear: true,
-        width: '100%'
-    });
+    /*============== Assigned Services Select2 ==========*/
+    if ($('.assigned-services').length) {
+        $('.assigned-services').select2({
+            placeholder: "Select Services",
+            allowClear: true,
+            width: '100%'
+        });
+    }
 
-    /*==============   date range picker staff day off ============*/
-    $('.date-range-picker').each(function () {
-        initializeDateRangePicker($(this));
-    });
-    $(document).on('focus', '.date-range-picker', function () {
-        if (!$(this).data('daterangepicker')) {
-            initializeDateRangePicker($(this));
-            $(this).data('daterangepicker').show();
-        }
-    });
+    /*============== Date range picker staff day off ============*/
     function initializeDateRangePicker($element) {
         $element.daterangepicker({
             autoUpdateInput: false,
@@ -34,43 +26,48 @@ $(document).ready(function () {
         });
     }
 
-    /*==============   staff day off dynamic add/remove  ============*/
-    window.addDayOff = addDayOff;
-    function addDayOff() {
-        let container = document.getElementById('dayOffContainer');
-        let html = `
-           <div class="bg-gray-50 border rounded p-4 mb-2 day-off-item">
-               <div class="grid grid-cols-2 gap-4">
-                   <div>
-                       <label class="block font-medium text-gray-700">Day(s) Off</label>
-                       <input type="text" name="day_offs[${dayOffIndex}][offs]" class="w-full border rounded p-2" required>
-                   </div>
-                   <div>
-                       <label class="block font-medium text-gray-700">Date Range</label>
-                       <input type="text" name="day_offs[${dayOffIndex}][date]" class="w-full border rounded p-2 date-range-picker" required>
-                   </div>
-               </div>
-               <button type="button" class="delete-btn bg-red-500 text-white px-4 py-2 mt-4 rounded" 
-               onclick="deleteRow(this)">Delete</button>
-           </div>`;
-        container.insertAdjacentHTML('beforeend', html);
+    $('.date-range-picker').each(function () {
+        initializeDateRangePicker($(this));
+    });
 
-        // re-init picker
-        $('.date-range-picker').last().daterangepicker({
-            autoUpdateInput: false,
-            locale: { format: 'MMMM D, YYYY' }
-        }).on('apply.daterangepicker', function (ev, picker) {
-            $(this).val(picker.startDate.format('MMMM D, YYYY') + ' - ' + picker.endDate.format('MMMM D, YYYY'));
-        });
+    $(document).on('focus', '.date-range-picker', function () {
+        if (!$(this).data('daterangepicker')) {
+            initializeDateRangePicker($(this));
+            $(this).data('daterangepicker').show();
+        }
+    });
+
+    /*============== Staff day off dynamic add/remove ============*/
+    let dayOffIndex = $('.day-off-item').length || 0; // track dynamic indices
+    window.addDayOff = function () {
+        const container = $('#dayOffContainer');
+        if (!container.length) return;
+
+        const html = `
+            <div class="bg-gray-50 border rounded p-4 mb-2 day-off-item">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-medium text-gray-700">Day(s) Off</label>
+                        <input type="text" name="day_offs[${dayOffIndex}][offs]" class="w-full border rounded p-2" required>
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-700">Date Range</label>
+                        <input type="text" name="day_offs[${dayOffIndex}][date]" class="w-full border rounded p-2 date-range-picker" required>
+                    </div>
+                </div>
+                <button type="button" class="delete-btn bg-red-500 text-white px-4 py-2 mt-4 rounded">Delete</button>
+            </div>`;
+        container.append(html);
+
+        initializeDateRangePicker(container.find('.date-range-picker').last());
         dayOffIndex++;
-    }
-    function deleteRow(button) {
-        var row = button.closest('.day-off-item');
-        if (row) row.remove();
-    }
-    window.deleteRow = deleteRow;
+    };
 
-    /*==============   workday start-end validation ============*/
+    $(document).on('click', '.delete-btn', function () {
+        $(this).closest('.day-off-item').remove();
+    });
+
+    /*============== Workday start-end validation ============*/
     $(document).on('change', 'select[name^="working_days"][name$="[start]"]', function () {
         const $start = $(this);
         const selectedIndex = this.selectedIndex;
@@ -81,27 +78,29 @@ $(document).ready(function () {
         });
     });
 
-    /*====================== cancel values ==================*/
+    /*====================== Cancel values ==================*/
     function populateCancellingValues(unit) {
-        var $select = $('#cancelling_value');
+        const $select = $('#cancelling_value');
+        if (!$select.length) return;
         $select.empty();
-        var max = (unit === 'hours') ? 24 : 30;
-        var savedValue = $('#cancel_value').val();
-        for (var i = 1; i <= max; i++) {
-            var isSelected = (savedValue == i) ? 'selected' : '';
-            $select.append('<option value="' + i + '" ' + isSelected + '>' + i + '</option>');
+        const max = (unit === 'hours') ? 24 : 30;
+        const savedValue = $('#cancel_value').val();
+        for (let i = 1; i <= max; i++) {
+            const isSelected = (savedValue == i) ? 'selected' : '';
+            $select.append(`<option value="${i}" ${isSelected}>${i}</option>`);
         }
     }
-    var initialUnit = $('#cancelling_unit').val();
+
+    const initialUnit = $('#cancelling_unit').val();
     populateCancellingValues(initialUnit);
     $('#cancelling_unit').on('change', function () {
         $('#cancel_value').val('');
         populateCancellingValues($(this).val());
     });
 
-    /*====================== stripe mode ==================*/
+    /*====================== Stripe mode ==================*/
     function toggleStripeOptions() {
-        var paymentMode = $('#payment_mode').val();
+        const paymentMode = $('#payment_mode').val();
         if (paymentMode === 'stripe') {
             $('.stripe-options').removeClass('hidden');
         } else {
@@ -109,14 +108,13 @@ $(document).ready(function () {
             $('.stripe-credentials').addClass('hidden');
         }
     }
+
     function toggleStripeCredentials() {
         const selected = $('input[name="payment_account"]:checked').val();
-        if (selected === 'custom') {
-            $('.stripe-credentials').removeClass('hidden');
-        } else {
-            $('.stripe-credentials').addClass('hidden');
-        }
+        if (selected === 'custom') $('.stripe-credentials').removeClass('hidden');
+        else $('.stripe-credentials').addClass('hidden');
     }
+
     function toggleStripeMode() {
         if ($('#payment__is_live').is(':checked')) {
             $('.stripe-live').removeClass('d-none hidden');
@@ -126,192 +124,133 @@ $(document).ready(function () {
             $('.stripe-test').removeClass('d-none hidden');
         }
     }
+
     toggleStripeOptions();
     toggleStripeCredentials();
     toggleStripeMode();
-    $('#payment_mode').on('change', function () {
-        toggleStripeOptions(); toggleStripeCredentials();
-    });
+    $('#payment_mode').on('change', () => { toggleStripeOptions(); toggleStripeCredentials(); });
     $('input[name="payment_account"]').on('change', toggleStripeCredentials);
     $('#payment__is_live').on('change', toggleStripeMode);
 
     /*====================== Delete existing gallery images ==================*/
-    /* ================= Delete existing gallery image ================= */
     window.deleteGalleryImage = function (button) {
-        const wrapper = button.closest('.existing-gallery-wrapper');
-        if (!wrapper) return;
+        const wrapper = $(button).closest('.existing-gallery-wrapper');
+        if (!wrapper.length) return;
+        const hiddenInput = wrapper.find('input[name="existing_gallery[]"]');
+        const imagePath = hiddenInput.length ? hiddenInput.val() : null;
 
-        // Get the image path from hidden input
-        const hiddenInput = wrapper.querySelector('input[name="existing_gallery[]"]');
-        const imagePath = hiddenInput ? hiddenInput.value : null;
-
-        // Add hidden input to mark for deletion
         if (imagePath) {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'delete_gallery[]';
-            input.value = imagePath;
-
-            document.querySelector('form').appendChild(input);
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'delete_gallery[]',
+                value: imagePath
+            }).appendTo('form');
         }
 
-        // Remove the preview
         wrapper.remove();
     };
 
-
-    /* ================= Handle new uploads ================= */
+    /*====================== Handle new gallery uploads ==================*/
+    const galleryInput = $('#gallery-input');
     let selectedGalleryFiles = [];
+    if (galleryInput.length) {
+        galleryInput.on('change', function (event) {
+            const newFiles = Array.from(event.target.files);
+            newFiles.forEach(file => {
+                if (!file.type.startsWith('image/')) return;
+                const fileKey = file.name + "_" + file.size;
+                selectedGalleryFiles.push({ key: fileKey, file });
 
-    document.getElementById('gallery-input').addEventListener('change', function (event) {
-        const newFiles = Array.from(event.target.files);
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const wrapper = $('<div class="relative w-16 h-16 inline-block mr-2 mb-2 new-preview"></div>').attr('data-key', fileKey);
+                    const img = $('<img>').attr('src', e.target.result).addClass('w-16 h-16 rounded shadow object-cover');
+                    const btn = $('<button type="button" class="absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-full">✕</button>');
+                    btn.on('click', function () {
+                        wrapper.remove();
+                        selectedGalleryFiles = selectedGalleryFiles.filter(f => f.key !== fileKey);
+                        updateFileInput();
+                    });
+                    wrapper.append(img, btn);
+                    $('#gallery-preview').append(wrapper);
+                };
+                reader.readAsDataURL(file);
+            });
 
-        newFiles.forEach(file => {
-            if (!file.type.startsWith('image/')) return;
+            this.value = "";
+            updateFileInput();
 
-            const fileKey = file.name + "_" + file.size; // unique key
-            selectedGalleryFiles.push({ key: fileKey, file });
+            function updateFileInput() {
+                const dataTransfer = new DataTransfer();
+                selectedGalleryFiles.forEach(obj => dataTransfer.items.add(obj.file));
+                galleryInput[0].files = dataTransfer.files;
+            }
+        });
+    }
+
+    /*====================== Service featured image upload ==================*/
+    const featureInput = $('#feature-input');
+    if (featureInput.length) {
+        let selectedFeatureFile = null;
+        const previewContainer = $('#new-feature-preview');
+
+        featureInput.on('change', function (event) {
+            const file = event.target.files[0];
+            if (!file || !file.type.startsWith('image/')) return;
+            selectedFeatureFile = file;
 
             const reader = new FileReader();
             reader.onload = function (e) {
-                const wrapper = document.createElement('div');
-                wrapper.className = "relative w-16 h-16 inline-block mr-2 mb-2 new-preview";
-                wrapper.setAttribute('data-key', fileKey);
+                let wrapper = previewContainer.find('.new-feature-wrapper, .existing-feature-wrapper').filter(function () {
+                    return $(this).css('display') !== 'none';
+                }).first();
 
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.className = "w-16 h-16 rounded shadow object-cover";
+                if (!wrapper.length) {
+                    wrapper = $('<div class="relative w-24 h-24 inline-block new-feature-wrapper"></div>');
+                    const img = $('<img class="w-24 h-24 rounded shadow object-cover border">');
+                    const btn = $('<button type="button" class="absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-full">✕</button>');
+                    btn.on('click', function () {
+                        wrapper.hide();
+                        selectedFeatureFile = null;
+                        featureInput.val('');
+                        wrapper.find('.remove-thumbnail-flag').val(1);
+                    });
+                    wrapper.append(img, btn);
 
-                const btn = document.createElement('button');
-                btn.type = "button";
-                btn.innerText = '✕';
-                btn.className = "absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-full";
+                    if (!wrapper.find('.remove-thumbnail-flag').length) {
+                        const removeFlag = $('<input type="hidden" name="remove_thumbnail" value="0" class="remove-thumbnail-flag">');
+                        wrapper.append(removeFlag);
+                    }
+                    previewContainer.append(wrapper);
+                }
 
-                btn.onclick = function () {
-                    wrapper.remove();
-                    selectedGalleryFiles = selectedGalleryFiles.filter(f => f.key !== fileKey);
-                    updateFileInput();
-                };
-
-                wrapper.appendChild(img);
-                wrapper.appendChild(btn);
-
-                document.getElementById('gallery-preview').appendChild(wrapper);
+                wrapper.find('img').attr('src', e.target.result);
+                wrapper.show();
+                wrapper.find('.remove-thumbnail-flag').val(0);
             };
             reader.readAsDataURL(file);
         });
-
-        // reset input so same file can be reselected
-        this.value = "";
-        updateFileInput();
-    });
-
-    /* ================= Sync hidden file input with selectedGalleryFiles ================= */
-    function updateFileInput() {
-        const input = document.getElementById('gallery-input');
-        const dataTransfer = new DataTransfer();
-
-        selectedGalleryFiles.forEach(obj => dataTransfer.items.add(obj.file));
-        input.files = dataTransfer.files;
     }
 
-
-    /*====================== service featured image upload ==================*/
-    let selectedFeatureFile = null;
-
-    $('#feature-input').on('change', function (event) {
-        const file = event.target.files[0];
-        const previewContainer = document.getElementById('new-feature-preview');
-        selectedFeatureFile = null;
-
-        if (!file || !file.type.startsWith('image/')) return;
-
-        selectedFeatureFile = file;
-
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            // Look for an existing wrapper that is still visible
-            let wrapper = [...previewContainer.querySelectorAll('.new-feature-wrapper, .existing-feature-wrapper')]
-                .find(w => w.style.display !== "none");
-
-            if (!wrapper) {
-                // If no visible wrapper exists, create one
-                wrapper = document.createElement('div');
-                wrapper.className = "relative w-24 h-24 inline-block new-feature-wrapper";
-
-                const img = document.createElement('img');
-                img.className = "w-24 h-24 rounded shadow object-cover border";
-
-                const btn = document.createElement('button');
-                btn.type = "button";
-                btn.innerText = '✕';
-                btn.className = "absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-full";
-
-                btn.onclick = function () {
-                    wrapper.style.display = "none"; // hide instead of remove
-                    selectedFeatureFile = null;
-                    document.getElementById('feature-input').value = "";
-
-                    const removeFlag = wrapper.querySelector('.remove-thumbnail-flag');
-                    if (removeFlag) removeFlag.value = 1;
-                };
-
-                wrapper.appendChild(img);
-                wrapper.appendChild(btn);
-
-                // Ensure hidden remove flag exists
-                let removeFlag = wrapper.querySelector('.remove-thumbnail-flag');
-                if (!removeFlag) {
-                    removeFlag = document.createElement('input');
-                    removeFlag.type = "hidden";
-                    removeFlag.name = "remove_thumbnail";
-                    removeFlag.value = 0;
-                    removeFlag.className = "remove-thumbnail-flag";
-                    wrapper.appendChild(removeFlag);
-                }
-
-                previewContainer.appendChild(wrapper);
-            }
-
-            // Update image preview
-            const imgEl = wrapper.querySelector('img');
-            imgEl.src = e.target.result;
-            wrapper.style.display = "inline-block"; // make sure it's visible
-
-            // Reset remove flag (because a new image was added)
-            const removeFlag = wrapper.querySelector('.remove-thumbnail-flag');
-            if (removeFlag) removeFlag.value = 0;
-        };
-
-        reader.readAsDataURL(file);
-    });
-
     // Delete existing thumbnail
-    document.querySelectorAll('.existing-delete-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const wrapper = this.closest('.existing-feature-wrapper');
+    $('.existing-delete-btn').on('click', function () {
+        const wrapper = $(this).closest('.existing-feature-wrapper');
+        wrapper.find('.remove-thumbnail-flag').val(1);
+        wrapper.hide();
+        if (featureInput.length) featureInput.val('');
+    });
 
-            // Mark for removal
-            const removeFlag = wrapper.querySelector('.remove-thumbnail-flag');
-            if (removeFlag) removeFlag.value = 1;
-
-            wrapper.style.display = "none"; // keep hidden, not removed
-            document.getElementById('feature-input').value = "";
+    /*====================== Quill editor ==================*/
+    const quillEl = $('#editor');
+    if (quillEl.length) {
+        const quill = new Quill('#editor', { theme: 'snow' });
+        $('#description').val(quill.root.innerHTML);
+        quill.on('text-change', function () {
+            $('#description').val(quill.root.innerHTML);
         });
-    });
-
-
-
-
-    /*====================== quill editor ==================*/
-    const quill = new Quill('#editor', { theme: 'snow' });
-    $('#description').val(quill.root.innerHTML);
-    quill.on('text-change', function () {
-        $('#description').val(quill.root.innerHTML);
-    });
-    $('form').on('submit', function () {
-        $('#description').val(quill.root.innerHTML);
-    });
+        $('form').on('submit', function () {
+            $('#description').val(quill.root.innerHTML);
+        });
+    }
 
 });
-
