@@ -25,32 +25,33 @@
               class="w-full mt-1 p-4 border rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500">
         </div>
         <!-- Avatar -->
+
+
         <div class="mb-4">
-           <label for="avatar" class="block text-sm font-medium text-gray-600">Profile Image</label>
+   <label class="block text-sm font-medium text-gray-600">Profile</label>
+   <input type="file" id="feature-input" name="avatar"
+      class="w-full mt-1 p-2 border rounded-md"
+      accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
 
-           <!-- File input -->
-           <input type="file" id="avatar" name="avatar"
-              class="w-full mt-1 p-4 border rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500"
-              accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif">
-              <div class="flex gap-2 mt-4 flex-wrap" id="new-profile-preview"></div>
+   <div class="flex gap-2 mt-4 flex-wrap" id="new-feature-preview">
+      @if(auth()->user()->avatar)
+      <div class="relative w-24 h-24 inline-block existing-feature-wrapper">
+         <img src="{{ asset('storage/' . auth()->user()->avatar) }}"
+            class="w-24 h-24 rounded shadow object-cover border">
+         <button type="button"
+            class="absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-full shadow existing-delete-btn">
+            ✕
+         </button>
+         <input type="hidden" name="existing_thumbnail" value="{{ auth()->user()->avatar }}">
+         <!-- Hidden remove flag -->
+         <input type="hidden" name="remove_thumbnail" value="0" class="remove-thumbnail-flag">
+      </div>
+      @else
+      <input type="hidden" name="remove_thumbnail" value="0" class="remove-thumbnail-flag">
+      @endif
+   </div>
+</div>
 
-           <!-- Hidden input to mark removal -->
-           <input type="hidden" name="remove_avatar" id="remove-avatar-flag" value="0">
-
-           <!-- Preview container -->
-           <div id="profile-image-preview" class="flex mt-4 gap-2 flex-wrap">
-              @if(auth()->user()->avatar)
-              <div class="relative w-24 h-24 existing-avatar-wrapper">
-                 <img src="{{ asset('storage/' . auth()->user()->avatar) }}"
-                    class="w-24 h-24 rounded shadow object-cover border">
-                 <button type="button"
-                    class="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-2 rounded-full shadow existing-delete-btn">
-                    ✕
-                 </button>
-              </div>
-              @endif
-           </div>
-        </div>
 
         <div class="flex justify-end mt-6">
            <button type="submit" class="bg-indigo-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-indigo-700">

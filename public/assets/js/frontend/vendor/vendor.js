@@ -229,8 +229,6 @@ $(document).ready(function () {
     $('#feature-input').on('change', function (event) {
         const file = event.target.files[0];
         const previewContainer = document.getElementById('new-feature-preview');
-
-        previewContainer.querySelectorAll('.new-feature-wrapper')?.forEach(e => e.remove());
         selectedFeatureFile = null;
 
         if (!file || !file.type.startsWith('image/')) return;
@@ -239,32 +237,56 @@ $(document).ready(function () {
 
         const reader = new FileReader();
         reader.onload = function (e) {
-            const wrapper = document.createElement('div');
-            wrapper.className = "relative w-24 h-24 inline-block new-feature-wrapper";
+            // Look for an existing wrapper that is still visible
+            let wrapper = [...previewContainer.querySelectorAll('.new-feature-wrapper, .existing-feature-wrapper')]
+                .find(w => w.style.display !== "none");
 
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.className = "w-24 h-24 rounded shadow object-cover border";
+            if (!wrapper) {
+                // If no visible wrapper exists, create one
+                wrapper = document.createElement('div');
+                wrapper.className = "relative w-24 h-24 inline-block new-feature-wrapper";
 
-            const btn = document.createElement('button');
-            btn.type = "button";
-            btn.innerText = '✕';
-            btn.className = "absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-full";
+                const img = document.createElement('img');
+                img.className = "w-24 h-24 rounded shadow object-cover border";
 
-            btn.onclick = function () {
-                wrapper.remove();
-                selectedFeatureFile = null;
-                document.getElementById('feature-input').value = "";
+                const btn = document.createElement('button');
+                btn.type = "button";
+                btn.innerText = '✕';
+                btn.className = "absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-full";
 
-                const removeFlag = document.querySelector('.remove-thumbnail-flag');
-                if (removeFlag) removeFlag.value = 1;
-            };
+                btn.onclick = function () {
+                    wrapper.style.display = "none"; // hide instead of remove
+                    selectedFeatureFile = null;
+                    document.getElementById('feature-input').value = "";
 
-            wrapper.appendChild(img);
-            wrapper.appendChild(btn);
-            previewContainer.appendChild(wrapper);
+                    const removeFlag = wrapper.querySelector('.remove-thumbnail-flag');
+                    if (removeFlag) removeFlag.value = 1;
+                };
 
-            const removeFlag = document.querySelector('.remove-thumbnail-flag');
+                wrapper.appendChild(img);
+                wrapper.appendChild(btn);
+
+                // Ensure hidden remove flag exists
+                let removeFlag = wrapper.querySelector('.remove-thumbnail-flag');
+                if (!removeFlag) {
+                    removeFlag = document.createElement('input');
+                    removeFlag.type = "hidden";
+                    removeFlag.name = "remove_thumbnail";
+                    removeFlag.value = 0;
+                    removeFlag.className = "remove-thumbnail-flag";
+                    wrapper.appendChild(removeFlag);
+                }
+
+                previewContainer.appendChild(wrapper);
+            }
+
+            // Update image preview
+            const imgEl = wrapper.querySelector('img');
+            imgEl.src = e.target.result;
+            wrapper.style.display = "inline-block"; // make sure it's visible
+
+            // Reset remove flag (because a new image was added)
+            const removeFlag = wrapper.querySelector('.remove-thumbnail-flag');
             if (removeFlag) removeFlag.value = 0;
         };
 
@@ -275,13 +297,18 @@ $(document).ready(function () {
     document.querySelectorAll('.existing-delete-btn').forEach(btn => {
         btn.addEventListener('click', function () {
             const wrapper = this.closest('.existing-feature-wrapper');
+
+            // Mark for removal
             const removeFlag = wrapper.querySelector('.remove-thumbnail-flag');
             if (removeFlag) removeFlag.value = 1;
-            wrapper.style.display = 'none';
-            wrapper.querySelector('img')?.remove();
-            this.remove();
+
+            wrapper.style.display = "none"; // keep hidden, not removed
+            document.getElementById('feature-input').value = "";
         });
     });
+
+
+
 
     /*====================== quill editor ==================*/
     const quill = new Quill('#editor', { theme: 'snow' });
@@ -292,77 +319,6 @@ $(document).ready(function () {
     $('form').on('submit', function () {
         $('#description').val(quill.root.innerHTML);
     });
-
-    let selectedAvatarFile = null;
-
-const previewContainer = document.getElementById('profile-image-preview');
-const newPreviewContainer = document.getElementById('new-profile-preview');
-const removeFlag = document.getElementById('remove-avatar-flag');
-
-// Initialize delete button for existing avatar on page load
-function initExistingDeleteBtn() {
-    document.querySelectorAll('.existing-delete-btn').forEach(btn => {
-        btn.onclick = function() {
-            const wrapper = this.closest('.existing-avatar-wrapper');
-            if (!wrapper) return;
-            wrapper.remove();
-            selectedAvatarFile = null;
-            document.getElementById('avatar').value = "";
-            removeFlag.value = 1;
-        };
-    });
-}
-
-initExistingDeleteBtn();
-
-// Handle new avatar selection
-document.getElementById('avatar').addEventListener('change', function(event) {
-    const file = event.target.files[0];
-
-    // Clear previous new preview
-    newPreviewContainer.innerHTML = '';
-    selectedAvatarFile = null;
-
-    if (!file || !file.type.startsWith('image/')) return;
-
-    selectedAvatarFile = file;
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const wrapper = document.createElement('div');
-        wrapper.className = "relative w-24 h-24 new-avatar-preview";
-
-        const img = document.createElement('img');
-        img.src = e.target.result;
-        img.className = "w-24 h-24 rounded shadow object-cover border";
-
-        const btn = document.createElement('button');
-        btn.type = "button";
-        btn.innerText = '✕';
-        btn.className = "absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-full";
-
-        btn.onclick = function() {
-            wrapper.remove();
-            selectedAvatarFile = null;
-            document.getElementById('avatar').value = "";
-            removeFlag.value = 1;
-        };
-
-        wrapper.appendChild(img);
-        wrapper.appendChild(btn);
-        newPreviewContainer.appendChild(wrapper);
-
-        // Reset remove flag when new file is selected
-        removeFlag.value = 0;
-
-        // Optionally hide existing avatar preview
-        document.querySelectorAll('.existing-avatar-wrapper').forEach(w => w.style.display = 'none');
-    };
-
-    reader.readAsDataURL(file);
-});
-
-
 
 });
 
