@@ -21,7 +21,7 @@
                     <div class="col-md-2">
                         <div class="page-header-titles float-right">
                         @can('create staffs')
-                            <a href="{{ route('staff.create') }}" class="btn btn-primary btn-sm p-2">Add Staff</a>
+                            <a href="{{ route('staff.create') }}" class="btn btn-primary btn-sm mr-2 p-2">Add Staff</a>
                         @endcan
                         @can('delete staffs')
                             <button id="bulkStaffsDeleteBtn" class="btn btn-danger btn-sm p-2 bulkDeleteBtn" disabled>Delete</button>
