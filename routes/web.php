@@ -192,8 +192,8 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
 
     Route::middleware('permission:create emails')->group(function () {
-        Route::get('/emails/add', [EmailTemplateController::class, 'create'])->name('emails.create');
-        Route::post('/emails/store', [EmailTemplateController::class, 'store'])->name('emails.store');
+        Route::get('/email/add', [EmailTemplateController::class, 'create'])->name('emails.create');
+        Route::post('/email/store', [EmailTemplateController::class, 'store'])->name('emails.store');
     });
 
     Route::middleware('permission:edit emails')->group(function () {

@@ -31,37 +31,43 @@
 
         <div class="row">
             <div class="col-lg-12">
+                <div class="row mb-3 justify-content-end">
+                    <div class="col-md-2 col-sm-6">
+                        <select id="filter-template" class="form-control select-template-name">
+                            <option value="">-- Select Template --</option>
+                            @foreach($templates as $template)
+                            <option value="{{ $template->id }}">{{ $template->template_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <select id="filter-customer" class="form-control select-users">
+                            <option value="">-- Select Booked By --</option>
+                            @foreach($customers as $customer)
+                            <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-2 col-sm-6">
+                        <div class="input-group">
+                            <input type="text" id="filter-start-date" class="form-control" placeholder="Select Date" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="col-md-1 col-sm-4">
+                        <button id="reset-filters" class="btn btn-primary float-right w-100">Reset</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-lg-12">
                 <div class="card user-profile-list">
                     <div class="card-body">
-                        <div class="row mb-3 justify-content-end">
-                            <div class="col-md-2 col-sm-6">
-                                <select id="filter-template" class="form-control select-template-name">
-                                    <option value="">-- Select Template --</option>
-                                    @foreach($templates as $template)
-                                    <option value="{{ $template->id }}">{{ $template->template_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-2 col-sm-6">
-                                <select id="filter-customer" class="form-control select-users">
-                                    <option value="">-- Select Booked By --</option>
-                                    @foreach($customers as $customer)
-                                    <option value="{{ $customer->id }}">{{ $customer->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-md-2 col-sm-6">
-                                <div class="input-group">
-                                    <input type="text" id="filter-start-date" class="form-control" placeholder="Select Date" autocomplete="off">
-                                </div>
-                            </div>
-
-                            <div class="col-md-1 col-sm-4">
-                                <button id="reset-filters" class="btn btn-primary float-right w-100">Reset</button>
-                            </div>
-                        </div>
-
                         <div class="dt-responsive table-responsive">
                             <table id="booking-list-table" class="table table-striped nowrap" width="100%">
                                 <thead>
@@ -164,8 +170,10 @@
             timeOut: 4000,
             positionClass: "toast-top-right"
         };
-        @if(session('success')) toastr.success("{{ session('success') }}"); @endif
-        @if(session('error')) toastr.error("{{ session('error') }}"); @endif
+        @if(session('success')) toastr.success("{{ session('success') }}");
+        @endif
+        @if(session('error')) toastr.error("{{ session('error') }}");
+        @endif
 
         bulkDelete("{{ route('booking.bulk-delete') }}");
     });
