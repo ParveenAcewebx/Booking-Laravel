@@ -78,16 +78,24 @@
                     data: 'subject',
                     name: 'subject',
                     width: "25%",
-                    render: function(data) {
-                        return `<div style="max-width:390px; white-space:normal; word-break:break-word;">${data ?? ''}</div>`;
+                    createdCell: function(td, cellData) {
+                        $(td).css({
+                            "max-width": "390px",
+                            "white-space": "normal",
+                            "word-break": "break-word"
+                        }).text(cellData ?? '');
                     }
                 },
                 { 
                     data: 'macro',
                     name: 'macro',
                     width: "15%",
-                    render: function(data) {
-                        return `<div style="max-width:190px; white-space:normal; word-break:break-word;">${data ?? ''}</div>`;
+                    createdCell: function(td, cellData) {
+                        $(td).css({
+                            "max-width": "190px",
+                            "white-space": "normal",
+                            "word-break": "break-word"
+                        }).text(cellData ?? '');
                     }
                 },
                 { 
@@ -96,8 +104,8 @@
                     orderable: false,
                     searchable: false,
                     width: "10%",
-                    render: function(data) {
-                        return `<div style="white-space:nowrap;">${data ?? ''}</div>`;
+                    createdCell: function(td, cellData) {
+                        $(td).css("white-space", "nowrap").html(cellData ?? '');
                     }
                 },
                 { 
@@ -105,20 +113,21 @@
                     orderable: false,
                     searchable: false,
                     width: "10%",
-                    render: function(data) {
-                        return `<div style="white-space:nowrap;">${data ?? ''}</div>`;
+                    createdCell: function(td, cellData) {
+                        $(td).css("white-space", "nowrap").html(cellData ?? '');
                     }
                 }
             ]
         });
 
+        // toastr notifications
         toastr.options = { closeButton: true, progressBar: true, timeOut: 4000, positionClass: "toast-top-right" };
 
         @if(session('success')) toastr.success("{{ session('success') }}"); @endif
         @if(session('error')) toastr.error("{{ session('error') }}"); @endif
 
+        // bulk delete init
         bulkDelete("{{ route('emails.bulk-delete') }}");
     });
 </script>
-
 @endsection
