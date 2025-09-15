@@ -103,8 +103,8 @@ if (!function_exists('sendAdminTemplateEmail')) {
     }
 }
 
-if (!function_exists('newcustomerregister')) {
-    function newcustomerregister($slug, $toEmail, $macros = [])
+if (!function_exists('newCustomerRegister')) {
+    function newCustomerRegister($slug, $toEmail, $macros = [])
     {
         try {
             $template = EmailTemplate::where('slug', $slug)->where('status', '1')->first();
@@ -138,8 +138,10 @@ if (!function_exists('newcustomerregister')) {
         }
     }
 }
-if (!function_exists('newbooking')) {
-    function newbooking($slug, $toEmail, $macros = [])
+/*========================== Send Booking email  ===========================*/
+
+if (!function_exists('newBooking')) {
+    function newBooking($slug, $toEmail, $macros = [])
     {
         try {
             $template = EmailTemplate::where('slug', $slug)->first();
@@ -173,6 +175,7 @@ if (!function_exists('newbooking')) {
         }
     }
 }
+/*========================== genrate html for booking tempalte email  ===========================*/
 if (!function_exists('generateBookingDataTable')) {
     function generateBookingDataTable(array $data): string
     {
@@ -202,5 +205,41 @@ if (!function_exists('generateBookingDataTable')) {
 
         $html .= '</tbody></table>';
         return $html;
+    }
+}
+/*========================== Send Password Rest Link Email  ===========================*/
+
+if (!function_exists('SendPasswordResetEmail')) {
+   function SendPasswordResetEmail($slug, $toEmail, $macros = []){
+    try {
+            $template = EmailTemplate::where('slug', $slug)->where('status', '1')->first();
+
+            if (!$template) {
+                \Log::error("Email template not found for slug: {$slug}");
+                return false;
+            }
+
+            // macros ko explode karke array bna lo
+            $allowedMacros = array_map('trim', explode(',', $template->macro));
+
+            $subject = replaceMacros($template->subject, $macros, $allowedMacros);
+            $body    = replaceMacros($template->email_content, $macros, $allowedMacros);
+
+            Mail::send([], [], function ($message) use ($toEmail, $subject, $body) {
+                $message->to($toEmail)
+                    ->subject($subject)
+                    ->from(
+                        get_setting('from_address', config('mail.from.address')),
+                        get_setting('from_name', config('mail.from.name'))
+                    )
+                    ->html($body);
+            });
+
+            \Log::info("successfully password reset email send to customer {$toEmail} using template: {$slug}");
+            return true;
+        } catch (\Exception $e) {
+            \Log::error("❌ Failed password reset email send to Customer {$toEmail}: " . $e->getMessage());
+            return false;
+        }
     }
 }

@@ -19,11 +19,6 @@
                         <form method="POST" action="{{ route('password.update') }}">
                             @csrf
                             <input type="hidden" name="token" value="{{ $token }}">
-                            <input type="hidden" name="email" value="test@example.com">
-                            <div class="form-group mb-3">
-                            <input type="email" class="form-control" id="email" name="email" placeholder="email" required>
-
-                            </div>  
                             <div class="form-group mb-3">
                             <input type="password" class="form-control" id="password" name="password" placeholder="password" required>
 
@@ -41,7 +36,7 @@
                                 <div>{{ $message }}</div>
                             @enderror
                             
-                            <button type="submit" class="btn btn-block btn-primary mb-4">Send mail</button>
+                            <button type="submit" class="btn btn-block btn-primary mb-4">Update Password</button>
                         </form>
                         <hr>
                         

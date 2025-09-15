@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use App\Models\PasswordResetToken;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -359,7 +363,7 @@ class UserController extends Controller
             '{SITE_TITLE}' => get_setting('site_title') ,
         ];
      
-        newcustomerregister('new_account_email_notification', $user->email, $macros);
+        newCustomerRegister('new_account_email_notification', $user->email, $macros);
         sendAdminTemplateEmail('admin_new_user_notification',get_setting('owner_email'), $macros);
         return redirect('/login')->with('success', 'Registration successful! Please log in.');
     }
@@ -394,47 +398,55 @@ class UserController extends Controller
         $request->validate([
             'email' => 'required|email|exists:users',
         ]);
-        $token = Str::random(64);
-        DB::table('password_reset_tokens')->updateOrInsert(
-            ['email' => $request->email],
-            [
-                'token' => $token,
-                'created_at' => Carbon::now()
-            ]
-        );
+        $token = Str::random(24);
+        PasswordResetToken::updateOrCreate(['email' => $request->email],['token' => $token,'created_at' => now(),]);
         $resetLink = route('password.reset', ['token' => $token]);
-        Mail::send([], [], function ($message) use ($request, $resetLink) {
-            $message->to($request->email)
-                ->subject('Reset Password')
-                ->setBody('Here is your reset password link: <a href="' . $resetLink . '">Click here to reset your password</a>', 'text/html');
-        });
-        return back()->with('message', 'We have e-mailed your password reset link!');
+        $user = User::where('email', $request->email)->pluck('name');
+        $macros = [
+            '{NAME}' => $user[0],
+            '{RESET_LINK}' => $resetLink,
+            '{SITE_TITLE}' => get_setting('site_title'),
+        ];
+    SendPasswordResetEmail('password_reset_email', $request->email, $macros);
+    return redirect()->route('login')->with('status', 'We have emailed your password reset link!');
     }
 
     public function showResetForm(Request $request, $token = null)
     {
-        return view('auth.reset')->with(['token' => $token, 'email' => $request->email]);
+        if(!empty($request->token)){
+            if ($this->tokenverification($request->token)) {
+                return view('auth.reset')->with([
+                    'token' => $token,
+                    'email' => $request->email,
+                ]);
+            }
+        }
+    }
+    public function tokenverification($token)
+    {
+        $tokenRecord = PasswordResetToken::where('token', $token)->first();
+        if ($tokenRecord) {
+            $createdAt = Carbon::parse($tokenRecord->created_at);
+            if ($createdAt->gt(now()->subMinutes(10))) {
+                return true; 
+            }
+        }
+        return false; 
     }
 
     public function reset(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users',
+            'token'=>'required',
             'password' => 'required|string|min:6|confirmed',
             'password_confirmation' => 'required'
         ]);
-        $updatePassword = DB::table('password_reset_tokens')
-            ->where([
-                'email' => $request->email,
-                'token' => $request->token
-            ])
-            ->first();
-        if (!$updatePassword) {
-            return back()->withInput()->with('error', 'Invalid token!');
+        if(!empty($request->token)){
+            $email = PasswordResetToken::where('token', $request->token)->pluck('email');
+            $user = User::where('email',  $email)->update(['password' => Hash::make($request->password)]);
+            PasswordResetToken::where(['email' => $email])->delete();
+            return redirect('/login')->with('message', 'Your password has been changed!');
         }
-        $user = User::where('email', $request->email)->update(['password' => Hash::make($request->password)]);
-        DB::table('password_reset_tokens')->where(['email' => $request->email])->delete();
-        return redirect('/login')->with('message', 'Your password has been changed!');
     }
 
     public function welcome()

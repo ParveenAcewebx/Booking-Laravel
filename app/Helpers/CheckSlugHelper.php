@@ -15,26 +15,26 @@ class CheckSlugHelper
     {
         $paths = [base_path('app'), base_path('resources/views')];
         $used = false;
-    
+
         foreach ($paths as $path) {
             $files = File::allFiles($path);
-    
+
             foreach ($files as $file) {
                 $lines = file($file->getRealPath());
-    
+
                 foreach ($lines as $line) {
                     $line = trim($line);
-    
+
                     // Skip single-line comments
                     if (str_starts_with($line, '//') || str_starts_with($line, '#')) {
                         continue;
                     }
-    
+
                     // Skip multi-line comments
                     if (preg_match('/^\s*\/\*/', $line) || preg_match('/\*\/\s*$/', $line)) {
                         continue;
                     }
-    
+
                     // Check if slug exists in the line
                     if (strpos($line, "'$slug'") !== false || strpos($line, "\"$slug\"") !== false) {
                         $used = true;
@@ -43,10 +43,10 @@ class CheckSlugHelper
                 }
             }
         }
-    
+
         return $used;
     }
-    
+
     public static function canDelete($slug)
     {
         return !self::isSlugUsed($slug);

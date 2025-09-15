@@ -658,7 +658,7 @@ class FormController extends Controller
                 '{BOOKING_DATA}' => generateBookingDataTable($bookingDetails),
             ];
 
-            newbooking('booking_confirmed_notification', $email, $macros);
+            newBooking('booking_confirmed_notification', $email, $macros);
         }
     }
 }

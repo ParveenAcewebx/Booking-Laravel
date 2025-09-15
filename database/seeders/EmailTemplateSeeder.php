@@ -108,6 +108,27 @@ class EmailTemplateSeeder extends Seeder
                 ',
                 'macro' => '{NAME},{SITE_TITLE},{BOOKING_DATA}',
            ],
+            [
+                    'slug' => 'password_reset_email',
+                    'title' => 'Password Reset Email',
+                    'subject' => 'Password Reset Request – {SITE_TITLE}', 
+                    'email_content' => '
+                        <p>Dear {NAME},</p>
+                        <p>We received a request to reset your password for your account at <strong>{SITE_TITLE}</strong>.</p>
+                        <p>You can reset your password by clicking the link below:</p>
+                        <p><a href="{RESET_LINK}">Reset Your Password</a></p>
+                        <p>If you did not request a password reset, please ignore this email or contact support.</p>
+                        <p>Best regards,<br />The <strong>{SITE_TITLE}</strong> Team</p>
+                    ',
+                    'dummy_template' => '
+                        <p>Dear Admin,<br /><br />
+                        A password reset request has been made for user: <strong>{NAME}</strong> on <strong>{SITE_TITLE}</strong>.<br /><br />
+                        You can review this request in the admin panel.<br /><br />
+                        Regards,<br />{SITE_TITLE}</p>
+                    ',
+                    'macro' => '{NAME},{SITE_TITLE},{RESET_LINK}',
+                ]
+
         ];
 
         foreach ($templates as $template) {
