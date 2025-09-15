@@ -414,16 +414,15 @@ class UserController extends Controller
     public function showResetForm(Request $request, $token = null)
     {
         if(!empty($request->token)){
-            if ($this->tokenverification($request->token)) {
+            if ($this->tokenverification($request->token)=== true) {
                 return view('auth.reset')->with([
                     'token' => $token,
                     'email' => $request->email,
                 ]);
-            }else{
+            }elseif($this->tokenverification($request->token) === false){
                return redirect()->route('password.request')
                  ->with('error', 'Your reset token has expired or is invalid. Please request a new password reset.');
             }
-            
         }
     }
     public function tokenverification($token)
@@ -433,9 +432,12 @@ class UserController extends Controller
             $createdAt = Carbon::parse($tokenRecord->created_at);
             if ($createdAt->gt(now()->subMinutes(10))) {
                 return true; 
+            }else{
+                return false; 
             }
         }
-        return false; 
+        return '';
+        
     }
 
     public function reset(Request $request)

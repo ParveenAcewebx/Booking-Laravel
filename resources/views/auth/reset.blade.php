@@ -11,10 +11,14 @@
                     <div class="card-body">
                         <h4 class="mb-3 f-w-400">Reset Password</h4>
                         <hr>
-                        @if (session('error'))
-                         <div class="alert alert-danger">
-                            {{ session('error') }}
-                         </div>
+                        @if ($errors->any())
+                            <div class="pt-3 alert alert-danger">
+                                
+                                    @foreach ($errors->all() as $error)
+                                        <p>{{ $error }}</p>
+                                    @endforeach
+                            
+                            </div>
                         @endif
                         <form method="POST" action="{{ route('password.update') }}">
                             @csrf

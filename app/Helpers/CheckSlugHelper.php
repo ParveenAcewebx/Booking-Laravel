@@ -25,20 +25,17 @@ class CheckSlugHelper
                 foreach ($lines as $line) {
                     $line = trim($line);
 
-                    // Skip single-line comments
                     if (str_starts_with($line, '//') || str_starts_with($line, '#')) {
                         continue;
                     }
 
-                    // Skip multi-line comments
                     if (preg_match('/^\s*\/\*/', $line) || preg_match('/\*\/\s*$/', $line)) {
                         continue;
                     }
 
-                    // Check if slug exists in the line
                     if (strpos($line, "'$slug'") !== false || strpos($line, "\"$slug\"") !== false) {
                         $used = true;
-                        break 3; // found in code
+                        break 3; 
                     }
                 }
             }
