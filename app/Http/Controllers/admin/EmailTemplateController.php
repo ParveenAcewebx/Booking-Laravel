@@ -7,7 +7,6 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\EmailTemplate;
 use App\Models\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Str;
 
 class EmailTemplateController extends Controller
 {
@@ -33,7 +32,6 @@ class EmailTemplateController extends Controller
                     return $row->macro;
                 })
                 ->addColumn('checkbox', function ($row) {
-                    // Disable checkbox if active
                     $disabled = $row->status == config('constants.status.active') ? 'disabled' : '';
                     return '<input type="checkbox" class="selectRow" value="' . $row->id . '" ' . $disabled . '>';
                 })
@@ -48,7 +46,6 @@ class EmailTemplateController extends Controller
 
                     if (auth()->user()->can('delete emails')) {
                         if ($row->status == config('constants.status.active')) {
-                            // Disable delete if active
                             $btn .= '<button type="button" class="btn btn-icon btn-secondary" disabled title="Active templates cannot be deleted">
                                         <i class="feather icon-trash-2"></i>
                                      </button>';
@@ -72,7 +69,6 @@ class EmailTemplateController extends Controller
         return view('admin.email-template.index');
     }
 
-
     public function create()
     {
         $loginId = getOriginalUserId();
@@ -82,12 +78,11 @@ class EmailTemplateController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->email_content);
         $validated = $request->validate([
-            'title'          => 'required|string|unique:email_templates,title',
-            'slug'           => 'required|string|unique:email_templates,slug',
-            'macro'          => 'required',
-            'subject'        => 'nullable|string',
+            'title'          => 'required|string|max:255|unique:email_templates,title',
+            'slug'           => 'required|string|max:255|unique:email_templates,slug',
+            'macro'          => 'required|string|max:255',
+            'subject'        => 'nullable|string|max:255',
             'dummy_template' => 'nullable|string',
             'email_content'  => 'required|string',
             'status'         => 'required|in:' . config('constants.status.active') . ',' . config('constants.status.inactive'),
@@ -117,25 +112,25 @@ class EmailTemplateController extends Controller
 
     public function edit(string $id)
     {
-        $getEmailId = EmailTemplate::findorFail($id);
+        $getEmailId = EmailTemplate::findOrFail($id);
         return view('admin.email-template.edit', compact('getEmailId'));
     }
 
     public function update(Request $request, $id)
     {
-        // dd('sdfdsf');
         $template = EmailTemplate::findOrFail($id);
+
         $validated = $request->validate([
-            'title'          => 'required|string|unique:email_templates,title,' . $template->id,
-            'slug'           => 'required|string|unique:email_templates,slug,' . $template->id,
-            'macro'          => 'required',
-            'subject'        => 'nullable|string',
+            'title'          => 'required|string|max:255|unique:email_templates,title,' . $template->id,
+            'slug'           => 'required|string|max:255|unique:email_templates,slug,' . $template->id,
+            'macro'          => 'required|string|max:255',
+            'subject'        => 'nullable|string|max:255',
             'dummy_template' => 'nullable|string',
             'email_content'  => 'required|string',
             'status'         => 'required|in:' . config('constants.status.active') . ',' . config('constants.status.inactive'),
         ]);
+
         try {
-            // Update template
             $template->update([
                 'title'          => $validated['title'],
                 'slug'           => $validated['slug'],

@@ -65,17 +65,50 @@
         let table = $('#emailTemplatesTable').DataTable({
             processing: true,
             serverSide: true,
+            autoWidth: false,
+            scrollX: true,
             ajax: "{{ route('emails.list') }}",
             order: [[1, 'desc']],
             columns: [
-                { data: 'checkbox', orderable: false, searchable: false },
-                { data: 'id', name: 'id', visible: false },
-                { data: 'title', name: 'title' },
-                { data: 'slug', name: 'slug' },
-                { data: 'subject', name: 'subject' },
-                { data: 'macro', name: 'macro' },
-                { data: 'status_label', name: 'status', orderable: false, searchable: false },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
+                { data: 'checkbox', orderable: false, searchable: false, width: "5%" },
+                { data: 'id', visible: false },
+                { data: 'title', name: 'title', width: "15%" },
+                { data: 'slug', name: 'slug', width: "15%" },
+                { 
+                    data: 'subject',
+                    name: 'subject',
+                    width: "25%",
+                    render: function(data) {
+                        return `<div style="max-width:390px; white-space:normal; word-break:break-word;">${data ?? ''}</div>`;
+                    }
+                },
+                { 
+                    data: 'macro',
+                    name: 'macro',
+                    width: "15%",
+                    render: function(data) {
+                        return `<div style="max-width:190px; white-space:normal; word-break:break-word;">${data ?? ''}</div>`;
+                    }
+                },
+                { 
+                    data: 'status_label',
+                    name: 'status',
+                    orderable: false,
+                    searchable: false,
+                    width: "10%",
+                    render: function(data) {
+                        return `<div style="white-space:nowrap;">${data ?? ''}</div>`;
+                    }
+                },
+                { 
+                    data: 'action',
+                    orderable: false,
+                    searchable: false,
+                    width: "10%",
+                    render: function(data) {
+                        return `<div style="white-space:nowrap;">${data ?? ''}</div>`;
+                    }
+                }
             ]
         });
 
@@ -85,7 +118,7 @@
         @if(session('error')) toastr.error("{{ session('error') }}"); @endif
 
         bulkDelete("{{ route('emails.bulk-delete') }}");
-
     });
 </script>
+
 @endsection

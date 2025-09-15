@@ -79,9 +79,14 @@
                                             type="text"
                                             name="subject"
                                             id="subject"
-                                            class="form-control"
+                                            class="form-control  @error('subject') is-invalid @enderror"
                                             value="{{ old('subject', $getEmailId->subject) }}"
                                             placeholder="Enter Subject">
+                                            @error('subject')
+                                        <span class="invalid-feedback d-block" id="macroNameError" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
                                     </div>
                                 </div>
 

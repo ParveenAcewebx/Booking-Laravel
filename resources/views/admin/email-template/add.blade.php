@@ -77,10 +77,16 @@
                                             type="text"
                                             name="subject"
                                             id="subject"
-                                            class="form-control"
+                                            class="form-control  @error('subject') is-invalid @enderror"
                                             placeholder="Enter Subject"
                                             value="{{ old('subject') }}">
+                                        @error('subject')
+                                        <span class="invalid-feedback d-block" id="macroNameError" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
                                     </div>
+
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -169,11 +175,10 @@
     </div>
 </div>
 <script>
-    document.getElementById('slug').addEventListener('input', function () {
-    let val = this.value;
-    // force lowercase + replace spaces with underscores
-    this.value = val.toLowerCase().replace(/\s+/g, '_');
-});
-
+    document.getElementById('slug').addEventListener('input', function() {
+        let val = this.value;
+        // force lowercase + replace spaces with underscores
+        this.value = val.toLowerCase().replace(/\s+/g, '_');
+    });
 </script>
 @endsection
