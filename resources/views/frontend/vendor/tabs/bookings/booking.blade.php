@@ -46,11 +46,13 @@
                                 Date: {{ \Carbon\Carbon::parse($booking->booking_datetime)->format('Y-m-d') }} |
                                 Time: {{ \Carbon\Carbon::parse($booking->booking_datetime)->format('h:i A') }}
                             </p>
+                            @if(!empty(json_decode($booking->booking_data)->email) && json_decode($booking->booking_data)->phone)
                             <p class="text-sm text-gray-500">
                                 Email: {{ $booking->email ?? json_decode($booking->booking_data)->email ?? 'N/A' }} |
                                 Phone:
                                 {{ $booking->phone_number ?? json_decode($booking->booking_data)->phone ?? 'N/A' }}
                             </p>
+                            @endif
                             <span class="inline-block mt-2 px-2 py-1 text-xs rounded 
                                                 {{ $booking->status === 'pending' 
                                                     ? 'bg-yellow-100 text-yellow-700' 
