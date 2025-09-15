@@ -7,6 +7,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\EmailTemplate;
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Helpers\CheckSlugHelper;
 
 class EmailTemplateController extends Controller
 {
@@ -20,54 +21,66 @@ class EmailTemplateController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $templates = EmailTemplate::query();
+            try {
+                $templates = EmailTemplate::query();
 
-            return DataTables::of($templates)
-                ->addColumn('status_label', function ($row) {
-                    return $row->status == config('constants.status.active')
-                        ? '<span class="badge badge-success">Active</span>'
-                        : '<span class="badge badge-danger">Inactive</span>';
-                })
-                ->addColumn('macro', function ($row) {
-                    return $row->macro;
-                })
-                ->addColumn('checkbox', function ($row) {
-                    $disabled = $row->status == config('constants.status.active') ? 'disabled' : '';
-                    return '<input type="checkbox" class="selectRow" value="' . $row->id . '" ' . $disabled . '>';
-                })
-                ->addColumn('action', function ($row) {
-                    $btn = '';
+                return DataTables::of($templates)
+                    ->addColumn('status_label', function ($row) {
+                        return $row->status == config('constants.status.active')
+                            ? '<span class="badge badge-success">Active</span>'
+                            : '<span class="badge badge-danger">Inactive</span>';
+                    })
+                    ->addColumn('macro', function ($row) {
+                        return $row->macro;
+                    })
+                    ->addColumn('checkbox', function ($row) {
+                        $canDelete = CheckSlugHelper::canDelete($row->slug);
+                        $disabled = ($row->status == config('constants.status.active') && !$canDelete) ? 'disabled' : '';
+                        return '<input type="checkbox" class="selectRow" value="' . $row->id . '" ' . $disabled . '>';
+                    })
+                    ->addColumn('action', function ($row) {
+                        $btn = '';
 
-                    if (auth()->user()->can('edit emails')) {
-                        $btn .= '<a href="' . route('emails.edit', $row->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit Email">
+                        // Edit button
+                        if (auth()->user()->can('edit emails')) {
+                            $btn .= '<a href="' . route('emails.edit', $row->id) . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit Email">
                                     <i class="fas fa-pencil-alt"></i>
                                  </a> ';
-                    }
+                        }
 
-                    if (auth()->user()->can('delete emails')) {
-                        if ($row->status == config('constants.status.active')) {
-                            $btn .= '<button type="button" class="btn btn-icon btn-secondary" disabled title="Active templates cannot be deleted">
+                        if (auth()->user()->can('delete emails')) {
+                            $canDelete = CheckSlugHelper::canDelete($row->slug);
+
+                            if ($row->status == config('constants.status.active') && !$canDelete) {
+
+                                $btn .= '<button type="button" class="btn btn-icon btn-secondary" disabled>
                                         <i class="feather icon-trash-2"></i>
                                      </button>';
-                        } else {
-                            $btn .= '<form action="' . route('emails.destroy', $row->id) . '" method="POST" id="delete-email-' . $row->id . '" style="display:inline;">
+                            } else {
+                                $btn .= '<form action="' . route('emails.destroy', $row->id) . '" method="POST" id="delete-email-' . $row->id . '" style="display:inline;">
                                         ' . csrf_field() . '
                                         <input type="hidden" name="_method" value="DELETE">
                                         <button type="button" onclick="deleteEmailTemplate(' . $row->id . ')" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Email">
                                             <i class="feather icon-trash-2"></i>
                                         </button>
                                      </form>';
+                            }
                         }
-                    }
 
-                    return $btn;
-                })
-                ->rawColumns(['status_label', 'checkbox', 'action', 'macro'])
-                ->make(true);
+                        return $btn;
+                    })
+                    ->rawColumns(['status_label', 'checkbox', 'action', 'macro'])
+                    ->make(true);
+            } catch (\Exception $e) {
+                // Return proper JSON error for DataTables
+                return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
+            }
         }
 
         return view('admin.email-template.index');
     }
+
+
 
     public function create()
     {

@@ -35,7 +35,8 @@
         "files": [
             "app/Helpers/FormHelper.php",
             "app/Helpers/helpers.php",
-            "app/Helpers/ImpersonationHelper.php"
+            "app/Helpers/ImpersonationHelper.php",
+            "app/Helpers/CheckSlugHelper.php"
         ]
     },
     "autoload-dev": {
