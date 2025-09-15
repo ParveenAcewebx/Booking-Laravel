@@ -363,7 +363,7 @@ class UserController extends Controller
             '{SITE_TITLE}' => get_setting('site_title') ,
         ];
      
-        newCustomerRegister('new_account_email_notification', $user->email, $macros);
+        newcustomerregister('new_account_email_notification', $user->email, $macros);
         sendAdminTemplateEmail('admin_new_user_notification',get_setting('owner_email'), $macros);
         return redirect('/login')->with('success', 'Registration successful! Please log in.');
     }
@@ -407,7 +407,7 @@ class UserController extends Controller
             '{RESET_LINK}' => $resetLink,
             '{SITE_TITLE}' => get_setting('site_title'),
         ];
-    SendPasswordResetEmail('password_reset_email', $request->email, $macros);
+    SendPasswordResetEmail('Password_Reset_Email', $request->email, $macros);
     return redirect()->route('login')->with('status', 'We have emailed your password reset link!');
     }
 
@@ -419,7 +419,11 @@ class UserController extends Controller
                     'token' => $token,
                     'email' => $request->email,
                 ]);
+            }else{
+               return redirect()->route('password.request')
+                 ->with('error', 'Your reset token has expired or is invalid. Please request a new password reset.');
             }
+            
         }
     }
     public function tokenverification($token)
@@ -439,7 +443,6 @@ class UserController extends Controller
         $request->validate([
             'token'=>'required',
             'password' => 'required|string|min:6|confirmed',
-            'password_confirmation' => 'required'
         ]);
         if(!empty($request->token)){
             $email = PasswordResetToken::where('token', $request->token)->pluck('email');
