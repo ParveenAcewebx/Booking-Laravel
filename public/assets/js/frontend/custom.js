@@ -69,11 +69,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const noVendorAssigned = noVendorElement.length > 0;
 
         const calendarWrap = $('#' + current_step).find('.calendar-wrap');
+        const no_available_slots = $('#' + current_step).find('.no_available_slots');
+        
 
         // Only validate calendar if it's in the DOM AND visible
         if (!noVendorAssigned && calendarWrap.length && calendarWrap.is(':visible')) {
             const bookedSlots = $('#' + current_step + ' #bookslots').val();
-            if (!bookedSlots) {
+            if (!bookedSlots && !no_available_slots.is(':visible')) {
                 $('#' + current_step).find('.select-slots').html('<p class="text-sm text-red-600 font-medium mt-1 p-4 border border-gray-300 shadow-md rounded-l text-danger">Please select a date and at least one slot.</p>');
                 isValid = false;
             } else {

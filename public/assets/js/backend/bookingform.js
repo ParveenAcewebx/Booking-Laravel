@@ -413,7 +413,7 @@ document.addEventListener("DOMContentLoaded", function () {
                      }
                      sessionsHTML += `</div></div></div>`;
                   } else {
-                     sessionsHTML = `<p class="text-sm text-red-500">No available slots found for this date.</p>`;
+                     sessionsHTML = `<p class="text-sm text-red-500 no_available_slots">No available slots found for this date.</p>`;
                   }
                   $('.availibility').html(sessionsHTML);
                   bindSlotClickEvent();
