@@ -22,7 +22,7 @@
                             <a href="{{ route('user.add') }}" class="btn btn-primary btn-sm mr-2 p-2">Add User</a>
                         @endcan
                         @can('delete users')
-                            <button id="bulkDeleteBtn" class="btn btn-danger btn-sm p-2" disabled>Delete</button>
+                            <button id="bulkDeleteBtn" class="btn btn-danger btn-sm p-2 bulkDeleteBtn" disabled>Delete</button>
                         @endcan
                         </div>
                     </div>

@@ -116,7 +116,7 @@ class BookingTemplateController extends Controller
 
         BookingTemplate::whereIn('id', $ids)->delete();
 
-        return response()->json(['success' => true, 'message' => 'Selected Templates Seleted Successfully.']);
+        return response()->json(['success' => true, 'message' => 'Selected Templates Deleted Successfully.']);
     }
 
 

@@ -26,7 +26,7 @@
                             <a href="{{ route('category.create') }}" class="btn btn-primary btn-sm mr-2 p-2">Add Category</a>
                             @endcan
                             @can('delete categories')
-                            <button id="bulkCategoryDeleteBtn" class="btn btn-danger btn-sm p-2" disabled>Delete</button>
+                            <button id="bulkCategoryDeleteBtn" class="btn btn-danger btn-sm p-2 bulkDeleteBtn" disabled>Delete</button>
                             @endcan
                         </div>
                     </div>

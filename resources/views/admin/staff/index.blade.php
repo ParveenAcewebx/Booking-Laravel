@@ -24,7 +24,7 @@
                             <a href="{{ route('staff.create') }}" class="btn btn-primary btn-sm p-2">Add Staff</a>
                         @endcan
                         @can('delete staffs')
-                            <button id="bulkStaffsDeleteBtn" class="btn btn-danger btn-sm p-2" disabled>Delete</button>
+                            <button id="bulkStaffsDeleteBtn" class="btn btn-danger btn-sm p-2 bulkDeleteBtn" disabled>Delete</button>
                         @endcan
                         </div>
                     </div>

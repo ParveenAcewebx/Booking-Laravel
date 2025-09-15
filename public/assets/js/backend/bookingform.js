@@ -407,13 +407,13 @@ document.addEventListener("DOMContentLoaded", function () {
                                     </div>`
                         });
                      } else {
-                        sessionsHTML = `<p class="text-danger text-center">No available slots found for this date ${date}.</p>`;
+                        sessionsHTML = `<p class="text-danger text-center no_available_slots">No available slots found for this date ${date}.</p>`;
                         $('.availibility').removeClass('d-none');
                         $('.availibility').removeClass('hidden');
                      }
                      sessionsHTML += `</div></div></div>`;
                   } else {
-                     sessionsHTML = `<p class="text-sm text-red-500 no_available_slots">No available slots found for this date.</p>`;
+                     sessionsHTML = `<p class="text-sm text-red-500 ">No available slots found for this date.</p>`;
                   }
                   $('.availibility').html(sessionsHTML);
                   bindSlotClickEvent();

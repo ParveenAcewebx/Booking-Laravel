@@ -23,7 +23,7 @@
                                 <a href="{{ route('roles.add') }}" class="btn btn-primary mr-2 p-2">Add Role</a>
                             @endcan
                             @can('delete roles')
-                                <button id="bulkRolesDeleteBtn" class="btn btn-danger p-2" disabled>Delete</button>
+                                <button id="bulkRolesDeleteBtn" class="btn btn-danger p-2 bulkDeleteBtn" disabled>Delete</button>
                             @endcan
                         </div>
                     </div>

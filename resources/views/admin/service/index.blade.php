@@ -26,7 +26,7 @@
                             <a href="{{ route('service.add') }}" class="btn btn-primary btn-sm mr-2 p-2">Add Service</a>
                             @endcan
                             @can('delete services')
-                            <button id="bulkServiceDeleteBtn" class="btn btn-danger btn-sm p-2" disabled>Delete</button>
+                            <button id="bulkServiceDeleteBtn" class="btn btn-danger btn-sm p-2 bulkDeleteBtn" disabled>Delete</button>
                             @endcan
                         </div>
                     </div>

@@ -22,7 +22,7 @@
                         <a href="{{ route('emails.create') }}" class="btn btn-primary btn-sm mr-2 p-2">Add Email</a>
                         @endcan
                         @can('delete emails')
-                        <button id="bulkEmailsDeleteBtn" class="btn btn-danger btn-sm p-2" disabled>Delete</button>
+                        <button id="bulkEmailsDeleteBtn" class="btn btn-danger btn-sm p-2 bulkDeleteBtn" disabled>Delete</button>
                         @endcan
                         </div>
                     </div>

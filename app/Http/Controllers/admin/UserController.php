@@ -407,7 +407,7 @@ class UserController extends Controller
             '{RESET_LINK}' => $resetLink,
             '{SITE_TITLE}' => get_setting('site_title'),
         ];
-    SendPasswordResetEmail('Password_Reset_Email', $request->email, $macros);
+    SendPasswordResetEmail('password_reset_email', $request->email, $macros);
     return redirect()->route('login')->with('status', 'We have emailed your password reset link!');
     }
 

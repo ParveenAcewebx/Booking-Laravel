@@ -21,7 +21,7 @@
                             <a href="{{ route('booking.add') }}" class="btn btn-primary btn-sm mr-2 p-2">Add Booking</a>
                             @endcan
                             @can('delete bookings')
-                            <button id="bulkBookingsDeleteBtn" class="btn btn-danger btn-sm p-2" disabled>Delete</button>
+                            <button id="bulkBookingsDeleteBtn" class="btn btn-danger btn-sm p-2 bulkDeleteBtn" disabled>Delete</button>
                             @endcan
                         </div>
                     </div>

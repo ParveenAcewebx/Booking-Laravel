@@ -22,7 +22,7 @@
                             <a href="{{ route('template.add') }}" class="btn btn-primary btn-sm mr-2 p-2">Add New Template</a>
                             @endcan
                             @can('delete templates')
-                            <button id="bulkTemplateDeleteBtn" class="btn btn-danger btn-sm p-2" disabled>Delete</button>
+                            <button id="bulkTemplateDeleteBtn" class="btn btn-danger btn-sm p-2 bulkDeleteBtn" disabled>Delete</button>
                             @endcan
                         </div>
                     </div>

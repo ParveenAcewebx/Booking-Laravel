@@ -22,7 +22,7 @@
                             <a href="{{ route('vendors.add') }}" class="btn btn-primary btn-sm mr-2 p-2">Add Vendor</a>
                         @endcan
                         @can('delete vendors')
-                            <button id="bulkVendorsDeleteBtn" class="btn btn-danger btn-sm p-2" disabled>Delete</button>
+                            <button id="bulkVendorsDeleteBtn" class="btn btn-danger btn-sm p-2 bulkDeleteBtn" disabled>Delete</button>
                         @endcan
                         </div>
                     </div>
