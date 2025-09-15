@@ -20,6 +20,7 @@ use App\Models\StaffServiceAssociation;
 
 class VendorBookingController extends Controller
 {
+    
     public function view()
     {
         // Check if user is logged in
@@ -102,6 +103,112 @@ class VendorBookingController extends Controller
                 ));
             }
         }
+    }
+    public function bookingview($id){
+     $booking = Booking::with('template')->findOrFail($id);
+        $dynamicValues = json_decode($booking->booking_data, true) ?? [];
+
+        $servicedata = isset($dynamicValues['service'])
+            ? Service::where('id', $dynamicValues['service'])->first()
+            : null;
+
+        $vendorname = isset($dynamicValues['vendor'])
+            ? Vendor::where('id', $dynamicValues['vendor'])->pluck('name')->first()
+            : null;
+
+        $serviceverndor = [
+            'serivename'      => $servicedata?->name,
+            'serviceprice'    => $servicedata?->price,
+            'servicurrency'   => $servicedata?->currency,
+            'serviceduration' => $servicedata?->duration,
+            'vendorname'      => $vendorname,
+        ];
+
+        $slotedetail = json_decode($booking->bookslots);
+        $formStructureJson = $booking->template->data ?? '[]';
+        $formStructureArray = json_decode($formStructureJson, true);
+        $formStructureArray = array_filter($formStructureArray, fn($item) => $item['type'] !== 'shortcodeblock');
+
+        $AdditionalInformation = [];
+
+        if (!empty($dynamicValues)) {
+            $excludedKeys = ['first_name', 'last_name', 'email', 'phone', 'service', 'vendor'];
+
+            $filteredDynamicValues = array_filter(
+                $dynamicValues,
+                fn($key) => !in_array($key, $excludedKeys),
+                ARRAY_FILTER_USE_KEY
+            );
+
+            $filteredKeys = array_keys($filteredDynamicValues);
+
+            $matchedValues = array_map(function ($field) use ($dynamicValues) {
+                $name = $field['name'] ?? null;
+                if (!$name) return null;
+                $value = $dynamicValues[$name] ?? null;
+
+                if ($field['type'] === 'checkbox-group') {
+                    $values = (array) ($value ?? []);
+                    if (in_array('other', $values)) {
+                        $values = array_diff($values, ['other']);
+                        if (!empty($dynamicValues[$name . '_other'])) {
+                            $otherValues = (array) $dynamicValues[$name . '_other'];
+                            $values = array_merge($values, $otherValues);
+                        }
+                    }
+                    return array_values($values);
+                }
+
+                if ($field['type'] === 'radio-group') {
+                    if ($value === 'other' && !empty($dynamicValues[$name . '_other'])) {
+                        return $dynamicValues[$name . '_other'];
+                    }
+                    return $value;
+                }
+
+                return $value;
+            }, array_filter($formStructureArray, function ($field) use ($filteredKeys) {
+                return !empty($field['name']) && in_array($field['name'], $filteredKeys);
+            }));
+
+            $matchedLabels = array_map(
+                function ($field) {
+                    return isset($field['label']) ? $field['label'] : '';
+                },
+                array_filter($formStructureArray, function ($field) use ($filteredKeys) {
+                    return !empty($field['name']) && in_array($field['name'], $filteredKeys);
+                })
+            );
+
+
+            $AdditionalInformation = [
+                'AddInfoLabel'       => $matchedLabels,
+                'AddInfoValue'       => $matchedValues,
+                'formStructureArray' => $formStructureArray,
+            ];
+        }
+
+        $bookingid = $id ?: '';
+
+        if (!empty($booking->booking_datetime)) {
+            $booking->booking_datetime = date('Y-m-d\TH:i', strtotime($booking->booking_datetime));
+        }
+
+        $selectedStaffUser = User::where('name', $booking->selected_staff)->first();
+        $booking->selected_staff = $selectedStaffUser?->id;
+
+        $loginId = getOriginalUserId();
+        $loginUser = $loginId ? User::find($loginId) : null;
+
+        return view('frontend.Vendor.tabs.bookings.view', [
+            'bookingid'            => $id,
+            'booking'              => $booking,
+            'AdditionalInformation' => $AdditionalInformation,
+            'userinfo'             => $dynamicValues,
+            'serviceverndor'       => $serviceverndor,
+            'slotedetail'          => $slotedetail,
+            'loginUser'            => $loginUser,
+        ]);
     }
 
     public function bookingdestroy($id)

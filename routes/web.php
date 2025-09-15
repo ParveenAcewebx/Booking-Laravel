@@ -249,8 +249,7 @@ Route::middleware(['VendorRoleCheck'])->group(function () {
 
     // Bookings
     Route::get('/dashboard/bookings', [VendorBookingController::class, 'view'])->name('vendor.bookings.view');
-
-    //  Bookings
+    Route::get('/bookings/view/{id}', [VendorBookingController::class, 'bookingview'])->name('bookings.view');
     Route::delete('/bookings/{id}', [VendorBookingController::class, 'bookingdestroy'])->name('vendor.booking.destroy');
     //  Services 
     Route::get('/dashboard/services', [VendorServiceController::class, 'view'])->name('vendor.services.view');

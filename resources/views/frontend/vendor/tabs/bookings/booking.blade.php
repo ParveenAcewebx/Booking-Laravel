@@ -34,17 +34,20 @@
             <div class="space-y-4 booking-section">
                 @if($bookingdata->count() > 0)
                 @foreach($bookingdata as $booking)
+                @php
+                    $matchedTemplate = $bookingtemplatedata->firstWhere('id', $booking->booking_template_id);
+                @endphp
                 <div class="p-4 border rounded-lg hover:shadow">
                     <div class="flex justify-between items-center">
                         <div>
+                               <p>Template Name <strong>({{$matchedTemplate->template_name}})</strong></p>
                             <h3 class="font-medium text-gray-800">
-                                {{ $booking->first_name ?? json_decode($booking->booking_data)->first_name ?? 'Unknown' }}
+                                {{ $booking->first_name ?? json_decode($booking->booking_data)->first_name ?? '' }}
                                 {{ $booking->last_name ?? json_decode($booking->booking_data)->last_name ?? '' }}
-                                - {{ $booking->service->name ?? '' }}
+                                 {{ $booking->service->name ?? '' }}
                             </h3>
-                            <p class="text-sm text-gray-500">
-                                Date: {{ \Carbon\Carbon::parse($booking->booking_datetime)->format('Y-m-d') }} |
-                                Time: {{ \Carbon\Carbon::parse($booking->booking_datetime)->format('h:i A') }}
+                            <p class="text-sm text-gray-500">   
+                                {{ \Carbon\Carbon::parse($booking->booking_datetime)->format(get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')) }}
                             </p>
                             @if(!empty(json_decode($booking->booking_data)->email) && json_decode($booking->booking_data)->phone)
                             <p class="text-sm text-gray-500">
@@ -62,7 +65,20 @@
                         </div>
 
                         {{-- Actions --}}
-                        <div class="flex gap-2">
+                        <div class="flex gap-2 items-center">
+                         <a href="{{ route('bookings.view', $booking->id) }}" 
+                                class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-blue-600 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-300"
+                                title="View Booking">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7s-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </a>
+
+
                             <form action="{{ route('vendor.booking.destroy', $booking->id) }}" method="POST"
                                 onsubmit="return confirm('Are you sure?');">
                                 @csrf
