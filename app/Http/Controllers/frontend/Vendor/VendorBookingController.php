@@ -200,7 +200,7 @@ class VendorBookingController extends Controller
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
-        return view('frontend.Vendor.tabs.bookings.view', [
+        return view('frontend.vendor.tabs.bookings.view', [
             'bookingid'            => $id,
             'booking'              => $booking,
             'AdditionalInformation' => $AdditionalInformation,
