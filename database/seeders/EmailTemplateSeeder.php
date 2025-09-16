@@ -15,47 +15,27 @@ class EmailTemplateSeeder extends Seeder
                 'title'   => 'Vendor Login Email Notification',
                 'subject' => 'Welcome to {SITE_TITLE}',
                 'email_content'    => '
-                    <p>Dear {NAME},<br /><br />
+                    <p>Dear {USER_NAME},<br /><br />
                     Welcome to <strong>{SITE_TITLE}</strong>! Your account has been successfully created. Please find your login credentials below:<br /><br />
-                    Name: <strong>{NAME}</strong><br />
-                    Email: <strong>{EMAIL}</strong><br />
+                    Name: <strong>{USER_NAME}</strong><br />
+                    Email: <strong>{USER_EMAIL}</strong><br />
                     Password: <strong>{PASSWORD}</strong><br /><br />
                     For security reasons, we recommend that you change your password after your first login.<br /><br />
                     Regards,<br /> {SITE_TITLE}</p>
                 ',
-                'dummy_template' => '
-                    <p>Dear {NAME},<br /><br />
-                    Welcome to <strong>{SITE_TITLE}</strong>! Your account has been successfully created. Please find your login credentials below:<br /><br />
-                    Name: <strong>{NAME}</strong><br />
-                    Email: <strong>{EMAIL}</strong><br />
-                    Password: <strong>{PASSWORD}</strong><br /><br />
-                    For security reasons, we recommend that you change your password after your first login.<br /><br />
-                    Regards,<br /> {SITE_TITLE}</p>
-                ',
-                'macro' => '{NAME},{SITE_TITLE},{EMAIL},{PASSWORD}',
             ],
             [
                 'slug' => 'new_account_email_notification',
                 'title' => 'New Account Email Notification',
                 'subject' => 'Welcome to {SITE_TITLE}',
                 'email_content' => '
-                    <p>Dear {NAME},<br /><br />
+                    <p>Dear {USER_NAME},<br /><br />
                     Welcome to <strong>{SITE_TITLE}</strong>! Your account has been successfully created. Please find your login credentials below:<br /><br />
-                    Name: <strong>{NAME}</strong><br />
-                    Email: <strong>{EMAIL}</strong><br />
+                    Name: <strong>{USER_NAME}</strong><br />
+                    Email: <strong>{USER_EMAIL}</strong><br />
                     For security reasons, we recommend that you change your password after your first login.<br /><br />
                     Regards,<br /> {SITE_TITLE}</p>
                 ',
-                'dummy_template' => '
-                    <p>Dear {NAME},<br /><br />
-                    Welcome to <strong>{SITE_TITLE}</strong>! Your account has been successfully created. Please find your login credentials below:<br /><br />
-                    Name: <strong>{NAME}</strong><br />
-                    Email: <strong>{EMAIL}</strong><br />
-                    Password: <strong>{PASSWORD}</strong><br /><br />
-                    For security reasons, we recommend that you change your password after your first login.<br /><br />
-                    Regards,<br /> {SITE_TITLE}</p>
-                ',
-                'macro' => '{NAME},{SITE_TITLE},{EMAIL}',
             ],
             [
                 'slug' => 'admin_new_user_notification',
@@ -64,27 +44,18 @@ class EmailTemplateSeeder extends Seeder
                 'email_content' => '
                     <p>Dear Admin,<br /><br />
                     A new user has just been created on <strong>{SITE_TITLE}</strong>.<br /><br />
-                    Name: <strong>{NAME}</strong><br />
-                    Email: <strong>{EMAIL}</strong><br /><br />
+                    Name: <strong>{USER_NAME}</strong><br />
+                    Email: <strong>{USER_EMAIL}</strong><br /><br />
                     You can view and manage this user from your admin panel.<br /><br />
                     Regards,<br /> {SITE_TITLE}</p>
                 ',
-                'dummy_template' => '
-                    <p>Dear Admin,<br /><br />
-                    A new user has just been created on <strong>{SITE_TITLE}</strong>.<br /><br />
-                    Name: <strong>{NAME}</strong><br />
-                    Email: <strong>{EMAIL}</strong><br /><br />
-                    You can view and manage this user from your admin panel.<br /><br />
-                    Regards,<br /> {SITE_TITLE}</p>
-                ',
-                'macro' => '{NAME},{SITE_TITLE},{EMAIL}',
             ],
-           [
+            [
                 'slug' => 'booking_confirmed_notification',
                 'title' => 'Booking Confirmed Notification',
-                'subject' => 'Booking Confirmed – {SITE_TITLE}', 
+                'subject' => 'Booking Confirmed – {SITE_TITLE}',
                 'email_content' => '
-                    <p>Dear {NAME},</p>
+                    <p>Dear {USER_NAME},</p>
                     <p>Thank you for your booking at <strong>{SITE_TITLE}</strong>.</p>
                     <div>
                         We’re happy to confirm that your booking has been successfully received.<br /><br />
@@ -99,35 +70,20 @@ class EmailTemplateSeeder extends Seeder
                         The <strong>{SITE_TITLE}</strong> Team
                     </p>
                 ',
-                'dummy_template' => '
-                    <p>Dear Admin,<br /><br />
-                    A new user has just been created on <strong>{SITE_TITLE}</strong>.<br /><br />
-                    {BOOKING_DATA}<br /><br />
-                    You can view and manage this user from your admin panel.<br /><br />
-                    Regards,<br /> {SITE_TITLE}</p>
-                ',
-                'macro' => '{NAME},{SITE_TITLE},{BOOKING_DATA}',
-           ],
+            ],
             [
-                    'slug' => 'password_reset_email',
-                    'title' => 'Password Reset Email',
-                    'subject' => 'Password Reset Request – {SITE_TITLE}', 
-                    'email_content' => '
-                        <p>Dear {NAME},</p>
+                'slug' => 'password_reset_email',
+                'title' => 'Password Reset Email',
+                'subject' => 'Password Reset Request – {SITE_TITLE}',
+                'email_content' => '
+                        <p>Dear {USER_NAME},</p>
                         <p>We received a request to reset your password for your account at <strong>{SITE_TITLE}</strong>.</p>
                         <p>You can reset your password by clicking the link below:</p>
                         <p><a href="{RESET_LINK}">Reset Your Password</a></p>
                         <p>If you did not request a password reset, please ignore this email or contact support.</p>
                         <p>Best regards,<br />The <strong>{SITE_TITLE}</strong> Team</p>
                     ',
-                    'dummy_template' => '
-                        <p>Dear Admin,<br /><br />
-                        A password reset request has been made for user: <strong>{NAME}</strong> on <strong>{SITE_TITLE}</strong>.<br /><br />
-                        You can review this request in the admin panel.<br /><br />
-                        Regards,<br />{SITE_TITLE}</p>
-                    ',
-                    'macro' => '{NAME},{SITE_TITLE},{RESET_LINK}',
-                ]
+            ]
 
         ];
 

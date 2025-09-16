@@ -65,7 +65,7 @@
                                             class="form-control  @error('subject') is-invalid @enderror"
                                             value="{{ old('subject', $getEmailId->subject) }}"
                                             placeholder="Enter Subject">
-                                            @error('subject')
+                                        @error('subject')
                                         <span class="invalid-feedback d-block" id="macroNameError" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -90,16 +90,14 @@
                                     </div>
                                 </div>
 
-                                <!-- <div class="col-md-12">
+                                <div class="col-md-12">
                                     <div class="mt-3">
-                                        <label class="font-weight-bold">Available Macros:</label>
-                                        <ul>
-                                            @foreach($macros as $key => $value)
-                                            <li><strong>{{ $key }}</strong> → <code>{{ $value }}</code></li>
-                                            @endforeach
-                                        </ul>
+                                        <label class="font-weight-bold d-block mb-2">Available Macros:</label>
+                                        @foreach($macros as $value)
+                                        <span class="badge badge-primary mr-2 mb-1">{{ $value }}</span>
+                                        @endforeach
                                     </div>
-                                </div> -->
+                                </div>
 
                             </div>
                         </div>
@@ -146,11 +144,11 @@
     </div>
 </div>
 <script>
-    document.getElementById('slug').addEventListener('input', function () {
-    let val = this.value;
-    // force lowercase + replace spaces with underscores
-    this.value = val.toLowerCase().replace(/\s+/g, '_');
-});
+    document.getElementById('slug').addEventListener('input', function() {
+        let val = this.value;
+        // force lowercase + replace spaces with underscores
+        this.value = val.toLowerCase().replace(/\s+/g, '_');
+    });
 </script>
 
 @endsection

@@ -210,8 +210,8 @@ class VendorController extends Controller
             //     }
 
             $macros = [
-                '{NAME}' => $user->name,
-                '{EMAIL}' => $user->email,
+                '{USER_NAME}' => $user->name,
+                '{USER_EMAIL}' => $user->email,
                 '{PASSWORD}' => $randomPassword,
                 '{SITE_TITLE}' => get_setting('site_title'),
             ];

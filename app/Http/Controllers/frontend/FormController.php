@@ -100,8 +100,8 @@ class FormController extends Controller
                 $lastInsertedId = $user->id;
 
                 $macros = [
-                    '{NAME}' => $user->name,
-                    '{EMAIL}' => $user->email,
+                    '{USER_NAME}' => $user->name,
+                    '{USER_EMAIL}' => $user->email,
                     '{PASSWORD}' => $randomPassword,
                     '{SITE_TITLE}' => get_setting('site_title'),
                 ];
@@ -653,7 +653,7 @@ class FormController extends Controller
         // Send email if possible
         if (!empty($name) && !empty($email)) {
             $macros = [
-                '{NAME}'         => $name,
+                '{USER_NAME}'         => $name,
                 '{SITE_TITLE}'   => get_setting('site_title'),
                 '{BOOKING_DATA}' => generateBookingDataTable($bookingDetails),
             ];

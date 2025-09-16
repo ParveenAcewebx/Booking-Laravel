@@ -358,8 +358,8 @@ class UserController extends Controller
         $user->assignRole($userRole);
 
         $macros = [
-            '{NAME}' =>$user->name,
-            '{EMAIL}' => $user->email,
+            '{USER_NAME}' =>$user->name,
+            '{USER_EMAIL}' => $user->email,
             '{SITE_TITLE}' => get_setting('site_title') ,
         ];
      
@@ -403,7 +403,7 @@ class UserController extends Controller
         $resetLink = route('password.reset', ['token' => $token]);
         $user = User::where('email', $request->email)->pluck('name');
         $macros = [
-            '{NAME}' => $user[0],
+            '{USER_NAME}' => $user[0],
             '{RESET_LINK}' => $resetLink,
             '{SITE_TITLE}' => get_setting('site_title'),
         ];
@@ -536,7 +536,6 @@ class UserController extends Controller
         }
     
         User::whereIn('id', $ids)->delete();
-    
         return response()->json(['success' => true, 'message' => 'Selected Users Deleted Successfully.']);
     }
     
