@@ -1,7 +1,8 @@
 @extends('admin.layouts.app')
 @section('content')
-<div class="pcoded-main-container">
+<div class="pcoded-main-container ">
     <div class="pcoded-content">
+       
         <div class="page-header">
             <div class="page-block">
                 <div class="row align-items-center">
@@ -57,7 +58,11 @@
 
                     <div class="col-md-1 col-sm-4">
                         <button id="reset-filters" class="btn btn-primary float-right w-100">Reset</button>
+                        
                     </div>
+                    <div class="export_booking d-flex justify-content-end">
+                <a href="{{route('export.booking.excel')}}" class="btn btn-primary btn-sm mr-3 p-2">Export To Excel</a>
+        </div>
                 </div>
 
             </div>

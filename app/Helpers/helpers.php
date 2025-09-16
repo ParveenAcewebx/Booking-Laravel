@@ -68,31 +68,36 @@ if (!function_exists('sendTemplateEmail')) {
 
 // Alias functions for backward compatibility
 if (!function_exists('sendVendorTemplateEmail')) {
-    function sendVendorTemplateEmail($slug, $toEmail, $macros = []) {
+    function sendVendorTemplateEmail($slug, $toEmail, $macros = [])
+    {
         return sendTemplateEmail($slug, $toEmail, $macros);
     }
 }
 
 if (!function_exists('sendAdminTemplateEmail')) {
-    function sendAdminTemplateEmail($slug, $toEmail, $macros = []) {
+    function sendAdminTemplateEmail($slug, $toEmail, $macros = [])
+    {
         return sendTemplateEmail($slug, $toEmail, $macros);
     }
 }
 
 if (!function_exists('newCustomerRegister')) {
-    function newCustomerRegister($slug, $toEmail, $macros = []) {
+    function newCustomerRegister($slug, $toEmail, $macros = [])
+    {
         return sendTemplateEmail($slug, $toEmail, $macros);
     }
 }
 
 if (!function_exists('newBooking')) {
-    function newBooking($slug, $toEmail, $macros = []) {
+    function newBooking($slug, $toEmail, $macros = [])
+    {
         return sendTemplateEmail($slug, $toEmail, $macros);
     }
 }
 
 if (!function_exists('SendPasswordResetEmail')) {
-    function SendPasswordResetEmail($slug, $toEmail, $macros = []) {
+    function SendPasswordResetEmail($slug, $toEmail, $macros = [])
+    {
         return sendTemplateEmail($slug, $toEmail, $macros);
     }
 }

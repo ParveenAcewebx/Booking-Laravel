@@ -20,6 +20,7 @@ use App\Http\Controllers\frontend\Vendor\VendorProfileController;
 use App\Http\Controllers\frontend\Vendor\VendorBookingController;
 use App\Http\Controllers\frontend\Vendor\VendorServiceController;
 use App\Http\Controllers\frontend\Vendor\VendorStaffController;
+use App\Http\Controllers\export\ExportBookingController;
 use App\Helpers\Shortcode;
 
 
@@ -270,7 +271,7 @@ Route::middleware(['VendorRoleCheck'])->group(function () {
     Route::delete('/staff/{id}', [VendorStaffController::class, 'staffDestroy'])->name('vendor.staff.destroy');
    
 });
-
+Route::get('/export-bookings', [ExportBookingController::class, 'exportBookings'])->name('export.booking.excel');
 
 Route::get('/email/logs', function () {
     $logPath = storage_path('logs/laravel.log');
