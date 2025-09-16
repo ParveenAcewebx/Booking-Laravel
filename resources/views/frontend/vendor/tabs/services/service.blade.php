@@ -33,10 +33,14 @@
             @foreach($servicedata as $services_data)
             @php
             $categoryObj = $categories->firstWhere('id', $services_data->category);
+            $desc = strip_tags($services_data->description);
+            $desc = trim($desc);
             @endphp
             <div class="space-y-4 mb-4 p-4 border rounded-lg hover:shadow">
                 <h2 class="mb-2 text-xl text-gray-800">{{ $services_data->name }}</h2>
+                @if(!empty($desc))
                 <p><strong>Description:</strong> {!! $services_data->description !!}</p>
+                @endif 
                 <p><strong>Category:</strong> {{ $categoryObj ? $categoryObj->category_name : 'Not assigned' }}</p>
                 <p><strong>Status:</strong> {{ $services_data->status == 1 ? 'Active' : 'Inactive' }}</p>
                 <p><strong>Price:</strong> {{ $services_data->currency }}{{ $services_data->price }}</p>

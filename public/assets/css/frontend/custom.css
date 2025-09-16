@@ -134,3 +134,6 @@ button.no.btn.btn-danger.btn-sm,button.yes.btn.btn-success.btn-sm {
     padding: 3px 5px;
     border-radius: 4px;
 }
+.ql-editor {
+    min-height: 150px;
+  }
