@@ -5,6 +5,14 @@ return [
         'active' => 1,
         'inactive' => 0,
     ],
+    'macro' => [
+        'SITE_TITLE' => '{SITE_TITLE}',
+        'USER_NAME' => '{USER_NAME}',
+        'BOOKING_DATA' => '{BOOKING_DATA}',
+        'USER_EMAIL' => '{USER_EMAIL}',
+        'PASSWORD' => '{PASSWORD}',
+        'RESET_PASSWORD' => '{RESET_PASSWORD}',
+    ],
     'defaultWorkHours' => [
         'monday'    => ['start' => '00:00', 'end' => '00:00', 'services' => []],
         'tuesday'   => ['start' => '00:00', 'end' => '00:00', 'services' => []],

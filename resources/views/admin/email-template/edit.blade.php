@@ -54,25 +54,8 @@
                                     </div>
                                 </div>
 
-                                <!-- Slug -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Slug<span class="text-danger">*</span></label>
-                                        <input
-                                            type="text"
-                                            name="slug"
-                                            id="slug"
-                                            class="form-control @error('slug') is-invalid @enderror"
-                                            value="{{ old('slug', $getEmailId->slug) }}"
-                                            placeholder="Enter Slug">
-                                        @error('slug')
-                                        <span class="invalid-feedback d-block">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-
                                 <!-- Subject -->
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="form-label">Subject</label>
                                         <input
@@ -86,37 +69,6 @@
                                         <span class="invalid-feedback d-block" id="macroNameError" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <!-- Dummy Template -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Dummy Template</label>
-                                        <input
-                                            type="text"
-                                            name="dummy_template"
-                                            id="dummy_template"
-                                            class="form-control"
-                                            value="{{ old('dummy_template', $getEmailId->dummy_template) }}"
-                                            placeholder="Enter Dummy Template">
-                                    </div>
-                                </div>
-
-                                <!-- Macro -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Macro<span class="text-danger">*</span></label>
-                                        <input
-                                            type="text"
-                                            name="macro"
-                                            id="macro"
-                                            class="form-control @error('macro') is-invalid @enderror"
-                                            value="{{ old('macro', $getEmailId->macro) }}"
-                                            placeholder="Enter Macro">
-                                        @error('macro')
-                                        <span class="invalid-feedback d-block">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>
@@ -137,6 +89,17 @@
                                         @enderror
                                     </div>
                                 </div>
+
+                                <!-- <div class="col-md-12">
+                                    <div class="mt-3">
+                                        <label class="font-weight-bold">Available Macros:</label>
+                                        <ul>
+                                            @foreach($macros as $key => $value)
+                                            <li><strong>{{ $key }}</strong> → <code>{{ $value }}</code></li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div> -->
 
                             </div>
                         </div>

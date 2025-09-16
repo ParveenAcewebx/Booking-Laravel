@@ -30,9 +30,8 @@ class EmailTemplateController extends Controller
                             ? '<span class="badge badge-success">Active</span>'
                             : '<span class="badge badge-danger">Inactive</span>';
                     })
-                    ->addColumn('macro', function ($row) {
-                        return $row->macro;
-                    })
+
+                    
                     ->addColumn('checkbox', function ($row) {
                         $canDelete = CheckSlugHelper::canDelete($row->slug);
                         $disabled = ($row->status == config('constants.status.active') && !$canDelete) ? 'disabled' : '';
@@ -53,7 +52,7 @@ class EmailTemplateController extends Controller
 
                             if ($row->status == config('constants.status.active') && !$canDelete) {
 
-                                $btn .= '<button type="button" class="btn btn-icon btn-secondary" disabled>
+                                $btn .= '<button type="button" class="btn btn-icon btn-secondary" disabled data-toggle="tooltip" title="Email template is in use">
                                         <i class="feather icon-trash-2"></i>
                                      </button>';
                             } else {
@@ -86,28 +85,27 @@ class EmailTemplateController extends Controller
     {
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
-        return view('admin.email-template.add', compact('loginUser'));
+        $macros = config('constants.macro');
+        return view('admin.email-template.add', compact('loginUser','macros'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'title'          => 'required|string|max:255|unique:email_templates,title',
-            'slug'           => 'required|string|max:255|unique:email_templates,slug',
-            'macro'          => 'required|string|max:255',
             'subject'        => 'nullable|string|max:255',
-            'dummy_template' => 'nullable|string',
             'email_content'  => 'required|string',
             'status'         => 'required|in:' . config('constants.status.active') . ',' . config('constants.status.inactive'),
         ]);
 
         try {
+            $stringWithUnderscores = str_replace(" ", "_", $validated['title']);
+            $slugCreation = strtolower($stringWithUnderscores);
+
             EmailTemplate::create([
                 'title'          => $validated['title'],
-                'slug'           => $validated['slug'],
-                'macro'          => $validated['macro'],
+                'slug'           => $slugCreation,
                 'subject'        => $validated['subject'] ?? null,
-                'dummy_template' => $validated['dummy_template'] ?? null,
                 'email_content'  => $request->email_content,
                 'status'         => $validated['status'],
             ]);
@@ -126,7 +124,8 @@ class EmailTemplateController extends Controller
     public function edit(string $id)
     {
         $getEmailId = EmailTemplate::findOrFail($id);
-        return view('admin.email-template.edit', compact('getEmailId'));
+        $macros = config('constants.macro');
+        return view('admin.email-template.edit', compact('getEmailId','macros'));
     }
 
     public function update(Request $request, $id)
@@ -135,21 +134,19 @@ class EmailTemplateController extends Controller
 
         $validated = $request->validate([
             'title'          => 'required|string|max:255|unique:email_templates,title,' . $template->id,
-            'slug'           => 'required|string|max:255|unique:email_templates,slug,' . $template->id,
-            'macro'          => 'required|string|max:255',
             'subject'        => 'nullable|string|max:255',
-            'dummy_template' => 'nullable|string',
             'email_content'  => 'required|string',
             'status'         => 'required|in:' . config('constants.status.active') . ',' . config('constants.status.inactive'),
         ]);
 
         try {
+            $stringWithUnderscores = str_replace(" ", "_", $validated['title']);
+            $slugCreation = strtolower($stringWithUnderscores);
+
             $template->update([
                 'title'          => $validated['title'],
-                'slug'           => $validated['slug'],
-                'macro'          => $validated['macro'],
+                'slug'           => $slugCreation,
                 'subject'        => $validated['subject'] ?? null,
-                'dummy_template' => $validated['dummy_template'] ?? null,
                 'email_content'  => $validated['email_content'],
                 'status'         => $validated['status'],
             ]);

@@ -40,6 +40,7 @@ class VendorController extends Controller
         $loginUser = $loginId ? User::find($loginId) : null;
         if ($request->ajax()) {
             // Load vendors with pivot + nested service relation
+        
             $vendors = Vendor::with('services')->select(['id', 'name', 'email', 'status', 'created_at']);
 
             return DataTables::of($vendors)
@@ -82,7 +83,30 @@ class VendorController extends Controller
                         $btn .= '</button>';
                         $btn .= '</form>';
                     }
-
+                    // Impersonation
+                    $currentUser = Auth::user();
+                    $isImpersonating = session()->has('impersonate_original_user') || Cookie::get('impersonate_original_user');
+                                
+                     $vendoremail = Vendor::where('id', $row->id)->pluck('email')->first();
+                    $vendoruserid =  User::where('email', $vendoremail)->pluck('id')->first();
+                    if ($isImpersonating && Auth::id() === $vendoruserid) {
+                        $btn .= '<form method="POST" action="' . route('user.switch.back') . '" style="display:inline;">
+                                    ' . csrf_field() . '
+                                    <button type="submit" class="btn btn-icon btn-dark" data-toggle="tooltip" title="Switch Back">
+                                        <i class="feather icon-log-out"></i>
+                                    </button>
+                                    </form>';
+                    } elseif (!$isImpersonating && $currentUser->hasRole('Administrator') && $currentUser->id !== $vendoruserid && $row->status == config('constants.status.active')) {
+                      
+                        $btn .= '<form method="POST" action="' . route('user.switch', $vendoruserid) . '" style="display:inline;">
+                                ' . csrf_field() . '
+                                <input type="hidden"name="switch_from"value="vendor">
+                                <button type="submit" class="btn btn-icon btn-dark" data-toggle="tooltip" title="Switch User">
+                                    <i class="fas fa-random"></i>
+                                </button>
+                                </form>';
+                            
+                    }
                     return $btn;
                 })
 

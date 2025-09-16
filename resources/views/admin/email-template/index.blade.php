@@ -44,7 +44,6 @@
                                         <th>Title</th>
                                         <th>Slug</th>
                                         <th>Subject</th>
-                                        <th>Macro</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -81,18 +80,6 @@
                     createdCell: function(td, cellData) {
                         $(td).css({
                             "max-width": "390px",
-                            "white-space": "normal",
-                            "word-break": "break-word"
-                        }).text(cellData ?? '');
-                    }
-                },
-                { 
-                    data: 'macro',
-                    name: 'macro',
-                    width: "15%",
-                    createdCell: function(td, cellData) {
-                        $(td).css({
-                            "max-width": "190px",
                             "white-space": "normal",
                             "word-break": "break-word"
                         }).text(cellData ?? '');

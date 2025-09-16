@@ -479,20 +479,20 @@ class UserController extends Controller
             $userToUpdate->assignRole($bookingRole);
         }
     }
-    public function switchUser($id)
+    public function switchUser(Request $request ,$id)
     {
         $currentUser = Auth::user();
-
         if (!$currentUser->hasRole('Administrator')) {
             abort(403, 'Unauthorized action.');
         }
-
         if ($currentUser->id == $id) {
             return redirect()->back()->with('error', 'You are already logged in as this user.');
         }
 
-    
         if (!session()->has('impersonate_original_user') && !Cookie::get('impersonate_original_user')) {
+            if($request->switch_from){
+            session(['impersonate_original_switch_back' => $request->switch_from]);
+            }
             session(['impersonate_original_user' => $currentUser->id]);
             Cookie::queue('impersonate_original_user', $currentUser->id, 60 * 24 * 7); // 7 days
         }
