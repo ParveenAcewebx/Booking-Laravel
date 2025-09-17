@@ -45,19 +45,31 @@
             <div class="col-span-2">
                 <h4 class="font-semibold text-gray-100">Subscribe Us</h4>
 
-                <form action="{{ route('subscribe.send') }}" method="POST">
+                <form id="subscription-form" action="{{ route('subscriptions.index') }}" method="POST" novalidate>
                     @csrf
-                    <div class="mt-4 flex flex-col items-center gap-2 sm:flex-row sm:gap-3 bg-white rounded-lg p-2 dark:bg-neutral-900">
+                    <div class="mt-3 flex flex-col items-center gap-2 sm:flex-row sm:gap-3 bg-white rounded-lg p-2 dark:bg-neutral-900">
                         <div class="w-full">
                             <label for="hero-input" class="sr-only">Subscribe</label>
-                            <input type="email" id="hero-input" name="hero-input" class="py-2.5 sm:py-3 px-4 block w-full border-transparent rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-transparent dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" placeholder="Enter your email" required>
+                            <input type="email" id="hero-input" name="email"
+                                class="py-2.5 sm:py-3 px-4 block w-full border rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:text-neutral-400"
+                                placeholder="Enter your email">
                         </div>
-                        <button type="submit" class="w-full sm:w-auto whitespace-nowrap p-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
-                            Subscribe
+                        <button id="subscribe-btn" type="submit"
+                            class="w-full sm:w-auto whitespace-nowrap p-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700">
+                            <span id="btn-text">Subscribe</span>
+                            <svg id="btn-spinner" class="animate-spin hidden h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                            </svg>
                         </button>
                     </div>
+                    <div id="subscription-message" class="hidden mt-3 rounded px-4 py-3"></div>
                 </form>
+
             </div>
+
             <!-- End Col -->
         </div>
         <!-- End Grid -->
@@ -93,8 +105,64 @@
                     </svg>
                 </a>
             </div>
-            <!-- End Social Brands -->
         </div>
     </div>
 </footer>
-<!-- ========== END FOOTER ========== -->
+<script>
+    document.getElementById('subscription-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+        const btnText = document.getElementById('btn-text');
+        const btnSpinner = document.getElementById('btn-spinner');
+        const msgBox = document.getElementById('subscription-message');
+        const emailInput = document.getElementById('hero-input');
+
+        btnText.classList.add('hidden');
+        btnSpinner.classList.remove('hidden');
+
+        try {
+            const res = await fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: formData
+            });
+
+            const data = await res.json();
+
+            if (data.status === 'success') {
+                msgBox.textContent = data.message;
+                msgBox.className = "mt-3 rounded bg-green-100 px-4 py-3 text-green-800";
+                msgBox.style.display = 'block';
+                form.reset();
+                setTimeout(() => msgBox.style.display = 'none', 4000);
+
+                btnSpinner.classList.add('hidden');
+                btnText.classList.remove('hidden');
+            } else {
+                msgBox.textContent = data.message || "Something went wrong!";
+                msgBox.className = "mt-3 rounded bg-red-100 px-4 py-3 text-red-800";
+                msgBox.style.display = 'block';
+
+                btnSpinner.classList.add('hidden');
+                btnText.classList.remove('hidden');
+
+                emailInput.addEventListener('input', function clearError() {
+                    msgBox.style.display = 'none';
+                    emailInput.removeEventListener('input', clearError);
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            msgBox.textContent = "Network error. Please try again.";
+            msgBox.className = "mt-3 rounded bg-red-100 px-4 py-3 text-red-800";
+            msgBox.style.display = 'block';
+            btnSpinner.classList.add('hidden');
+            btnText.classList.remove('hidden');
+        }
+    });
+</script>
