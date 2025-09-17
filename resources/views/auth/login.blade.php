@@ -24,21 +24,20 @@
                         <form method="POST" action="{{ route('login') }}">
                             @csrf
                             <div class="form-group mb-3">
-                                <input type="email" name="email" class="form-control" id="Email" placeholder="Email address" required>
+                                <input type="email" name="email" class="form-control {{$errors->has('email') ?'border border-danger ' :''}}" id="Email" placeholder="Email address" oninput="removeError('email')" value="{{ old('email') }}" >
                                 @error('email')
-                                  <div class="error-message">{{ $message }}</div>
+                                  <div class="error-message text-danger text-left"id="email-error">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="form-group mb-4">
-                                <input type="password" name="password" class="form-control" id="Password" placeholder="Password" required>
+                                <input type="password" name="password" class="form-control {{$errors->has('password') ?'border border-danger' :''}}" id="Password" placeholder="Password" oninput="removeError('password')" value="{{ old('password') }}" >
                                 @error('password')
-                                  <div class="error-message">{{ $message }}</div>
+                                  <div class="error-message text-danger text-left"id="password-error">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="custom-control custom-checkbox text-left mb-4 mt-2">
                                 <input type="checkbox" name="rememberme" class="custom-control-input" id="customCheck1">
                                 <label class="custom-control-label" for="customCheck1">Save credentials.</label>
-                               
                             </div>
                             <button type="submit" class="btn btn-block btn-primary mb-4">Sign in</button>
                         </form>
@@ -51,9 +50,6 @@
         </div>
     </div>
 </div>
+
 @endsection
 
-
-
-
-  

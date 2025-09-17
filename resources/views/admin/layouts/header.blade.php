@@ -4,14 +4,14 @@
         <a class="mobile-menu" id="mobile-collapse" href="#!"><span></span></a>
         <a href="#!" class="b-brand">
             @php
-                $logoPath = 'storage/' . get_setting('website_logo');
-                $logoStoragePath = 'public/' . get_setting('website_logo'); // adjust if necessary
+            $logoPath = 'storage/' . get_setting('website_logo');
+            $logoStoragePath = 'public/' . get_setting('website_logo'); // adjust if necessary
             @endphp
 
             @if (get_setting('website_logo') && Storage::exists($logoStoragePath))
-                <img src="{{ asset($logoPath) }}" alt="MyBrand Logo" class="img-fluid" style="max-width: 60%; margin: 0 auto;">
+            <img src="{{ asset($logoPath) }}" alt="MyBrand Logo" class="img-fluid" style="max-width: 60%; margin: 0 auto;">
             @else
-                <img src="{{ asset('assets/images/no-image-available.png') }}" alt="No Image" class="img-fluid" style="max-width: 30%; margin: 0 auto;">
+            <img src="{{ asset('assets/images/no-image-available.png') }}" alt="No Image" class="img-fluid" style="max-width: 30%; margin: 0 auto;">
             @endif
         </a>
         <a href="#!" class="mob-toggler">
@@ -121,13 +121,18 @@
                         </div>
                         <ul class="pro-body">
                             <li>
-                                <a href="{{ route('home') }}" class="dropdown-item"target="_blank">
-                                   <i class="fas fa-globe"></i> Visit Site
+                                <a href="{{ route('home') }}" class="dropdown-item" target="_blank">
+                                    <i class="fas fa-globe"></i> Visit Site
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('profile') }}" class="dropdown-item">
                                     <i class="feather icon-user"></i> Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('changepassword') }}" class="dropdown-item">
+                                    <i class="feather icon-lock"></i> Change Password
                                 </a>
                             </li>
                             <li>
@@ -138,11 +143,11 @@
 
                             <!-- Switch Back Button -->
                             @php
-                                $isImpersonating = session()->has('impersonate_original_user') || Cookie::get('impersonate_original_user');
-                                $loginUser = null;
-                                if ($isImpersonating) {
-                                    $loginUser = \App\Models\User::find(session('impersonate_original_user') ?? Cookie::get('impersonate_original_user'));
-                                }
+                            $isImpersonating = session()->has('impersonate_original_user') || Cookie::get('impersonate_original_user');
+                            $loginUser = null;
+                            if ($isImpersonating) {
+                            $loginUser = \App\Models\User::find(session('impersonate_original_user') ?? Cookie::get('impersonate_original_user'));
+                            }
                             @endphp
 
                             @if($isImpersonating && $loginUser)

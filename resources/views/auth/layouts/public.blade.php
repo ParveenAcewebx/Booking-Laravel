@@ -84,6 +84,18 @@
             setCookie("modelopen", ticks, 1);
         }
     }
+    function removeError(field) {
+        const input = document.getElementById(field);
+        const errorMessage = document.getElementById(field + '-error');
+        
+        // Remove the error border if present
+        input.classList.remove('border', 'border-danger');
+        
+        // Remove the error message if present
+        if (errorMessage) {
+            errorMessage.remove();
+        }
+    }
 </script>
 
 </body>

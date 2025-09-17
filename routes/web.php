@@ -238,6 +238,8 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
 });
 // Front profile 
 Route::get('/logout', [UserController::class, 'logout'])->name('logout');
+Route::get('/user/changepassword', [UserController::class, 'changePassword'])->name('changepassword');
+Route::post('/user/changepassword', [UserController::class, 'updatePassword'])->name('changepassword.update');
 
 Route::post('/store/session', [FormController::class, 'storeSession'])->name('session.store');
 Route::get('/get/session', [FormController::class, 'getSession'])->name('session.get');
