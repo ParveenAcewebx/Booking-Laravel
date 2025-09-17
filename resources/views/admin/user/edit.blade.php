@@ -59,25 +59,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Password -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Password <span class="text-danger">*</span></label>
-                                        <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" placeholder="Password">
-                                        @error('password')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <!-- Confirm Password -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Confirm Password <span class="text-danger">*</span></label>
-                                        <input type="password" class="form-control" name="password_confirmation" placeholder="Confirm Password">
-                                    </div>
-                                </div>
-
                                 <!-- Phone Number -->
                                 <div class="col-md-6">
                                     <div class="form-group">
