@@ -88,6 +88,14 @@ if (!function_exists('newCustomerRegister')) {
     }
 }
 
+if (!function_exists('sendSubscriptionTemplateEmail')) {
+
+    function sendSubscriptionTemplateEmail($slug, $toEmail, $macros = [])
+    {
+        return sendTemplateEmail($slug, $toEmail, $macros);
+    }
+}
+
 if (!function_exists('newBooking')) {
     function newBooking($slug, $toEmail, $macros = [])
     {

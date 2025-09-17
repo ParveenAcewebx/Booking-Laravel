@@ -39,7 +39,13 @@
                     </a>
                     <div class="dropdown-menu profile-notification">
                         <ul class="pro-body">
-                            <li><a href="{{ route('user.edit', Auth::id()) }}" class="dropdown-item"><i class="fas fa-circle"></i> Profile</a></li>
+                            @if(Auth::check())
+                            <li>
+                                <a href="{{ route('user.edit', ['id' => Auth::id()]) }}" class="dropdown-item">
+                                    <i class="fas fa-circle"></i> Profile
+                                </a>
+                            </li>
+                            @endif
                             <li><a href="email_inbox.html" class="dropdown-item"><i class="fas fa-circle"></i> My Messages</a></li>
                             <li><a href="auth-signin.html" class="dropdown-item"><i class="fas fa-circle"></i> Lock Screen</a></li>
                         </ul>
@@ -116,8 +122,12 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right profile-notification">
                         <div class="pro-head">
-                            <img src="{{ Auth::user()->avatar ? Storage::url(Auth::user()->avatar) : asset('assets/images/no-image-available.png') }}" class="img-radius hei-40" alt="User-Profile-Image">
+                            @if(Auth::check())
+                            <img src="{{ Auth::user()->avatar ? Storage::url(Auth::user()->avatar) : asset('assets/images/no-image-available.png') }}"
+                                class="img-radius hei-40"
+                                alt="User-Profile-Image">
                             <span>{{ Auth::user()->name }}</span>
+                            @endif
                         </div>
                         <ul class="pro-body">
                             <li>

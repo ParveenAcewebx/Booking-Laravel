@@ -8,6 +8,7 @@ use App\Http\Controllers\admin\BookingController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\frontend\FormController;
+use App\Http\Controllers\frontend\SubscriptionsController;
 use App\Http\Controllers\admin\ServiceController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\frontend\BookingListingController;
@@ -86,8 +87,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
     Route::middleware('permission:delete users')->group(function () {
         Route::delete('/user/{userid}/delete', [UserController::class, 'userDelete'])->name('user.delete');
-        Route::post('/user/bulk-delete', [UserController::class, 'bulkDelete'])->name('user.bulk-delete'); 
-
+        Route::post('/user/bulk-delete', [UserController::class, 'bulkDelete'])->name('user.bulk-delete');
     });
     Route::middleware('permission:view templates')->group(function () {
         Route::get('/templates', [BookingTemplateController::class, 'index'])->name('template.list');
@@ -119,7 +119,6 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     Route::middleware('permission:delete bookings')->group(function () {
         Route::delete('/booking/{id}/delete', [BookingController::class, 'bookingDelete'])->name('booking.delete');
         Route::post('/booking/bulk-delete', [BookingController::class, 'bulkDelete'])->name('booking.bulk-delete');
-
     });
     Route::middleware('permission:view roles')->group(function () {
         Route::get('/roles', [RoleController::class, 'index'])->name('roles.list');
@@ -134,8 +133,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
     Route::middleware('permission:delete roles')->group(function () {
         Route::delete('/roles/{id}/delete', [RoleController::class, 'roleDelete'])->name('roles.delete');
-        Route::post('/roles/bulk-delete', [RoleController::class, 'bulkDelete'])->name('roles.bulk-delete'); 
-
+        Route::post('/roles/bulk-delete', [RoleController::class, 'bulkDelete'])->name('roles.bulk-delete');
     });
     Route::middleware('permission:edit services')->group(function () {
         Route::get('/service/{service}/edit', [ServiceController::class, 'serviceEdit'])->name('service.edit');
@@ -168,8 +166,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
     Route::middleware('permission:delete vendors')->group(function () {
         Route::delete('/vendor/{id}/delete', [VendorController::class, 'destroy'])->name('vendors.delete');
-        Route::post('/vendor/bulk-delete', [VendorController::class, 'bulkDelete'])->name('vendors.bulk-delete'); 
-
+        Route::post('/vendor/bulk-delete', [VendorController::class, 'bulkDelete'])->name('vendors.bulk-delete');
     });
 
     Route::middleware('permission:view categories')->group(function () {
@@ -185,8 +182,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
     Route::middleware('permission:delete categories')->group(function () {
         Route::delete('/category/{category}', [CategoryController::class, 'destroy'])->name('category.destroy');
-        Route::post('/category/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('category.bulk-delete'); 
-
+        Route::post('/category/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('category.bulk-delete');
     });
 
     Route::middleware('permission:view emails')->group(function () {
@@ -205,7 +201,6 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     Route::middleware('permission:delete emails')->group(function () {
         Route::delete('/emails/{emails}', [EmailTemplateController::class, 'destroy'])->name('emails.destroy');
         Route::post('/emails/bulk-delete', [EmailTemplateController::class, 'bulkDelete'])->name('emails.bulk-delete');
-
     });
     Route::middleware('permission:view staffs')->group(function () {
         Route::get('/staffs', [StaffController::class, 'index'])->name('staff.list');
@@ -221,7 +216,6 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     Route::middleware('permission:delete staffs')->group(function () {
         Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->name('staff.destroy');
         Route::post('/staff/bulk-delete', [StaffController::class, 'bulkDelete'])->name('staff.bulk-delete');
-
     });
     Route::middleware('permission:access settings')->group(function () {
         Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
@@ -234,7 +228,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
 
     Route::middleware('permission:delete subscriptions')->group(function () {
         Route::delete('/subscription/{id}', [SubscriptionController::class, 'destroy'])->name('subscription.destroy');
-        Route::post('/subscriptions/bulk-delete', [SubscriptionController::class, 'bulkDelete'])->name('subscription.bulk-delete'); 
+        Route::post('/subscriptions/bulk-delete', [SubscriptionController::class, 'bulkDelete'])->name('subscription.bulk-delete');
     });
 
     Route::get('/profile', [UserController::class, 'userEdit'])->name('profile');
@@ -246,6 +240,8 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     Route::get('/welcome', [UserController::class, 'welcome']);
     Route::get('/userrole', [UserController::class, 'userrole']);
 });
+Route::post('/subscription', [SubscriptionsController::class, 'index'])->name('subscriptions.index');
+
 // Front profile 
 Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 Route::get('/user/changepassword', [UserController::class, 'changePassword'])->name('changepassword');
@@ -258,7 +254,7 @@ Route::post('/form/session/destroyed', [FormController::class, 'sessiondestroy']
 // Route::get('/profile', [UserProfileController::class, 'userEdit'])->name('Userprofile');
 Route::post('/profile/update', [VendorProfileController::class, 'UserprofileUpdate'])->name('ProfileUpdate');
 Route::middleware(['VendorRoleCheck'])->group(function () {
-   
+
     Route::get('/dashboard/profile', [VendorInformationController::class, 'view'])->middleware('VendorRoleCheck')->name('vendor.dashboard.view');
 
     // Bookings
@@ -267,11 +263,11 @@ Route::middleware(['VendorRoleCheck'])->group(function () {
     Route::delete('/bookings/{id}', [VendorBookingController::class, 'bookingdestroy'])->name('vendor.booking.destroy');
     //  Services 
     Route::get('/dashboard/services', [VendorServiceController::class, 'view'])->name('vendor.services.view');
-     Route::get('/dashboard/services/add', [VendorServiceController::class, 'add'])->name('vendor.services.add');
+    Route::get('/dashboard/services/add', [VendorServiceController::class, 'add'])->name('vendor.services.add');
     Route::get('/dashboard/services/{id}/edit', [VendorServiceController::class, 'edit'])->name('vendor.services.edit');
-    
+
     Route::post('/services', [VendorServiceController::class, 'ServiceCreate'])->name('vendor.services.store');
-   
+
     Route::put('/services/{id}', [VendorServiceController::class, 'ServiceUpdate'])->name('vendor.services.update');
     Route::delete('/services/{id}', [VendorServiceController::class, 'Servicedestroy'])->name('vendor.services.destroy');
 
@@ -279,17 +275,16 @@ Route::middleware(['VendorRoleCheck'])->group(function () {
     Route::get('/dashboard/staff', [VendorStaffController::class, 'view'])->name('vendor.staff.view');
     Route::get('/dashboard/staff/add', [VendorStaffController::class, 'add'])->name('vendor.staff.add');
     Route::post('/dashboard/staff', [VendorStaffController::class, 'staffCreate'])->name('vendor.staff.store');
-     Route::get('/dashboard/staff/edit/{id}', [VendorStaffController::class, 'edit'])->name('vendor.staff.edit');
+    Route::get('/dashboard/staff/edit/{id}', [VendorStaffController::class, 'edit'])->name('vendor.staff.edit');
     Route::put('/staff/{id}', [VendorStaffController::class, 'staffUpdate'])->name('vendor.staff.update');
     Route::delete('/staff/{id}', [VendorStaffController::class, 'staffDestroy'])->name('vendor.staff.destroy');
-   
 });
 Route::get('/export-bookings', [ExportBookingController::class, 'exportBookings'])->name('export.booking.excel');
 
 Route::get('/email/logs', function () {
     $logPath = storage_path('logs/laravel.log');
     if (!File::exists($logPath)) {
-    return response('Log file not found.', 404);
+        return response('Log file not found.', 404);
     }
     $logContents = File::get($logPath);
     return response("<pre>$logContents</pre>");

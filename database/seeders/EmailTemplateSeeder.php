@@ -83,7 +83,20 @@ class EmailTemplateSeeder extends Seeder
                         <p>If you did not request a password reset, please ignore this email or contact support.</p>
                         <p>Best regards,<br />The <strong>{SITE_TITLE}</strong> Team</p>
                     ',
-            ]
+            ],
+            [
+                'slug'   => 'subscription_email_notification',
+                'title'   => 'Subscription Email Notification',
+                'subject' => 'Thank you for subscribing to {SITE_TITLE}',
+                'email_content'    => '
+                    <p>Dear {USER_NAME},<br /><br />
+                    Thank you for subscribing to <strong>{SITE_TITLE}</strong>! 🎉<br /><br />
+                    We’re excited to have you with us. You will now receive the latest news, updates, and exclusive offers directly in your inbox.<br /><br />
+                    If you ever wish to unsubscribe, you can do so easily from any of our emails.<br /><br />
+                    Best regards,<br />
+                    <strong>{SITE_TITLE}</strong></p>
+                ',
+            ],
 
         ];
 

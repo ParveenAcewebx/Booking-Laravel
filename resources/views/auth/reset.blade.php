@@ -11,39 +11,33 @@
                     <div class="card-body">
                         <h4 class="mb-3 f-w-400">Reset Password</h4>
                         <hr>
-                        @if ($errors->any())
-                            <div class="pt-3 alert alert-danger">
-                                
-                                    @foreach ($errors->all() as $error)
-                                        <p>{{ $error }}</p>
-                                    @endforeach
-                            
-                            </div>
-                        @endif
                         <form method="POST" action="{{ route('password.update') }}">
                             @csrf
                             <input type="hidden" name="token" value="{{ $token }}">
+                            
+                            <!-- Password Field -->
                             <div class="form-group mb-3">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="password" required>
-
+                                <input type="password" class="form-control {{ $errors->has('password') ? 'border border-danger' : '' }}" id="password" name="password" placeholder="Password" oninput="removeError('password')">
+                                @error('password')
+                                    <div class="error-message text-danger text-left" id="password-error">{{ $message }}</div>
+                                @enderror
                             </div>  
-                            <div class="form-group mb-3">
-                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Confirm password" required> 
 
+                            <!-- Confirm Password Field -->
+                            <div class="form-group mb-3">
+                                <input type="password" class="form-control {{ $errors->has('password_confirmation') ? 'border border-danger' : '' }}" id="password_confirmation" name="password_confirmation" placeholder="Confirm password"  oninput="removeError('password_confirmation')"> 
+                                @error('password_confirmation')
+                                    <div class="error-message text-danger text-left" id="password_confirmation-error">{{ $message }}</div>
+                                @enderror
                             </div>   
-                                          
+
                             @if (session('status'))
                                <div>{{ session('status') }}</div>
                             @endif
 
-                            @error('email')
-                                <div>{{ $message }}</div>
-                            @enderror
-                            
                             <button type="submit" class="btn btn-block btn-primary mb-4">Update Password</button>
                         </form>
                         <hr>
-                        
                     </div>
                 </div>
             </div>
@@ -51,8 +45,3 @@
     </div>
 </div>
 @endsection
-
-
-
-
-  

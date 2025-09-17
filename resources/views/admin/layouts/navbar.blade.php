@@ -4,6 +4,8 @@
 
             {{-- User Header --}}
             <div>
+            @if(Auth::check())
+
                 <div class="main-menu-header">
                     <img class="img-radius hei-40"
                         src="{{ Auth::user()->avatar ? Storage::url(Auth::user()->avatar) : asset('assets/images/no-image-available.png') }}"
@@ -17,7 +19,7 @@
                         </div>
                     </div>
                 </div>
-
+            @endif
                 <div class="collapse" id="nav-user-link">
                     <ul class="list-inline">
                         <li class="list-inline-item">

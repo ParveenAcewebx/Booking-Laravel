@@ -69,7 +69,7 @@
                                     id="password_confirmation"
                                     oninput="removeError('password_confirmation')">
                                 @error('password_confirmation')
-                                    <div class="error-message text-danger" id="password_confirmation-error">{{ $message }}</div>
+                                    <div class="error-message text-danger text-left" id="password_confirmation-error">{{ $message }}</div>
                                 @enderror
                             </div>
                             
