@@ -40,6 +40,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/booking', [BookingListingController::class, 'listing'])->name('booking.listing');
+Route::get('/booking/{id}', [BookingListingController::class, 'listing'])->name('booking.show');
 Route::get('/admin', function () {
     return redirect()->route('dashboard');
 });

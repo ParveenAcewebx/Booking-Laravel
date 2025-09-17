@@ -22,7 +22,7 @@
         </a>
         <a href="{{ route('booking.listing') }}"
           class="relative font-medium text-white
-                {{ request()->routeIs('booking.listing') ? 'before:absolute before:-bottom-1.5 before:w-full before:h-1 before:bg-yellow-400' : '' }}">
+                {{ request()->routeIs('booking.listing') || request()->routeIs('booking.show') ? 'before:absolute before:-bottom-1.5 before:w-full before:h-1 before:bg-yellow-400' : '' }}">
           Bookings
         </a>
       </div>

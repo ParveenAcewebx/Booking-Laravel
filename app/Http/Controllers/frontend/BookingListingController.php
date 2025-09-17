@@ -9,18 +9,31 @@ use App\Models\User;
 
 class BookingListingController extends Controller
 {
-    public function listing()
+    public function listing($id = null)
     {
-        $sessionData = session()->all();
-        foreach ($sessionData as $key => $value) {
+        // Clear old session data
+        foreach (session()->all() as $key => $value) {
             if (strpos($key, 'user_data_') === 0) {
                 session()->forget($key);
             }
         }
 
+        // If ID is given → filter by that ID
+        if ($id) {
+            $bookings = BookingTemplate::where('status', 1)
+                ->where('vendor_id', $id)
+                ->where('data', '!=', '')
+                ->get();
+        } else {
+            // Otherwise fetch all
+            $bookings = BookingTemplate::where('status', 1)
+                ->where('data', '!=', '')
+                ->get();
+        }
+
         return view('frontend.bookingListing', [
-           'bookings' => BookingTemplate::where('status', 1)->where('data', '!=', '')->get(),
-           'username' => null
+            'bookings' => $bookings,
+            'username' => null
         ]);
     }
 }

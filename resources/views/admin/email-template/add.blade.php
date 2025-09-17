@@ -80,7 +80,7 @@
                                         <!-- Hidden field to submit to backend -->
                                         <textarea name="email_content"
                                             id="email_content"
-                                            class="d-none @error('email_content') is-invalid @enderror">{{ old('email_content') }}</textarea>
+                                            class="d-none @error('email_content')  is-invalid @enderror">{{ old('email_content') }}</textarea>
 
                                         @error('email_content')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
