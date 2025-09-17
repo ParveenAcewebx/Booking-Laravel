@@ -335,7 +335,7 @@ function deleteCategory(id) {
                 .then((res) => res.json())
                 .then((data) => {
                     if (data.success) {
-                        swal("Category deleted successfully!", {
+                        swal("Category Deleted Successfully!", {
                             icon: "success",
                         }).then(() => {
                             window.location.reload();
@@ -349,6 +349,60 @@ function deleteCategory(id) {
                 .catch((err) => {
                     console.error(err);
                     swal("Something went wrong!", { icon: "error" });
+                });
+        }
+    });
+}
+
+function SubscriptionDelete(id, event) {
+    event.preventDefault(); // Stop default form behavior
+
+    swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this Subscription!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            const form = document.getElementById("deleteSubscription-" + id); // Correct ID
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: "POST", // Laravel expects POST with _method=DELETE
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        swal(
+                            "Deleted!",
+                            "Subscription Deleted Successfully.",
+                            "success"
+                        ).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        swal(
+                            "Failed",
+                            "Something went wrong while deleting.",
+                            "error"
+                        );
+                    }
+                })
+                .catch((error) => {
+                    console.error("Delete error:", error);
+                    swal(
+                        "Error",
+                        "There was an error processing your request.",
+                        "error"
+                    );
                 });
         }
     });
@@ -384,7 +438,7 @@ function deleteService(id, event) {
                     if (data.success) {
                         swal(
                             "Deleted!",
-                            "Service deleted successfully.",
+                            "Service Deleted Successfully.",
                             "success"
                         ).then(() => {
                             window.location.reload();

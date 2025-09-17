@@ -22,7 +22,7 @@ use App\Http\Controllers\frontend\Vendor\VendorServiceController;
 use App\Http\Controllers\frontend\Vendor\VendorStaffController;
 use App\Http\Controllers\export\ExportBookingController;
 use App\Helpers\Shortcode;
-
+use App\Http\Controllers\admin\SubscriptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -86,7 +86,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
     Route::middleware('permission:delete users')->group(function () {
         Route::delete('/user/{userid}/delete', [UserController::class, 'userDelete'])->name('user.delete');
-        Route::post('/user/bulk-delete', [UserController::class, 'bulkDelete'])->name('user.bulk-delete'); // Bulk Delete
+        Route::post('/user/bulk-delete', [UserController::class, 'bulkDelete'])->name('user.bulk-delete'); 
 
     });
     Route::middleware('permission:view templates')->group(function () {
@@ -118,7 +118,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
     Route::middleware('permission:delete bookings')->group(function () {
         Route::delete('/booking/{id}/delete', [BookingController::class, 'bookingDelete'])->name('booking.delete');
-        Route::post('/booking/bulk-delete', [BookingController::class, 'bulkDelete'])->name('booking.bulk-delete'); // Bulk Delete
+        Route::post('/booking/bulk-delete', [BookingController::class, 'bulkDelete'])->name('booking.bulk-delete');
 
     });
     Route::middleware('permission:view roles')->group(function () {
@@ -134,7 +134,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
     Route::middleware('permission:delete roles')->group(function () {
         Route::delete('/roles/{id}/delete', [RoleController::class, 'roleDelete'])->name('roles.delete');
-        Route::post('/roles/bulk-delete', [RoleController::class, 'bulkDelete'])->name('roles.bulk-delete'); // Bulk Delete
+        Route::post('/roles/bulk-delete', [RoleController::class, 'bulkDelete'])->name('roles.bulk-delete'); 
 
     });
     Route::middleware('permission:edit services')->group(function () {
@@ -168,7 +168,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
     Route::middleware('permission:delete vendors')->group(function () {
         Route::delete('/vendor/{id}/delete', [VendorController::class, 'destroy'])->name('vendors.delete');
-        Route::post('/vendor/bulk-delete', [VendorController::class, 'bulkDelete'])->name('vendors.bulk-delete'); // Bulk Delete
+        Route::post('/vendor/bulk-delete', [VendorController::class, 'bulkDelete'])->name('vendors.bulk-delete'); 
 
     });
 
@@ -185,7 +185,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
     Route::middleware('permission:delete categories')->group(function () {
         Route::delete('/category/{category}', [CategoryController::class, 'destroy'])->name('category.destroy');
-        Route::post('/category/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('category.bulk-delete'); // Bulk Delete
+        Route::post('/category/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('category.bulk-delete'); 
 
     });
 
@@ -204,7 +204,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
     Route::middleware('permission:delete emails')->group(function () {
         Route::delete('/emails/{emails}', [EmailTemplateController::class, 'destroy'])->name('emails.destroy');
-        Route::post('/emails/bulk-delete', [EmailTemplateController::class, 'bulkDelete'])->name('emails.bulk-delete'); // Bulk Delete
+        Route::post('/emails/bulk-delete', [EmailTemplateController::class, 'bulkDelete'])->name('emails.bulk-delete');
 
     });
     Route::middleware('permission:view staffs')->group(function () {
@@ -220,7 +220,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     });
     Route::middleware('permission:delete staffs')->group(function () {
         Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->name('staff.destroy');
-        Route::post('/staff/bulk-delete', [StaffController::class, 'bulkDelete'])->name('staff.bulk-delete'); // Bulk Delete
+        Route::post('/staff/bulk-delete', [StaffController::class, 'bulkDelete'])->name('staff.bulk-delete');
 
     });
     Route::middleware('permission:access settings')->group(function () {
@@ -228,7 +228,17 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
         Route::post('/settings/store', [SettingsController::class, 'store'])->name('settings.store');
     });
 
+    Route::middleware('permission:view subscriptions')->group(function () {
+        Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscription.list');
+    });
+
+    Route::middleware('permission:delete subscriptions')->group(function () {
+        Route::delete('/subscription/{id}', [SubscriptionController::class, 'destroy'])->name('subscription.destroy');
+        Route::post('/subscriptions/bulk-delete', [SubscriptionController::class, 'bulkDelete'])->name('subscription.bulk-delete'); 
+    });
+
     Route::get('/profile', [UserController::class, 'userEdit'])->name('profile');
+    Route::post('/subscribe', [UserController::class, 'subscribe'])->name('subscribe.send');
     Route::post('/user/{id}/update', [UserController::class, 'userUpdate'])->name('user.update');
     // General routes (dashboard, logout, etc.)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

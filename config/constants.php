@@ -90,6 +90,11 @@ return [
             'slug' => 'settings',
             'roles' => ['access settings']
         ],
+        'subscriptions' => [
+            'name' => "Subscriptions",
+            'slug' => 'subscriptions',
+            'roles' => ['view subscriptions','delete subscriptions']
+        ],
     ],
     'currencies' => [
         'USD' => [

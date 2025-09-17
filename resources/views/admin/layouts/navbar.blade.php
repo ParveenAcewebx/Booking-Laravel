@@ -231,6 +231,22 @@
                     </li>
                     @endcanany
 
+                    {{-- Subscriptions --}}
+                    @canany(['view subscriptions', 'delete subscriptions'])
+                    <li class="nav-item pcoded-hasmenu {{ request()->routeIs('subscription.*') ? 'pcoded-trigger' : '' }}">
+                        <a href="#!" class="nav-link">
+                            <span class="pcoded-micon"><i class="fas fa-rss"></i></span>
+                            <span class="pcoded-mtext">Subscribers</span>
+                        </a>
+                        <ul class="pcoded-submenu" @if(request()->routeIs('subscription.*')) style="display:block;" @endif>
+                            @can('view subscriptions')
+                            <li class="{{ request()->routeIs('subscription.list') ? 'active' : '' }}">
+                                <a href="{{ route('subscription.list') }}">All Subscribers</a>
+                            </li>
+                            @endcan
+                        </ul>
+                    </li>
+                    @endcanany
                     {{-- Settings --}}
                     @can('access settings')
                     <li class="nav-item">
