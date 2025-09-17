@@ -6,7 +6,7 @@
         <div class="page-header">
             <div class="page-block">
                 <div class="row align-items-center">
-                    <div class="col-md-10">
+                    <div class="col-md-6">
                         <div class="page-header-title">
                             <h5>All Users</h5>
                         </div>
@@ -16,7 +16,7 @@
                             <li class="breadcrumb-item"><a href="{{ route('user.list') }}">All Users</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-6">
                         <div class="page-header-titles float-right">
                         @can('create users')
                             <a href="{{ route('user.add') }}" class="btn btn-primary btn-sm mr-2 p-2">Add User</a>
@@ -24,6 +24,7 @@
                         @can('delete users')
                             <button id="bulkDeleteBtn" class="btn btn-danger btn-sm p-2 bulkDeleteBtn" disabled>Delete</button>
                         @endcan
+                             <a href="{{ route('export.user.excel') }}" class="btn btn-primary btn-sm ml-2 mr-2 p-2">Export To Excel</a>
                         </div>
                     </div>
                 </div>
