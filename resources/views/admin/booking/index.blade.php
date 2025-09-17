@@ -6,7 +6,7 @@
         <div class="page-header">
             <div class="page-block">
                 <div class="row align-items-center">
-                    <div class="col-md-10">
+                    <div class="col-md-6">
                         <div class="page-header-title">
                             <h5>All Bookings</h5>
                         </div>
@@ -16,7 +16,7 @@
                             <li class="breadcrumb-item"><a href="{{ route('booking.list') }}">All Bookings</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-6">
                         <div class="page-header-titles float-right">
                             @can('create bookings')
                             <a href="{{ route('booking.add') }}" class="btn btn-primary btn-sm mr-2 p-2">Add Booking</a>
@@ -61,7 +61,7 @@
                         
                     </div>
                     <div class="export_booking d-flex justify-content-end">
-                <a href="{{route('export.booking.excel')}}" class="btn btn-primary btn-sm mr-3 p-2">Export To Excel</a>
+                <a href="{{route('export.booking.excel')}}" class="btn btn-primary btn-sm mr-3 p-2 d-flex align-items-center">Export To Excel</a>
         </div>
                 </div>
 

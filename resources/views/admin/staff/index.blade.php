@@ -8,7 +8,7 @@
         <div class="page-header">
             <div class="page-block">
                 <div class="row align-items-center">
-                    <div class="col-md-10">
+                    <div class="col-md-6">
                         <div class="page-header-title">
                             <h5>All Staff</h5>
                         </div>
@@ -18,7 +18,7 @@
                             <li class="breadcrumb-item"><a href="{{ route('staff.list') }}">All Staff</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-6">
                         <div class="page-header-titles float-right">
                         @can('create staffs')
                             <a href="{{ route('staff.create') }}" class="btn btn-primary btn-sm mr-2 p-2">Add Staff</a>
@@ -26,6 +26,7 @@
                         @can('delete staffs')
                             <button id="bulkStaffsDeleteBtn" class="btn btn-danger btn-sm p-2 bulkDeleteBtn" disabled>Delete</button>
                         @endcan
+                            <a href="{{ route('export.staff.excel') }}" class="btn btn-primary btn-sm ml-2 mr-2 p-2">Export To Excel</a>
                         </div>
                     </div>
                 </div>
