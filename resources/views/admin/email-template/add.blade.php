@@ -72,15 +72,21 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label>Email Content</label>
+                                        <label>Email Content <span class="text-danger">*</span></label>
+
+                                        <!-- Quill editor container -->
                                         <div id="quill-editor" style="height: 200px;">{!! old('email_content') !!}</div>
+
+                                        <!-- Hidden field to submit to backend -->
                                         <textarea name="email_content"
                                             id="email_content"
                                             class="d-none @error('email_content') is-invalid @enderror">{{ old('email_content') }}</textarea>
+
                                         @error('email_content')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
+
                                 </div>
                                 <div class="col-md-12">
                                     <div class="mt-3">
@@ -133,11 +139,5 @@
         </form>
     </div>
 </div>
-<script>
-    document.getElementById('slug').addEventListener('input', function() {
-        let val = this.value;
-        // force lowercase + replace spaces with underscores
-        this.value = val.toLowerCase().replace(/\s+/g, '_');
-    });
-</script>
+
 @endsection

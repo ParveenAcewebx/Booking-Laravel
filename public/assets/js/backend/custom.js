@@ -1192,15 +1192,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const emailContentField = document.querySelector("#email_content");
 
+    // Set initial value (for edit case)
     if (emailContentField && emailContentField.value) {
         quill.clipboard.dangerouslyPasteHTML(emailContentField.value);
     }
 
+    // Sync Quill → textarea before form submit
     const form = document.querySelector("form");
     if (form) {
         form.addEventListener("submit", function () {
             let html = quill.root.innerHTML.trim();
 
+            // Treat Quill’s empty state as empty string
             if (html === "<p><br></p>") {
                 html = "";
             }

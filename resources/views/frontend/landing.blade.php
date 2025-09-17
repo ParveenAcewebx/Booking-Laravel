@@ -81,6 +81,7 @@
                 </div>
             </div>
         </div>
+        
         <div class="relative ms-4">
             <img class="w-full rounded-md" src="https://images.unsplash.com/photo-1665686377065-08ba896d16fd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&h=800&q=80" alt="Hero Image">
             <div class="absolute inset-0 -z-1 bg-linear-to-tr from-gray-200 via-white/0 to-white/0 size-full rounded-md mt-4 -mb-4 me-4 -ms-4 lg:mt-6 lg:-mb-6 lg:me-6 lg:-ms-6 dark:from-neutral-800 dark:via-neutral-900/0 dark:to-neutral-900/0"></div>
@@ -109,327 +110,8 @@
     </div>
 </div>
 <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
-  <div class="grid sm:grid-cols-2 lg:grid-cols-3 items-center gap-6 md:gap-10">
-    <div class="size-full bg-white shadow-lg rounded-lg p-5 dark:bg-neutral-900">
-      <div class="flex items-center gap-x-4 mb-3">
-        <div class="inline-flex justify-center items-center size-15.5 rounded-full border-4 border-blue-50 bg-blue-100 dark:border-blue-900 dark:bg-blue-800">
-          <svg class="shrink-0 size-6 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
-        </div>
-        <div class="shrink-0">
-          <h3 class="block text-lg font-semibold text-gray-800 dark:text-white">Build your portfolio</h3>
-        </div>
-      </div>
-      <p class="text-gray-600 dark:text-neutral-400">The simplest way to keep your portfolio always up-to-date.</p>
-    </div>
-        <div class="size-full bg-white shadow-lg rounded-lg p-5 dark:bg-neutral-900">
-      <div class="flex items-center gap-x-4 mb-3">
-        <div class="inline-flex justify-center items-center size-15.5 rounded-full border-4 border-blue-50 bg-blue-100 dark:border-blue-900 dark:bg-blue-800">
-          <svg class="shrink-0 size-6 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h20"/><path d="M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3"/><path d="m7 21 5-5 5 5"/></svg>
-        </div>
-        <div class="shrink-0">
-          <h3 class="block text-lg font-semibold text-gray-800 dark:text-white">Get freelance work</h3>
-        </div>
-      </div>
-      <p class="text-gray-600 dark:text-neutral-400">New design projects delivered to your inbox each morning.</p>
-    </div>
-    <div class="size-full bg-white shadow-lg rounded-lg p-5 dark:bg-neutral-900">
-      <div class="flex items-center gap-x-4 mb-3">
-        <div class="inline-flex justify-center items-center size-15.5 rounded-full border-4 border-blue-50 bg-blue-100 dark:border-blue-900 dark:bg-blue-800">
-          <svg class="shrink-0 size-6 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2v0a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12v0a2 2 0 0 1-2-2V7"/></svg>
-        </div>
-        <div class="shrink-0">
-          <h3 class="block text-lg font-semibold text-gray-800 dark:text-white">Sell your goods</h3>
-        </div>
-      </div>
-      <p class="text-gray-600 dark:text-neutral-400">Get your goods in front of millions of potential customers with ease.</p>
-    </div>
-        <div class="size-full bg-white shadow-lg rounded-lg p-5 dark:bg-neutral-900">
-      <div class="flex items-center gap-x-4 mb-3">
-        <div class="inline-flex justify-center items-center size-15.5 rounded-full border-4 border-blue-50 bg-blue-100 dark:border-blue-900 dark:bg-blue-800">
-          <svg class="shrink-0 size-6 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 8.5 9 12l-3.5 3.5L2 12l3.5-3.5Z"/><path d="m12 2 3.5 3.5L12 9 8.5 5.5 12 2Z"/><path d="M18.5 8.5 22 12l-3.5 3.5L15 12l3.5-3.5Z"/><path d="m12 15 3.5 3.5L12 22l-3.5-3.5L12 15Z"/></svg>
-        </div>
-        <div class="shrink-0">
-          <h3 class="block text-lg font-semibold text-gray-800 dark:text-white">Get freelance work</h3>
-        </div>
-      </div>
-      <p class="text-gray-600 dark:text-neutral-400">New design projects delivered to your inbox each morning.</p>
-    </div>
-        <div class="size-full bg-white shadow-lg rounded-lg p-5 dark:bg-neutral-900">
-      <div class="flex items-center gap-x-4 mb-3">
-        <div class="inline-flex justify-center items-center size-15.5 rounded-full border-4 border-blue-50 bg-blue-100 dark:border-blue-900 dark:bg-blue-800">
-          <svg class="shrink-0 size-6 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.466 7.5C15.643 4.237 13.952 2 12 2 9.239 2 7 6.477 7 12s2.239 10 5 10c.342 0 .677-.069 1-.2"/><path d="m15.194 13.707 3.814 1.86-1.86 3.814"/><path d="M19 15.57c-1.804.885-4.274 1.43-7 1.43-5.523 0-10-2.239-10-5s4.477-5 10-5c4.838 0 8.873 1.718 9.8 4"/></svg>
-        </div>
-        <div class="shrink-0">
-          <h3 class="block text-lg font-semibold text-gray-800 dark:text-white">Sell your goods</h3>
-        </div>
-      </div>
-      <p class="text-gray-600 dark:text-neutral-400">Get your goods in front of millions of potential customers with ease.</p>
-    </div>
-    <div class="size-full bg-white shadow-lg rounded-lg p-5 dark:bg-neutral-900">
-      <div class="flex items-center gap-x-4 mb-3">
-        <div class="inline-flex justify-center items-center size-15.5 rounded-full border-4 border-blue-50 bg-blue-100 dark:border-blue-900 dark:bg-blue-800">
-          <svg class="shrink-0 size-6 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.3 10a.7.7 0 0 1-.626-1.079L11.4 3a.7.7 0 0 1 1.198-.043L16.3 8.9a.7.7 0 0 1-.572 1.1Z"/><rect x="3" y="14" width="7" height="7" rx="1"/><circle cx="17.5" cy="17.5" r="3.5"/></svg>
-        </div>
-        <div class="shrink-0">
-          <h3 class="block text-lg font-semibold text-gray-800 dark:text-white">Build your portfolio</h3>
-        </div>
-      </div>
-      <p class="text-gray-600 dark:text-neutral-400">The simplest way to keep your portfolio always up-to-date.</p>
-    </div>
-  </div>
-</div>
-<div class="bg-neutral-900">
-  <div class="max-w-5xl px-4 xl:px-0 py-10 lg:pt-20 lg:pb-20 mx-auto">
-    <div class="max-w-3xl mb-10 lg:mb-14">
-      <h2 class="text-white font-semibold text-2xl md:text-4xl md:leading-tight">Our approach</h2>
-      <p class="mt-1 text-neutral-400">This profound insight guides our comprehensive strategy — from meticulous research and strategic planning to the seamless execution of brand development and website or product deployment.</p>
-    </div>
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 lg:items-center">
-      <div class="aspect-w-16 aspect-h-9 lg:aspect-none">
-        <img class="w-full object-cover rounded-xl" src="https://images.unsplash.com/photo-1587614203976-365c74645e83?q=80&w=480&h=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Features Image">
-      </div>
-      <div>
-        <div class="mb-4">
-          <h3 class="text-[#ff0] text-xs font-medium uppercase">
-            Steps
-          </h3>
-        </div>
-        <div class="flex gap-x-5 ms-1">
-          <div class="relative last:after:hidden after:absolute after:top-8 after:bottom-0 after:start-4 after:w-px after:-translate-x-[0.5px] after:bg-neutral-800">
-            <div class="relative z-10 size-8 flex justify-center items-center">
-              <span class="flex shrink-0 justify-center items-center size-8 border border-neutral-800 text-[#ff0] font-semibold text-xs uppercase rounded-full">
-                1
-              </span>
-            </div>
-          </div>
-          <div class="grow pt-0.5 pb-8 sm:pb-12">
-            <p class="text-sm lg:text-base text-neutral-400">
-              <span class="text-white">Market Research and Analysis:</span>
-              Identify your target audience and understand their needs, preferences, and behaviors.
-            </p>
-          </div>
-        </div>
-             <div class="flex gap-x-5 ms-1">
-          <div class="relative last:after:hidden after:absolute after:top-8 after:bottom-0 after:start-4 after:w-px after:-translate-x-[0.5px] after:bg-neutral-800">
-            <div class="relative z-10 size-8 flex justify-center items-center">
-              <span class="flex shrink-0 justify-center items-center size-8 border border-neutral-800 text-[#ff0] font-semibold text-xs uppercase rounded-full">
-                2
-              </span>
-            </div>
-          </div>
-          <div class="grow pt-0.5 pb-8 sm:pb-12">
-            <p class="text-sm lg:text-base text-neutral-400">
-              <span class="text-white">Product Development and Testing:</span>
-              Develop digital products or services that address the needs and preferences of your target audience.
-            </p>
-          </div>
-        </div>
-        <div class="flex gap-x-5 ms-1">
-     <div class="relative last:after:hidden after:absolute after:top-8 after:bottom-0 after:start-4 after:w-px after:-translate-x-[0.5px] after:bg-neutral-800">
-            <div class="relative z-10 size-8 flex justify-center items-center">
-              <span class="flex shrink-0 justify-center items-center size-8 border border-neutral-800 text-[#ff0] font-semibold text-xs uppercase rounded-full">
-                3
-              </span>
-            </div>
-          </div>
-          <div class="grow pt-0.5 pb-8 sm:pb-12">
-            <p class="text-sm md:text-base text-neutral-400">
-              <span class="text-white">Marketing and Promotion:</span>
-              Develop a comprehensive marketing strategy to promote your digital products or services.
-            </p>
-          </div>
-        </div>
-        <div class="flex gap-x-5 ms-1">
-          <div class="relative last:after:hidden after:absolute after:top-8 after:bottom-0 after:start-4 after:w-px after:-translate-x-[0.5px] after:bg-neutral-800">
-            <div class="relative z-10 size-8 flex justify-center items-center">
-              <span class="flex shrink-0 justify-center items-center size-8 border border-neutral-800 text-[#ff0] font-semibold text-xs uppercase rounded-full">
-                4
-              </span>
-            </div>
-          </div>
-          <div class="grow pt-0.5 pb-8 sm:pb-12">
-            <p class="text-sm md:text-base text-neutral-400">
-              <span class="text-white">Launch and Optimization:</span>
-              Launch your digital products or services to the market, closely monitoring their performance and user feedback.
-            </p>
-          </div>
-        </div>
-        <a class="group inline-flex items-center gap-x-2 py-2 px-3 bg-[#ff0] font-medium text-sm text-neutral-800 rounded-full focus:outline-hidden" href="#">
-          <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path><path class="opacity-0 group-hover:opacity-100 group-focus:opacity-100 group-hover:delay-100 transition" d="M14.05 2a9 9 0 0 1 8 7.94"></path><path class="opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition" d="M14.05 6A5 5 0 0 1 18 10"></path></svg>
-          Schedule a call
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
-  <!-- Grid -->
-  <div class="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
-    <!-- Card -->
-    <a class="group flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl hover:shadow-md focus:outline-hidden focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
-      <div class="p-4 md:p-5">
-        <div class="flex justify-between items-center gap-x-3">
-          <div class="grow">
-            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
-              Management
-            </h3>
-            <p class="text-sm text-gray-500 dark:text-neutral-500">
-              4 job positions
-            </p>
-          </div>
-          <div>
-            <svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-          </div>
-        </div>
-      </div>
-    </a>
-    <!-- End Card -->
-
-    <!-- Card -->
-    <a class="group flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl hover:shadow-md focus:outline-hidden focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
-      <div class="p-4 md:p-5">
-        <div class="flex justify-between items-center gap-x-3">
-          <div class="grow">
-            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
-              App Development
-            </h3>
-            <p class="text-sm text-gray-500 dark:text-neutral-500">
-              26 job positions
-            </p>
-          </div>
-          <div>
-            <svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-          </div>
-        </div>
-      </div>
-    </a>
-    <!-- End Card -->
-
-    <!-- Card -->
-    <a class="group flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl hover:shadow-md focus:outline-hidden focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
-      <div class="p-4 md:p-5">
-        <div class="flex justify-between items-center gap-x-3">
-          <div class="grow">
-            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
-              Arts & Entertainment
-            </h3>
-            <p class="text-sm text-gray-500 dark:text-neutral-500">
-              9 job positions
-            </p>
-          </div>
-          <div>
-            <svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-          </div>
-        </div>
-      </div>
-    </a>
-    <!-- End Card -->
-
-    <!-- Card -->
-    <a class="group flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl hover:shadow-md focus:outline-hidden focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
-      <div class="p-4 md:p-5">
-        <div class="flex justify-between items-center gap-x-3">
-          <div class="grow">
-            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
-              Accounting
-            </h3>
-            <p class="text-sm text-gray-500 dark:text-neutral-500">
-              11 job positions
-            </p>
-          </div>
-          <div>
-            <svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-          </div>
-        </div>
-      </div>
-    </a>
-    <!-- End Card -->
-
-    <!-- Card -->
-    <a class="group flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl hover:shadow-md focus:outline-hidden focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
-      <div class="p-4 md:p-5">
-        <div class="flex justify-between items-center gap-x-3">
-          <div class="grow">
-            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
-              UI Designer
-            </h3>
-            <p class="text-sm text-gray-500 dark:text-neutral-500">
-              37 job positions
-            </p>
-          </div>
-          <div>
-            <svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-          </div>
-        </div>
-      </div>
-    </a>
-    <!-- End Card -->
-
-    <!-- Card -->
-    <a class="group flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl hover:shadow-md focus:outline-hidden focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
-      <div class="p-4 md:p-5">
-        <div class="flex justify-between items-center gap-x-3">
-          <div class="grow">
-            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
-              Apps
-            </h3>
-            <p class="text-sm text-gray-500 dark:text-neutral-500">
-              2 job positions
-            </p>
-          </div>
-          <div>
-            <svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-          </div>
-        </div>
-      </div>
-    </a>
-    <!-- End Card -->
-
-    <!-- Card -->
-    <a class="group flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl hover:shadow-md focus:outline-hidden focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
-      <div class="p-4 md:p-5">
-        <div class="flex justify-between items-center gap-x-3">
-          <div class="grow">
-            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
-              Content Writer
-            </h3>
-            <p class="text-sm text-gray-500 dark:text-neutral-500">
-              10 job positions
-            </p>
-          </div>
-          <div>
-            <svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-          </div>
-        </div>
-      </div>
-    </a>
-    <!-- End Card -->
-
-    <!-- Card -->
-    <a class="group flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl hover:shadow-md focus:outline-hidden focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
-      <div class="p-4 md:p-5">
-        <div class="flex justify-between items-center gap-x-3">
-          <div class="grow">
-            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
-              Analytics
-            </h3>
-            <p class="text-sm text-gray-500 dark:text-neutral-500">
-              14 job positions
-            </p>
-          </div>
-          <div>
-            <svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-          </div>
-        </div>
-      </div>
-    </a>
-    <!-- End Card -->
-  </div>
-  <!-- End Grid -->
-</div>
-<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
   <div class="max-w-2xl mx-auto text-center mb-10 lg:mb-14">
-    <h2 class="text-2xl font-bold md:text-4xl md:leading-tight dark:text-white">Our Team</h2>
+    <h2 class="text-2xl font-bold md:text-4xl md:leading-tight dark:text-white">Our Vendors</h2>
     <p class="mt-1 text-gray-600 dark:text-neutral-400">Creative people</p>
   </div>
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -712,4 +394,325 @@
     </a>
   </div>
 </div> 
+
+<div class="bg-neutral-900">
+  <div class="max-w-5xl px-4 xl:px-0 py-10 lg:pt-20 lg:pb-20 mx-auto">
+    <div class="max-w-3xl mb-10 lg:mb-14">
+      <h2 class="text-white font-semibold text-2xl md:text-4xl md:leading-tight">Our approach</h2>
+      <p class="mt-1 text-neutral-400">This profound insight guides our comprehensive strategy — from meticulous research and strategic planning to the seamless execution of brand development and website or product deployment.</p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 lg:items-center">
+      <div class="aspect-w-16 aspect-h-9 lg:aspect-none">
+        <img class="w-full object-cover rounded-xl" src="https://images.unsplash.com/photo-1587614203976-365c74645e83?q=80&w=480&h=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Features Image">
+      </div>
+      <div>
+        <div class="mb-4">
+          <h3 class="text-[#ff0] text-xs font-medium uppercase">
+            Steps
+          </h3>
+        </div>
+        <div class="flex gap-x-5 ms-1">
+          <div class="relative last:after:hidden after:absolute after:top-8 after:bottom-0 after:start-4 after:w-px after:-translate-x-[0.5px] after:bg-neutral-800">
+            <div class="relative z-10 size-8 flex justify-center items-center">
+              <span class="flex shrink-0 justify-center items-center size-8 border border-neutral-800 text-[#ff0] font-semibold text-xs uppercase rounded-full">
+                1
+              </span>
+            </div>
+          </div>
+          <div class="grow pt-0.5 pb-8 sm:pb-12">
+            <p class="text-sm lg:text-base text-neutral-400">
+              <span class="text-white">Market Research and Analysis:</span>
+              Identify your target audience and understand their needs, preferences, and behaviors.
+            </p>
+          </div>
+        </div>
+             <div class="flex gap-x-5 ms-1">
+          <div class="relative last:after:hidden after:absolute after:top-8 after:bottom-0 after:start-4 after:w-px after:-translate-x-[0.5px] after:bg-neutral-800">
+            <div class="relative z-10 size-8 flex justify-center items-center">
+              <span class="flex shrink-0 justify-center items-center size-8 border border-neutral-800 text-[#ff0] font-semibold text-xs uppercase rounded-full">
+                2
+              </span>
+            </div>
+          </div>
+          <div class="grow pt-0.5 pb-8 sm:pb-12">
+            <p class="text-sm lg:text-base text-neutral-400">
+              <span class="text-white">Product Development and Testing:</span>
+              Develop digital products or services that address the needs and preferences of your target audience.
+            </p>
+          </div>
+        </div>
+        <div class="flex gap-x-5 ms-1">
+     <div class="relative last:after:hidden after:absolute after:top-8 after:bottom-0 after:start-4 after:w-px after:-translate-x-[0.5px] after:bg-neutral-800">
+            <div class="relative z-10 size-8 flex justify-center items-center">
+              <span class="flex shrink-0 justify-center items-center size-8 border border-neutral-800 text-[#ff0] font-semibold text-xs uppercase rounded-full">
+                3
+              </span>
+            </div>
+          </div>
+          <div class="grow pt-0.5 pb-8 sm:pb-12">
+            <p class="text-sm md:text-base text-neutral-400">
+              <span class="text-white">Marketing and Promotion:</span>
+              Develop a comprehensive marketing strategy to promote your digital products or services.
+            </p>
+          </div>
+        </div>
+        <div class="flex gap-x-5 ms-1">
+          <div class="relative last:after:hidden after:absolute after:top-8 after:bottom-0 after:start-4 after:w-px after:-translate-x-[0.5px] after:bg-neutral-800">
+            <div class="relative z-10 size-8 flex justify-center items-center">
+              <span class="flex shrink-0 justify-center items-center size-8 border border-neutral-800 text-[#ff0] font-semibold text-xs uppercase rounded-full">
+                4
+              </span>
+            </div>
+          </div>
+          <div class="grow pt-0.5 pb-8 sm:pb-12">
+            <p class="text-sm md:text-base text-neutral-400">
+              <span class="text-white">Launch and Optimization:</span>
+              Launch your digital products or services to the market, closely monitoring their performance and user feedback.
+            </p>
+          </div>
+        </div>
+        <a class="group inline-flex items-center gap-x-2 py-2 px-3 bg-[#ff0] font-medium text-sm text-neutral-800 rounded-full focus:outline-hidden" href="#">
+          <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path><path class="opacity-0 group-hover:opacity-100 group-focus:opacity-100 group-hover:delay-100 transition" d="M14.05 2a9 9 0 0 1 8 7.94"></path><path class="opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition" d="M14.05 6A5 5 0 0 1 18 10"></path></svg>
+          Schedule a call
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+  <!-- Grid -->
+  <div class="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+    <!-- Card -->
+    <a class="group flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl hover:shadow-md focus:outline-hidden focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
+      <div class="p-4 md:p-5">
+        <div class="flex justify-between items-center gap-x-3">
+          <div class="grow">
+            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
+              Management
+            </h3>
+            <p class="text-sm text-gray-500 dark:text-neutral-500">
+              4 job positions
+            </p>
+          </div>
+          <div>
+            <svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+        </div>
+      </div>
+    </a>
+    <!-- End Card -->
+
+    <!-- Card -->
+    <a class="group flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl hover:shadow-md focus:outline-hidden focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
+      <div class="p-4 md:p-5">
+        <div class="flex justify-between items-center gap-x-3">
+          <div class="grow">
+            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
+              App Development
+            </h3>
+            <p class="text-sm text-gray-500 dark:text-neutral-500">
+              26 job positions
+            </p>
+          </div>
+          <div>
+            <svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+        </div>
+      </div>
+    </a>
+    <!-- End Card -->
+
+    <!-- Card -->
+    <a class="group flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl hover:shadow-md focus:outline-hidden focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
+      <div class="p-4 md:p-5">
+        <div class="flex justify-between items-center gap-x-3">
+          <div class="grow">
+            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
+              Arts & Entertainment
+            </h3>
+            <p class="text-sm text-gray-500 dark:text-neutral-500">
+              9 job positions
+            </p>
+          </div>
+          <div>
+            <svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+        </div>
+      </div>
+    </a>
+    <!-- End Card -->
+
+    <!-- Card -->
+    <a class="group flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl hover:shadow-md focus:outline-hidden focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
+      <div class="p-4 md:p-5">
+        <div class="flex justify-between items-center gap-x-3">
+          <div class="grow">
+            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
+              Accounting
+            </h3>
+            <p class="text-sm text-gray-500 dark:text-neutral-500">
+              11 job positions
+            </p>
+          </div>
+          <div>
+            <svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+        </div>
+      </div>
+    </a>
+    <!-- End Card -->
+
+    <!-- Card -->
+    <a class="group flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl hover:shadow-md focus:outline-hidden focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
+      <div class="p-4 md:p-5">
+        <div class="flex justify-between items-center gap-x-3">
+          <div class="grow">
+            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
+              UI Designer
+            </h3>
+            <p class="text-sm text-gray-500 dark:text-neutral-500">
+              37 job positions
+            </p>
+          </div>
+          <div>
+            <svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+        </div>
+      </div>
+    </a>
+    <!-- End Card -->
+
+    <!-- Card -->
+    <a class="group flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl hover:shadow-md focus:outline-hidden focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
+      <div class="p-4 md:p-5">
+        <div class="flex justify-between items-center gap-x-3">
+          <div class="grow">
+            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
+              Apps
+            </h3>
+            <p class="text-sm text-gray-500 dark:text-neutral-500">
+              2 job positions
+            </p>
+          </div>
+          <div>
+            <svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+        </div>
+      </div>
+    </a>
+    <!-- End Card -->
+
+    <!-- Card -->
+    <a class="group flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl hover:shadow-md focus:outline-hidden focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
+      <div class="p-4 md:p-5">
+        <div class="flex justify-between items-center gap-x-3">
+          <div class="grow">
+            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
+              Content Writer
+            </h3>
+            <p class="text-sm text-gray-500 dark:text-neutral-500">
+              10 job positions
+            </p>
+          </div>
+          <div>
+            <svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+        </div>
+      </div>
+    </a>
+    <!-- End Card -->
+
+    <!-- Card -->
+    <a class="group flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl hover:shadow-md focus:outline-hidden focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
+      <div class="p-4 md:p-5">
+        <div class="flex justify-between items-center gap-x-3">
+          <div class="grow">
+            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
+              Analytics
+            </h3>
+            <p class="text-sm text-gray-500 dark:text-neutral-500">
+              14 job positions
+            </p>
+          </div>
+          <div>
+            <svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+        </div>
+      </div>
+    </a>
+    <!-- End Card -->
+  </div>
+  <!-- End Grid -->
+</div>
+<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 items-center gap-6 md:gap-10">
+    <div class="size-full bg-white shadow-lg rounded-lg p-5 dark:bg-neutral-900">
+      <div class="flex items-center gap-x-4 mb-3">
+        <div class="inline-flex justify-center items-center size-15.5 rounded-full border-4 border-blue-50 bg-blue-100 dark:border-blue-900 dark:bg-blue-800">
+          <svg class="shrink-0 size-6 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+        </div>
+        <div class="shrink-0">
+          <h3 class="block text-lg font-semibold text-gray-800 dark:text-white">Build your portfolio</h3>
+        </div>
+      </div>
+      <p class="text-gray-600 dark:text-neutral-400">The simplest way to keep your portfolio always up-to-date.</p>
+    </div>
+        <div class="size-full bg-white shadow-lg rounded-lg p-5 dark:bg-neutral-900">
+      <div class="flex items-center gap-x-4 mb-3">
+        <div class="inline-flex justify-center items-center size-15.5 rounded-full border-4 border-blue-50 bg-blue-100 dark:border-blue-900 dark:bg-blue-800">
+          <svg class="shrink-0 size-6 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h20"/><path d="M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3"/><path d="m7 21 5-5 5 5"/></svg>
+        </div>
+        <div class="shrink-0">
+          <h3 class="block text-lg font-semibold text-gray-800 dark:text-white">Get freelance work</h3>
+        </div>
+      </div>
+      <p class="text-gray-600 dark:text-neutral-400">New design projects delivered to your inbox each morning.</p>
+    </div>
+    <div class="size-full bg-white shadow-lg rounded-lg p-5 dark:bg-neutral-900">
+      <div class="flex items-center gap-x-4 mb-3">
+        <div class="inline-flex justify-center items-center size-15.5 rounded-full border-4 border-blue-50 bg-blue-100 dark:border-blue-900 dark:bg-blue-800">
+          <svg class="shrink-0 size-6 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2v0a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12v0a2 2 0 0 1-2-2V7"/></svg>
+        </div>
+        <div class="shrink-0">
+          <h3 class="block text-lg font-semibold text-gray-800 dark:text-white">Sell your goods</h3>
+        </div>
+      </div>
+      <p class="text-gray-600 dark:text-neutral-400">Get your goods in front of millions of potential customers with ease.</p>
+    </div>
+        <div class="size-full bg-white shadow-lg rounded-lg p-5 dark:bg-neutral-900">
+      <div class="flex items-center gap-x-4 mb-3">
+        <div class="inline-flex justify-center items-center size-15.5 rounded-full border-4 border-blue-50 bg-blue-100 dark:border-blue-900 dark:bg-blue-800">
+          <svg class="shrink-0 size-6 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 8.5 9 12l-3.5 3.5L2 12l3.5-3.5Z"/><path d="m12 2 3.5 3.5L12 9 8.5 5.5 12 2Z"/><path d="M18.5 8.5 22 12l-3.5 3.5L15 12l3.5-3.5Z"/><path d="m12 15 3.5 3.5L12 22l-3.5-3.5L12 15Z"/></svg>
+        </div>
+        <div class="shrink-0">
+          <h3 class="block text-lg font-semibold text-gray-800 dark:text-white">Get freelance work</h3>
+        </div>
+      </div>
+      <p class="text-gray-600 dark:text-neutral-400">New design projects delivered to your inbox each morning.</p>
+    </div>
+        <div class="size-full bg-white shadow-lg rounded-lg p-5 dark:bg-neutral-900">
+      <div class="flex items-center gap-x-4 mb-3">
+        <div class="inline-flex justify-center items-center size-15.5 rounded-full border-4 border-blue-50 bg-blue-100 dark:border-blue-900 dark:bg-blue-800">
+          <svg class="shrink-0 size-6 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.466 7.5C15.643 4.237 13.952 2 12 2 9.239 2 7 6.477 7 12s2.239 10 5 10c.342 0 .677-.069 1-.2"/><path d="m15.194 13.707 3.814 1.86-1.86 3.814"/><path d="M19 15.57c-1.804.885-4.274 1.43-7 1.43-5.523 0-10-2.239-10-5s4.477-5 10-5c4.838 0 8.873 1.718 9.8 4"/></svg>
+        </div>
+        <div class="shrink-0">
+          <h3 class="block text-lg font-semibold text-gray-800 dark:text-white">Sell your goods</h3>
+        </div>
+      </div>
+      <p class="text-gray-600 dark:text-neutral-400">Get your goods in front of millions of potential customers with ease.</p>
+    </div>
+    <div class="size-full bg-white shadow-lg rounded-lg p-5 dark:bg-neutral-900">
+      <div class="flex items-center gap-x-4 mb-3">
+        <div class="inline-flex justify-center items-center size-15.5 rounded-full border-4 border-blue-50 bg-blue-100 dark:border-blue-900 dark:bg-blue-800">
+          <svg class="shrink-0 size-6 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.3 10a.7.7 0 0 1-.626-1.079L11.4 3a.7.7 0 0 1 1.198-.043L16.3 8.9a.7.7 0 0 1-.572 1.1Z"/><rect x="3" y="14" width="7" height="7" rx="1"/><circle cx="17.5" cy="17.5" r="3.5"/></svg>
+        </div>
+        <div class="shrink-0">
+          <h3 class="block text-lg font-semibold text-gray-800 dark:text-white">Build your portfolio</h3>
+        </div>
+      </div>
+      <p class="text-gray-600 dark:text-neutral-400">The simplest way to keep your portfolio always up-to-date.</p>
+    </div>
+  </div>
+</div>
+
 @endsection
