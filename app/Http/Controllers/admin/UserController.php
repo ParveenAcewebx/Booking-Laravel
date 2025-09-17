@@ -542,5 +542,29 @@ class UserController extends Controller
         User::whereIn('id', $ids)->delete();
         return response()->json(['success' => true, 'message' => 'Selected Users Deleted Successfully.']);
     }
-    
+    public function changePassword()
+    {
+        return view('admin.user.change-password');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'old_password' => 'required',
+            'new_password' => 'required|min:8|confirmed',
+            'new_password_confirmation' => 'required',
+        ]);
+        $errors = [];
+        if (!Hash::check($request->old_password, $user->password)) {
+            $errors['old_password'] = 'Old password is incorrect';
+        }
+        if (!empty($errors)) {
+            return back()->withErrors($errors)->withInput();
+        }
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+        return redirect()->route('changepassword')->with('success', 'Password Updated Successfully!');
+    }
 }
