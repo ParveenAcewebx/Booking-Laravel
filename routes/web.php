@@ -233,10 +233,15 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
         Route::delete('/subscription/{id}', [SubscriptionController::class, 'destroy'])->name('subscription.destroy');
         Route::post('/subscriptions/bulk-delete', [SubscriptionController::class, 'bulkDelete'])->name('subscription.bulk-delete');
     });
-
-    Route::get('/enquires', [EnquiryController::class, 'index'])->name('enquiry.list');
-    Route::delete('/enquires/{id}', [EnquiryController::class, 'destroy'])->name('enquiry.destroy');
-    Route::post('/enquires/bulk-delete', [EnquiryController::class, 'bulkDelete'])->name('enquiry.bulk-delete');
+    
+    Route::middleware('permission:view enquires')->group(function () {
+        Route::get('/enquires/{id}', [EnquiryController::class, 'show'])->name('enquiry.show'); // 👈 show enquiry details
+        Route::get('/enquires', [EnquiryController::class, 'index'])->name('enquiry.list');
+    });
+    Route::middleware('permission:delete enquires')->group(function () {
+        Route::delete('/enquires/{id}', [EnquiryController::class, 'destroy'])->name('enquiry.destroy');
+        Route::post('/enquires/bulk-delete', [EnquiryController::class, 'bulkDelete'])->name('enquiry.bulk-delete');
+    });
 
 
     Route::get('/profile', [UserController::class, 'userEdit'])->name('profile');
