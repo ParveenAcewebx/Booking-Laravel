@@ -111,7 +111,7 @@
 </div>
 @php
 use App\Models\Vendor;
-$vendors = Vendor::all(); // fetch all vendors
+$vendors = Vendor::where('status', 1)->get();
 @endphp
 
 @if($vendors->count())
