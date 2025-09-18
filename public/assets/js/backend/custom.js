@@ -10,6 +10,7 @@ setTimeout(() => {
     }
 }, 5000);
 
+
 $('#filter-start-date').daterangepicker({
     singleDatePicker: true,
     showDropdowns: true,

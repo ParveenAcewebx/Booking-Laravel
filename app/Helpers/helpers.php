@@ -110,6 +110,20 @@ if (!function_exists('SendPasswordResetEmail')) {
     }
 }
 
+if (!function_exists('sendEnquiryCustomerTemplateEmail')) {
+    function sendEnquiryCustomerTemplateEmail($slug, $toEmail, $macros = [])
+    {
+        return sendTemplateEmail($slug, $toEmail, $macros);
+    }
+}
+
+if (!function_exists('sendAdminEnquiryTemplateEmail')) {
+    function sendAdminEnquiryTemplateEmail($slug, $toEmail, $macros = [])
+    {
+        return sendTemplateEmail($slug, $toEmail, $macros);
+    }
+}
+
 /*========================== Generate HTML Table for Booking ==========================*/
 if (!function_exists('generateBookingDataTable')) {
     function generateBookingDataTable(array $data): string

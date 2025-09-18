@@ -96,6 +96,33 @@ class EmailTemplateSeeder extends Seeder
                     <strong>{SITE_TITLE}</strong></p>
                 ',
             ],
+            [
+                'slug'   => 'enquiry_email_notification',
+                'title'   => 'Enquiry Email Notification',
+                'subject' => 'Thank You for Contacting {SITE_TITLE}',
+                'email_content'    => '
+                    Hi {USER_NAME},Thank you for reaching out to {SITE_TITLE}! 🎉
+                    We’ve received your message and our team will get back to you shortly.
+                    Best regards,
+                    {SITE_TITLE} Team
+                ',
+            ],
+            [
+                'slug'   => 'admin_enquiry_email_notification',
+                'title'   => 'Admin Enquiry Email Notification',
+                'subject' => 'New Contact Inquiry from {USER_NAME}',
+                'email_content'    => '
+                    Hi Admin,
+                    You have received a new contact inquiry from your website:
+                    Name: {USER_NAME}
+                    Email: {USER_EMAIL}
+                    Phone: {PHONE}
+                    Message: {MESSAGE}  
+                    Please review and follow up as needed.
+                    Best regards,
+                    {SITE_TITLE} Website
+                ',
+            ],
 
         ];
 

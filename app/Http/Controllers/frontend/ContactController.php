@@ -35,8 +35,17 @@ class ContactController extends Controller
             'email'   => $request->email,
             'phone'   => $request->phone,
             'message' => $request->message
-        ]);
+        ]); 
 
+        $macros = [
+            '{USER_NAME}' => $request->name,
+            '{USER_EMAIL}' => $request->email,
+            '{PHONE}' => $request->phone,
+            '{MESSAGE}' => $request->message,
+            '{SITE_TITLE}' => get_setting('site_title'),
+        ];
+        sendEnquiryCustomerTemplateEmail('enquiry_email_notification', $request->email, $macros);
+        sendAdminEnquiryTemplateEmail('admin_enquiry_email_notification',get_setting('owner_email'), $macros);
         return redirect()->back()->with('success', 'Enquiry submitted Successfully.');
     }
 

@@ -753,3 +753,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+setTimeout(() => {
+    const alert = document.getElementById("contact-success");
+    if (alert) {
+        alert.classList.add("fade");
+        setTimeout(() => alert.remove(), 500);
+    }
+}, 5000);
