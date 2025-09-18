@@ -123,7 +123,7 @@ $vendors = Vendor::where('status', 1)->get();
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     @foreach($vendors as $vendor)
-    <a href="{{ url('booking/' . $vendor->id) }}" class="flex flex-col rounded-xl p-4 md:p-6 bg-white border border-gray-200 dark:bg-neutral-900 dark:border-neutral-700 hover:shadow-lg transition">
+    <a href="{{ url('vendor/' . $vendor->id) }}" class="flex flex-col rounded-xl p-4 md:p-6 bg-white border border-gray-200 dark:bg-neutral-900 dark:border-neutral-700 hover:shadow-lg transition">
       <div class="flex items-center gap-x-4">
         <img class="rounded-full size-20 border-2 border-blue-150"
           src="{{ $vendor->thumbnail && file_exists(public_path('storage/' . $vendor->thumbnail)) 

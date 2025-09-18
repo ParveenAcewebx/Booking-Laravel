@@ -308,6 +308,57 @@ function deleteRole(id) {
 }
 
 
+function EnquiryDelete(id) {
+    event.preventDefault();
+
+    swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this Enquiry!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            const form = document.getElementById("deleteEnquiry-" + id);
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: "POST", // Laravel still expects POST with _method=DELETE
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        swal("Enquiry Deleted Successfully.", {
+                            icon: "success",
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        swal(
+                            "Oops! Something went wrong while deleting the role.",
+                            {
+                                icon: "error",
+                            }
+                        );
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    swal("Error occurred while processing the request!", {
+                        icon: "error",
+                    });
+                });
+        }
+    });
+}
+
 function deleteCategory(id) {
     event.preventDefault();
 

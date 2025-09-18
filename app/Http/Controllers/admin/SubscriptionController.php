@@ -14,6 +14,7 @@ class SubscriptionController extends Controller
         if ($request->ajax()) {
             return DataTables::of(Subscription::query())
                 ->addColumn('checkbox', function ($subscription) {
+                    
                     return '<input type="checkbox" class="selectRow" value="' . $subscription->id . '">';
                 })
                 ->addColumn('email', function ($subscription) {
@@ -25,6 +26,7 @@ class SubscriptionController extends Controller
                         : '';
                 })
                 ->addColumn('action', function ($subscription) {
+                    if (auth()->user()->can('delete subscriptions')) {
                     $btn = '<form id="deleteSubscription-' . $subscription->id . '" 
                                 action="' . route('subscription.destroy', $subscription->id) . '" 
                                 method="POST" style="display:inline-block;">
@@ -36,6 +38,7 @@ class SubscriptionController extends Controller
                             </button>
                         </form>';
                     return $btn;
+                    }
                 })
                 ->rawColumns(['checkbox', 'action'])
                 ->make(true);

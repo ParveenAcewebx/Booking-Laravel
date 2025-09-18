@@ -39,19 +39,19 @@ class BookingController extends Controller
         if ($request->ajax()) {
             $bookings = Booking::with(['template', 'customer'])
                 ->select('bookings.*');
-    
+
             if ($request->has('template_id') && $request->template_id != '') {
                 $bookings->where('booking_template_id', $request->template_id);
             }
-    
+
             if ($request->has('customer_id') && $request->customer_id != '') {
                 $bookings->where('customer_id', $request->customer_id);
             }
-    
+
             if ($request->has('start_date') && $request->start_date != '') {
                 $bookings->whereDate('created_at', '=', $request->start_date);
             }
-    
+
             return DataTables::of($bookings)
                 ->addColumn('template_name', function ($booking) {
                     return $booking->template ? $booking->template->template_name : '';
@@ -66,10 +66,13 @@ class BookingController extends Controller
                 })
                 ->addColumn('action', function ($booking) {
                     $btn = '';
+                    if (auth()->user()->can('edit bookings')) {
                     $btn .= '<a href="' . route('booking.view', $booking->id) . '" class="btn btn-icon btn-success" title="View Booking">
                               <i class="feather icon-eye"></i>
                             </a> ';
-                    $btn .= '<form id="deleteBooking-' . $booking->id . '" 
+                    }
+                    if (auth()->user()->can('delete bookings')) {
+                        $btn .= '<form id="deleteBooking-' . $booking->id . '" 
                                     action="' . route('booking.delete', $booking->id) . '" 
                                     method="POST" style="display:inline-block;">
                                 <input type="hidden" name="_method" value="DELETE">
@@ -79,18 +82,19 @@ class BookingController extends Controller
                                     <i class="feather icon-trash-2"></i>
                                 </button>
                             </form>';
+                    }
                     return $btn;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
         }
-    
+
         $templates = BookingTemplate::all();
         $customers = User::whereHas('roles')->get();
-    
+
         return view('admin.booking.index', compact('templates', 'customers'));
     }
-    
+
 
     public function bookingAdd()
     {

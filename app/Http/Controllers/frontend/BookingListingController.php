@@ -9,7 +9,7 @@ use App\Models\User;
 
 class BookingListingController extends Controller
 {
-    public function listing($id = null)
+    public function listing()
     {
         // Clear old session data
         foreach (session()->all() as $key => $value) {
@@ -18,18 +18,9 @@ class BookingListingController extends Controller
             }
         }
 
-        // If ID is given → filter by that ID
-        if ($id) {
-            $bookings = BookingTemplate::where('status', 1)
-                ->where('vendor_id', $id)
-                ->where('data', '!=', '')
-                ->get();
-        } else {
-            // Otherwise fetch all
-            $bookings = BookingTemplate::where('status', 1)
-                ->where('data', '!=', '')
-                ->get();
-        }
+        $bookings = BookingTemplate::where('status', 1)
+            ->where('data', '!=', '')
+            ->get();
 
         return view('frontend.bookingListing', [
             'bookings' => $bookings,

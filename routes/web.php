@@ -11,7 +11,9 @@ use App\Http\Controllers\frontend\FormController;
 use App\Http\Controllers\frontend\SubscriptionsController;
 use App\Http\Controllers\admin\ServiceController;
 use App\Http\Controllers\admin\CategoryController;
+use App\Http\Controllers\admin\EnquiryController;
 use App\Http\Controllers\frontend\BookingListingController;
+use App\Http\Controllers\frontend\VendorListingController;
 use App\Http\Controllers\admin\StaffController;
 use App\Http\Controllers\admin\VendorController;
 use App\Http\Controllers\admin\SettingsController;
@@ -42,7 +44,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/booking', [BookingListingController::class, 'listing'])->name('booking.listing');
-Route::get('/booking/{id}', [BookingListingController::class, 'listing'])->name('booking.show');
+Route::get('/vendor/{id}', [VendorListingController::class, 'listing'])->name('vendor.show');
 Route::get('/admin', function () {
     return redirect()->route('dashboard');
 });
@@ -231,6 +233,11 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
         Route::delete('/subscription/{id}', [SubscriptionController::class, 'destroy'])->name('subscription.destroy');
         Route::post('/subscriptions/bulk-delete', [SubscriptionController::class, 'bulkDelete'])->name('subscription.bulk-delete');
     });
+
+    Route::get('/enquires', [EnquiryController::class, 'index'])->name('enquiry.list');
+    Route::delete('/enquires/{id}', [EnquiryController::class, 'destroy'])->name('enquiry.destroy');
+    Route::post('/enquires/bulk-delete', [EnquiryController::class, 'bulkDelete'])->name('enquiry.bulk-delete');
+
 
     Route::get('/profile', [UserController::class, 'userEdit'])->name('profile');
     Route::post('/subscribe', [UserController::class, 'subscribe'])->name('subscribe.send');

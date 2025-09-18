@@ -85,15 +85,20 @@ return [
             'slug' => 'emails',
             'roles' => ['view emails', 'create emails', 'edit emails', 'delete emails']
         ],
-        'settings' => [
-            'name' => "Settings",
-            'slug' => 'settings',
-            'roles' => ['access settings']
+        'enquires' => [
+            'name' => "Enquires",
+            'slug' => 'enquires',
+            'roles' => ['view enquires','delete enquires','reply enquires']
         ],
         'subscriptions' => [
             'name' => "Subscriptions",
             'slug' => 'subscriptions',
             'roles' => ['view subscriptions','delete subscriptions']
+        ],
+        'settings' => [
+            'name' => "Settings",
+            'slug' => 'settings',
+            'roles' => ['access settings']
         ],
     ],
     'currencies' => [

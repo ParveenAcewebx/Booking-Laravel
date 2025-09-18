@@ -249,6 +249,22 @@
                         </ul>
                     </li>
                     @endcanany
+
+                    {{-- Enquiry --}}
+                    @canany(['view enquires', 'delete enquires','reply enquires'])
+                    <li class="nav-item pcoded-hasmenu {{ request()->routeIs('enquiry.*') ? 'pcoded-trigger' : '' }}">
+                        <a href="#!" class="nav-link">
+                            <span class="pcoded-micon"><i class="fas fa-envelope-open-text"></i></span>
+                            <span class="pcoded-mtext">Contact Enquries</span>
+                        </a>
+                        <ul class="pcoded-submenu" @if(request()->routeIs('enquiry.*')) style="display:block;" @endif>
+                            <li class="{{ request()->routeIs('enquiry.list') ? 'active' : '' }}">
+                                <a href="{{ route('enquiry.list') }}">All Contact Enquries</a>
+                            </li>
+                        </ul>
+                    </li>
+                    @endcan
+
                     {{-- Settings --}}
                     @can('access settings')
                     <li class="nav-item">
