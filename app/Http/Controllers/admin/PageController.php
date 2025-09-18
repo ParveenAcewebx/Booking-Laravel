@@ -49,6 +49,9 @@ class PageController extends Controller
                 $btn .= '<button type="button" onclick="deletePage(' . $row->id . ', event)" class="btn btn-icon btn-danger" data-toggle="tooltip" title="Delete Page">
                 <i class="feather icon-trash-2"></i>
                 </button>';
+                 $btn .= '<a href="' . url('/' . $row->slug) . '" class="btn btn-icon btn-info ml-1" title="View Booking" target="_blank">
+                                        <i class="feather icon-eye"></i>
+                                    </a>';
                 $btn .= '</form>';
                     return $btn;
                 })

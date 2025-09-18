@@ -137,3 +137,7 @@ button.no.btn.btn-danger.btn-sm,button.yes.btn.btn-success.btn-sm {
 .ql-editor {
     min-height: 150px;
   }
+  .contact-form{
+    position: relative;
+    margin-top:-120px;
+  }

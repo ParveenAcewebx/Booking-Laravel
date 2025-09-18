@@ -71,5 +71,6 @@ class Kernel extends HttpKernel
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         'checkCustomerRole' => \App\Http\Middleware\CheckCustomerRole::class,
         'VendorRoleCheck' => \App\Http\Middleware\VendorStaffMiddleware::class,
+        'checkPageSlug' => \App\Http\Middleware\CheckPageSlug::class,
     ];
 }

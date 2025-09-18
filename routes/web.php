@@ -13,6 +13,7 @@ use App\Http\Controllers\admin\ServiceController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\EnquiryController;
 use App\Http\Controllers\frontend\BookingListingController;
+use App\Http\Controllers\frontend\ContactController;
 use App\Http\Controllers\frontend\VendorListingController;
 use App\Http\Controllers\admin\StaffController;
 use App\Http\Controllers\admin\VendorController;
@@ -29,6 +30,7 @@ use App\Http\Controllers\admin\SubscriptionController;
 use App\Http\Controllers\export\ExportStaffController;
 use App\Http\Controllers\export\ExportUserController;
 use App\Http\Controllers\admin\PageController;
+use App\Http\Controllers\frontend\ShowPageController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -58,6 +60,9 @@ Route::post('/form/{slug}', [FormController::class, 'store'])->name('form.store'
 Route::get('/get/services/staff', [FormController::class, 'getservicesstaff'])->name('get.services.staff');
 Route::get('/get/vendor/get_booking_calender', [FormController::class, 'getBookingCalender'])->name('service.vendor.calender');
 Route::get('/get/slotbooked', [FormController::class, 'getBookingSlot'])->name('service.slotbooked');
+Route::get('/contact', [ContactController::class, 'listing'])->name('contact.listing');
+Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+Route::get('/captcha-refresh', [ContactController::class, 'refreshCaptcha'])->name('captcha.refresh');
 
 // Guest routes (not logged in)
 Route::middleware('guest')->group(function () {
@@ -78,8 +83,8 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     Route::get('/export/staff', [ExportStaffcontroller::class, 'exportstaff'])->name('export.staff.excel');
     Route::get('/export/user', [ExportUserController::class, 'exportuser'])->name('export.user.excel');
 
-   /*======================= Page module Routes ================================*/
-     Route::middleware('permission:view pages')->group(function () {
+    /*======================= Page module Routes ================================*/
+    Route::middleware('permission:view pages')->group(function () {
         Route::get('/pages', [PageController::class, 'index'])->name('page.list');
     });
     Route::middleware('permission:create page')->group(function () {
@@ -257,7 +262,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
         Route::delete('/subscription/{id}', [SubscriptionController::class, 'destroy'])->name('subscription.destroy');
         Route::post('/subscriptions/bulk-delete', [SubscriptionController::class, 'bulkDelete'])->name('subscription.bulk-delete');
     });
-    
+
     Route::middleware('permission:view enquires')->group(function () {
         Route::get('/enquires/{id}', [EnquiryController::class, 'show'])->name('enquiry.show'); // 👈 show enquiry details
         Route::get('/enquires', [EnquiryController::class, 'index'])->name('enquiry.list');
@@ -317,7 +322,7 @@ Route::middleware(['VendorRoleCheck'])->group(function () {
     Route::put('/staff/{id}', [VendorStaffController::class, 'staffUpdate'])->name('vendor.staff.update');
     Route::delete('/staff/{id}', [VendorStaffController::class, 'staffDestroy'])->name('vendor.staff.destroy');
 });
-
+Route::get('/{slug}', [ShowPageController::class, 'show'])->middleware('checkPageSlug')->name('page.show');
 
 
 Route::get('/email/logs', function () {

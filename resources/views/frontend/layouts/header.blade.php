@@ -25,6 +25,19 @@
                 {{ request()->routeIs('booking.listing') || request()->routeIs('booking.show') ? 'before:absolute before:-bottom-1.5 before:w-full before:h-1 before:bg-yellow-400' : '' }}">
           Bookings
         </a>
+
+        <a href="{{ route('contact.listing') }}"
+          class="relative font-medium text-white
+                {{ request()->routeIs('contact.listing') || request()->routeIs('contact.listing') ? 'before:absolute before:-bottom-1.5 before:w-full before:h-1 before:bg-yellow-400' : '' }}">
+          Contact
+        </a>
+        @if(count($pages) > 0)
+        @foreach($pages as $page)
+            <a href="{{ route('page.show', $page->slug) }}" class="relative font-medium text-white {{ request()->is($page->slug) ? 'before:absolute before:-bottom-1.5 before:w-full before:h-1 before:bg-yellow-400' : '' }}">
+                {{ $page->title }}
+            </a>
+        @endforeach
+        @endif
       </div>
       <!-- Buttons & Mobile Toggle -->
       <div class="flex items-center gap-2 relative" x-data="{ open: false }">
