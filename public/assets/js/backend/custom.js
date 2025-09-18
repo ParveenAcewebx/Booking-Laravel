@@ -1585,4 +1585,3 @@ function bulkDelete(url) {
 
     toggleBulkDeleteButton();
 }
-

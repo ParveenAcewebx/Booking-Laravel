@@ -12,6 +12,9 @@ return [
         '{USER_EMAIL}',
         '{PASSWORD}',
         '{RESET_LINK}',
+        '{REPLY}',
+        '{MESSAGE}',
+        '{PHONE}'
     ],
     'defaultWorkHours' => [
         'monday'    => ['start' => '00:00', 'end' => '00:00', 'services' => []],
@@ -99,6 +102,11 @@ return [
             'name' => "Settings",
             'slug' => 'settings',
             'roles' => ['access settings']
+        ],
+        'Pages' => [
+            'name' => "pages",
+            'slug' => 'pages',
+            'roles' => ['view pages','create page','edit page','delete page']
         ],
     ],
     'currencies' => [

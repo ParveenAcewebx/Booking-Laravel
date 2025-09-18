@@ -59,8 +59,8 @@
                                     <div class="form-group">
                                         <label>Description</label>
                                         <div id="quill-editor" style="height: 200px;">{!! old('description') !!}</div>
-                                        <textarea name="description"
-                                            id="description"
+                                        <textarea name="reply-message"
+                                            id="reply-message"
                                             class="d-none @error('description') is-invalid @enderror">{{ old('description') }}</textarea>
                                         @error('description')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>

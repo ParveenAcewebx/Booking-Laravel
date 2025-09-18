@@ -67,7 +67,28 @@
                         </ul>
                     </li>
                     @endcanany
-
+                  
+                    {{-- pages --}}
+                    @canany(['view pages', 'create pages', 'edit pages', 'delete pages'])
+                    <li class="nav-item pcoded-hasmenu {{ request()->routeIs('user.*') ? 'pcoded-trigger' : '' }}">
+                        <a href="#!" class="nav-link">
+                            <span class="pcoded-micon"><i class="feather icon-file-text"></i></span>
+                            <span class="pcoded-mtext">Pages</span>
+                        </a>
+                        <ul class="pcoded-submenu" @if(request()->routeIs('user.*')) style="display:block;" @endif>
+                            @can('create page')
+                                <li class="{{ request()->routeIs('page.add') ? 'active' : '' }}">
+                                    <a href="{{ route('page.add') }}">Add Page</a>
+                                </li>
+                            @endcan
+                            @can('view pages')
+                                <li class="{{ request()->routeIs('page.list') ? 'active' : '' }}">
+                                    <a href="{{ route('page.list') }}">All Pages</a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+                    @endcanany
                     {{-- Roles --}}
                     @canany(['view roles', 'create roles', 'edit roles', 'delete roles'])
                     <li class="nav-item pcoded-hasmenu {{ request()->routeIs('roles.*') ? 'pcoded-trigger' : '' }}">

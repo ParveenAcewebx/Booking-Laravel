@@ -28,6 +28,7 @@ use App\Helpers\Shortcode;
 use App\Http\Controllers\admin\SubscriptionController;
 use App\Http\Controllers\export\ExportStaffController;
 use App\Http\Controllers\export\ExportUserController;
+use App\Http\Controllers\admin\PageController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -72,6 +73,29 @@ Route::middleware('guest')->group(function () {
 
 // Authenticated routes
 Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(function () {
+
+    Route::get('/export/bookings', [ExportBookingController::class, 'exportBookings'])->name('export.booking.excel');
+    Route::get('/export/staff', [ExportStaffcontroller::class, 'exportstaff'])->name('export.staff.excel');
+    Route::get('/export/user', [ExportUserController::class, 'exportuser'])->name('export.user.excel');
+
+   /*======================= Page module Routes ================================*/
+     Route::middleware('permission:view pages')->group(function () {
+        Route::get('/pages', [PageController::class, 'index'])->name('page.list');
+    });
+    Route::middleware('permission:create page')->group(function () {
+        Route::get('/page/add', [PageController::class, 'PageAdd'])->name('page.add');
+        Route::post('/page/save', [PageController::class, 'PageSave'])->name('page.save');
+    });
+    Route::middleware('permission:edit page')->group(function () {
+        Route::get('/page/{id}/edit', [PageController::class, 'pageEdit'])->name('page.edit');
+        Route::post('/page/{id}/update', [PageController::class, 'pageUpdate'])->name('page.update');
+        Route::put('/page/{id}/update', [PageController::class, 'pageUpdate'])->name('page.update');
+    });
+    Route::middleware('permission:delete page')->group(function () {
+        Route::delete('/page/{userid}/delete', [PageController::class, 'pageDelete'])->name('page.delete');
+        Route::post('/page/bulk-delete', [PageController::class, 'bulkDelete'])->name('page.bulk-delete');
+    });
+
     Route::post('/{id}/switch', [UserController::class, 'switchUser'])->name('user.switch');
     Route::post('/switch-back', [UserController::class, 'switchBack'])->name('user.switch.back');
     Route::get('/booking/load-template-html/{id}', [BookingController::class, 'loadTemplateHTML']);
@@ -243,6 +267,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
         Route::post('/enquires/bulk-delete', [EnquiryController::class, 'bulkDelete'])->name('enquiry.bulk-delete');
     });
 
+    Route::post('/enquiries/reply', [EnquiryController::class, 'reply'])->name('enquiry.reply');
 
     Route::get('/profile', [UserController::class, 'userEdit'])->name('profile');
     Route::post('/subscribe', [UserController::class, 'subscribe'])->name('subscribe.send');
@@ -292,9 +317,7 @@ Route::middleware(['VendorRoleCheck'])->group(function () {
     Route::put('/staff/{id}', [VendorStaffController::class, 'staffUpdate'])->name('vendor.staff.update');
     Route::delete('/staff/{id}', [VendorStaffController::class, 'staffDestroy'])->name('vendor.staff.destroy');
 });
-Route::get('/export/bookings', [ExportBookingController::class, 'exportBookings'])->name('export.booking.excel');
-Route::get('/export/staff', [ExportStaffcontroller::class, 'exportstaff'])->name('export.staff.excel');
-Route::get('/export/user', [ExportUserController::class, 'exportuser'])->name('export.user.excel');
+
 
 
 Route::get('/email/logs', function () {
