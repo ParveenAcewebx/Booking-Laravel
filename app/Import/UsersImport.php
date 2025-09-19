@@ -9,9 +9,8 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
-use Maatwebsite\Excel\Concerns\ShouldQueue;
 
-class UsersImport implements ToModel, WithHeadingRow, WithValidation, WithChunkReading, ShouldQueue
+class UsersImport implements ToModel, WithHeadingRow, WithValidation, WithChunkReading
 {
     protected $sendEmail;
 
@@ -22,11 +21,13 @@ class UsersImport implements ToModel, WithHeadingRow, WithValidation, WithChunkR
 
     public function model(array $row)
     {
+        // Generate random password if not provided
         $plainPassword = $row['password'] ?? (
             Str::random(4) . rand(0, 9) . Str::random(2) .
             '!@#$%^&*()_+'[rand(0, 11)] . Str::random(2)
         );
 
+        // Create user
         $user = User::create([
             'name'          => $row['name'],
             'email'         => $row['email'],
@@ -37,8 +38,10 @@ class UsersImport implements ToModel, WithHeadingRow, WithValidation, WithChunkR
                                 : config('constants.status.inactive'),
         ]);
 
+        // Assign role
         $user->assignRole('customer');
 
+        // Send email notifications if enabled
         if ($this->sendEmail) {
             $macros = [
                 '{USER_NAME}'     => $user->name,
@@ -54,11 +57,13 @@ class UsersImport implements ToModel, WithHeadingRow, WithValidation, WithChunkR
         return $user;
     }
 
+    // Process 1000 rows per chunk to save memory
     public function chunkSize(): int
     {
         return 1000;
     }
 
+    // Validation rules
     public function rules(): array
     {
         return [
@@ -69,15 +74,16 @@ class UsersImport implements ToModel, WithHeadingRow, WithValidation, WithChunkR
         ];
     }
 
+    // Custom error messages
     public function customValidationMessages()
     {
         return [
-            '*.name.required'  => 'Name is required.',
-            '*.email.required' => 'Email is required.',
-            '*.email.email'    => 'Email must be valid.',
-            '*.email.unique'   => 'This email already exists.',
+            '*.name.required'         => 'Name is required.',
+            '*.email.required'        => 'Email is required.',
+            '*.email.email'           => 'Email must be valid.',
+            '*.email.unique'          => 'This email already exists.',
             '*.phone_number.required' => 'Phone number is required.',
-            '*.status.in'      => 'Status must be Active or Inactive.',
+            '*.status.in'             => 'Status must be Active or Inactive.',
         ];
     }
 }
