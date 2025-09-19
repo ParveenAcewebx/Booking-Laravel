@@ -114,43 +114,36 @@ function deleteUser(id) {
         }
     });
 }
-
-function deleteStaff(id) {
-    event.preventDefault();
+function deletePage(id, event) {
+    event.preventDefault(); // Prevent default form submission behavior
+    
     swal({
         title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this staff!",
+        text: "Once deleted, you will not be able to recover this page!",
         icon: "warning",
         buttons: true,
         dangerMode: true,
     }).then((willDelete) => {
         if (willDelete) {
-            var user = document.getElementById("deleteStaff-" + id);
-            var userData = new FormData(user);
-            fetch(user.action, {
+            // Send the DELETE request via AJAX
+            fetch(`/admin/pages/${id}/delete`, {
                 method: "DELETE",
-                body: userData,
                 headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                    "X-CSRF-TOKEN": document
-                        .querySelector('meta[name="csrf-token"]')
-                        .getAttribute("content"),
-                },
+                    "X-Requested-With": "XMLHttpRequest",  // Make sure it's an AJAX request
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+                }
             })
                 .then((response) => response.json())
                 .then((data) => {
-                    if (data.success === true) {
-                        swal("Staff Deleted Successfully.", {
+                    if (data.success) {
+                        swal("Page Deleted Successfully.", {
                             icon: "success",
                         }).then(() => {
-                            window.location.reload();
-                        });
-                    } else if (data.success === "login") {
-                        swal("That user is currently logged in.", {
-                            icon: "error",
+                            // Reload the page after deletion
+                            location.reload();
                         });
                     } else {
-                        swal("There was an error!", {
+                        swal("Error: " + data.message, {
                             icon: "error",
                         });
                     }
@@ -164,6 +157,57 @@ function deleteStaff(id) {
         }
     });
 }
+function deletePage(id, event) {
+    event.preventDefault();  // Prevent the default form submission
+    swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this page!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            // Find the form element using the page ID
+            var pageForm = document.getElementById("deletePage-" + id);
+            var formData = new FormData(pageForm);
+
+            // Perform the AJAX request
+            fetch(pageForm.action, {
+                method: "POST",  // We use POST since we're sending the DELETE method via a hidden input
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+                },
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success === true) {
+                    swal("Page Deleted Successfully.", {
+                        icon: "success",
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else if (data.success === "login") {
+                    swal("That item is not found.", {
+                        icon: "error",
+                    });
+                } else {
+                    swal("There was an error!", {
+                        icon: "error",
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                swal("There was an error processing your request.", {
+                    icon: "error",
+                });
+            });
+        }
+    });
+}
+
 
 // Booking delete alert
 function deleteBooking(id) {
@@ -1586,3 +1630,12 @@ function bulkDelete(url) {
 
     toggleBulkDeleteButton();
 }
+document.addEventListener('DOMContentLoaded', function () {
+    const fileInput = document.getElementById('excelFileInput');
+    const fileLabel = fileInput.nextElementSibling;
+
+    fileInput.addEventListener('change', function (e) {
+        let fileName = e.target.files.length ? e.target.files[0].name : "Choose file...";
+        fileLabel.textContent = fileName;
+    });
+});
