@@ -74,6 +74,31 @@
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    
+                            <!-- Meta SEO Fields -->
+                            <div class="form-group">
+                                <label class="form-label">Meta Title</label>
+                                <input type="text" class="form-control @error('meta_title') is-invalid @enderror" name="meta_title" value="{{ old('meta_title', $page->meta_title) }}" placeholder="Meta Title">
+                                @error('meta_title')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Meta Keywords</label>
+                                <input type="text" class="form-control @error('meta_keywords') is-invalid @enderror" name="meta_keywords" value="{{ old('meta_keywords',$page->meta_keywords) }}" placeholder="Meta Keywords (comma separated)">
+                                @error('meta_keywords')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Meta Description</label>
+                                <textarea class="form-control @error('meta_description') is-invalid @enderror" name="meta_description" rows="3" placeholder="Meta Description">{{ old('meta_description', $page->meta_description) }}</textarea>
+                                @error('meta_description')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                           
                                 </div>
                             </div>
                         </div>
