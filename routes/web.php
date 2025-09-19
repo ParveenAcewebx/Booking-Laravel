@@ -5,7 +5,7 @@ use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\BookingTemplateController;
 use App\Http\Controllers\admin\ProfileController;
 use App\Http\Controllers\admin\BookingController;
-use App\Http\Controllers\admin\Import\UserImportController;
+use App\Http\Controllers\Import\UserImportController;
 use App\Http\Controllers\frontend\FormController;
 use App\Http\Controllers\frontend\SubscriptionsController;
 use App\Http\Controllers\admin\ServiceController;

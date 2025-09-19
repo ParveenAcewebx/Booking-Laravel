@@ -557,44 +557,4 @@ class UserController extends Controller
         $user->save();
         return redirect()->route('changepassword')->with('success', 'Password Updated Successfully!');
     }
-
-
-    public function showImportView()
-    {
-        return view('admin.import.user-import');
-    }
-
-    public function importSave(Request $request)
-    {
-        $request->validate([
-            'excel_file' => 'required|mimes:xlsx,xls',
-        ]);
-
-        if ($request->hasFile('excel_file')) {
-            $file = $request->file('excel_file');
-        
-            $requiredHeaders = ['name', 'email', 'password', 'phone_number', 'status'];
-
-            $headings = (new HeadingRowImport)->toArray($file);
-            $headersInFile = array_map('strtolower', $headings[0][0]); 
-
-            foreach ($requiredHeaders as $header) {
-                if (!in_array($header, $headersInFile)) {
-                    return redirect()->back()
-                        ->with('error', "Missing required column: {$header}. Please use the sample file format.");
-                }
-            }
-            Excel::import(new UsersImport($request->input('send_email') ?? 1), $file);
-            return redirect()->route('user.list')->with('success', 'Users Imported Successfully.');
-        }
-
-        return redirect()->back()->with('error', 'Please upload a valid file.');
-    }
-
-
-    public function sample()
-    {
-        $path = public_path('samples/user_import_sample.xlsx');
-        return response()->download($path, 'user_import_sample.xlsx');
-    }
 }

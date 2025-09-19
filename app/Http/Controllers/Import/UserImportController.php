@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin\Import;
+namespace App\Http\Controllers\Import;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
