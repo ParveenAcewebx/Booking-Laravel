@@ -24,7 +24,8 @@
                         @can('delete users')
                             <button id="bulkDeleteBtn" class="btn btn-danger btn-sm p-2 bulkDeleteBtn" disabled>Delete</button>
                         @endcan
-                             <a href="{{ route('export.user.excel') }}" class="btn btn-primary btn-sm ml-2 mr-2 p-2">Export To Excel</a>
+                             <a href="{{ route('export.user.excel') }}" class="btn btn-primary btn-sm ml-2 p-2">Export To Excel</a>
+                             <a href="{{ route('import.view') }}" class="btn btn-info btn-sm ml-2 mr-2 p-2">Import</a>
                         </div>
                     </div>
                 </div>

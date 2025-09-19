@@ -106,6 +106,8 @@ class SettingsController extends Controller
             'encryption' => $request['mail_encryption'],
             'from_address' => $request['mail_from_address'],
             'from_name' => $request['mail_from_name'],
+            // 'recaptcha_secret_key' => $request['recaptcha_secret_key'],
+            // 'recaptcha_site_key' => $request['recaptcha_site_key'],
         ];
 
         foreach ($smtpSettings as $key => $value) {

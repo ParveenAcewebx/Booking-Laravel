@@ -106,7 +106,7 @@ return [
         'Pages' => [
             'name' => "pages",
             'slug' => 'pages',
-            'roles' => ['view pages','create page','edit page','delete page']
+            'roles' => ['view pages','create pages','edit pages','delete pages']
         ],
     ],
     'currencies' => [

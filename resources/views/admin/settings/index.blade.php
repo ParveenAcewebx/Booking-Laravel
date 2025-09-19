@@ -24,16 +24,18 @@
             <div class="row">
                 <div class="col-md-6 col-xl-4">
                     <div class="card">
-                        <div class="card-header"><h5>Site Identity</h5></div>
+                        <div class="card-header">
+                            <h5>Site Identity</h5>
+                        </div>
                         <div class="card-body">
                             <!-- Site Title -->
                             <div class="form-group">
                                 <label class="form-label font-weight-bold">Site Title <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('site_title') is-invalid @enderror"
                                     name="site_title" placeholder="Enter Site Title"
-                                    value="{{ old('site_title', $settings['site_title'] ?? '') }}" >
+                                    value="{{ old('site_title', $settings['site_title'] ?? '') }}">
                                 @error('site_title')
-                                    <span class="invalid-feedback d-block">{{ $message }}</span>
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
                             <!-- Website Logo -->
@@ -49,7 +51,7 @@
                                     </div>
                                 </div>
                                 @error('website_logo')
-                                    <span class="invalid-feedback d-block">{{ $message }}</span>
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                                 <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
                                 {{-- Preview --}}
@@ -86,7 +88,7 @@
                                     </div>
                                 </div>
                                 @error('favicon')
-                                    <span class="invalid-feedback d-block">{{ $message }}</span>
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                                 <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
                                 {{-- Preview --}}
@@ -109,7 +111,7 @@
                                     </div>
                                 </div>
                                 <input type="hidden" name="remove_favicon" id="removeFaviconFlag" value="0">
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -122,11 +124,11 @@
                                 <label class="form-label">Date Format</label>
                                 <select name="date_format" class="form-control select-user">
                                     @foreach($dateFormats as $key => $label)
-                                        <option value="{{ $key }}" {{ (old('date_format') ?? $settings['date_format'] ?? '') == $key ? 'selected' : '' }}>{{ $label }}</option>
+                                    <option value="{{ $key }}" {{ (old('date_format') ?? $settings['date_format'] ?? '') == $key ? 'selected' : '' }}>{{ $label }}</option>
                                     @endforeach
                                 </select>
                                 @error('date_format')
-                                    <span class="invalid-feedback d-block">{{ $message }}</span>
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
                             <!-- Time Format -->
@@ -137,7 +139,7 @@
                                     <option value="h:i A" {{ (old('time_format') ?? $settings['time_format'] ?? '') == 'h:i A' ? 'selected' : '' }}>12-Hour (e.g. 02:30 PM)</option>
                                 </select>
                                 @error('time_format')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
                             <!-- Timezone -->
@@ -145,11 +147,11 @@
                                 <label class="form-label">Timezone</label>
                                 <select name="timezone" class="form-control select-user">
                                     @foreach($timezones as $timezone)
-                                        <option value="{{ $timezone }}" {{ (old('timezone') ?? $settings['timezone'] ?? '') == $timezone ? 'selected' : '' }}>{{ $timezone }}</option>
+                                    <option value="{{ $timezone }}" {{ (old('timezone') ?? $settings['timezone'] ?? '') == $timezone ? 'selected' : '' }}>{{ $timezone }}</option>
                                     @endforeach
                                 </select>
                                 @error('timezone')
-                                    <div class="text-danger mt-1">{{ $message }}</div>
+                                <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -165,18 +167,18 @@
                                 <div class="input-group">
                                     <select class="form-control @error('code') is-invalid @enderror" name="code" style="max-width: 100px;">
                                         @foreach($phoneCountries as $country)
-                                            <option value="{{ $country['code'] }}"
-                                                {{ old('code', $settings['owner_country_code'] ?? '+91') == $country['code'] ? 'selected' : '' }}>
-                                                {{ $country['code'] }}
-                                            </option>
+                                        <option value="{{ $country['code'] }}"
+                                            {{ old('code', $settings['owner_country_code'] ?? '+91') == $country['code'] ? 'selected' : '' }}>
+                                            {{ $country['code'] }}
+                                        </option>
                                         @endforeach
                                     </select>
                                     <input type="text" class="form-control @error('owner_phone_number') is-invalid @enderror"
                                         name="owner_phone_number" placeholder="Enter phone number"
-                                        value="{{ old('owner_phone_number', $settings['owner_phone_number'] ?? '') }}" >
+                                        value="{{ old('owner_phone_number', $settings['owner_phone_number'] ?? '') }}">
                                 </div>
                                 @error('owner_phone_number')
-                                    <span class="invalid-feedback d-block">{{ $message }}</span>
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
                             <!-- Owner Email -->
@@ -186,7 +188,7 @@
                                     name="owner_email" placeholder="Enter owner email"
                                     value="{{ old('owner_email', $settings['owner_email'] ?? '') }}">
                                 @error('owner_email')
-                                    <span class="invalid-feedback d-block">{{ $message }}</span>
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
@@ -235,10 +237,10 @@
                     </div>
                 </div>
                 <div class="col-md-6 col-xl-4">
-                 <div class="card">
+                    <div class="card">
                         <h5 class="card-header">SMTP Details</h5>
-                            <div class="card-body">
-                              <div class="mb-3 d-none">
+                        <div class="card-body">
+                            <div class="mb-3 d-none">
                                 <label for="mail_mailer" class="form-label">Mail Mailer</label>
                                 <input type="text" name="mail_mailer" id="mail_mailer" class="form-control"
                                     value="{{ old('mail_mailer', $settings['mailer'] ?? 'smtp') }}"
@@ -290,20 +292,41 @@
                                     placeholder="App Name">
                             </div>
 
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xl-4">
+                    <div class="card">
+                        <h5 class="card-header">Recaptcha Keys</h5>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="recaptcha_site_key" class="form-label">Recaptcha Site Key</label>
+                                <input type="text" name="recaptcha_site_key" id="recaptcha_site_key" class="form-control"
+                                    value="{{ old('recaptcha_site_key', $settings['recaptcha_site_key'] ?? '') }}"
+                                    placeholder="Recaptcha Site Key">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="recaptcha_secret_key" class="form-label">Recaptcha Secret Key</label>
+                                <input type="text" name="recaptcha_secret_key" id="recaptcha_secret_key" class="form-control"
+                                    value="{{ old('recaptcha_secret_key', $settings['recaptcha_secret_key'] ?? '') }}"
+                                    placeholder="Recaptcha Secret Key">
                             </div>
                         </div>
+                    </div>
                 </div>
             </div>
-            
+
             <!-- Submit -->
             <div class="text-right settings-btn">
                 <button type="submit" class="btn btn-primary mt-3">Save Settings</button>
-            </div>            
+            </div>
         </form>
     </div>
 </section>
 <script type="text/javascript">
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         // Show Toastr
         toastr.options = {
             closeButton: true,
@@ -311,10 +334,14 @@
             timeOut: "4000",
             positionClass: "toast-top-right"
         };
-        @if(session('success')) toastr.success("{{ session('success') }}"); @endif
-        @if(session('error')) toastr.error("{{ session('error') }}"); @endif
-        @if(session('info')) toastr.info("{{ session('info') }}"); @endif
-        @if(session('warning')) toastr.warning("{{ session('warning') }}"); @endif
+        @if(session('success')) toastr.success("{{ session('success') }}");
+        @endif
+        @if(session('error')) toastr.error("{{ session('error') }}");
+        @endif
+        @if(session('info')) toastr.info("{{ session('info') }}");
+        @endif
+        @if(session('warning')) toastr.warning("{{ session('warning') }}");
+        @endif
 
         // Update file preview when changed
         setupImagePreview('websiteLogoInput', 'website-logo-preview', 'website-logo-preview-container', 'removeWebsiteLogoFlag');
@@ -328,7 +355,7 @@
         const removeFlag = document.getElementById(flagId);
         const label = document.querySelector(`label[for="${inputId}"]`);
 
-        input.addEventListener('change', function () {
+        input.addEventListener('change', function() {
             const file = this.files[0];
             if (file) {
                 previewImg.src = URL.createObjectURL(file);

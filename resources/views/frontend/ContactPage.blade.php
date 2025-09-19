@@ -48,7 +48,6 @@
                         @error('message') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         <div class="flex items-center space-x-3">
                             <span>{!! captcha_img('flat') !!}</span>
-                            <!-- <button type="button" id="reload" class="p-2 bg-gray-100 rounded-md">🔄</button> -->
                         </div>
                         <input type="text" name="captcha" placeholder="Enter Captcha"
                             class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500 focus:outline-none @error('captcha') border-red-500 @enderror">

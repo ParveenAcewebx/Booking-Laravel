@@ -70,12 +70,12 @@
                   
                     {{-- pages --}}
                     @canany(['view pages', 'create pages', 'edit pages', 'delete pages'])
-                    <li class="nav-item pcoded-hasmenu {{ request()->routeIs('user.*') ? 'pcoded-trigger' : '' }}">
+                    <li class="nav-item pcoded-hasmenu {{ request()->routeIs('page.*') ? 'pcoded-trigger' : '' }}">
                         <a href="#!" class="nav-link">
                             <span class="pcoded-micon"><i class="feather icon-file-text"></i></span>
                             <span class="pcoded-mtext">Pages</span>
                         </a>
-                        <ul class="pcoded-submenu" @if(request()->routeIs('user.*')) style="display:block;" @endif>
+                        <ul class="pcoded-submenu" @if(request()->routeIs('page.*')) style="display:block;" @endif>
                             @can('create page')
                                 <li class="{{ request()->routeIs('page.add') ? 'active' : '' }}">
                                     <a href="{{ route('page.add') }}">Add Page</a>

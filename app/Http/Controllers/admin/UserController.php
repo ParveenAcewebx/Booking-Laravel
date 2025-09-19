@@ -15,12 +15,14 @@ use Spatie\Permission\Models\Permission;
 use App\Models\PasswordResetToken;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
-
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use App\Import\UsersImport;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\HeadingRowImport;
 
 class UserController extends Controller
 {
@@ -34,32 +36,32 @@ class UserController extends Controller
     {
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
-    
+
         if ($request->ajax()) {
             $currentUser = Auth::user();
             $isImpersonating = session()->has('impersonate_original_user') || Cookie::get('impersonate_original_user');
             $statusLabels = array_flip(config('constants.status'));
-    
+
             $query = User::with(['roles'])
                 ->whereDoesntHave('roles', function ($q) {
-                    $q->where('name', 'staff'); // exclude staff if needed
+                    $q->where('name', 'staff');
                 })
                 ->select('users.*');
-    
+
             return DataTables::of($query)
                 ->addIndexColumn()
-    
+
                 ->addColumn('checkbox', function ($row) use ($currentUser) {
                     if (Auth::id() != $row->id) {
                         return '<input type="checkbox" class="selectRow" value="' . $row->id . '">';
                     }
                     return '<input type="checkbox" class="selectRow" value="' . $row->id . '" disabled>';
                 })
-    
+
                 ->addColumn('name', function ($row) {
                     return '<h6 class="m-b-0">' . e($row->name) . '</h6><p class="m-b-0">' . e($row->email) . '</p>';
                 })
-    
+
                 ->editColumn('created_at', function ($row) {
                     return $row->created_at
                         ? $row->created_at->format(
@@ -67,23 +69,22 @@ class UserController extends Controller
                         )
                         : '';
                 })
-    
+
                 ->addColumn('roles', function ($row) {
                     return $row->roles->pluck('name')->map(function ($role) {
                         return '<span class="badge badge-primary">' . e($role) . '</span>';
                     })->implode(' ');
                 })
-    
+
                 ->addColumn('status', function ($row) use ($statusLabels) {
                     return $row->status == config('constants.status.active')
                         ? '<span class="badge badge-success">Active</span>'
                         : '<span class="badge badge-danger">Inactive</span>';
                 })
-    
+
                 ->addColumn('action', function ($row) use ($currentUser, $isImpersonating) {
                     $btn = '';
-    
-                    // Edit
+
                     if (Auth::id() == $row->id) {
                         $btn .= '<a href="' . route('profile') . '" class="btn btn-icon btn-success" data-toggle="tooltip" title="Edit User">
                                     <i class="fas fa-pencil-alt"></i>
@@ -93,8 +94,7 @@ class UserController extends Controller
                                     <i class="fas fa-pencil-alt"></i>
                                  </a> ';
                     }
-    
-                    // Delete
+
                     if ($currentUser->can('delete users') && Auth::id() != $row->id) {
                         $btn .= '<form action="' . route('user.delete', [$row->id]) . '" method="POST" style="display:inline;" id="deleteUser-' . $row->id . '">';
                         $btn .= csrf_field();
@@ -104,8 +104,7 @@ class UserController extends Controller
                                  </button>';
                         $btn .= '</form>';
                     }
-    
-                    // Impersonation
+
                     if ($isImpersonating && Auth::id() === $row->id) {
                         $btn .= '<form method="POST" action="' . route('user.switch.back') . '" style="display:inline;">'
                             . csrf_field() . '
@@ -123,18 +122,14 @@ class UserController extends Controller
                             </form>';
                         }
                     }
-    
+
                     return $btn;
                 })
-    
                 ->rawColumns(['checkbox', 'name', 'roles', 'status', 'action'])
                 ->make(true);
         }
-    
         return view('admin.user.index', compact('loginUser'));
     }
-    
-
 
     public function userAdd()
     {
@@ -147,7 +142,6 @@ class UserController extends Controller
         if ($loginId) {
             $loginUser = User::find($loginId);
         }
-
         return view('admin.user.add', compact('allRoles', 'allusers', 'loginUser', 'phoneCountries'));
     }
 
@@ -183,7 +177,6 @@ class UserController extends Controller
         $user->assignRole($userRole);
 
         if ($user) {
-            // return redirect('/admin/users')->with('success', 'User Added Successfully.');
             return redirect()->route('user.list')->with('success', 'User Added Successfully.');
         } else {
             return redirect()->back()->with('error', 'It failed. Please try again.');
@@ -279,7 +272,6 @@ class UserController extends Controller
                 'password' => bcrypt($request->password)
             ]);
         }
-        // dd($request->role);
         $userRole = Role::find($request->role);
         $user->roles()->sync([$userRole->id]);
 
@@ -290,7 +282,6 @@ class UserController extends Controller
     {
         $user = User::find($id);
         $authuser_id = Auth::user()->id;
-        $username = $user->name;
         if ($authuser_id != $id) {
             $user->delete();
             return response()->json(['success' => true]);
@@ -362,13 +353,13 @@ class UserController extends Controller
         $user->assignRole($userRole);
 
         $macros = [
-            '{USER_NAME}' =>$user->name,
+            '{USER_NAME}' => $user->name,
             '{USER_EMAIL}' => $user->email,
-            '{SITE_TITLE}' => get_setting('site_title') ,
+            '{SITE_TITLE}' => get_setting('site_title'),
         ];
-     
+
         newcustomerregister('new_account_email_notification', $user->email, $macros);
-        sendAdminTemplateEmail('admin_new_user_notification',get_setting('owner_email'), $macros);
+        sendAdminTemplateEmail('admin_new_user_notification', get_setting('owner_email'), $macros);
         return redirect('/login')->with('success', 'Registration successful! Please log in.');
     }
 
@@ -403,7 +394,7 @@ class UserController extends Controller
             'email' => 'required|email|exists:users',
         ]);
         $token = Str::random(24);
-        PasswordResetToken::updateOrCreate(['email' => $request->email],['token' => $token,'created_at' => now(),]);
+        PasswordResetToken::updateOrCreate(['email' => $request->email], ['token' => $token, 'created_at' => now(),]);
         $resetLink = route('password.reset', ['token' => $token]);
         $user = User::where('email', $request->email)->pluck('name');
         $macros = [
@@ -411,21 +402,21 @@ class UserController extends Controller
             '{RESET_LINK}' => $resetLink,
             '{SITE_TITLE}' => get_setting('site_title'),
         ];
-    SendPasswordResetEmail('password_reset_email', $request->email, $macros);
-    return redirect()->route('login')->with('status', 'We have emailed your password reset link!');
+        SendPasswordResetEmail('password_reset_email', $request->email, $macros);
+        return redirect()->route('login')->with('status', 'We have emailed your password reset link!');
     }
 
     public function showResetForm(Request $request, $token = null)
     {
-        if(!empty($request->token)){
-            if ($this->tokenverification($request->token)=== true) {
+        if (!empty($request->token)) {
+            if ($this->tokenverification($request->token) === true) {
                 return view('auth.reset')->with([
                     'token' => $token,
                     'email' => $request->email,
                 ]);
-            }elseif($this->tokenverification($request->token) === false){
-               return redirect()->route('password.request')
-                 ->with('error', 'Your reset token has expired or is invalid. Please request a new password reset.');
+            } elseif ($this->tokenverification($request->token) === false) {
+                return redirect()->route('password.request')
+                    ->with('error', 'Your reset token has expired or is invalid. Please request a new password reset.');
             }
         }
     }
@@ -435,22 +426,21 @@ class UserController extends Controller
         if ($tokenRecord) {
             $createdAt = Carbon::parse($tokenRecord->created_at);
             if ($createdAt->gt(now()->subMinutes(10))) {
-                return true; 
-            }else{
-                return false; 
+                return true;
+            } else {
+                return false;
             }
         }
         return '';
-        
     }
 
     public function reset(Request $request)
     {
         $request->validate([
-            'token'=>'required',
+            'token' => 'required',
             'password' => 'required|string|min:6|confirmed',
         ]);
-        if(!empty($request->token)){
+        if (!empty($request->token)) {
             $email = PasswordResetToken::where('token', $request->token)->pluck('email');
             $user = User::where('email',  $email)->update(['password' => Hash::make($request->password)]);
             PasswordResetToken::where(['email' => $email])->delete();
@@ -483,7 +473,7 @@ class UserController extends Controller
             $userToUpdate->assignRole($bookingRole);
         }
     }
-    public function switchUser(Request $request ,$id)
+    public function switchUser(Request $request, $id)
     {
         $currentUser = Auth::user();
         if (!$currentUser->hasRole('Administrator')) {
@@ -494,8 +484,8 @@ class UserController extends Controller
         }
 
         if (!session()->has('impersonate_original_user') && !Cookie::get('impersonate_original_user')) {
-            if($request->switch_from){
-            session(['impersonate_original_switch_back' => $request->switch_from]);
+            if ($request->switch_from) {
+                session(['impersonate_original_switch_back' => $request->switch_from]);
             }
             session(['impersonate_original_user' => $currentUser->id]);
             Cookie::queue('impersonate_original_user', $currentUser->id, 60 * 24 * 7); // 7 days
@@ -507,7 +497,7 @@ class UserController extends Controller
         $userToSwitch = User::with('staff')->findOrFail($id);
 
         if ($userToSwitch->staff && $userToSwitch->staff->primary_staff == 1) {
-            return redirect('/dashboard/profile'); 
+            return redirect('/dashboard/profile');
         }
 
         return redirect('/admin');
@@ -521,7 +511,7 @@ class UserController extends Controller
 
             if ($originalUser) {
                 Auth::login($originalUser);
-        
+
                 session()->forget('impersonate_original_user');
                 Cookie::queue(Cookie::forget('impersonate_original_user'));
 
@@ -534,11 +524,11 @@ class UserController extends Controller
     public function bulkDelete(Request $request)
     {
         $ids = $request->input('ids');
-    
+
         if (!$ids || !is_array($ids)) {
             return response()->json(['success' => false, 'message' => 'No Records Selected.'], 400);
         }
-    
+
         User::whereIn('id', $ids)->delete();
         return response()->json(['success' => true, 'message' => 'Selected Users Deleted Successfully.']);
     }
@@ -566,5 +556,45 @@ class UserController extends Controller
         $user->password = Hash::make($request->new_password);
         $user->save();
         return redirect()->route('changepassword')->with('success', 'Password Updated Successfully!');
+    }
+
+
+    public function showImportView()
+    {
+        return view('admin.import.user-import');
+    }
+
+    public function importSave(Request $request)
+    {
+        $request->validate([
+            'excel_file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        if ($request->hasFile('excel_file')) {
+            $file = $request->file('excel_file');
+        
+            $requiredHeaders = ['name', 'email', 'password', 'phone_number', 'status'];
+
+            $headings = (new HeadingRowImport)->toArray($file);
+            $headersInFile = array_map('strtolower', $headings[0][0]); 
+
+            foreach ($requiredHeaders as $header) {
+                if (!in_array($header, $headersInFile)) {
+                    return redirect()->back()
+                        ->with('error', "Missing required column: {$header}. Please use the sample file format.");
+                }
+            }
+            Excel::import(new UsersImport($request->input('send_email') ?? 1), $file);
+            return redirect()->route('user.list')->with('success', 'Users Imported Successfully.');
+        }
+
+        return redirect()->back()->with('error', 'Please upload a valid file.');
+    }
+
+
+    public function sample()
+    {
+        $path = public_path('samples/user_import_sample.xlsx');
+        return response()->download($path, 'user_import_sample.xlsx');
     }
 }

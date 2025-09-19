@@ -15,6 +15,7 @@ use App\Http\Controllers\admin\EnquiryController;
 use App\Http\Controllers\frontend\BookingListingController;
 use App\Http\Controllers\frontend\ContactController;
 use App\Http\Controllers\frontend\VendorListingController;
+use App\Http\Controllers\frontend\LandingPageController;
 use App\Http\Controllers\admin\StaffController;
 use App\Http\Controllers\admin\VendorController;
 use App\Http\Controllers\admin\SettingsController;
@@ -88,16 +89,16 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     Route::middleware('permission:view pages')->group(function () {
         Route::get('/pages', [PageController::class, 'index'])->name('page.list');
     });
-    Route::middleware('permission:create page')->group(function () {
+    Route::middleware('permission:create pages')->group(function () {
         Route::get('/page/add', [PageController::class, 'PageAdd'])->name('page.add');
         Route::post('/page/save', [PageController::class, 'PageSave'])->name('page.save');
     });
-    Route::middleware('permission:edit page')->group(function () {
+    Route::middleware('permission:edit pages')->group(function () {
         Route::get('/page/{id}/edit', [PageController::class, 'pageEdit'])->name('page.edit');
         Route::post('/page/{id}/update', [PageController::class, 'pageUpdate'])->name('page.update');
         Route::put('/page/{id}/update', [PageController::class, 'pageUpdate'])->name('page.update');
     });
-    Route::middleware('permission:delete page')->group(function () {
+    Route::middleware('permission:delete ')->group(function () {
         Route::delete('/page/{userid}/delete', [PageController::class, 'pageDelete'])->name('page.delete');
         Route::post('/page/bulk-delete', [PageController::class, 'bulkDelete'])->name('page.bulk-delete');
     });
@@ -328,6 +329,7 @@ Route::middleware(['VendorRoleCheck'])->group(function () {
 });
 Route::get('/{slug}', [ShowPageController::class, 'show'])->middleware('checkPageSlug')->name('page.show');
 
+Route::get('/',[LandingPageController::class, 'index'])->name('home');
 
 Route::get('/email/logs', function () {
     $logPath = storage_path('logs/laravel.log');
