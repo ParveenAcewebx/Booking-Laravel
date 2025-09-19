@@ -9,6 +9,7 @@ use App\Http\Controllers\Import\UserImportController;
 use App\Http\Controllers\frontend\FormController;
 use App\Http\Controllers\frontend\SubscriptionsController;
 use App\Http\Controllers\admin\ServiceController;
+use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\EnquiryController;
 use App\Http\Controllers\frontend\BookingListingController;

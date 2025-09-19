@@ -1,5 +1,4 @@
 @extends('admin.layouts.app')
-
 @section('content')
 <section class="pcoded-main-container">
     <div class="pcoded-content">
@@ -21,27 +20,22 @@
                 </div>
             </div>
         </div>
-
-        <!-- Main Content -->
         <form action="{{ route('user.import.save') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
 
-                <!-- Left Column -->
                 <div class="col-md-8 order-md-1">
                     <div class="card">
                         <div class="card-header"><h5>Import Settings</h5></div>
                         <div class="card-body">
                             <div class="row">
 
-                                <!-- Download Sample -->
                                 <div class="col-md-12 mb-3">
                                     <a href="{{ route('user.import.sample') }}" class="btn btn-success">
                                         <i class="feather icon-download"></i> Download Sample File
                                     </a>
                                 </div>
 
-                                <!-- File Upload -->
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="form-label">Excel File <span class="text-danger">*</span></label>
@@ -59,9 +53,6 @@
                                             </div>
                                         </div>
                                         <small class="form-text text-muted">Supported file types: XLSX, XLS</small>
-                                        @error('excel_file')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
                                     </div>
                                 </div>
 
@@ -102,29 +93,4 @@
 
     </div>
 </section>
-<script>
-    // Toastr options
-    toastr.options = {
-        "closeButton": true,
-        "progressBar": true,
-        "positionClass": "toast-top-right",
-        "timeOut": "5000"
-    };
-
-    // Flash messages
-    @if(session('success'))
-        toastr.success("{{ session('success') }}");
-    @endif
-
-    @if(session('error'))
-        toastr.error("{{ session('error') }}");
-    @endif
-
-    // Validation errors
-    @if($errors->any())
-        @foreach($errors->all() as $error)
-            toastr.error("{{ $error }}");
-        @endforeach
-    @endif
-</script>
 @endsection
