@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\frontend;
+namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Contact; 
+use App\Models\Contact;
+use Illuminate\Support\Facades\Http;
 
 class ContactController extends Controller
 {
@@ -21,18 +22,25 @@ class ContactController extends Controller
             'email'   => 'required|email|max:255',
             'phone'   => 'required|string|max:20',
             'message' => 'required|string|max:2000',
-            'g-recaptcha-response' => 'required|captcha',
-
-        ],
-        [
-            'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
-            'g-recaptcha-response.captcha' => 'Captcha verification failed, please try again.',
+            'g-recaptcha-response' => 'required',
         ]);
 
         if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret'   => get_setting('recaptcha_secret_key'),
+            'response' => $request->input('g-recaptcha-response'),
+            'remoteip' => $request->ip(),
+        ]);
+
+        $result = $response->json();
+
+        if (!($result['success'] ?? false)) {
             return redirect()->back()
-                             ->withErrors($validator)
-                             ->withInput();
+                ->withErrors(['captcha' => 'reCAPTCHA verification failed, please try again.'])
+                ->withInput();
         }
 
         Contact::create([
@@ -40,22 +48,24 @@ class ContactController extends Controller
             'email'   => $request->email,
             'phone'   => $request->phone,
             'message' => $request->message
-        ]); 
+        ]);
 
         $macros = [
-            '{USER_NAME}' => $request->name,
+            '{USER_NAME}'  => $request->name,
             '{USER_EMAIL}' => $request->email,
-            '{PHONE}' => $request->phone,
-            '{MESSAGE}' => $request->message,
+            '{PHONE}'      => $request->phone,
+            '{MESSAGE}'    => $request->message,
             '{SITE_TITLE}' => get_setting('site_title'),
         ];
+
         sendEnquiryCustomerTemplateEmail('enquiry_email_notification', $request->email, $macros);
-        sendAdminEnquiryTemplateEmail('admin_enquiry_email_notification',get_setting('owner_email'), $macros);
-        return redirect()->back()->with('success', 'Enquiry submitted Successfully.');
+        sendAdminEnquiryTemplateEmail('admin_enquiry_email_notification', get_setting('owner_email'), $macros);
+
+        return redirect()->back()->with('success', 'Enquiry submitted successfully.');
     }
 
     public function refreshCaptcha()
     {
-        return response()->json(['captcha'=> captcha_img('flat')]);
+        return response()->json(['captcha' => captcha_img('flat')]);
     }
 }
