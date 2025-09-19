@@ -4,34 +4,14 @@ namespace App\Http\Controllers\Import;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\form;
-use App\Models\Staff;
 use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-use App\Models\PasswordResetToken;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 use App\Import\UsersImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\HeadingRowImport;
+use Maatwebsite\Excel\Validators\ValidationException as ExcelValidationException;
 
 class UserImportController extends Controller
 {
-    protected $allUsers;
-    public function __construct()
-    {
-        $this->allUsers = User::all();
-    }
-
     public function showImportView()
     {
         return view('admin.import.user-import');
@@ -45,25 +25,43 @@ class UserImportController extends Controller
 
         if ($request->hasFile('excel_file')) {
             $file = $request->file('excel_file');
-        
-            $requiredHeaders = ['name', 'email', 'password', 'phone_number', 'status'];
 
+            $requiredHeaders = ['name', 'email', 'phone_number', 'status', 'password'];
             $headings = (new HeadingRowImport)->toArray($file);
-            $headersInFile = array_map('strtolower', $headings[0][0]); 
+            $headersInFile = array_map('strtolower', $headings[0][0]);
 
             foreach ($requiredHeaders as $header) {
                 if (!in_array($header, $headersInFile)) {
-                    return redirect()->back()
+                    return redirect()->route('user.list')
                         ->with('error', "Missing required column: {$header}. Please use the sample file format.");
                 }
             }
-            Excel::import(new UsersImport($request->input('send_email') ?? 1), $file);
-            return redirect()->route('user.list')->with('success', 'Users Imported Successfully.');
+
+            if (count($headersInFile) !== count($requiredHeaders)) {
+                return redirect()->route('user.list')
+                    ->with('error', "Invalid column count. Expected: " . implode(', ', $requiredHeaders));
+            }
+
+            try {
+                Excel::import(new UsersImport($request->boolean('send_email')), $file);
+
+                return redirect()->route('user.list')
+                    ->with('success', 'Users Imported Successfully.');
+            } catch (ExcelValidationException $e) {
+                $failures = $e->failures();
+                $messages = [];
+
+                foreach ($failures as $failure) {
+                    $messages[] = "Row {$failure->row()}: " . implode(', ', $failure->errors());
+                }
+
+                return redirect()->route('user.list')
+                    ->with('error', implode('<br>', $messages));
+            }
         }
 
         return redirect()->back()->with('error', 'Please upload a valid file.');
     }
-
 
     public function sample()
     {
