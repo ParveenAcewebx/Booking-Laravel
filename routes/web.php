@@ -5,8 +5,7 @@ use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\BookingTemplateController;
 use App\Http\Controllers\admin\ProfileController;
 use App\Http\Controllers\admin\BookingController;
-use App\Http\Controllers\admin\DashboardController;
-use App\Http\Controllers\admin\RoleController;
+use App\Http\Controllers\admin\Import\UserImportController;
 use App\Http\Controllers\frontend\FormController;
 use App\Http\Controllers\frontend\SubscriptionsController;
 use App\Http\Controllers\admin\ServiceController;
@@ -80,6 +79,10 @@ Route::middleware('guest')->group(function () {
 // Authenticated routes
 Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(function () {
 
+    Route::get('/users/import-view', [UserImportController::class, 'showImportView'])->name('import.view');
+    Route::post('/user/import/save', [UserImportController::class, 'importSave'])->name('user.import.save');
+    Route::get('/user/import/sample', [UserImportController::class, 'sample'])->name('user.import.sample');
+
 
     Route::get('/export/bookings', [ExportBookingController::class, 'exportBookings'])->name('export.booking.excel');
     Route::get('/export/staff', [ExportStaffcontroller::class, 'exportstaff'])->name('export.staff.excel');
@@ -110,9 +113,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     // Routes for editing (edit users, edit templates, etc.)
     Route::middleware('permission:view users')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('user.list');
-        Route::get('/users/import-view', [UserController::class, 'showImportView'])->name('import.view');
-        Route::post('/user/import/save', [UserController::class, 'importSave'])->name('user.import.save');
-        Route::get('/user/import/sample', [UserController::class, 'sample'])->name('user.import.sample');
+     
     });
     Route::middleware('permission:create users')->group(function () {
         Route::get('/user/add', [UserController::class, 'userAdd'])->name('user.add');

@@ -19,10 +19,7 @@ class UsersImport implements ToModel, WithHeadingRow
 
     public function model(array $row)
     {
-        // Generate a random password if not provided
         $plainPassword = $row['password'] ?? (Str::random(4) . rand(0, 9) . Str::random(2) . '!@#$%^&*()_+'[rand(0, 11)] . Str::random(2));
-
-        // Create and save user
         $user = User::create([
             'name'          => $row['name'],
             'email'         => $row['email'],
@@ -43,10 +40,9 @@ class UsersImport implements ToModel, WithHeadingRow
                 '{SITE_TITLE}'    => get_setting('site_title'),
             ];
 
-            newcustomerregister('new_account_email_notification', $user->email, $macros);
+            newcustomerregister('vendor_login_email_notification', $user->email, $macros);
             sendAdminTemplateEmail('admin_new_user_notification', get_setting('owner_email'), $macros);
         }
-
         return $user;
     }
 }
