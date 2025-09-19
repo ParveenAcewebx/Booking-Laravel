@@ -123,7 +123,12 @@ if (!function_exists('sendAdminEnquiryTemplateEmail')) {
         return sendTemplateEmail($slug, $toEmail, $macros);
     }
 }
-
+if (!function_exists('sendCustomerReplyTemplateEmail')) {
+    function sendCustomerReplyTemplateEmail($slug, $toEmail, $macros = [])
+    {
+        return sendTemplateEmail($slug, $toEmail, $macros);
+    }
+}
 /*========================== Generate HTML Table for Booking ==========================*/
 if (!function_exists('generateBookingDataTable')) {
     function generateBookingDataTable(array $data): string

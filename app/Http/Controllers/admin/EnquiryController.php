@@ -105,26 +105,14 @@ class EnquiryController extends Controller
             ]);
     
             $contact = Contact::findOrFail($request->id);
-    
-            $subject = "Reply to your enquiry";
-            $body = "
-                <p>Hi {$contact->name},</p>
-                <p>Thank you for contacting us. Here is our reply:</p>
-                <p><strong>Your Message:</strong> {$contact->message}</p>
-                <p><strong>Our Reply:</strong></p>
-                {$request->reply_message}
-                <br>
-                <p>Regards,<br>Your Company Name</p>
-            ";
-    
-            // Send email
-            Mail::send([], [], function (Message $message) use ($contact, $subject, $body) {
-                $message->to($contact->email, $contact->name)
-                        ->subject($subject)
-                        ->html($body); // Send HTML
-            });
-    
-            // Save reply in DB
+            $macros = [
+                '{USER_NAME}' => $contact->name,
+                '{MESSAGE}' => $contact->message,
+                '{REPLY}' => $request->reply_message,
+                '{SITE_TITLE}' => get_setting('site_title'),
+            ];
+
+            sendCustomerReplyTemplateEmail('customer_reply_notification', $contact->email, $macros);
     
             return response()->json([
                 'success' => true,
