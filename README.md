@@ -1,4 +1,4 @@
-# Universal Booking
+# Universal Booking Solution
 
 Universal Booking is a flexible and dynamic booking management platform built with Laravel. It includes a powerful admin backend and a responsive frontend using Tailwind CSS. The system supports multi-step form creation, vendor and staff management, service booking, and complete user access control.
 
