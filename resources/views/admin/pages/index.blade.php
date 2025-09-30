@@ -18,10 +18,10 @@
                     </div>
                     <div class="col-md-6">
                         <div class="page-header-titles float-right">
-                            @can('create page')
+                            @can('create pages')
                                 <a href="{{ route('page.add') }}" class="btn btn-primary btn-sm mr-2 p-2">Add Page</a>
                             @endcan
-                            @can('delete page')
+                            @can('delete pages')
                                 <button id="bulkDeleteBtn" class="btn btn-danger btn-sm p-2 bulkDeleteBtn" disabled>Delete</button>
                             @endcan
                         </div>
