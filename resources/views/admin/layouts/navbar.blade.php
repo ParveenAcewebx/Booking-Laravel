@@ -76,7 +76,7 @@
                             <span class="pcoded-mtext">Pages</span>
                         </a>
                         <ul class="pcoded-submenu" @if(request()->routeIs('page.*')) style="display:block;" @endif>
-                            @can('create page')
+                            @can('create pages')
                                 <li class="{{ request()->routeIs('page.add') ? 'active' : '' }}">
                                     <a href="{{ route('page.add') }}">Add Page</a>
                                 </li>
