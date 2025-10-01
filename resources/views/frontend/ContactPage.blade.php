@@ -71,10 +71,6 @@
                                 class="px-6 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 shadow">
                                 Send Message
                             </button>
-                            <button type="reset"
-                                class="px-6 py-2 border border-pink-600 text-pink-600 rounded-lg hover:bg-pink-50">
-                                Cancel
-                            </button>
                         </div>
                     </form>
                 </div>
