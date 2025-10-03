@@ -123,6 +123,22 @@ class EmailTemplateSeeder extends Seeder
                     {SITE_TITLE} Website
                 ',
             ],
+              [
+                'slug'   => 'customer_reply_notification',
+                'title'   => 'Customer Reply Notification',
+                'subject' => 'New Reply from {USER_NAME}',
+                'email_content'    => '
+                    Hi {USER_NAME},
+                    You have received a new reply to your inquiry from {SITE_TITLE}:
+                    Name: {USER_NAME}
+                    Email: {USER_EMAIL}
+                    Phone: {PHONE}
+                    Message: {MESSAGE}  
+                    Please review and follow up as needed.
+                    Best regards,
+                    {SITE_TITLE} Website
+                ',
+            ],
 
         ];
 
