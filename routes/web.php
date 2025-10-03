@@ -103,9 +103,9 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
         Route::post('/page/{id}/update', [PageController::class, 'pageUpdate'])->name('page.update');
         Route::put('/page/{id}/update', [PageController::class, 'pageUpdate'])->name('page.update');
     });
-    Route::middleware('permission:delete ')->group(function () {
-        Route::delete('/page/{userid}/delete', [PageController::class, 'pageDelete'])->name('page.delete');
-        Route::post('/page/bulk-delete', [PageController::class, 'bulkDelete'])->name('page.bulk-delete');
+    Route::middleware('permission:delete pages')->group(function () {
+        Route::delete('/pages/{userid}/delete', [PageController::class, 'pageDelete'])->name('page.delete');
+        Route::post('/pages/bulk-delete', [PageController::class, 'bulkDelete'])->name('page.bulk-delete');
     });
 
     Route::post('/{id}/switch', [UserController::class, 'switchUser'])->name('user.switch');

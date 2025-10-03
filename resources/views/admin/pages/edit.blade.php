@@ -141,6 +141,7 @@
                                         <label class="custom-file-label overflow-hidden" for="addAvatarInput">Choose file...</label>
                                     </div>
                                 </div>
+                                  <input type="hidden" name="image_stored" id="remove_image" value="{{ $page->feature_image ? asset('storage/' . $page->feature_image) : '' }}">
                                 <small class="form-text text-muted">Supported image types: JPG, JPEG, PNG, or GIF.</small>
                                 @error('feature_image')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -161,6 +162,7 @@
                                                     title="Remove image">
                                                     &times;
                                                 </button>
+                                              
                                         </div>
                                     </div>
                                 </div>

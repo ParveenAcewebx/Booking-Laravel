@@ -115,15 +115,16 @@ class PageController extends Controller
             'description'   => 'required',
             'slug'          => 'required|string|max:255|unique:pages,slug,' . $page->id,
             'feature_image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'image_stored'=>'nullable|string',
+            'meta_title'    => 'nullable|string|max:255',
+            'meta_description'=> 'nullable|string',
+            'meta_keywords' => 'nullable|string',
         ]);
-
         $slug = Str::slug($validated['slug']);
-
-        $featureImagePath = $page->feature_image;
+        $featureImagePath = $validated['image_stored'];
         if ($request->hasFile('feature_image')) {
             $featureImagePath = $request->file('feature_image')->store('pages', 'public');
         }
-
         $page->update([
             'title'         => $validated['title'],
             'content'       => $validated['description'],
@@ -131,9 +132,9 @@ class PageController extends Controller
             'status'        => $request['status'],
             'feature_image' => $featureImagePath,
             'created_by'    => auth()->id(),
-            'meta_title'       => $request['meta_title'],
-            'meta_keywords'    => $request['meta_keywords'],
-            'meta_description' => $request['meta_description'],
+            'meta_title'       => $validated['meta_title'],
+            'meta_keywords'    => $validated['meta_keywords'],
+            'meta_description' => $validated['meta_description'],
         ]);
         return redirect()->route('page.list')->with('success', 'Page updated successfully!');
     }

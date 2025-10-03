@@ -1595,6 +1595,7 @@ $(document).ready(function () {
         // Handle remove
         removeButton.on('click', function () {
             fileInput.val('');
+            $('#remove_image').val('');
             fileLabel.text('Choose file...');
             previewImage.attr('src', '');
             previewContainer.addClass('d-none');
