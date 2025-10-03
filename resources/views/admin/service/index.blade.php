@@ -6,7 +6,7 @@
         <div class="page-header">
             <div class="page-block">
                 <div class="row align-items-center">
-                    <div class="col-md-10">
+                    <div class="col-md-8">
                         <div class="page-header-title">
                             <h5 class="m-b-10">All Services</h5>
                         </div>
@@ -20,7 +20,7 @@
                             <li class="breadcrumb-item"><a href="{{ route('service.list') }}">All Services</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-4">
                         <div class="page-header-titles float-right">
                             @can('create services')
                             <a href="{{ route('service.add') }}" class="btn btn-primary btn-sm mr-2 p-2">Add Service</a>

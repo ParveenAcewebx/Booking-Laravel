@@ -6,7 +6,7 @@
         <div class="page-header">
             <div class="page-block">
                 <div class="row align-items-center">
-                    <div class="col-md-10">
+                    <div class="col-md-8">
                         <div class="page-header-title">
                             <h5>All Email</h5>
                         </div>
@@ -16,7 +16,7 @@
                             <li class="breadcrumb-item"><a href="{{ route('emails.list') }}">All Email</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-4">
                         <div class="page-header-titles float-right">
                         @can('create emails')
                         <a href="{{ route('emails.create') }}" class="btn btn-primary btn-sm mr-2 p-2">Add Email</a>

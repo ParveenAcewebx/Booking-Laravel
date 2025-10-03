@@ -6,7 +6,7 @@
         <div class="page-header">
             <div class="page-block">
                 <div class="row align-items-center">
-                    <div class="col-md-10">
+                    <div class="col-md-8">
                         <div class="page-header-title">
                             <h5>All Vendors</h5>
                         </div>
@@ -16,7 +16,7 @@
                             <li class="breadcrumb-item"><a href="{{ route('vendors.list') }}">All Vendors</a></li>
                         </ul>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-4">
                         <div class="page-header-titles float-right">
                         @can('create vendors')
                             <a href="{{ route('vendors.add') }}" class="btn btn-primary btn-sm mr-2 p-2">Add Vendor</a>

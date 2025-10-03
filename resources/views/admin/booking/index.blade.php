@@ -57,7 +57,7 @@
                     </div>
 
                     <div class="col-md-1 col-sm-4">
-                        <button id="reset-filters" class="btn btn-primary float-right w-100">Reset</button>
+                        <button id="reset-filters" class="btn btn-primary w-100 export_booking d-flex justify-content-center">Reset</button>
                         
                     </div>
                     <div class="export_booking d-flex justify-content-end">
