@@ -121,7 +121,10 @@ class PageController extends Controller
             'meta_keywords' => 'nullable|string',
         ]);
         $slug = Str::slug($validated['slug']);
-        $featureImagePath = $validated['image_stored'];
+         $featureImagePath='';
+        if($validated['image_stored']){
+        $featureImagePath = $page->feature_image;
+        }
         if ($request->hasFile('feature_image')) {
             $featureImagePath = $request->file('feature_image')->store('pages', 'public');
         }
