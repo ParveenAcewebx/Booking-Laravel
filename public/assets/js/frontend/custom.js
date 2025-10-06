@@ -383,13 +383,13 @@ document.addEventListener("DOMContentLoaded", function () {
                             }
 
                             // ---------- radio ----------
-                            if (typeof val === "string") {
-                                let radioElement = $('input[type="radio"][name="' + formattedKey + '"][value="' + val + '"]');
+                           if (typeof val === "string") {
+                                let safeVal = $.escapeSelector(val);
+                                let radioElement = $('input[type="radio"][name="' + formattedKey + '"][value="' + safeVal + '"]');
                                 if (radioElement.length > 0) {
                                     radioElement.prop('checked', true);
                                 }
                             }
-
                             // ---------- checkboxes ----------
                             let checkboxElements = $('input[type="checkbox"][name="' + formattedKey + '"');
                             if (checkboxElements.length > 0) {
