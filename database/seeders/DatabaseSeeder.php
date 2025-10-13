@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
             UsersTable::class,
             ModelHasRolesTable::class,
             SettingsTableSeeder::class,
-            EmailTemplateSeeder::class
+            EmailTemplateSeeder::class,
+            GoogleRecaptichakeySeeder::class
         ]);
     }
 

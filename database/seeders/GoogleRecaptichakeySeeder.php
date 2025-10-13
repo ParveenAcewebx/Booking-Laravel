@@ -6,7 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 
-class GoogleRecapticha_key extends Seeder
+class GoogleRecaptichakeySeeder extends Seeder
 {
     /**
      * Run the database seeds.
