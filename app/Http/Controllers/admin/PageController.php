@@ -30,7 +30,9 @@ class PageController extends Controller
                     return $create_by_name;
                 })
                 ->editColumn('created_at', function ($row) {
-                    return $row->created_at->format('Y-m-d H:i');
+                    return $row->created_at->format(
+                            get_setting('date_format', 'Y-m-d') . ' ' . get_setting('time_format', 'H:i')
+                        );
                 })
                 ->addColumn('status', function ($row) {
                     return $row->status == 'publish'
