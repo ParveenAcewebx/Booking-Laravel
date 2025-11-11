@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{{ get_setting('site_title', config('app.name', 'Universal Booking Solution')) }}</title>
+    <!-- HTML5 Shim and Respond.js IE11 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 11]>
+    	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    	<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    	<![endif]-->
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="">
+    <meta name="author" content="Codedthemes" />
+    <!-- Favicon icon -->
+    <link rel="icon" href="{{ get_setting('favicon') ? asset('storage/' . get_setting('favicon')) : asset('assets/images/favicon.ico') }}" type="image/x-icon">
+    <!-- vendor css -->
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+</head>
+<body class="">
+   
+<div id="app">
+        <!-- Header  -->
+      
+      
+        <!-- all contents -->
+        @yield('content')
+    </div>
+
+
+<!-- Apex Chart -->
+<script src="assets/js/plugins/apexcharts.min.js"></script>
+
+
+<!-- custom-chart js -->
+<script src="assets/js/pages/dashboard-main.js"></script>
+<script>
+    $(document).ready(function() {
+        // $('#exampleModalCenter').modal();
+        // checkCookie();
+    });
+
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toGMTString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
+    function checkCookie() {
+        var ticks = getCookie("modelopen");
+        if (ticks != "") {
+            ticks++;
+            setCookie("modelopen", ticks, 1);
+            if (ticks == "2" || ticks == "1" || ticks == "0") {
+                $('#exampleModalCenter').modal();
+            }
+        } else {
+            // user = prompt("Please enter your name:", "");
+            $('#exampleModalCenter').modal();
+            ticks = 1;
+            setCookie("modelopen", ticks, 1);
+        }
+    }
+    function removeError(field) {
+        const input = document.getElementById(field);
+        const errorMessage = document.getElementById(field + '-error');
+        
+        // Remove the error border if present
+        input.classList.remove('border', 'border-danger');
+        
+        // Remove the error message if present
+        if (errorMessage) {
+            errorMessage.remove();
+        }
+    }
+</script>
+</body>
+</html>
+=

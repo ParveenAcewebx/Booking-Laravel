@@ -1,4 +1,4 @@
-@extends('layouts.public')
+@extends('auth.layouts.public')
 
 @section('content')
 <!-- [ auth-signin ] start -->
@@ -39,8 +39,3 @@
     </div>
 </div>
 @endsection
-
-
-
-
-  

@@ -2,25 +2,26 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\API\V1\APIControllerV1;
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Public route
+Route::post('/login-user', [APIControllerV1::class, 'loginUserAPI']);
+
+// Protected routes with Sanctum
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::post('/logout', [APIControllerV1::class, 'logout']);
+    Route::get('/formById/{id}', [APIControllerV1::class, 'getForm']);
+    Route::get('/bookings', [APIControllerV1::class, 'index']);
+    Route::get('/bookingsById/{id}', [APIControllerV1::class, 'show']);
+    Route::get('/booking-templates', [APIControllerV1::class, 'bookingTemplates']);
+    Route::get('/getBookingByVendorId/{id}', [APIControllerV1::class, 'searchBookingByVendorId']);
+    Route::get('/getBookingByServiceId/{id}', [APIControllerV1::class, 'searchBookingByServiceId']);
+    Route::get('/getBookingByStaffId/{id}', [APIControllerV1::class, 'searchBookingByStaffId']);
+    Route::get('/getStaffById/{id}', [APIControllerV1::class, 'searchStaffById']);
+    Route::get('/getServiceById/{id}', [APIControllerV1::class, 'searchServiceById']);
 });
 
 
-// Route::get('/create-user', [UserController::class, 'createUser']);
 
-Route::post('/login-user', [APIControllerV1::class, 'loginUserAPI']);
-Route::middleware('auth:sanctum')->get('/form/{id}', [APIControllerV1::class, 'getForm']);
+/* ------ BookingTemplateAPI ---- */
