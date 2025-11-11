@@ -1,4 +1,4 @@
-@extends('layouts.public')
+@extends('auth.layouts.public')
 
 @section('content')
 <!-- [ auth-signin ] start -->
@@ -9,7 +9,7 @@
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <div class="card-body">
-                        <h4 class="mb-3 f-w-400">Signin</h4>
+                        <h4 class="mb-3 f-w-400">Sign in</h4>
                         <hr>
                         @if (session('error'))
                          <div class="alert alert-danger">
@@ -24,26 +24,26 @@
                         <form method="POST" action="{{ route('login') }}">
                             @csrf
                             <div class="form-group mb-3">
-                                <input type="email" name="email" class="form-control" id="Email" placeholder="Email address" required>
+                                <input type="email" name="email" class="form-control {{ $errors->has('email') ? 'border border-danger' : '' }}" id="email" placeholder="Email address" oninput="removeError('email')" value="{{ old('email') }}">
                                 @error('email')
-                                  <div class="error-message">{{ $message }}</div>
+                                  <div class="error-message text-danger text-left" id="email-error">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="form-group mb-4">
-                                <input type="password" name="password" class="form-control" id="Password" placeholder="Password" required>
+                                <input type="password" name="password" class="form-control {{ $errors->has('password') ? 'border border-danger' : '' }}" id="password" placeholder="Password" oninput="removeError('password')" value="{{ old('password') }}">
                                 @error('password')
-                                  <div class="error-message">{{ $message }}</div>
+                                  <div class="error-message text-danger text-left" id="password-error">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="custom-control custom-checkbox text-left mb-4 mt-2">
                                 <input type="checkbox" name="rememberme" class="custom-control-input" id="customCheck1">
                                 <label class="custom-control-label" for="customCheck1">Save credentials.</label>
-                               
                             </div>
-                            <button type="submit" class="btn btn-block btn-primary mb-4">Signin</button>
+                            <button type="submit" class="btn btn-block btn-primary mb-4">Sign in</button>
                         </form>
                         <hr>
                         <p class="mb-2 text-muted">Forgot password? <a href="{{route('password.request')}}" class="f-w-400">Reset</a></p>
+                        <p class="mb-2 text-muted">Don't have an account? <a href="{{route('register')}}" class="f-w-400">Signup</a></p>
                     </div>
                 </div>
             </div>
@@ -51,8 +51,3 @@
     </div>
 </div>
 @endsection
-
-
-
-
-  

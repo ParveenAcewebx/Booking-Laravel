@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Helpers\Shortcode;
 use Illuminate\Support\ServiceProvider;
+use App\Models\Service;
+use Illuminate\Support\Facades\Artisan;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +22,178 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Shortcode::register('services', function ($shortcodeAttrs, $class) {
+            $services = Service::all();
+            $c = $class;
+            if ($services->isEmpty() || $services->every(function ($service) {
+                return $service->status !== 1;
+            })) {
+                return " No services available at the moment";
+            }
+
+            $selectedService = $shortcodeAttrs['service'] ?? '';
+            $selectedvendor  = $shortcodeAttrs['vendor'] ?? '';
+            $servicesForm    = '';
+
+            // Service dropdown
+            $servicesForm .= "<div class='form-group {$c['group']}'>";
+            $servicesForm .= "<label for='service' class='{$c['label']} services-show'>Select Service <span class='text-red-500'>*</span></label>";
+            $servicesForm .= "<select name='dynamic[service]' id='get_service_staff' class='get_service_staff {$c['select']}' required>";
+            $servicesForm .= '<option value="">---Select Service---</option>';
+            foreach ($services as $service) {
+                $attributes = $service->getAttributes();
+                if ($attributes['status'] === 1) {
+                    $selected = $attributes['id'] == $selectedService ? 'selected' : '';
+                    $servicesForm .= "<option value='{$attributes['id']}' {$selected}>{$attributes['name']}</option>";
+                }
+            }
+            $servicesForm .= "</select>";
+            $servicesForm .= "</div>";
+
+            // Vendor dropdown
+            $servicesForm .= "<div id='loader'class='vendor-loder d-none hidden'></div>";
+            $servicesForm .= "<div class='form-group {$c['group']} select_service_vendor {$c['hidden']}'>";
+            $servicesForm .= "<label for='staff' class='{$c['label']}'>Select Vendor <span class='text-red-500'>*</span></label>";
+            $servicesForm .= "<input type='hidden' class='selected_vendor' value='" . $selectedvendor . "'>";
+            $servicesForm .= "<div class='vendor-placeholder'></div>";  
+            $servicesForm .= "<select name='dynamic[vendor]' id='service_vendor_form' class='{$c['select']} service_vendor_form' required>";
+            $servicesForm .= '<option value="">---Select Vendor---</option>';
+            $servicesForm .= "</select>";
+            $servicesForm .= "</div>";
+            $servicesForm .=  '<div class="showMessage hidden d-none">No Available dates for this Vendor.</div><div class="calendar-wrap hidden d-none">
+                    <div class="w-full flex items-center justify-between d-flex w-100 justify-content-between">
+                        <div class="pre-button flex items-center justify-center">
+                            <i class="fa fa-chevron-left"></i>
+                        </div>
+                        <h5 id="month-name" class="text-center mt-[-10px]"></h5>
+                        <div class="next-button flex items-center justify-center">
+                            <i class="fa fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    <table id="calendar" class="table-auto w-full mt-4">
+                        <thead>
+                            <tr>
+                                <th class="px-2 py-1 text-sm font-medium text-center">Sun</th>
+                                <th class="px-2 py-1 text-sm font-medium text-center">Mon</th>
+                                <th class="px-2 py-1 text-sm font-medium text-center">Tue</th>
+                                <th class="px-2 py-1 text-sm font-medium text-center">Wed</th>
+                                <th class="px-2 py-1 text-sm font-medium text-center">Thu</th>
+                                <th class="px-2 py-1 text-sm font-medium text-center">Fri</th>
+                                <th class="px-2 py-1 text-sm font-medium text-center">Sat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <tr>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                    <td class="px-4 py-2 text-center"></td>
+                                </tr>
+                        </tbody>
+                    </table>
+                    <div class="availibility p-4 border border-gray-300 shadow-md rounded-lg hidden">
+                    <div class="timings"></div>
+                    </div>
+                </div>';
+            if ($c['hidden'] === 'd-none') {
+                $servicesForm .= '<div class="d-flex justify-content-end"><button type="button" class="remove-all-slots text-white p-2 m-1 bg-danger border-danger d-none">
+                        Remove All
+                    </button></div>';
+            } else {
+                $servicesForm .= '<button type="button" class="remove-all-slots hidden bg-red-600 text-white p-2 float-right m-3 rounded mt-3">
+                        Remove All
+                    </button>';
+            }
+
+           $servicesForm .= '<input type="hidden" name="bookslots" id="bookslots">
+           <div class="select-slots">
+
+            </div>
+
+     <div class="slot-list-wrapper space-y-2">
+   </div>';
+            return $servicesForm;
+        });
+
+        Shortcode::register('user-information', function ($shortcodeAttrs, $class) {
+            $c = $class;
+            // dd($shortcodeAttrs);
+            $firstName = $shortcodeAttrs['first_name'] ?? '';
+            $lastName  = $shortcodeAttrs['last_name'] ?? '';
+            $email     = $shortcodeAttrs['email'] ?? '';
+            $phone     = $shortcodeAttrs['phone'] ?? '';
+            $userForm  = '';
+
+            $userForm .= "<div class='form-group {$c['group']}'>";
+            $userForm .= "<label for='first_name'class='{$c['label']}'>First Name <span class='text-red-500'>*</span></label>";
+            $userForm .= "<input type='text' name='dynamic[first_name]' id='first_name' class='form-control {$c['input']}' value='" . e($firstName) . "' placeholder='First Name' required>";
+            $userForm .= "</div>";
+
+            $userForm .= "<div class='form-group {$c['group']}'>";
+            $userForm .= "<label for='last_name' class='{$c['label']}'>Last Name <span class='text-red-500'>*</span></label>";
+            $userForm .= "<input type='text' name='dynamic[last_name]' id='last_name' class='form-control {$c['input']}' value='" . e($lastName) . "' placeholder='Last Name' required>";
+            $userForm .= "</div>";
+
+            $userForm .= "<div class='form-group {$c['group']}' >";
+            $userForm .= "<label for='email'class='{$c['label']}'>Email <span class='text-red-500'>*</span></label>";
+            $userForm .= "<input type='email' name='dynamic[email]' id='email' class='form-control {$c['input']}' value='" . e($email) . "' placeholder='Email Address' required>";
+            $userForm .= "</div>";
+
+            $userForm .= "<div class='form-group {$c['group']}'>";
+            $userForm .= "<label for='phone' class='{$c['label']}'>Phone</label>";
+            $userForm .= "<input type='tel' name='dynamic[phone]' id='phone' class='form-control {$c['input']}' value='" . e($phone) . "' placeholder='Phone Number' maxlength='10' oninput=\"this.value = this.value.replace(/[^0-9]/g, '')\">";
+            $userForm .= "</div>";
+
+            return $userForm;
+        });
+
     }
 }

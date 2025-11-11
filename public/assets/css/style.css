@@ -642,6 +642,18 @@ mark,
     background-color: #fcf8e3;
 }
 
+.error {
+    color: red;
+}
+
+#formTemplatesname-error {
+    color: red;
+    font-size: 14px;
+    margin-top: 4px;
+    display: block;
+  }
+  
+
 .list-unstyled {
     padding-left: 0;
     list-style: none;
@@ -2249,6 +2261,7 @@ textarea.form-control {
 }
 
 .form-check-label {
+    margin-top:2px;
     margin-bottom: 0;
 }
 
@@ -11094,6 +11107,7 @@ a.text-dark:hover, a.text-dark:focus {
 
 .icon-log-out:before {
     content: "\e888";
+    padding-top: 1px;
 }
 
 .icon-loader:before {
@@ -19705,11 +19719,11 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .btn.btn-icon {
-    width: 45px;
-    height: 45px;
+    width: 35px;
+    height: 35px;
     padding: 0;
     border-radius: 50%;
-    font-size: 18px;
+    font-size: 15px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -19995,6 +20009,7 @@ a.badge-light-secondary.active, a.badge-light-secondary:active, a.badge-light-se
     background: rgba(46, 204, 113, 0.2);
     border-color: #c4f1d7;
     color: #2ecc71;
+    margin-right: 5px;
 }
 
 a.badge-light-success.active, a.badge-light-success:active, a.badge-light-success:focus, a.badge-light-success:hover {
@@ -20136,6 +20151,17 @@ strong {
 .page-header {
     background: transparent;
     margin-bottom: 30px;
+    /* margin-top: 60px; */
+}
+img.logo {
+    width: 100px;
+}
+div#dynamicFormFields {
+    background: #ededed;
+    padding: 20px;
+}
+.form-builder-dialog{
+    z-index: 99999 !important;
 }
 
 .page-header h5 {
@@ -22604,7 +22630,7 @@ pre[class*=language-]:before {
 }
 
 .pcoded-header .dropdown .profile-notification .pro-body {
-    padding: 20px 0;
+    padding: 10px 0;
     margin-bottom: 0;
     list-style: none;
 }
@@ -28402,7 +28428,7 @@ body.box-layout .pcoded-navbar.theme-horizontal ~ .pcoded-header {
 .table th {
     border-top: 1px solid #e2e5e8;
     white-space: nowrap;
-    padding: 1.05rem 0.75rem;
+    padding: 10px 10px;
 }
 
 .table thead th {
@@ -31994,7 +32020,7 @@ new-task label input[type=checkbox] {
 }
 
 .user-profile-list table {
-    border-spacing: 0 10px;
+    /* border-spacing: 0 5px; */
     width: calc(100% - 10px);
     margin: 0 5px;
 }
@@ -32028,18 +32054,13 @@ new-task label input[type=checkbox] {
     justify-content: center;
 }
 
-.user-profile-list table tbody tr:hover {
-    box-shadow: 0 0 6px 0 #0073aa;
-}
-
 .user-profile-list table tbody tr:hover td {
     cursor: pointer;
-    color: #fff;
-    background: #0073aa;
+    color: #373a3c;
 }
 
 .user-profile-list table tbody tr:hover td h6 {
-    color: #fff;
+    color: #373a3c;
 }
 
 .user-profile-list table tbody tr:hover td .overlay-edit {
@@ -32053,7 +32074,6 @@ new-task label input[type=checkbox] {
 }
 
 .user-profile-list table tr td {
-    background: #fff;
     position: relative;
 }
 
@@ -32080,4 +32100,14 @@ new-task label input[type=checkbox] {
 }
 .profile-avatar img {
     width: 20%;
+}
+
+table tbody tr:hover .badge-light-success {
+    border-color: #c4f1d7;
+    position: relative;
+    z-index: 999999;
+    background: #212529;
+}
+.form-wrap.form-builder .cb-wrap.sticky-controls {
+    margin-right: 13px !important;
 }
