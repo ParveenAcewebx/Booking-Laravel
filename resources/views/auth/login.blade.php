@@ -43,7 +43,7 @@
                         </form>
                         <hr>
                          <button type="submit" class="btn btn-block btn-danger mb-4">Login With Google</button>
-                         <button type="submit" class="btn btn-block btn-primary mb-4">Login With Facebook</button>
+                         <button type="submit" class="btn btn-block btn-primary mb-4">Login With Gmail</button>
                          <p class="mb-2 text-muted">Forgot password? <a href="{{route('password.request')}}" class="f-w-400">Reset</a></p>
                         <p class="mb-2 text-muted">Don't have an account? <a href="{{route('register')}}" class="f-w-400">Signup</a></p>
                     </div>
