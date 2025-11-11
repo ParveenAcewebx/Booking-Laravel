@@ -42,6 +42,11 @@
                             <button type="submit" class="btn btn-block btn-primary mb-4">Sign in</button>
                         </form>
                         <hr>
+                        <div class="text-center mb-3">
+                            <a href="{{ route('auth.google.redirect') }}" class="btn btn-danger btn-block">
+                                <i class="fab fa-google mr-2"></i> Login with Google
+                            </a>
+                        </div>
                         <p class="mb-2 text-muted">Forgot password? <a href="{{route('password.request')}}" class="f-w-400">Reset</a></p>
                         <p class="mb-2 text-muted">Don't have an account? <a href="{{route('register')}}" class="f-w-400">Signup</a></p>
                     </div>
