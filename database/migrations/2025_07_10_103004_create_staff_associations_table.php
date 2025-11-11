@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('staff_service_associations', function (Blueprint $table) {
+            $table->id();
+            $table->string('staff_member'); // changed from unsignedBigInteger to string
+            $table->string('service_id');  // same here
+            $table->timestamps();
+
+            // Remove foreign keys if no longer referencing numeric IDs
+            // $table->foreign('staff_member')->references('id')->on('users')->onDelete('cascade');
+            // $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('staff_service_associations');
+    }
+};

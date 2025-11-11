@@ -1,0 +1,143 @@
+.calendar-wrap {
+    /* width: 65%; */
+    background: #fff;
+    padding: 40px 20px 20px 20px;
+}
+
+table#calendar {
+    max-width: 360px;
+    border-spacing: 5px !important;
+    border-collapse: initial;
+    margin: 0 auto;
+}
+
+#calendar {
+    width: 100%;
+}
+
+#calendar thead tr {
+    color: #000;
+    font-weight: 700;
+}
+
+#calendar tr {
+    height: 3em;
+}
+
+#calendar tbody tr {
+    color: #000;
+}
+
+#calendar tbody td {
+    width: 14%;
+    border-radius: 50%;
+    cursor: pointer;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    position: relative;
+    z-index: 0;
+}
+
+#calendar tbody td:after {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    content: '';
+    width: 44px;
+    height: 44px;
+    margin: 0 auto;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    border-radius: 50%;
+    -webkit-transition: 0.3s;
+    -o-transition: 0.3s;
+    transition: 0.3s;
+    z-index: -1;
+}
+
+/*---------- Loader Css --------*/
+/* Loader full screen */
+.loader-block {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0009;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+/* Loader container */
+.loader-content {
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+
+/* Circle animation */
+.loader-circle {
+    width: 50%;
+    height: 50%;
+    border-radius: 50%;
+    border: 10px solid rgba(255, 255, 255, 0.2);
+    border-top-color: #fff;
+    animation: spin 1.5s linear infinite;
+}
+
+/* Percentage text */
+.loader-percent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Hide site content initially */
+.site-wrapper {
+    display: none;
+}
+
+ul.frmb.stage-wrap {
+    margin-left: 10px !important;
+}
+button.clear-all, button.no.btn.btn-danger.btn-sm {
+    background-color: #e74c3c !important;
+ 
+}
+button.clear-all,button.save-template,button.no.btn.btn-danger.btn-sm,button.yes.btn.btn-success.btn-sm{
+    color: white !important;
+}
+button.save-template, button.yes.btn.btn-success.btn-sm {
+    background-color: #0073aa !important;
+}
+.form-builder-dialog.positioned, button.yes.btn.btn-success.btn-sm {
+    left: 672.888px !important;
+}
+
+button.no.btn.btn-danger.btn-sm,button.yes.btn.btn-success.btn-sm {
+    padding: 3px 5px;
+    border-radius: 4px;
+}
+.ql-editor {
+    min-height: 150px;
+  }
+  .contact-form{
+    position: relative;
+    margin-top:-120px;
+  }
