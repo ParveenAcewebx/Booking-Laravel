@@ -2,16 +2,23 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "anhskohbo/no-captcha": "^3.7",
         "bitpay/sdk": "^9.1",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
-        "spatie/laravel-permission": "^6.10"
+        "maatwebsite/excel": "^3.1",
+        "mews/captcha": "^3.4",
+        "spatie/laravel-permission": "^6.10",
+        "yajra/laravel-datatables-oracle": "^10.11"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
@@ -27,7 +34,13 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/Helpers/FormHelper.php",
+            "app/Helpers/helpers.php",
+            "app/Helpers/ImpersonationHelper.php",
+            "app/Helpers/CheckSlugHelper.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -39,14 +52,22 @@
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
         ],
+        "post-install-cmd": [
+            "@php artisan key:generate --ansi",
+            "@php artisan vendor:publish --provider=\"Yajra\\DataTables\\DataTablesServiceProvider\" --force",
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
         "post-update-cmd": [
+            "@php artisan vendor:publish --provider=\"Yajra\\DataTables\\DataTablesServiceProvider\" --force",
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
-            "@php artisan key:generate --ansi"
+            "@php artisan key:generate --ansi",
+            "@php artisan vendor:publish --provider=\"Yajra\\DataTables\\DataTablesServiceProvider\" --force",
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ]
     },
     "extra": {
