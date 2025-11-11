@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Import\UsersImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\HeadingRowImport;
+use Laravel\Socialite\Facades\Socialite;
 
 class UserController extends Controller
 {
@@ -556,5 +557,27 @@ class UserController extends Controller
         $user->password = Hash::make($request->new_password);
         $user->save();
         return redirect()->route('changepassword')->with('success', 'Password Updated Successfully!');
+    }
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+    public function handleGoogleCallback()
+    {
+        $googleUser = Socialite::driver('google')->user();
+        $user = User::firstOrCreate(
+            ['email' => $googleUser->getEmail()],
+            [
+                'name' => $googleUser->getName(),
+                'password' => bcrypt(uniqid()),
+                'avatar' => '',
+                'status' => 1,
+                'phone_code' => '+91',
+                'phone_number' => '1234567890',
+            ]
+        );
+
+        Auth::login($user);
+    return redirect()->route('home');
     }
 }

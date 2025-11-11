@@ -72,6 +72,8 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [UserController::class, 'register'])->name('register');
     Route::get('/login', [UserController::class, 'showLoginForm'])->name("login.form");
     Route::post('/login', [UserController::class, 'login'])->name('login');
+    Route::get('auth/google', [UserController::class, 'redirectToGoogle'])->name('auth.google.redirect');
+    Route::get('auth/google/callback', [UserController::class, 'handleGoogleCallback']);
     Route::get('/forgot-password', [UserController::class, 'forgotPassword'])->name('password.request');
     Route::post('password/email', [UserController::class, 'sendResetLinkEmail'])->name('password.email');
     Route::get('password/reset/{token}', [UserController::class, 'showResetForm'])->name('password.reset');
