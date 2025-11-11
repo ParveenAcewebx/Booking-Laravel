@@ -76,6 +76,7 @@ Route::middleware('guest')->group(function () {
     Route::post('password/email', [UserController::class, 'sendResetLinkEmail'])->name('password.email');
     Route::get('password/reset/{token}', [UserController::class, 'showResetForm'])->name('password.reset');
     Route::post('password/reset', [UserController::class, 'reset'])->name('password.update');
+    Route::post('login', [UserController::class, 'loginwithgoogle'])->name('auth.google.redirect');
 });
 
 // Authenticated routes
