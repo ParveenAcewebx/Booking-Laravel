@@ -170,6 +170,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\SmtpConfigServiceProvider::class,
         App\Providers\PageServiceProvider::class,
+        App\Providers\SettingsServiceProvider::class,
     ])->toArray(),
 
     /*

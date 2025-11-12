@@ -76,12 +76,6 @@
                             <button class="btn btn-primary btn-block mb-4" type="submit">Register</button>
                         </form>
                         <hr>
-<<<<<<< HEAD
-=======
-                        <a href="{{ route('auth.google.redirect') }}" class="btn btn-danger btn-block">
-                            <i class="fab fa-google mr-2"></i> Login with Google
-                        </a>
->>>>>>> e231ee95bcffe133e0da5699ad7481472c5d0f8f
                         <p class="mb-2">Already have an account? <a href="{{route('login.form')}}" class="f-w-400">Signin</a></p>
                     </div>
                 </div>

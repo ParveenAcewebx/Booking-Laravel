@@ -72,11 +72,8 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [UserController::class, 'register'])->name('register');
     Route::get('/login', [UserController::class, 'showLoginForm'])->name("login.form");
     Route::post('/login', [UserController::class, 'login'])->name('login');
-<<<<<<< HEAD
-        Route::get('auth/google', [UserController::class, 'redirectToGoogle'])->name('auth.google.redirect');
-=======
     Route::get('auth/google', [UserController::class, 'redirectToGoogle'])->name('auth.google.redirect');
->>>>>>> e231ee95bcffe133e0da5699ad7481472c5d0f8f
+    Route::get('auth/google', [UserController::class, 'redirectToGoogle'])->name('auth.google.redirect');
     Route::get('auth/google/callback', [UserController::class, 'handleGoogleCallback']);
     Route::get('/forgot-password', [UserController::class, 'forgotPassword'])->name('password.request');
     Route::post('password/email', [UserController::class, 'sendResetLinkEmail'])->name('password.email');
