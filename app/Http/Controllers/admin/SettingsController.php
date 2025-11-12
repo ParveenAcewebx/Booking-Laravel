@@ -108,6 +108,8 @@ class SettingsController extends Controller
             'from_name' => $request['mail_from_name'],
             'recaptcha_secret_key' => $request['recaptcha_secret_key'],
             'recaptcha_site_key' => $request['recaptcha_site_key'],
+            'google_client_id' => $request['google_client_id'],
+            'google_client_secret' => $request['google_client_secret'],
         ];
 
         foreach ($smtpSettings as $key => $value) {

@@ -56,8 +56,8 @@ Universal Booking is a flexible and dynamic booking management platform built wi
 
 ## 🔐 Login Details
 
-- **Email** admin@example.com
-- **Password** password
+- **Email:** admin@example.com
+- **Password:** password
 
 ---
 
