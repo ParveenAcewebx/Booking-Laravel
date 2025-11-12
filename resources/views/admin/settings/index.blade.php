@@ -315,6 +315,29 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card">
+                        <h5 class="card-header">Google Keys</h5>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="google_client_id" class="form-label">Google Client Id</label>
+                                <input type="text" name="google_client_id" id="google_client_id" class="form-control"
+                                    value="{{ old('google_client_id', $settings['google_client_id'] ?? '') }}"
+                                    placeholder="Google Client Id">
+                            </div>
+                            <div class="mb-3">
+                                <label for="google_client_secret" class="form-label">Google Client Secret</label>
+                                <input type="text" name="google_client_secret" id="google_client_secret" class="form-control"
+                                    value="{{ old('google_client_secret', $settings['google_client_secret'] ?? '') }}"
+                                    placeholder="Google Client Secret">
+                            </div>
+                            <div class="mb-3">
+                                <label for="google_redirect_uri" class="form-label">Google Redirect Uri</label>
+                                <input type="text" name="google_redirect_uri" id="google_redirect_uri" class="form-control"
+                                    value="{{ old('google_redirect_uri', $settings['google_redirect_uri'] ?? '') }}"
+                                    placeholder="Google Redirect Uri">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
