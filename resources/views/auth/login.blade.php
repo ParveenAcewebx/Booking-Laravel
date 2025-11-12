@@ -40,6 +40,11 @@
                                 <label class="custom-control-label" for="customCheck1">Save credentials.</label>
                             </div>
                             <button type="submit" class="btn btn-block btn-primary mb-4">Sign in</button>
+                            <div class="button mb-2">
+                            <a href="{{ route('auth.google.redirect') }}" class="btn btn-danger btn-block">
+                                <i class="fab fa-google mr-2"></i> Login with Google
+                            </a>
+                        </div>
                         </form>
                         <hr>
                         <p class="mb-2 text-muted">Forgot password? <a href="{{route('password.request')}}" class="f-w-400">Reset</a></p>
