@@ -80,6 +80,12 @@ Route::middleware('guest')->group(function () {
     Route::post('password/reset', [UserController::class, 'reset'])->name('password.update');
 });
 
+// Mail approve link to users.
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+Route::get('/verify-email/{id}', [UserController::class, 'Emailverify']);
+
 // Authenticated routes
 Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(function () {
 

@@ -30,9 +30,11 @@ class EmailTemplateSeeder extends Seeder
                 'subject' => 'Welcome to {SITE_TITLE}',
                 'email_content' => '
                     <p>Dear {USER_NAME},<br /><br />
-                    Welcome to <strong>{SITE_TITLE}</strong>! Your account has been successfully created. Please find your login credentials below:<br /><br />
+                    Welcome to <strong>{SITE_TITLE}</strong>! Your account has been successfully created. <br /><br />
+                    Verify Your Email Address <p><a href="{VERIFY_LINK}">Click Here to Verify Email</a></p>
                     Name: <strong>{USER_NAME}</strong><br />
                     Email: <strong>{USER_EMAIL}</strong><br />
+                    Password: <strong>{USER_PASSWORD}</strong><br />
                     For security reasons, we recommend that you change your password after your first login.<br /><br />
                     Regards,<br /> {SITE_TITLE}</p>
                 ',
