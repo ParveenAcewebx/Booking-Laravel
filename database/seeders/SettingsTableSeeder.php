@@ -101,13 +101,13 @@ class SettingsTableSeeder extends Seeder
             ],
             [
                 'key'=>'username',
-                'value'=>'keshav.acewebx@gmail.com',
+                'value'=>'ashish.acewebx@gmail.com',
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
             [
                 'key'=>'password',
-                'value'=>'jknqaqfjtadvjmdb',
+                'value'=>'ozdrhjwasqwrorks',
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
@@ -119,13 +119,13 @@ class SettingsTableSeeder extends Seeder
             ],
             [
                 'key'=>'from_address',
-                'value'=>'keshav.acewebx@gmail.com',
+                'value'=>'ashish.acewebx@gmail.com',
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
             [
                 'key'=>'from_name',
-                'value'=>'laravel',
+                'value'=>'Booking-laravel',
                 'created_at' => $now,
                 'updated_at' => $now,
             ],

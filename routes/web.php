@@ -33,6 +33,9 @@ use App\Http\Controllers\export\ExportStaffController;
 use App\Http\Controllers\export\ExportUserController;
 use App\Http\Controllers\admin\PageController;
 use App\Http\Controllers\frontend\ShowPageController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -43,6 +46,11 @@ use App\Http\Controllers\frontend\ShowPageController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+Route::get('/verify-email/{id}', [UserController::class, 'Emailverify']);
+
 
 Route::get('/', function () {
     return view('frontend.landing');

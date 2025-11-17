@@ -24,6 +24,7 @@ use App\Import\UsersImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\HeadingRowImport;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Auth\Events\Registered;
 
 class UserController extends Controller
 {
@@ -321,7 +322,7 @@ class UserController extends Controller
                 return redirect()->intended('/admin/dashboard');
             } elseif ($user->hasRole('Customer') && $user->status == 0) {
                 Auth::logout();
-                return redirect('/login')->with('error', 'Your account is inactive. Please contact support.');
+                return redirect('/login')->with('error', 'Your account is inactive. Please Verify Your Email  Or Contact Support.');
             } else {
                 return redirect('/');
             }
@@ -336,7 +337,6 @@ class UserController extends Controller
     {
         return view('auth.register');
     }
-
     public function register(Request $request)
     {
         $request->validate([
@@ -344,11 +344,14 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6|confirmed',
         ]);
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'status' => '0',
         ]);
+
         $role_id = 4;
         $userRole = Role::find($role_id);
         $user->assignRole($userRole);
@@ -356,12 +359,28 @@ class UserController extends Controller
         $macros = [
             '{USER_NAME}' => $user->name,
             '{USER_EMAIL}' => $user->email,
+            '{USER_PASSWORD}' => $request->password,
+            '{VERIFY_LINK}' => $verifyUrl = url('/verify-email/'.$user->id),
             '{SITE_TITLE}' => get_setting('site_title'),
         ];
 
         newcustomerregister('new_account_email_notification', $user->email, $macros);
         sendAdminTemplateEmail('admin_new_user_notification', get_setting('owner_email'), $macros);
-        return redirect('/login')->with('success', 'Registration successful! Please log in.');
+        return redirect('/login')->with('success', 'Registration successful! Please check your email to verify your account.');
+    }
+
+    public function Emailverify($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return redirect('/login')->with('error', 'Invalid verification link.');
+        }
+
+        $user->status = '1';
+        $user->save();
+
+        return redirect('/login')->with('success', 'Your email has been verified successfully! You can now login.');
     }
 
     public function permissionCheck()
