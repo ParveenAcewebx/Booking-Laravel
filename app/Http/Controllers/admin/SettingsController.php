@@ -108,8 +108,10 @@ class SettingsController extends Controller
             'from_name' => $request['mail_from_name'],
             'recaptcha_secret_key' => $request['recaptcha_secret_key'],
             'recaptcha_site_key' => $request['recaptcha_site_key'],
+            'google_client_id' => $request['google_client_id'],
+            'google_client_secret' => $request['google_client_secret'],
+            'google_redirect_uri' => $request['google_redirect_uri'],
         ];
-
         foreach ($smtpSettings as $key => $value) {
             Setting::updateOrCreate(
                 ['key' => $key],
@@ -122,9 +124,9 @@ class SettingsController extends Controller
     public function updateGoogleLogin(Request $request)
     {
         $request->validate([
-            'google_client_id' => 'required|string',
-            'google_client_secret' => 'required|string',
-            'google_redirect_uri' => 'required|url',
+            'google_client_id' => 'nullable|string',
+            'google_client_secret' => 'nullable|string',
+            'google_redirect_uri' => 'nullable|url',
             'google_login_enabled' => 'nullable',
         ]);
 
@@ -135,15 +137,32 @@ class SettingsController extends Controller
         ];
 
         foreach ($googleLoginSettings as $key => $value) {
-            Setting::updateOrCreate(['key' => $key], ['value' => $value ?? '']);
+            Setting::updateOrCreate(['key' => $key], ['value' => $value]);
         }
 
-        $value = $request->has('google_login_enabled') ? 1 : 0;
-        Setting::updateOrCreate(['key' => 'google_login_enabled'], ['value' => $value]);
+        $clientId = $request->input('google_client_id');
+        $clientSecret = $request->input('google_client_secret');
+        $redirectUri = $request->input('google_redirect_uri');
 
-        return back()->with('success', 'Google login setting updated.');
+        if (empty($clientId) || empty($clientSecret) || empty($redirectUri)) {
+            Setting::updateOrCreate(['key' => 'google_login_enabled'], ['value' => 0]);
+            return back()->with('error', 'Please fill in Google login credentials to enable the toggle.');
+        }
+
+        if ($clientId !== '' && $clientSecret !== '' && $redirectUri !== '') {
+            $enabled = $request->has('google_login_enabled') && $request->input('google_login_enabled');
+            Setting::updateOrCreate(['key' => 'google_login_enabled'], ['value' => $enabled]);
+
+            if ($enabled) {
+                return back()->with('success', 'Google login enabled successfully.');
+            } else {
+                return back()->with('success', 'Google login disabled successfully.');
+            }
+        }
+
+        Setting::updateOrCreate(['key' => 'google_login_enabled'], ['value' => 0]);
+        return back()->with('error', 'Please provide all required Google credentials (Client ID, Secret, and Redirect URI) to enable Google login.');
     }
-    
 }
 
 
