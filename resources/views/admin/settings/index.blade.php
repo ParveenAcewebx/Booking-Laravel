@@ -348,9 +348,7 @@
                                 class="form-control @error('google_client_id') is-invalid @enderror"
                                 value="{{ old('google_client_id', $settings['google_client_id'] ?? '') }}"
                                 placeholder="Google Client ID">
-                            @error('google_client_id')
-                                <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
-                            @enderror
+
                         </div>
                         <div class="mb-3">
                             <label for="google_client_secret" class="form-label">Google Client Secret</label>
@@ -360,9 +358,7 @@
                                 class="form-control @error('google_client_secret') is-invalid @enderror"
                                 value="{{ old('google_client_secret', $settings['google_client_secret'] ?? '') }}"
                                 placeholder="Google Client Secret">
-                            @error('google_client_secret')
-                                <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
-                            @enderror
+
                         </div>
                         <div class="mb-3">
                             <label for="google_redirect_uri" class="form-label">Google Redirect URI</label>
@@ -372,9 +368,7 @@
                                 class="form-control @error('google_redirect_uri') is-invalid @enderror"
                                 value="{{ old('google_redirect_uri', $settings['google_redirect_uri'] ?? '') }}"
                                 placeholder="Google Redirect URI">
-                            @error('google_redirect_uri')
-                                <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
-                            @enderror
+
                         </div>
                     </div>
                 </form>
