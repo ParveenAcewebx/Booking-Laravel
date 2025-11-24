@@ -129,6 +129,12 @@ class SettingsTableSeeder extends Seeder
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
+            [
+                'key'=>'google_login_enabled',
+                'value'=>'0',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
         ]);
     }
 }

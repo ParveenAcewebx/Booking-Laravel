@@ -315,37 +315,71 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card">
-                        <h5 class="card-header">Google Keys</h5>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label for="google_client_id" class="form-label">Google Client Id</label>
-                                <input type="text" name="google_client_id" id="google_client_id" class="form-control"
-                                    value="{{ old('google_client_id', $settings['google_client_id'] ?? '') }}"
-                                    placeholder="Google Client Id">
-                            </div>
-                            <div class="mb-3">
-                                <label for="google_client_secret" class="form-label">Google Client Secret</label>
-                                <input type="text" name="google_client_secret" id="google_client_secret" class="form-control"
-                                    value="{{ old('google_client_secret', $settings['google_client_secret'] ?? '') }}"
-                                    placeholder="Google Client Secret">
-                            </div>
-                            <div class="mb-3">
-                                <label for="google_redirect_uri" class="form-label">Google Redirect Uri</label>
-                                <input type="text" name="google_redirect_uri" id="google_redirect_uri" class="form-control"
-                                    value="{{ old('google_redirect_uri', $settings['google_redirect_uri'] ?? '') }}"
-                                    placeholder="Google Redirect Uri">
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
-
             <!-- Submit -->
             <div class="text-right settings-btn">
                 <button type="submit" class="btn btn-primary mt-3">Save Settings</button>
             </div>
         </form>
+        <div class="col-md-6 col-xl-4">
+            <div class="card">
+                <h5 class="card-header">Google Keys</h5>
+                <form method="POST" action="{{ route('settings.google.login') }}">
+                    @csrf
+                    <div class="card-body">
+                        <div class="mb-3 d-flex align-items-center">
+                            <label class="switch mb-0" for="google_login_enabled">
+                                <input type="checkbox" 
+                                    name="google_login_enabled"
+                                    id="google_login_enabled"
+                                    onchange="this.form.submit();"
+                                    value="1"
+                                    {{ old('google_login_enabled', $settings['google_login_enabled'] ?? 0) ? 'checked' : '' }}>
+                                <span class="slider round"></span>
+                            </label>
+                            <span style="margin-left:15px;">Enable Login with Google</span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="google_client_id" class="form-label">Google Client ID</label>
+                            <input type="text" 
+                                name="google_client_id" 
+                                id="google_client_id" 
+                                class="form-control @error('google_client_id') is-invalid @enderror"
+                                value="{{ old('google_client_id', $settings['google_client_id'] ?? '') }}"
+                                placeholder="Google Client ID">
+                            @error('google_client_id')
+                                <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="google_client_secret" class="form-label">Google Client Secret</label>
+                            <input type="text" 
+                                name="google_client_secret" 
+                                id="google_client_secret" 
+                                class="form-control @error('google_client_secret') is-invalid @enderror"
+                                value="{{ old('google_client_secret', $settings['google_client_secret'] ?? '') }}"
+                                placeholder="Google Client Secret">
+                            @error('google_client_secret')
+                                <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="google_redirect_uri" class="form-label">Google Redirect URI</label>
+                            <input type="text" 
+                                name="google_redirect_uri" 
+                                id="google_redirect_uri" 
+                                class="form-control @error('google_redirect_uri') is-invalid @enderror"
+                                value="{{ old('google_redirect_uri', $settings['google_redirect_uri'] ?? '') }}"
+                                placeholder="Google Redirect URI">
+                            @error('google_redirect_uri')
+                                <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+                            @enderror
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </section>
 <script type="text/javascript">

@@ -41,10 +41,12 @@
                             </div>
                             <button type="submit" class="btn btn-block btn-primary mb-4">Sign in</button>
                             <div class="button mb-2">
-                            <a href="{{ route('auth.google.redirect') }}" class="btn btn-danger btn-block">
-                                <i class="fab fa-google mr-2"></i> Login with Google
-                            </a>
-                        </div>
+                                @if(get_setting('google_login_enabled'))
+                                    <a href="{{ route('auth.google.redirect') }}" class="btn btn-danger w-100 mb-3">
+                                        <i class="fab fa-google"></i> Login with Google
+                                    </a>
+                                @endif
+                            </div>
                         </form>
                         <hr>
                         <p class="mb-2 text-muted">Forgot password? <a href="{{route('password.request')}}" class="f-w-400">Reset</a></p>

@@ -108,9 +108,6 @@ class SettingsController extends Controller
             'from_name' => $request['mail_from_name'],
             'recaptcha_secret_key' => $request['recaptcha_secret_key'],
             'recaptcha_site_key' => $request['recaptcha_site_key'],
-            'google_client_id' => $request['google_client_id'],
-            'google_client_secret' => $request['google_client_secret'],
-            'google_redirect_uri' => $request['google_redirect_uri'],
         ];
 
         foreach ($smtpSettings as $key => $value) {
@@ -122,4 +119,32 @@ class SettingsController extends Controller
         
         return back()->with('success', 'Settings Updated Successfully.');
     }
+    public function updateGoogleLogin(Request $request)
+    {
+        $request->validate([
+            'google_client_id' => 'required|string',
+            'google_client_secret' => 'required|string',
+            'google_redirect_uri' => 'required|url',
+            'google_login_enabled' => 'nullable',
+        ]);
+
+        $googleLoginSettings = [
+            'google_client_id' => $request->input('google_client_id'),
+            'google_client_secret' => $request->input('google_client_secret'),
+            'google_redirect_uri' => $request->input('google_redirect_uri'),
+        ];
+
+        foreach ($googleLoginSettings as $key => $value) {
+            Setting::updateOrCreate(['key' => $key], ['value' => $value ?? '']);
+        }
+
+        $value = $request->has('google_login_enabled') ? 1 : 0;
+        Setting::updateOrCreate(['key' => 'google_login_enabled'], ['value' => $value]);
+
+        return back()->with('success', 'Google login setting updated.');
+    }
+    
 }
+
+
+
