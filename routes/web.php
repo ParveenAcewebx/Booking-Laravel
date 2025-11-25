@@ -80,7 +80,6 @@ Route::middleware('guest')->group(function () {
     Route::post('password/reset', [UserController::class, 'reset'])->name('password.update');
 });
 
-Route::post('/settings/google-login', [SettingsController::class, 'updateGoogleLogin'])->name('settings.google.login');
 
 // Mail approve link to users.
 Route::get('/email/verify', function () {
