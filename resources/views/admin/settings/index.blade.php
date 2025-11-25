@@ -329,22 +329,19 @@
                     @csrf
                     <div class="card-body">
                         <div class="mb-3 d-flex align-items-center">
-                            <label class="switch mb-0" for="google_login_enabled">
-                                <input type="checkbox" 
-                                    name="google_login_enabled"
-                                    id="google_login_enabled"
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" name="google_login_enabled" id="customswitch1"
                                     onchange="this.form.submit();"
                                     value="1"
-                                    {{ old('google_login_enabled', $settings['google_login_enabled'] ?? 0) ? 'checked' : '' }}>
-                                <span class="slider round"></span>
-                            </label>
-                            <span style="margin-left:15px;">Enable Login with Google</span>
+                                    {{ (old('google_login_enabled', $settings['google_login_enabled'] ?? 1) == 1) ? 'checked' : '' }}>
+                                <label class="custom-control-label" for="customswitch1">Enable login with google</label>
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="google_client_id" class="form-label">Google Client ID</label>
-                            <input type="text" 
-                                name="google_client_id" 
-                                id="google_client_id" 
+                            <input type="text"
+                                name="google_client_id"
+                                id="google_client_id"
                                 class="form-control @error('google_client_id') is-invalid @enderror"
                                 value="{{ old('google_client_id', $settings['google_client_id'] ?? '') }}"
                                 placeholder="Google Client ID">
@@ -352,9 +349,9 @@
                         </div>
                         <div class="mb-3">
                             <label for="google_client_secret" class="form-label">Google Client Secret</label>
-                            <input type="text" 
-                                name="google_client_secret" 
-                                id="google_client_secret" 
+                            <input type="text"
+                                name="google_client_secret"
+                                id="google_client_secret"
                                 class="form-control @error('google_client_secret') is-invalid @enderror"
                                 value="{{ old('google_client_secret', $settings['google_client_secret'] ?? '') }}"
                                 placeholder="Google Client Secret">
@@ -362,9 +359,9 @@
                         </div>
                         <div class="mb-3">
                             <label for="google_redirect_uri" class="form-label">Google Redirect URI</label>
-                            <input type="text" 
-                                name="google_redirect_uri" 
-                                id="google_redirect_uri" 
+                            <input type="text"
+                                name="google_redirect_uri"
+                                id="google_redirect_uri"
                                 class="form-control @error('google_redirect_uri') is-invalid @enderror"
                                 value="{{ old('google_redirect_uri', $settings['google_redirect_uri'] ?? '') }}"
                                 placeholder="Google Redirect URI">
