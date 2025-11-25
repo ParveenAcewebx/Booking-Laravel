@@ -75,7 +75,7 @@
     display: inline-block;
     width: 50px;   /* changed */
     height: 24px;  /* changed */
-}
+} 
 .switch input {
     opacity: 0;
     width: 0;
