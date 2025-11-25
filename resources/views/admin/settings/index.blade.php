@@ -19,7 +19,7 @@
                 </div>
             </div>
         </div>
-        <form action="{{ route('settings.store') }}" method="POST" enctype="multipart/form-data" class="settings-form">
+        <form action="{{ route('settings.store') }}" method="POST" enctype="multipart/form-data" class="settings-form" novalidate>
             @csrf
             <div class="row">
                 <div class="col-md-6 col-xl-4">
@@ -315,6 +315,71 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card">
+                        <h5 class="card-header">Google Keys</h5>
+                        <div class="card-body">
+
+                        <div class="mb-3">
+                            <input type="hidden" name="google_login_enabled" value="0">
+
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox"
+                                    class="custom-control-input"
+                                    id="customswitch1"
+                                    name="google_login_enabled"
+                                    value="1"
+                                    onchange="toggleof()"
+                                    {{ ($settings['google_login_enabled'] ?? 0) == 1 ? 'checked' : '' }}>
+                                <label class="custom-control-label" for="customswitch1">
+                                    Enable login with google
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="googleKeys" style="display: {{ ($settings['google_login_enabled'] ?? 0) == 1 ? 'block' : 'none' }};">
+
+                            <div class="mb-3">
+                                <label for="google_client_id" class="form-label">Google Client ID</label>
+                                <input type="text"
+                                    name="google_client_id"
+                                    id="google_client_id"
+                                    class="form-control @error('google_client_id') is-invalid @enderror"
+                                    value="{{ $settings['google_client_id'] ?? '' }}"
+                                    placeholder="Google Client ID">
+                                @error('google_client_id')
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="google_client_secret" class="form-label">Google Client Secret</label>
+                                <input type="text"
+                                    name="google_client_secret"
+                                    id="google_client_secret"
+                                    class="form-control @error('google_client_secret') is-invalid @enderror"
+                                    value="{{ $settings['google_client_secret'] ?? '' }}"
+                                    placeholder="Google Client Secret">
+                                @error('google_client_secret')
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="google_redirect_uri" class="form-label">Google Redirect URI</label>
+                                <input type="text"
+                                    name="google_redirect_uri"
+                                    id="google_redirect_uri"
+                                    class="form-control @error('google_redirect_uri') is-invalid @enderror"
+                                    value="{{ $settings['google_redirect_uri'] ?? '' }}"
+                                    placeholder="Google Redirect URI">
+                                @error('google_redirect_uri')
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                        </div>
+
+                    </div>
                 </div>
             </div>
             <!-- Submit -->
@@ -322,55 +387,6 @@
                 <button type="submit" class="btn btn-primary mt-3">Save Settings</button>
             </div>
         </form>
-        <div class="col-md-6 col-xl-4">
-            <div class="card">
-                <h5 class="card-header">Google Keys</h5>
-                <form method="POST" action="{{ route('settings.google.login') }}">
-                    @csrf
-                    <div class="card-body">
-                        <div class="mb-3 d-flex align-items-center">
-                            <div class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input" name="google_login_enabled" id="customswitch1"
-                                    onchange="this.form.submit();"
-                                    value="1"
-                                    {{ (old('google_login_enabled', $settings['google_login_enabled'] ?? 1) == 1) ? 'checked' : '' }}>
-                                <label class="custom-control-label" for="customswitch1">Enable login with google</label>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="google_client_id" class="form-label">Google Client ID</label>
-                            <input type="text"
-                                name="google_client_id"
-                                id="google_client_id"
-                                class="form-control @error('google_client_id') is-invalid @enderror"
-                                value="{{ old('google_client_id', $settings['google_client_id'] ?? '') }}"
-                                placeholder="Google Client ID">
-
-                        </div>
-                        <div class="mb-3">
-                            <label for="google_client_secret" class="form-label">Google Client Secret</label>
-                            <input type="text"
-                                name="google_client_secret"
-                                id="google_client_secret"
-                                class="form-control @error('google_client_secret') is-invalid @enderror"
-                                value="{{ old('google_client_secret', $settings['google_client_secret'] ?? '') }}"
-                                placeholder="Google Client Secret">
-
-                        </div>
-                        <div class="mb-3">
-                            <label for="google_redirect_uri" class="form-label">Google Redirect URI</label>
-                            <input type="text"
-                                name="google_redirect_uri"
-                                id="google_redirect_uri"
-                                class="form-control @error('google_redirect_uri') is-invalid @enderror"
-                                value="{{ old('google_redirect_uri', $settings['google_redirect_uri'] ?? '') }}"
-                                placeholder="Google Redirect URI">
-
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
     </div>
 </section>
 <script type="text/javascript">
@@ -433,6 +449,20 @@
             document.querySelector('label[for="faviconInput"]').innerText = 'Choose file...';
         }
     }
+    
+    function toggleof() {
+        let checkbox = document.getElementById('customswitch1');
+        let keysDiv = document.getElementById('googleKeys');
+
+        if (checkbox && keysDiv) {
+            if (checkbox.checked) {
+                keysDiv.style.display = "block";
+            } else {
+                keysDiv.style.display = "none";
+            }
+        }
+    }
+    
 </script>
 
-@endsection
+@endsection 
