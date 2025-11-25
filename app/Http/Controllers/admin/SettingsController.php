@@ -126,7 +126,7 @@ class SettingsController extends Controller
         $request->validate([
             'google_client_id' => 'nullable|string',
             'google_client_secret' => 'nullable|string',
-            'google_redirect_uri' => 'nullable|url',
+            'google_redirect_uri' => 'nullable',
             'google_login_enabled' => 'nullable',
         ]);
 
