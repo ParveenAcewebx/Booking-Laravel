@@ -20,7 +20,7 @@ class GoogleRecaptichakeySeeder extends Seeder
             ],
             [
                 'key'=>'recaptcha_secret_key',
-                'value'=>'6Lf8mdorAAAAACI62WSy4f69HyHPySpagxNaAfEa',
+                'value'=>'6LeMlBgsAAAAAOtH0Xraf67SsIQIYYRvIo7z4n36',
             ]
         ];
          foreach ($settings as $setting) {

@@ -37,7 +37,7 @@
 <!-- Apex Chart -->
 <script src="assets/js/plugins/apexcharts.min.js"></script>
 
-
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <!-- custom-chart js -->
 <script src="assets/js/pages/dashboard-main.js"></script>
 <script>
