@@ -308,6 +308,7 @@ class UserController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
+            'g-recaptcha-response' =>'required',
         ]);
         $credentials = $request->only('email', 'password');
         $remember = $request->has('rememberme');
@@ -342,6 +343,7 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6|confirmed',
+            'g-recaptcha-response' =>'required',
         ]);
 
         $user = User::create([
@@ -598,4 +600,28 @@ class UserController extends Controller
         Auth::login($user);
     return redirect()->route('home');
     }
+     public function redirectToFacebook()
+    {
+        
+        return Socialite::driver('facebook')->redirect();
+    }
+        public function handleFacebookCallback()
+        {
+            $facebookUser = Socialite::driver('facebook')->stateless()->user();
+
+            $user = User::firstOrCreate(
+                ['email' => $facebookUser->getEmail()],
+                [
+                    'name' => $facebookUser->getName(),
+                    'password' => bcrypt(uniqid()),
+                    'avatar' => '',
+                    'status' => 1,
+                    'phone_code' => '+91',
+                    'phone_number' => '1234567890',
+                ]
+            );
+
+        Auth::login($user);
+        return redirect()->route('home');
+        }
 }

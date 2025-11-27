@@ -72,9 +72,31 @@
                                     <div class="error-message text-danger text-left" id="password_confirmation-error">{{ $message }}</div>
                                 @enderror
                             </div>
-                            
+                            <div class="form-group mb-4">
+                                <div class="g-recaptcha" data-sitekey="{{ get_setting('recaptcha_site_key') }}"></div>
+                                @error('g-recaptcha-response') 
+                                    <div class="error-message text-danger text-left">{{ $message }}</div>
+                                @enderror
+                            </div>
                             <button class="btn btn-primary btn-block mb-4" type="submit">Register</button>
                         </form>
+                        <hr>
+                         <div class="row">
+                                <div class="col-md-6">
+                                    @if(get_setting('google_login_enabled'))
+                                        <a href="{{ route('auth.google.redirect') }}" class="btn btn-outline-danger">
+                                            <i class="fab fa-google"></i> Login with Google
+                                        </a>
+                                    @endif
+                                </div>
+                                <div class="col-md-6">
+                                    @if(get_setting('facebook_login_enabled'))
+                                        <a href="{{ route('auth.facebook.redirect') }}" class="btn btn-outline-primary">
+                                            <i class="fab fa-facebook"></i> Login with Facebook
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>  
                         <hr>
                         <p class="mb-2">Already have an account? <a href="{{route('login.form')}}" class="f-w-400">Signin</a></p>
                     </div>

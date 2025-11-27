@@ -14,6 +14,11 @@ class SettingsServiceProvider extends ServiceProvider
                 'services.google.client_secret' => get_setting('google_client_secret'),
                 'services.google.redirect' => get_setting('google_redirect_uri'),
             ]);
+            config([
+                'services.facebook.client_id'     => get_setting('facebook_client_id'),
+                'services.facebook.client_secret' => get_setting('facebook_client_secret'),
+                'services.facebook.redirect'      => get_setting('facebook_redirect_uri'),
+            ]);
         }
     }
 

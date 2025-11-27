@@ -35,15 +35,29 @@
                                   <div class="error-message text-danger text-left" id="password-error">{{ $message }}</div>
                                 @enderror
                             </div>
+                            <div class="g-recaptcha" data-sitekey="{{ get_setting('recaptcha_site_key') }}"></div>
+                            @error('g-recaptcha-response') 
+                                  <div class="error-message text-danger text-left">{{ $message }}</div>
+                            @enderror
                             <div class="custom-control custom-checkbox text-left mb-4 mt-2">
                                 <input type="checkbox" name="rememberme" class="custom-control-input" id="customCheck1">
                                 <label class="custom-control-label" for="customCheck1">Save credentials.</label>
                             </div>
                             <button type="submit" class="btn btn-block btn-primary mb-4">Sign in</button>
-                            <div class="button mb-2">
+                            <hr>
+                            <div class="d-flex justify-content-between mt-3 mb-2" style="gap: 14px;">
                                 @if(get_setting('google_login_enabled'))
-                                    <a href="{{ route('auth.google.redirect') }}" class="btn btn-danger w-100 mb-3">
-                                        <i class="fab fa-google"></i> Login with Google
+                                    <a href="{{ route('auth.google.redirect') }}" class="btn border-danger d-flex align-items-center"
+                                       style="height:48px;">
+                                        <i class="fab fa-google mr-2" style="color:#DB4437; font-size:19px;"></i>
+                                        <span class="text-dark">Login with Google</span>
+                                    </a>
+                                @endif
+                                @if(get_setting('facebook_login_enabled'))
+                                    <a href="{{ route('auth.facebook.redirect') }}" class="btn border-primary d-flex align-items-center"
+                                       style="height:48px;">
+                                        <i class="fab fa-facebook mr-2" style="color:#1877f3; font-size:19px;"></i>
+                                        <span class="text-dark">Login with Facebook</span>
                                     </a>
                                 @endif
                             </div>

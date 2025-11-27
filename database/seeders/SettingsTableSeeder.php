@@ -135,6 +135,12 @@ class SettingsTableSeeder extends Seeder
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
+            [
+                'key'=>'facebook_login_enabled',
+                'value'=>'0',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
         ]);
     }
 }

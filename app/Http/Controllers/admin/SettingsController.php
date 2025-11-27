@@ -52,7 +52,10 @@ class SettingsController extends Controller
             'mail_from_name' => 'nullable|string',
             'google_client_id' => 'required',
             'google_client_secret' => 'required',
-            'google_redirect_uri' => 'required'
+            'google_redirect_uri' => 'required',
+            'facebook_client_id' => 'required',
+            'facebook_client_secret' => 'required',
+            'facebook_redirect_uri' => 'required'
         ]);
 
         $settings = [
@@ -129,6 +132,18 @@ class SettingsController extends Controller
         ];
 
         foreach ($googleSettings as $key => $value) {
+            Setting::updateOrCreate(['key' => $key], ['value' => $value]);
+        }
+
+        $facebookEnabled = $request->facebook_login_enabled;
+        $facebookSettings = [
+            'facebook_login_enabled' => $facebookEnabled,
+            'facebook_client_id'     => $request->facebook_client_id,
+            'facebook_client_secret' => $request->facebook_client_secret,
+            'facebook_redirect_uri'  => $request->facebook_redirect_uri,
+        ];
+
+        foreach ($facebookSettings as $key => $value) {
             Setting::updateOrCreate(['key' => $key], ['value' => $value]);
         }
 

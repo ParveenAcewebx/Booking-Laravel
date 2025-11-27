@@ -315,70 +315,129 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
                     <div class="card">
-                        <h5 class="card-header">Google Keys</h5>
+                        <div class="card-header">
+                            <h5>Google Keys</h5>
+                        </div>
                         <div class="card-body">
-
-                        <div class="mb-3">
-                            <input type="hidden" name="google_login_enabled" value="0">
-
-                            <div class="custom-control custom-switch">
-                                <input type="checkbox"
-                                    class="custom-control-input"
-                                    id="customswitch1"
-                                    name="google_login_enabled"
-                                    value="1"
-                                    onchange="toggleof()"
-                                    {{ ($settings['google_login_enabled'] ?? 0) == 1 ? 'checked' : '' }}>
-                                <label class="custom-control-label" for="customswitch1">
-                                    Enable login with google
-                                </label>
+                            <div class="form-group">
+                                <input type="hidden" name="google_login_enabled" value="0">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox"
+                                        class="custom-control-input"
+                                        id="customswitch1"
+                                        name="google_login_enabled"
+                                        value="1"
+                                        onchange="toggleof()"
+                                        {{ ($settings['google_login_enabled'] ?? 0) == 1 ? 'checked' : '' }}>
+                                    <label class="custom-control-label" for="customswitch1">
+                                        Enable login with google
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="googleKeys" style="display: {{ ($settings['google_login_enabled'] ?? 0) == 1 ? 'block' : 'none' }};">
+                                <div class="form-group">
+                                    <label class="form-label" for="google_client_id">Google Client ID</label>
+                                    <input type="text"
+                                        class="form-control @error('google_client_id') is-invalid @enderror"
+                                        name="google_client_id"
+                                        id="google_client_id"
+                                        value="{{ $settings['google_client_id'] ?? '' }}"
+                                        placeholder="Google Client ID">
+                                    @error('google_client_id')
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="google_client_secret">Google Client Secret</label>
+                                    <input type="text"
+                                        class="form-control @error('google_client_secret') is-invalid @enderror"
+                                        name="google_client_secret"
+                                        id="google_client_secret"
+                                        value="{{ $settings['google_client_secret'] ?? '' }}"
+                                        placeholder="Google Client Secret">
+                                    @error('google_client_secret')
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="google_redirect_uri">Google Redirect URI</label>
+                                    <input type="text"
+                                        class="form-control @error('google_redirect_uri') is-invalid @enderror"
+                                        name="google_redirect_uri"
+                                        id="google_redirect_uri"
+                                        value="{{ $settings['google_redirect_uri'] ?? '' }}"
+                                        placeholder="Google Redirect URI">
+                                    @error('google_redirect_uri')
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
-
-                        <div id="googleKeys" style="display: {{ ($settings['google_login_enabled'] ?? 0) == 1 ? 'block' : 'none' }};">
-
-                            <div class="mb-3">
-                                <label for="google_client_id" class="form-label">Google Client ID</label>
-                                <input type="text"
-                                    name="google_client_id"
-                                    id="google_client_id"
-                                    class="form-control @error('google_client_id') is-invalid @enderror"
-                                    value="{{ $settings['google_client_id'] ?? '' }}"
-                                    placeholder="Google Client ID">
-                                @error('google_client_id')
-                                <span class="invalid-feedback d-block">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="google_client_secret" class="form-label">Google Client Secret</label>
-                                <input type="text"
-                                    name="google_client_secret"
-                                    id="google_client_secret"
-                                    class="form-control @error('google_client_secret') is-invalid @enderror"
-                                    value="{{ $settings['google_client_secret'] ?? '' }}"
-                                    placeholder="Google Client Secret">
-                                @error('google_client_secret')
-                                <span class="invalid-feedback d-block">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="google_redirect_uri" class="form-label">Google Redirect URI</label>
-                                <input type="text"
-                                    name="google_redirect_uri"
-                                    id="google_redirect_uri"
-                                    class="form-control @error('google_redirect_uri') is-invalid @enderror"
-                                    value="{{ $settings['google_redirect_uri'] ?? '' }}"
-                                    placeholder="Google Redirect URI">
-                                @error('google_redirect_uri')
-                                <span class="invalid-feedback d-block">{{ $message }}</span>
-                                @enderror
-                            </div>
-
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Facebook Keys</h5>
                         </div>
-
+                        <div class="card-body">
+                            <div class="form-group">
+                                <input type="hidden" name="facebook_login_enabled" value="0">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox"
+                                        class="custom-control-input"
+                                        id="facebookSwitch1"
+                                        name="facebook_login_enabled"
+                                        value="1"
+                                        onchange="toggleFacebookKeys()"
+                                        {{ ($settings['facebook_login_enabled'] ?? 0) == 1 ? 'checked' : '' }}>
+                                    <label class="custom-control-label" for="facebookSwitch1">
+                                        Enable login with Facebook
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="facebookKeys" style="display: {{ ($settings['facebook_login_enabled'] ?? 0) == 1 ? 'block' : 'none' }};">
+                                <div class="form-group">
+                                    <label class="form-label" for="facebook_client_id">Facebook App ID</label>
+                                    <input type="text"
+                                        class="form-control @error('facebook_client_id') is-invalid @enderror"
+                                        name="facebook_client_id"
+                                        id="facebook_client_id"
+                                        value="{{ $settings['facebook_client_id'] ?? '' }}"
+                                        placeholder="Facebook App ID">
+                                    @error('facebook_client_id')
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="facebook_client_secret">Facebook App Secret</label>
+                                    <input type="text"
+                                        class="form-control @error('facebook_client_secret') is-invalid @enderror"
+                                        name="facebook_client_secret"
+                                        id="facebook_client_secret"
+                                        value="{{ $settings['facebook_client_secret'] ?? '' }}"
+                                        placeholder="Facebook App Secret">
+                                    @error('facebook_client_secret')
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="facebook_redirect_uri">Facebook Redirect URI</label>
+                                    <input type="text"
+                                        class="form-control @error('facebook_redirect_uri') is-invalid @enderror"
+                                        name="facebook_redirect_uri"
+                                        id="facebook_redirect_uri"
+                                        value="{{ $settings['facebook_redirect_uri'] ?? '' }}"
+                                        placeholder="Facebook Redirect URI">
+                                    @error('facebook_redirect_uri')
+                                    <span class="invalid-feedback d-block">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -449,7 +508,7 @@
             document.querySelector('label[for="faviconInput"]').innerText = 'Choose file...';
         }
     }
-    
+
     function toggleof() {
         let checkbox = document.getElementById('customswitch1');
         let keysDiv = document.getElementById('googleKeys');
@@ -462,7 +521,18 @@
             }
         }
     }
-    
+         function toggleFacebookKeys() {
+         let checkbox = document.getElementById('facebookSwitch1');
+         let keysDiv = document.getElementById('facebookKeys');
+
+         if (checkbox && keysDiv) {
+             if (checkbox.checked) {
+                 keysDiv.style.display = "block";
+             } else {
+                 keysDiv.style.display = "none";
+             }
+         }
+     }
 </script>
 
-@endsection 
+@endsection
