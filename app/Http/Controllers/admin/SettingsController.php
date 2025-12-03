@@ -50,12 +50,6 @@ class SettingsController extends Controller
             'mail_encryption' => 'nullable|string|in:tls,ssl,null',
             'mail_from_address' => 'nullable|email',
             'mail_from_name' => 'nullable|string',
-            'google_client_id' => 'required',
-            'google_client_secret' => 'required',
-            'google_redirect_uri' => 'required',
-            'facebook_client_id' => 'required',
-            'facebook_client_secret' => 'required',
-            'facebook_redirect_uri' => 'required'
         ]);
 
         $settings = [
@@ -77,23 +71,19 @@ class SettingsController extends Controller
             $path = $request->file('website_logo')->store('logos', 'public');
             $settings['website_logo'] = $path;
         }
-
         // Handle favicon upload
         if ($request->hasFile('favicon')) {
             $path = $request->file('favicon')->store('favicons', 'public');
             $settings['favicon'] = $path;
         }
-
         // Handle removal of website logo
         if ($request->remove_website_logo) {
             $settings['website_logo'] = '';
         }
-
         // Handle removal of favicon
         if ($request->remove_favicon) {
             $settings['favicon'] = '';
         }
-
         // Save each setting
         foreach ($settings as $key => $value) {
             Setting::updateOrCreate(
@@ -101,9 +91,7 @@ class SettingsController extends Controller
                 ['value' => $value]
             );
         }
-       
-        
-         $smtpSettings = [
+          $smtpSettings = [
             'mailer' => $request['mail_mailer'],
             'host' => $request['mail_host'],
             'port' => $request['mail_port'],
@@ -114,37 +102,37 @@ class SettingsController extends Controller
             'from_name' => $request['mail_from_name'],
             'recaptcha_secret_key' => $request['recaptcha_secret_key'],
             'recaptcha_site_key' => $request['recaptcha_site_key'],
-
+            'google_login_enabled' => $request['google_login_enabled'],
+            'google_client_id'     => $request['google_client_id'],
+            'google_client_secret' => $request['google_client_secret'],
+            'google_redirect_uri'  => $request['google_redirect_uri'],
+            'facebook_login_enabled' => $request['facebook_login_enabled'],
+            'facebook_client_id'     => $request['facebook_client_id'],
+            'facebook_client_secret' => $request['facebook_client_secret'],  
+            'facebook_redirect_uri'  => $request['facebook_redirect_uri'],
         ];
+
+        if ($request['google_login_enabled'] == 1) {
+            $request->validate([
+                'google_client_id' => 'required',
+                'google_client_secret' => 'required',
+                'google_redirect_uri' => 'required',
+            ]);
+        }
+
+        if ($request['facebook_login_enabled'] == 1) {
+            $request->validate([
+                'facebook_client_id' => 'required',
+                'facebook_client_secret' => 'required',
+                'facebook_redirect_uri' => 'required'
+            ]);
+        }
+
         foreach ($smtpSettings as $key => $value) {
             Setting::updateOrCreate(
                 ['key' => $key],
                 ['value' => $value]
             );
-        }
-        $googleEnabled = $request->google_login_enabled;
-
-        $googleSettings = [
-            'google_login_enabled' => $googleEnabled,
-            'google_client_id'     => $request->google_client_id,
-            'google_client_secret' => $request->google_client_secret,
-            'google_redirect_uri'  => $request->google_redirect_uri,
-        ];
-
-        foreach ($googleSettings as $key => $value) {
-            Setting::updateOrCreate(['key' => $key], ['value' => $value]);
-        }
-
-        $facebookEnabled = $request->facebook_login_enabled;
-        $facebookSettings = [
-            'facebook_login_enabled' => $facebookEnabled,
-            'facebook_client_id'     => $request->facebook_client_id,
-            'facebook_client_secret' => $request->facebook_client_secret,
-            'facebook_redirect_uri'  => $request->facebook_redirect_uri,
-        ];
-
-        foreach ($facebookSettings as $key => $value) {
-            Setting::updateOrCreate(['key' => $key], ['value' => $value]);
         }
 
         return back()->with('success', 'Settings Updated Successfully.');

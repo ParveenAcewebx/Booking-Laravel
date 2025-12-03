@@ -81,22 +81,22 @@
                             <button class="btn btn-primary btn-block mb-4" type="submit">Register</button>
                         </form>
                         <hr>
-                         <div class="row">
-                                <div class="col-md-6">
-                                    @if(get_setting('google_login_enabled'))
-                                        <a href="{{ route('auth.google.redirect') }}" class="btn btn-outline-danger">
-                                            <i class="fab fa-google"></i> Login with Google
-                                        </a>
-                                    @endif
-                                </div>
-                                <div class="col-md-6">
-                                    @if(get_setting('facebook_login_enabled'))
-                                        <a href="{{ route('auth.facebook.redirect') }}" class="btn btn-outline-primary">
-                                            <i class="fab fa-facebook"></i> Login with Facebook
-                                        </a>
-                                    @endif
-                                </div>
-                            </div>  
+                        <div class="d-flex justify-content-between mt-3 mb-2" style="gap: 14px;">
+                                @if(get_setting('google_login_enabled'))
+                                    <a href="{{ route('auth.google.redirect') }}" class="btn border-danger d-flex align-items-center"
+                                       style="height:48px;">
+                                        <i class="fab fa-google mr-2" style="color:#DB4437; font-size:19px;"></i>
+                                        <span class="text-dark">Login with Google</span>
+                                    </a>
+                                @endif
+                                @if(get_setting('facebook_login_enabled'))
+                                    <a href="{{ route('auth.facebook.redirect') }}" class="btn border-primary d-flex align-items-center"
+                                       style="height:48px;">
+                                        <i class="fab fa-facebook mr-2" style="color:#1877f3; font-size:19px;"></i>
+                                        <span class="text-dark">Login with Facebook</span>
+                                    </a>
+                                @endif
+                            </div>
                         <hr>
                         <p class="mb-2">Already have an account? <a href="{{route('login.form')}}" class="f-w-400">Signin</a></p>
                     </div>
