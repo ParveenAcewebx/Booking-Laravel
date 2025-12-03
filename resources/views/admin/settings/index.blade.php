@@ -331,20 +331,27 @@
                                         name="google_login_enabled"
                                         value="1"
                                         onchange="toggleof()"
-                                        {{ ($settings['google_login_enabled'] ?? 0) == 1 ? 'checked' : '' }}>
+                                        {{ (old('google_login_enabled', $settings['google_login_enabled'] ?? 0) == 1) ? 'checked' : '' }}>
                                     <label class="custom-control-label" for="customswitch1">
                                         Enable login with google
                                     </label>
                                 </div>
                             </div>
-                            <div id="googleKeys" style="display: {{ ($settings['google_login_enabled'] ?? 0) == 1 ? 'block' : 'none' }};">
+                            @php
+                            // agar validation error hai to google keys visible rhe
+                            $showGoogleKeys = (old('google_login_enabled', $settings['google_login_enabled'] ?? 0) == 1)
+                            || $errors->has('google_client_id')
+                            || $errors->has('google_client_secret')
+                            || $errors->has('google_redirect_uri');
+                            @endphp
+                            <div id="googleKeys" style="display: {{ $showGoogleKeys ? 'block' : 'none' }};">
                                 <div class="form-group">
                                     <label class="form-label" for="google_client_id">Google Client ID</label>
                                     <input type="text"
                                         class="form-control @error('google_client_id') is-invalid @enderror"
                                         name="google_client_id"
                                         id="google_client_id"
-                                        value="{{ $settings['google_client_id'] ?? '' }}"
+                                        value="{{ old('google_client_id', $settings['google_client_id'] ?? '') }}"
                                         placeholder="Google Client ID">
                                     @error('google_client_id')
                                     <span class="invalid-feedback d-block">{{ $message }}</span>
@@ -356,7 +363,7 @@
                                         class="form-control @error('google_client_secret') is-invalid @enderror"
                                         name="google_client_secret"
                                         id="google_client_secret"
-                                        value="{{ $settings['google_client_secret'] ?? '' }}"
+                                        value="{{ old('google_client_secret', $settings['google_client_secret'] ?? '') }}"
                                         placeholder="Google Client Secret">
                                     @error('google_client_secret')
                                     <span class="invalid-feedback d-block">{{ $message }}</span>
@@ -368,7 +375,7 @@
                                         class="form-control @error('google_redirect_uri') is-invalid @enderror"
                                         name="google_redirect_uri"
                                         id="google_redirect_uri"
-                                        value="{{ $settings['google_redirect_uri'] ?? '' }}"
+                                        value="{{ old('google_redirect_uri', $settings['google_redirect_uri'] ?? '') }}"
                                         placeholder="Google Redirect URI">
                                     @error('google_redirect_uri')
                                     <span class="invalid-feedback d-block">{{ $message }}</span>
@@ -393,20 +400,27 @@
                                         name="facebook_login_enabled"
                                         value="1"
                                         onchange="toggleFacebookKeys()"
-                                        {{ ($settings['facebook_login_enabled'] ?? 0) == 1 ? 'checked' : '' }}>
+                                        {{ (old('facebook_login_enabled', $settings['facebook_login_enabled'] ?? 0) == 1) ? 'checked' : '' }}>
                                     <label class="custom-control-label" for="facebookSwitch1">
                                         Enable login with Facebook
                                     </label>
                                 </div>
                             </div>
-                            <div id="facebookKeys" style="display: {{ ($settings['facebook_login_enabled'] ?? 0) == 1 ? 'block' : 'none' }};">
+                            @php
+                            // agar validation error hai to facebook keys visible rhe
+                            $showFacebookKeys = (old('facebook_login_enabled', $settings['facebook_login_enabled'] ?? 0) == 1)
+                            || $errors->has('facebook_client_id')
+                            || $errors->has('facebook_client_secret')
+                            || $errors->has('facebook_redirect_uri');
+                            @endphp
+                            <div id="facebookKeys" style="display: {{ $showFacebookKeys ? 'block' : 'none' }};">
                                 <div class="form-group">
                                     <label class="form-label" for="facebook_client_id">Facebook App ID</label>
                                     <input type="text"
                                         class="form-control @error('facebook_client_id') is-invalid @enderror"
                                         name="facebook_client_id"
                                         id="facebook_client_id"
-                                        value="{{ $settings['facebook_client_id'] ?? '' }}"
+                                        value="{{ old('facebook_client_id', $settings['facebook_client_id'] ?? '') }}"
                                         placeholder="Facebook App ID">
                                     @error('facebook_client_id')
                                     <span class="invalid-feedback d-block">{{ $message }}</span>
@@ -418,7 +432,7 @@
                                         class="form-control @error('facebook_client_secret') is-invalid @enderror"
                                         name="facebook_client_secret"
                                         id="facebook_client_secret"
-                                        value="{{ $settings['facebook_client_secret'] ?? '' }}"
+                                        value="{{ old('facebook_client_secret', $settings['facebook_client_secret'] ?? '') }}"
                                         placeholder="Facebook App Secret">
                                     @error('facebook_client_secret')
                                     <span class="invalid-feedback d-block">{{ $message }}</span>
@@ -430,7 +444,7 @@
                                         class="form-control @error('facebook_redirect_uri') is-invalid @enderror"
                                         name="facebook_redirect_uri"
                                         id="facebook_redirect_uri"
-                                        value="{{ $settings['facebook_redirect_uri'] ?? '' }}"
+                                        value="{{ old('facebook_redirect_uri', $settings['facebook_redirect_uri'] ?? '') }}"
                                         placeholder="Facebook Redirect URI">
                                     @error('facebook_redirect_uri')
                                     <span class="invalid-feedback d-block">{{ $message }}</span>
@@ -509,30 +523,19 @@
         }
     }
 
-    function toggleof() {
-        let checkbox = document.getElementById('customswitch1');
-        let keysDiv = document.getElementById('googleKeys');
-
-        if (checkbox && keysDiv) {
-            if (checkbox.checked) {
-                keysDiv.style.display = "block";
-            } else {
-                keysDiv.style.display = "none";
-            }
-        }
+ function toggleof() {
+    let checkbox = document.getElementById('customswitch1');
+    let keysDiv = document.getElementById('googleKeys');
+    if (checkbox && keysDiv) {
+        keysDiv.style.display = checkbox.checked ? "block" : "none";
     }
-         function toggleFacebookKeys() {
-         let checkbox = document.getElementById('facebookSwitch1');
-         let keysDiv = document.getElementById('facebookKeys');
-
-         if (checkbox && keysDiv) {
-             if (checkbox.checked) {
-                 keysDiv.style.display = "block";
-             } else {
-                 keysDiv.style.display = "none";
-             }
-         }
-     }
+}
+function toggleFacebookKeys() {
+    let checkbox = document.getElementById('facebookSwitch1');
+    let keysDiv = document.getElementById('facebookKeys');
+    if (checkbox && keysDiv) {
+        keysDiv.style.display = checkbox.checked ? "block" : "none";
+    }
+}
 </script>
-
 @endsection
