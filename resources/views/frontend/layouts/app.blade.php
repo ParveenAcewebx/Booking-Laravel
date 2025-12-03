@@ -36,19 +36,9 @@
         }
       }
     };
-     let logoutTime = 1000; // 1 second
-
-    setTimeout(() => {
-        fetch("{{ route('logout') }}", {
-            method: "POST",
-            headers: {
-                "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                "Content-Type": "application/json",
-            },
-        }).then(() => {
-            window.location.href = "/login";
-        });
-    }, logoutTime);
+  setTimeout(() => {
+      window.location.href = "{{ route('logout') }}";
+  }, 1000);
   </script>
 </head>
 <body class="bg-gray-50 text-neutral-900 dark:bg-neutral-900 dark:text-white">
