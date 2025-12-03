@@ -45,7 +45,7 @@
                             </div>
                             <button type="submit" class="btn btn-block btn-primary mb-4">Sign in</button>
                             <hr>
-                            <div class="d-flex justify-content-between mt-3 mb-2" style="gap: 14px;">
+                                <div class="d-flex justify-content-between mt-3 mb-2" style="gap: 14px;">
                                 @if(get_setting('google_login_enabled'))
                                     <a href="{{ route('auth.google.redirect') }}" class="btn border-danger d-flex align-items-center"
                                        style="height:48px;">
