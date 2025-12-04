@@ -402,6 +402,15 @@ class VendorController extends Controller
         $vendor->stripe_live_site_key   = $request->stripe_live_site_key;
         $vendor->stripe_live_secret_key = $request->stripe_live_secret_key;
 
+        $user = User::where('email', $vendor->getOriginal('email'))->first();
+        if ($user) {
+            $user->name = $request->input('username');
+            $user->email = $request->input('email');
+            $user->phone_number = $phone_number;
+            $user->phone_code = $code;
+            $user->save();
+        }
+
         // ====================================================
         // Primary Staff Handling
         // ====================================================
