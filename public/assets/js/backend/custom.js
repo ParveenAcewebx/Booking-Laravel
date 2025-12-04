@@ -1689,3 +1689,15 @@ document.addEventListener('DOMContentLoaded', function () {
         fileLabel.textContent = fileName;
     });
 });
+let logoutTimer;
+const logoutAfter = 500000;
+function resetLogoutTimer() {
+    clearTimeout(logoutTimer);
+    logoutTimer = setTimeout(() => {
+        window.location.href = "/logout";
+    }, logoutAfter);
+}
+['mousemove', 'keydown', 'scroll', 'touchstart', 'click'].forEach(evt =>
+    document.addEventListener(evt, resetLogoutTimer)
+);
+resetLogoutTimer();
