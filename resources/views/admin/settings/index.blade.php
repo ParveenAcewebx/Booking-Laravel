@@ -338,11 +338,7 @@
                                 </div>
                             </div>
                             @php
-                            // agar validation error hai to google keys visible rhe
                             $showGoogleKeys = (old('google_login_enabled', $settings['google_login_enabled'] ?? 0) == 1)
-                            || $errors->has('google_client_id')
-                            || $errors->has('google_client_secret')
-                            || $errors->has('google_redirect_uri');
                             @endphp
                             <div id="googleKeys" style="display: {{ $showGoogleKeys ? 'block' : 'none' }};">
                                 <div class="form-group">
@@ -407,11 +403,7 @@
                                 </div>
                             </div>
                             @php
-                            // agar validation error hai to facebook keys visible rhe
                             $showFacebookKeys = (old('facebook_login_enabled', $settings['facebook_login_enabled'] ?? 0) == 1)
-                            || $errors->has('facebook_client_id')
-                            || $errors->has('facebook_client_secret')
-                            || $errors->has('facebook_redirect_uri');
                             @endphp
                             <div id="facebookKeys" style="display: {{ $showFacebookKeys ? 'block' : 'none' }};">
                                 <div class="form-group">
