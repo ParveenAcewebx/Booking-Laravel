@@ -87,7 +87,16 @@
                 </div>
             </div>
             @endcan
-              @can('view users')
+            @can('view services')
+            <div class="col-xl-12">
+                <div class="card table-card">
+                    <div class="card-header">
+                        <canvas id="transportChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            @endcan
+            @can('view users')
             <div class="col-xl-8">
                 <div class="card table-card">
                     <div class="card-header">
@@ -220,4 +229,24 @@
         <!-- [ Main Content ] end -->
     </div>
 </div>
+<script>
+    let totalUsers   = {{ count($totalUsers) }};
+    let bookings     = {{ count($bookings) }};
+    let bookingForms = {{ count($bookingForms) }};
+    let services     = {{ count($services) }};
+    const ctx = document.getElementById('transportChart');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Total Users', 'Total Bookings', 'Total Booking Templates', 'Total Services'],
+            datasets: [{
+                label: 'Frequency',
+                data: [totalUsers, bookings, bookingForms, services],
+                backgroundColor: [ '#1cc88a','#4e73df', '#36b9cc', '#f6c23e'],
+                borderWidth: 1
+            }]
+        },
+    });
+</script>
 @endsection
