@@ -266,6 +266,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let chartLabels = @json($chartLabels);
     let chartValues = @json($chartValues);
 
+    if (!chartLabels || chartLabels.length === 0 || !chartValues || chartValues.length === 0) {
+        document.getElementById("transportChart").parentElement.innerHTML = '<p class="text-center text-muted">No data found</p>';
+        document.getElementById("pieChart").parentElement.innerHTML = '<p class="text-center text-muted">No data found</p>';
+        return;
+    }
+
     new Chart(document.getElementById("transportChart"), {
         type: "bar",
         data: {
@@ -286,7 +292,7 @@ document.addEventListener("DOMContentLoaded", function () {
         options: {
             responsive: true,
             scales: {
-                x: { beginAtZero: true }
+                y: { beginAtZero: true }
             }
         }
     });
