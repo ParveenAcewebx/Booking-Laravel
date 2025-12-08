@@ -299,7 +299,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     Route::post('/subscribe', [UserController::class, 'subscribe'])->name('subscribe.send');
     Route::post('/user/{id}/update', [UserController::class, 'userUpdate'])->name('user.update');
     // General routes (dashboard, logout, etc.)
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::match(['GET', 'POST'], '/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/todo', [UserController::class, 'todo'])->name('todo');
     Route::get('/welcome', [UserController::class, 'welcome']);
     Route::get('/userrole', [UserController::class, 'userrole']);

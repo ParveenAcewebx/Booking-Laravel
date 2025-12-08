@@ -134,11 +134,7 @@ class VendorBookingController extends Controller
         if (!empty($dynamicValues)) {
             $excludedKeys = ['first_name', 'last_name', 'email', 'phone', 'service', 'vendor'];
 
-            $filteredDynamicValues = array_filter(
-                $dynamicValues,
-                fn($key) => !in_array($key, $excludedKeys),
-                ARRAY_FILTER_USE_KEY
-            );
+            $filteredDynamicValues = array_filter($dynamicValues);
 
             $filteredKeys = array_keys($filteredDynamicValues);
 

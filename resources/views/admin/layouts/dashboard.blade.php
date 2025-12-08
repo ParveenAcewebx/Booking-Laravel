@@ -87,15 +87,35 @@
                 </div>
             </div>
             @endcan
-            @can('view services')
-            <div class="col-xl-12">
+            <div class="col-xl-8">
                 <div class="card table-card">
-                    <div class="card-header">
+                    <div class="card-header d-flex justify-content-between">
+                        <span>Bookings Chart</span>
+                        <form method="POST" action="{{ route('dashboard') }}" class="form-inline" id="dateRangeForm">
+                            @csrf
+                            <input type="text"
+                                id="dateRange"
+                                name="date_range"
+                                class="form-control form-control-sm mr-2"
+                                placeholder="Select Date Range"
+                                onchange="document.getElementById('dateRangeForm').submit();">
+                        </form>
+                    </div>
+                    <div class="card-body">
                         <canvas id="transportChart"></canvas>
                     </div>
                 </div>
             </div>
-            @endcan
+            <div class="col-xl-4">
+                <div class="card table-card">
+                    <div class="card-header d-flex justify-content-between">
+                        <span>Pie Chart</span>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </div>
+            </div>
             @can('view users')
             <div class="col-xl-8">
                 <div class="card table-card">
@@ -230,23 +250,72 @@
     </div>
 </div>
 <script>
-    let totalUsers   = {{ count($totalUsers) }};
-    let bookings     = {{ count($bookings) }};
-    let bookingForms = {{ count($bookingForms) }};
-    let services     = {{ count($services) }};
-    const ctx = document.getElementById('transportChart');
+document.addEventListener("DOMContentLoaded", function () {
+    $('#dateRange, #piedate').daterangepicker({
+        autoUpdateInput: false,
+        locale: { cancelLabel: "Clear" }
+    });
+    $('#dateRange, #piedate').on("apply.daterangepicker", function (ev, picker) {
+        $(this).val(
+            picker.startDate.format("YYYY-MM-DD") + " - " + picker.endDate.format("YYYY-MM-DD")
+        );
+    });
+    $('#dateRange').on('apply.daterangepicker', function () {
+        document.getElementById('dateRangeForm').submit();
+    });
+    let chartLabels = @json($chartLabels);
+    let chartValues = @json($chartValues);
 
-    new Chart(ctx, {
-        type: 'bar',
+    new Chart(document.getElementById("transportChart"), {
+        type: "bar",
         data: {
-            labels: ['Total Users', 'Total Bookings', 'Total Booking Templates', 'Total Services'],
+            labels: chartLabels,
             datasets: [{
-                label: 'Frequency',
-                data: [totalUsers, bookings, bookingForms, services],
-                backgroundColor: [ '#1cc88a','#4e73df', '#36b9cc', '#f6c23e'],
-                borderWidth: 1
+                label: "Bookings",
+                data: chartValues,
+                backgroundColor: [
+                    "#4fcac0",
+                    "#f39c12",
+                    "#e74c3c",
+                    "#8e44ad",
+                    "#3498db",
+                    "#2ecc71"
+                ]
             }]
         },
+        options: {
+            responsive: true,
+            scales: {
+                x: { beginAtZero: true }
+            }
+        }
     });
+
+    new Chart(document.getElementById("pieChart"), {
+        type: "pie",
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                data: chartValues,
+                backgroundColor: [
+                    "#4fcac0",
+                    "#f39c12",
+                    "#e74c3c",
+                    "#8e44ad",
+                    "#3498db",
+                    "#2ecc71"
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+});
 </script>
+
 @endsection
