@@ -23,7 +23,7 @@
         <!-- [ Main Content ] start -->
         <div class="row">
             <!-- View Chart Start-->
-               @can('view users')
+            @can('view users')
             <div class="col-xl-3 col-md-6">
                 <div class="card flat-card">
                     <div class="row-table">
@@ -98,7 +98,7 @@
                                 name="date_range"
                                 class="form-control form-control-sm mr-2"
                                 placeholder="Select Date Range"
-                                onchange="document.getElementById('dateRangeForm').submit();">
+                                value="{{ $selectedDateRange }}">
                         </form>
                     </div>
                     <div class="card-body">
@@ -231,7 +231,7 @@
                     </div>
                 </div>
             </div>
-               @endcan
+            @endcan
             <div class="col-xl-4">
                 <div class="user-card-body card">
                     <div class="card-body">
@@ -250,78 +250,95 @@
     </div>
 </div>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    $('#dateRange, #piedate').daterangepicker({
-        autoUpdateInput: false,
-        locale: { cancelLabel: "Clear" }
-    });
-    $('#dateRange, #piedate').on("apply.daterangepicker", function (ev, picker) {
-        $(this).val(
-            picker.startDate.format("YYYY-MM-DD") + " - " + picker.endDate.format("YYYY-MM-DD")
-        );
-    });
-    $('#dateRange').on('apply.daterangepicker', function () {
-        document.getElementById('dateRangeForm').submit();
-    });
-    let chartLabels = @json($chartLabels);
-    let chartValues = @json($chartValues);
+    document.addEventListener("DOMContentLoaded", function() {
+        let oldDate = @json($selectedDateRange);
 
-    if (!chartLabels || chartLabels.length === 0 || !chartValues || chartValues.length === 0) {
-        document.getElementById("transportChart").parentElement.innerHTML = '<p class="text-center text-muted">No data found</p>';
-        document.getElementById("pieChart").parentElement.innerHTML = '<p class="text-center text-muted">No data found</p>';
-        return;
-    }
+        let startDate = moment().subtract(6, 'days');
+        let endDate = moment();
 
-    new Chart(document.getElementById("transportChart"), {
-        type: "bar",
-        data: {
-            labels: chartLabels,
-            datasets: [{
-                label: "Bookings",
-                data: chartValues,
-                backgroundColor: [
-                    "#4fcac0",
-                    "#f39c12",
-                    "#e74c3c",
-                    "#8e44ad",
-                    "#3498db",
-                    "#2ecc71"
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: { beginAtZero: true }
-            }
+        if (oldDate && oldDate.includes(" - ")) {
+            let parts = oldDate.split(" - ");
+
+            startDate = moment(parts[0], "YYYY-MM-DD");
+            endDate = moment(parts[1], "YYYY-MM-DD");
         }
-    });
 
-    new Chart(document.getElementById("pieChart"), {
-        type: "pie",
-        data: {
-            labels: chartLabels,
-            datasets: [{
-                data: chartValues,
-                backgroundColor: [
-                    "#4fcac0",
-                    "#f39c12",
-                    "#e74c3c",
-                    "#8e44ad",
-                    "#3498db",
-                    "#2ecc71"
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom' }
+        $('#dateRange').daterangepicker({
+            startDate: startDate,
+            endDate: endDate,
+            autoUpdateInput: true,
+            locale: {
+                format: "YYYY-MM-DD",
+                cancelLabel: "Clear"
             }
-        }
-    });
+        });
 
-});
+        $('#dateRange').val(startDate.format("YYYY-MM-DD") + " - " + endDate.format("YYYY-MM-DD"));
+
+        $('#dateRange').on("apply.daterangepicker", function(ev, picker) {
+            $(this).val(
+                picker.startDate.format("YYYY-MM-DD") +
+                " - " +
+                picker.endDate.format("YYYY-MM-DD")
+            );
+            document.getElementById('dateRangeForm').submit();
+        });
+
+        let chartLabels = @json($chartLabels);
+        let chartValues = @json($chartValues);
+
+        if (!chartLabels.length || !chartValues.length) {
+            document.getElementById("transportChart").parentElement.innerHTML =
+                '<p class="text-center text-muted">No data found</p>';
+            document.getElementById("pieChart").parentElement.innerHTML =
+                '<p class="text-center text-muted">No data found</p>';
+            return;
+        }
+
+        new Chart(document.getElementById("transportChart"), {
+            type: "bar",
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    label: "Bookings",
+                    data: chartValues,
+                    backgroundColor: [
+                        "#4fcac0", "#f39c12", "#e74c3c",
+                        "#8e44ad", "#3498db", "#2ecc71"
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById("pieChart"), {
+            type: "pie",
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    data: chartValues,
+                    backgroundColor: [
+                        "#4fcac0", "#f39c12", "#e74c3c",
+                        "#8e44ad", "#3498db", "#2ecc71"
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    });
 </script>
-
 @endsection
