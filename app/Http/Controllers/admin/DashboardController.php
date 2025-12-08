@@ -9,17 +9,8 @@ use App\Models\BookingTemplate;
 use App\Models\Service;
 use App\Models\Setting;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
-use DB;
 use Carbon\Carbon;
-use Mail;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cookie;
 
 class DashboardController extends Controller
@@ -33,54 +24,51 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
-        $countUsers = $this->allUsers;
-        $allusers = User::orderBy('created_at', 'desc')->take(5)->get();
+        $countUsers   = $this->allUsers;
+        $allusers     = User::orderBy('created_at', 'desc')->take(5)->get();
         $bookingForms = BookingTemplate::all();
-        $settings = Setting::pluck('value', 'key')->toArray();
+        $services     = Service::all();
+        $settings     = Setting::pluck('value', 'key')->toArray();
         $dateFormat = $settings['date_format'];
-        $timeFormat = $settings['time_format'];
         $timezone   = $settings['timezone'];
-        $dateRange = $request->date_range;
-          if ($dateRange) {
-            [$start, $end] = explode(" - ", $dateRange);
+        $selectedDateRange = $request->date_range;
+
+        if ($selectedDateRange) {
+            [$start, $end] = explode(" - ", $selectedDateRange);
             $start = Carbon::parse($start, $timezone)->startOfDay();
-            $end = $start->copy()->addDays(6)->endOfDay();
-
-            $bookings = Booking::whereBetween('booking_datetime', [$start, $end])
-                ->orderBy('booking_datetime', 'asc')
-                ->get();
+            $end   = Carbon::parse($end, $timezone)->endOfDay();
         } else {
-            $start = now($timezone)->startOfWeek();
-            $end   = now($timezone)->endOfWeek();
-
-            $bookings = Booking::whereBetween('booking_datetime', [$start, $end])
-                ->orderBy('booking_datetime', 'asc')
-                ->get();
+            $start = now($timezone)->subDays(6)->startOfDay();
+            $end   = now($timezone)->endOfDay();
+            $selectedDateRange = $start->format('Y-m-d') . " - " . $end->format('Y-m-d');
         }
-        $groupedBookings = $bookings->groupBy(function ($item) use ($dateFormat, $timezone) {
+
+        $bookingsFiltered = Booking::whereBetween('booking_datetime', [$start, $end])
+            ->orderBy('booking_datetime', 'asc')
+            ->get();
+
+        $groupedBookings = $bookingsFiltered->groupBy(function ($item) use ($timezone, $dateFormat) {
             return Carbon::parse($item->booking_datetime)
                 ->timezone($timezone)
                 ->format($dateFormat);
         });
-        
+
         $chartLabels = $groupedBookings->keys()->values();
         $chartValues = $groupedBookings->map->count()->values();
-        $services = Service::all();
-        $bookings = Booking::all();
+
         $loginId = getOriginalUserId();
-        $loginUser = null;
-        if ($loginId) {
-            $loginUser = User::find($loginId);
-        }
+        $loginUser = $loginId ? User::find($loginId) : null;
+
         return view('admin.layouts.dashboard', [
-            'totalUsers' => $countUsers,
-            'allusers' => $allusers,
-            'bookingForms' => $bookingForms,
-            'bookings' => $bookings,
-            'loginUser' => $loginUser,
-            'services' => $services,
-            'chartLabels'  => $chartLabels,
-            'chartValues'  => $chartValues,
+            'totalUsers'        => $countUsers,
+            'allusers'          => $allusers,
+            'bookingForms'      => $bookingForms,
+            'services'          => $services,
+            'bookings'          => Booking::all(),
+            'chartLabels'       => $chartLabels,
+            'chartValues'       => $chartValues,
+            'loginUser'         => $loginUser,
+            'selectedDateRange' => $selectedDateRange,
         ]);
     }
 }
