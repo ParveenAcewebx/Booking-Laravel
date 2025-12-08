@@ -180,11 +180,7 @@ class BookingController extends Controller
         if (!empty($dynamicValues)) {
             $excludedKeys = ['first_name', 'last_name', 'email', 'phone', 'service', 'vendor'];
 
-            $filteredDynamicValues = array_filter(
-                $dynamicValues,
-                fn($key) => !in_array($key, $excludedKeys),
-                ARRAY_FILTER_USE_KEY
-            );
+            $filteredDynamicValues = array_filter($dynamicValues);
 
             $filteredKeys = array_keys($filteredDynamicValues);
 
@@ -192,7 +188,7 @@ class BookingController extends Controller
                 $name = $field['name'] ?? null;
                 if (!$name) return null;
                 $value = $dynamicValues[$name] ?? null;
-
+                
                 if ($field['type'] === 'checkbox-group') {
                     $values = (array) ($value ?? []);
                     if (in_array('other', $values)) {
@@ -213,6 +209,7 @@ class BookingController extends Controller
                 }
 
                 return $value;
+                
             }, array_filter($formStructureArray, function ($field) use ($filteredKeys) {
                 return !empty($field['name']) && in_array($field['name'], $filteredKeys);
             }));
@@ -245,6 +242,7 @@ class BookingController extends Controller
 
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
+
 
         return view('admin.booking.view', [
             'bookingid'            => $id,
