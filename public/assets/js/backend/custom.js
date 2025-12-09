@@ -1690,7 +1690,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 let logoutTimer;
-const logoutAfter = 500000;
+const logoutAfter = LOGOUT_TIMEOUT * 1000; 
 function resetLogoutTimer() {
     clearTimeout(logoutTimer);
     logoutTimer = setTimeout(() => {

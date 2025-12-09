@@ -128,7 +128,6 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     // Routes for editing (edit users, edit templates, etc.)
     Route::middleware('permission:view users')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('user.list');
-     
     });
     Route::middleware('permission:create users')->group(function () {
         Route::get('/user/add', [UserController::class, 'userAdd'])->name('user.add');
@@ -298,7 +297,6 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     Route::get('/profile', [UserController::class, 'userEdit'])->name('profile');
     Route::post('/subscribe', [UserController::class, 'subscribe'])->name('subscribe.send');
     Route::post('/user/{id}/update', [UserController::class, 'userUpdate'])->name('user.update');
-    // General routes (dashboard, logout, etc.)
     Route::match(['GET', 'POST'], '/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/todo', [UserController::class, 'todo'])->name('todo');
     Route::get('/welcome', [UserController::class, 'welcome']);
@@ -320,7 +318,6 @@ Route::post('/profile/update', [VendorProfileController::class, 'UserprofileUpda
 Route::middleware(['VendorRoleCheck'])->group(function () {
 
     Route::get('/dashboard/profile', [VendorInformationController::class, 'view'])->middleware('VendorRoleCheck')->name('vendor.dashboard.view');
-
     // Bookings
     Route::get('/dashboard/bookings', [VendorBookingController::class, 'view'])->name('vendor.bookings.view');
     Route::get('/bookings/view/{id}', [VendorBookingController::class, 'bookingview'])->name('bookings.view');

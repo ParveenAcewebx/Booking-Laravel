@@ -24,7 +24,7 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
-        $countUsers   = $this->allUsers;
+$logoutTime = config('app.automatic_logout_time');        $countUsers   = $this->allUsers;
         $allusers     = User::orderBy('created_at', 'desc')->take(5)->get();
         $bookingForms = BookingTemplate::all();
         $services     = Service::all();
@@ -32,7 +32,6 @@ class DashboardController extends Controller
         $dateFormat = $settings['date_format'];
         $timezone   = $settings['timezone'];
         $selectedDateRange = $request->date_range;
-
         if ($selectedDateRange) {
             [$start, $end] = explode(" - ", $selectedDateRange);
             $start = Carbon::parse($start, $timezone)->startOfDay();
@@ -69,6 +68,7 @@ class DashboardController extends Controller
             'chartValues'       => $chartValues,
             'loginUser'         => $loginUser,
             'selectedDateRange' => $selectedDateRange,
+            'logoutTime'        => $logoutTime,
         ]);
     }
 }
