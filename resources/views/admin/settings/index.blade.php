@@ -159,11 +159,11 @@
                 </div>
                 <div class="col-md-6 col-xl-4">
                     <div class="card">
-                        <h5 class="card-header">Owner Information</h5>
+                        <h5 class="card-header">Admin Information</h5>
                         <div class="card-body">
                             <!-- Owner Phone -->
                             <div class="form-group">
-                                <label class="form-label font-weight-bold">Owner Phone Number <span class="text-danger">*</span></label>
+                                <label class="form-label font-weight-bold">Admin Phone Number <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <select class="form-control @error('code') is-invalid @enderror" name="code" style="max-width: 100px;">
                                         @foreach($phoneCountries as $country)
@@ -183,7 +183,7 @@
                             </div>
                             <!-- Owner Email -->
                             <div class="form-group">
-                                <label class="form-label font-weight-bold">Owner Email <span class="text-danger">*</span></label>
+                                <label class="form-label font-weight-bold">Admin Email <span class="text-danger">*</span></label>
                                 <input type="email" class="form-control @error('owner_email') is-invalid @enderror"
                                     name="owner_email" placeholder="Enter owner email"
                                     value="{{ old('owner_email', $settings['owner_email'] ?? '') }}">

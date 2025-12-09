@@ -250,6 +250,7 @@
     </div>
 </div>
 <script>
+        const LOGOUT_TIMEOUT = {{ $logoutTime }}; 
     document.addEventListener("DOMContentLoaded", function() {
         let oldDate = @json($selectedDateRange);
 

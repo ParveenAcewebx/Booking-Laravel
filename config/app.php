@@ -189,5 +189,5 @@ return [
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
 
     ])->toArray(),
-
+    'automatic_logout_time' => env('AUTOMATIC_LOGOUT_TIME', 300),
 ];
