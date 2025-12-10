@@ -29,6 +29,7 @@ use App\Http\Controllers\frontend\Vendor\VendorStaffController;
 use App\Http\Controllers\export\ExportBookingController;
 use App\Helpers\Shortcode;
 use App\Http\Controllers\admin\SubscriptionController;
+use App\Http\Controllers\StripePaymentController;
 use App\Http\Controllers\export\ExportStaffController;
 use App\Http\Controllers\export\ExportUserController;
 use App\Http\Controllers\admin\PageController;
@@ -43,10 +44,16 @@ use App\Http\Controllers\frontend\ShowPageController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
 Route::get('/', function () {
     return view('frontend.landing');
 })->name('home');
+Route::prefix('form')->controller(StripePaymentController::class)->group(function () {
+    Route::get('stripe', 'stripe')->name('stripe.index');
+    Route::get('stripe/checkout', 'stripeCheckout')->name('stripe.checkout');
+    Route::get('stripe/checkout/success', 'stripeCheckoutSuccess')->name('stripe.checkout.success');
+
+});
+
 
 Route::get('/booking', [BookingListingController::class, 'listing'])->name('booking.listing');
 Route::get('/vendor/{id}', [VendorListingController::class, 'listing'])->name('vendor.show');
@@ -97,8 +104,6 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     Route::get('/users/import-view', [UserImportController::class, 'showImportView'])->name('import.view');
     Route::post('/user/import/save', [UserImportController::class, 'importSave'])->name('user.import.save');
     Route::get('/user/import/sample', [UserImportController::class, 'sample'])->name('user.import.sample');
-
-
     Route::get('/export/bookings', [ExportBookingController::class, 'exportBookings'])->name('export.booking.excel');
     Route::get('/export/staff', [ExportStaffcontroller::class, 'exportstaff'])->name('export.staff.excel');
     Route::get('/export/user', [ExportUserController::class, 'exportuser'])->name('export.user.excel');
@@ -343,7 +348,6 @@ Route::middleware(['VendorRoleCheck'])->group(function () {
 Route::get('/{slug}', [ShowPageController::class, 'show'])->middleware('checkPageSlug')->name('page.show');
 
 Route::get('/',[LandingPageController::class, 'index'])->name('home');
-
 Route::get('/email/logs', function () {
     $logPath = storage_path('logs/laravel.log');
     if (!File::exists($logPath)) {
@@ -361,3 +365,4 @@ Route::get('/check-smtp', function () {
 
     return 'SMTP is NOT properly configured.';
 });
+

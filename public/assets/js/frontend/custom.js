@@ -205,20 +205,30 @@ document.addEventListener("DOMContentLoaded", function () {
             currentSteps--;
         }
     }
+function handleSubmitButtonClick(event) {
+    event.preventDefault();
 
-    function handleSubmitButtonClick(event) {
-        let isFormValid = true;
+    let isFormValid = true;
 
-        steps.forEach(step => {
-            if (!validateRequiredFields(step)) {
-                isFormValid = false;
-            }
-        });
-
-        if (!isFormValid) {
-            event.preventDefault();
+    steps.forEach(step => {
+        if (!validateRequiredFields(step)) {
+            isFormValid = false;
         }
+    });
+
+    if (!isFormValid) {
+        return; 
     }
+
+    // Allow storing this attempt
+    isSubmitting = true;
+
+    // Instead of submitting form → redirect to Stripe checkout
+    window.location.href = "/form/stripe/checkout";
+}
+
+
+
 
     /*------ Staff Select On Change ------*/
     function get_services_staff() {
@@ -329,6 +339,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // detect form submit
         $('form').on('submit', function () {
             isSubmitting = true;
+            window.location.href = "{{ route('stripe.checkout') }}";
         });
 
         $.ajax({
