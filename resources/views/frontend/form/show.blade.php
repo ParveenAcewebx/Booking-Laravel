@@ -1,5 +1,4 @@
 @extends('frontend.layouts.app')
-
 @section('content')
 <div id="loader" class="loader-block">
     <div class="loader-content">

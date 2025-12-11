@@ -3,59 +3,69 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Stripe;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
+use App\Models\Booking;
+use App\Models\Service;
+use App\Models\Vendor;
+use Stripe\Stripe;
+use Stripe\Checkout\Session;
+use Stripe\StripeClient;
 
 class StripePaymentController extends Controller
 {
-    public function stripe()
-    {
-        return redirect()->back()->with('success', 'Booking successful!');
-    }
-
-
 
     public function stripeCheckout(Request $request)
     {
-        session(['return_form_url' => url()->previous()]);
+        $booking = Booking::find($request->booking_id);
+        $service = Service::find($booking->service_id);
+        $vendor = Vendor::find($service->vendor_id);
+        $secretKey = $vendor->stripe_test_secret_key;
+        Stripe::setApiKey($secretKey);
+        $currency = strtolower(trim($service->currency));
+        $map = [
+            '$'  => 'usd',
+            '₹'  => 'inr',
+        ];
+        if (isset($map[$currency])) {
+            $currency = $map[$currency];
+        }
+        $amount = intval($service->price * 100);
+        $session = Session::create([
+            'payment_method_types' => ['card'],
 
-        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
-
-        $productName = "Service Booking";
-        $amount = 500;
-
-        $session = \Stripe\Checkout\Session::create([
             'line_items' => [[
                 'price_data' => [
-                    'currency' => 'usd',
-                    'unit_amount' => $amount * 100,
+                    'currency' => $currency,
+                    'unit_amount' => $amount,
                     'product_data' => [
-                        'name' => $productName,
+                        'name' => $service->name,
                     ],
                 ],
                 'quantity' => 1,
             ]],
             'mode' => 'payment',
-            'success_url' => route('stripe.checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url' => url()->previous(),
+            'success_url' => route('stripe.checkout.success') 
+                . '?session_id={CHECKOUT_SESSION_ID}'
+                . '&vendor_id=' . $vendor->id
+                . '&booking_id=' . $booking->id,
+
+            'cancel_url' => session('return_form_url') ?? url('/'),
         ]);
-
-        return redirect($session->url);
+        return redirect()->away($session->url);
     }
-
 
     public function stripeCheckoutSuccess(Request $request)
     {
-        if (!$request->session_id) {
-            return redirect('/')->with('error', 'Missing session ID');
-        }
+        $sessionId = $request->session_id;
+        $vendorId  = $request->vendor_id;
+        $bookingId = $request->booking_id;
+        $vendor = Vendor::find($vendorId);
+        $secretKey = $vendor->stripe_test_secret_key;
+        $stripe = new StripeClient($secretKey);
+        Booking::where('id', $bookingId)->update([
+            'status' => 'confirmed'
+        ]);
 
-        $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
-        $session = $stripe->checkout->sessions->retrieve($request->session_id);
-
-        $formUrl = session('return_form_url', '/');
-
-        return redirect($formUrl)->with('success', 'Booking successful! Your payment was processed.');
+        return redirect(session('return_form_url') ?? '/')
+            ->with('success', 'Your booking is confirmed successfully!');
     }
 }

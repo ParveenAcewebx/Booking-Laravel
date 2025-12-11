@@ -25,11 +25,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-            $settings = Setting::pluck('value', 'key')->toArray();
-            if (!empty($settings['timezone'])) {
-                Config::set('app.timezone', $settings['timezone']);
-                date_default_timezone_set($settings['timezone']);
-            }
+            // $settings = Setting::pluck('value', 'key')->toArray();
+            // if (!empty($settings['timezone'])) {
+            //     Config::set('app.timezone', $settings['timezone']);
+            //     date_default_timezone_set($settings['timezone']);
+            // }
             Shortcode::register('services', function ($shortcodeAttrs, $class) {
             $services = Service::all();
             $c = $class;

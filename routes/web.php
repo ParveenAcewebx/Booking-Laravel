@@ -47,14 +47,15 @@ use App\Http\Controllers\frontend\ShowPageController;
 Route::get('/', function () {
     return view('frontend.landing');
 })->name('home');
-Route::prefix('form')->controller(StripePaymentController::class)->group(function () {
-    Route::get('stripe', 'stripe')->name('stripe.index');
-    Route::get('stripe/checkout', 'stripeCheckout')->name('stripe.checkout');
-    Route::get('stripe/checkout/success', 'stripeCheckoutSuccess')->name('stripe.checkout.success');
 
-});
+Route::get('/stripe/debug', [StripePaymentController::class, 'debugfunction']);
+Route::get('/stripe/create', [StripePaymentController::class, 'stripeCheckout'])->name('stripe.checkout');
+Route::get('/stripe/success', [StripePaymentController::class, 'stripeCheckoutSuccess'])->name('stripe.checkout.success');
 
-
+// Route::prefix('form/stripe')->controller(StripePaymentController::class)->group(function () {
+//     Route::get('/checkout', 'stripeCheckout')->name('stripe.checkout');
+//     Route::get('/checkout/success', 'stripeCheckoutSuccess')->name('stripe.checkout.success');
+// });
 Route::get('/booking', [BookingListingController::class, 'listing'])->name('booking.listing');
 Route::get('/vendor/{id}', [VendorListingController::class, 'listing'])->name('vendor.show');
 Route::get('/admin', function () {

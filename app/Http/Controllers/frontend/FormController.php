@@ -128,15 +128,14 @@ class FormController extends Controller
         ]);
         $bookingId = $booking->id;
         $this->sendmailtocustom($template->id, $bookingId, $bookingData);
-        return redirect()
-            ->route('form.show', $template->slug)
-            ->with([
-                'success' => 'Form submitted successfully!',
-                'alert-class' => 'frontend-form mb-4 rounded bg-green-100 px-4 py-3 text-green-800' // you can change this to whatever class you need
+        if ($request->has('pay')) {
+            session(['return_form_url' => route('form.show', $template->slug)]);
+            return redirect()->route('stripe.checkout', [
+                'booking_id' => $booking->id,
             ]);
+        }
+        return redirect()->route('form.show', $template->slug)->with(['success' => 'Form submitted successfully!',]);
     }
-
-
     function getservicesstaff(Request $request)
     {
         $vendor_data = [];
