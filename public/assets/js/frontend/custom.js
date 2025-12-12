@@ -205,29 +205,34 @@ document.addEventListener("DOMContentLoaded", function () {
             currentSteps--;
         }
     }
-function handleSubmitButtonClick(event) {
-    event.preventDefault();
-
-    let isFormValid = true;
-
-    steps.forEach(step => {
-        if (!validateRequiredFields(step)) {
-            isFormValid = false;
+    // function handleSubmitButtonClick(event) {
+    //     event.preventDefault();
+    //     let isFormValid = true;
+    //     steps.forEach(step => {
+    //         if (!validateRequiredFields(step)) {
+    //             isFormValid = false;
+    //         }
+    //     });
+    //     if (!isFormValid) {
+    //         return; 
+    //     }
+    //     isSubmitting = true;
+    // }
+    
+     function submitBookingForm() {
+        let isFormValid = true;
+        steps.forEach(step => {
+            if (!validateRequiredFields(step)) {
+                isFormValid = false;
+            }
+        });
+             if (!isFormValid) {
+            return; 
         }
-    });
-
-    if (!isFormValid) {
-        return; 
+    let form = document.querySelector("form");
+    form.action = form.action + "?pay=stripe"; 
+    form.submit();
     }
-
-    // Allow storing this attempt
-    isSubmitting = true;
-
-    // Instead of submitting form → redirect to Stripe checkout
-    window.location.href = "/form/stripe/checkout";
-}
-
-
 
 
     /*------ Staff Select On Change ------*/
@@ -325,7 +330,7 @@ function handleSubmitButtonClick(event) {
 
     nextButtons.forEach(button => button.addEventListener('click', handleNextButtonClick));
     prevButton.addEventListener('click', handlePreviousButtonClick);
-    submitButtons.forEach(button => button.addEventListener('click', handleSubmitButtonClick));
+    submitButtons.forEach(button => {button.addEventListener('click', function(e){e.preventDefault();submitBookingForm();});});
     if (ServiceStaffCode) {
         ServiceStaffCode.addEventListener('change', get_services_staff);
     }
@@ -339,7 +344,7 @@ function handleSubmitButtonClick(event) {
         // detect form submit
         $('form').on('submit', function () {
             isSubmitting = true;
-            window.location.href = "{{ route('stripe.checkout') }}";
+            document.getElementById("bookingForm").submit();
         });
 
         $.ajax({

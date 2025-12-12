@@ -47,16 +47,6 @@ use App\Http\Controllers\frontend\ShowPageController;
 Route::get('/', function () {
     return view('frontend.landing');
 })->name('home');
-Route::prefix('form')->controller(StripePaymentController::class)->group(function () {
-    Route::get('stripe', 'stripe')->name('stripe.index');
-    Route::get('stripe/checkout', 'stripeCheckout')->name('stripe.checkout');
-    Route::get('stripe/checkout/success', 'stripeCheckoutSuccess')->name('stripe.checkout.success');
-
-});
-
-
-Route::get('/booking', [BookingListingController::class, 'listing'])->name('booking.listing');
-Route::get('/vendor/{id}', [VendorListingController::class, 'listing'])->name('vendor.show');
 Route::get('/admin', function () {
     return redirect()->route('dashboard');
 });
@@ -64,6 +54,13 @@ Route::get('/admin/shortcodes/list', function () {
     return response()->json(Shortcode::getRegisteredShortcodes());
 });
 
+
+Route::get('/stripe/debug', [StripePaymentController::class, 'debugfunction']);
+Route::get('/stripe/create', [StripePaymentController::class, 'stripeCheckout'])->name('stripe.checkout');
+Route::get('/stripe/success', [StripePaymentController::class, 'stripeCheckoutSuccess'])->name('stripe.checkout.success');
+
+Route::get('/booking', [BookingListingController::class, 'listing'])->name('booking.listing');
+Route::get('/vendor/{id}', [VendorListingController::class, 'listing'])->name('vendor.show');
 Route::get('/form/{slug}', [FormController::class, 'show'])->name('form.show');
 Route::post('/form/{slug}', [FormController::class, 'store'])->name('form.store');
 Route::get('/get/services/staff', [FormController::class, 'getservicesstaff'])->name('get.services.staff');
