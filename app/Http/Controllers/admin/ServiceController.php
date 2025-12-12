@@ -135,6 +135,7 @@ class ServiceController extends Controller
         $data['duration'] = $request->duration;
         $data['currency'] = $request->currency;
         $data['price'] = $request->price ? $request->price : '0.00';
+        $data['vendor_id'] = $request->vendor[0] ?? null;
         $serviceId = Service::create($data);
         $getVendorId = $request->input('vendor', []);
         foreach ($getVendorId as $vendorId) {
@@ -213,9 +214,9 @@ class ServiceController extends Controller
             'payment_mode'          => 'nullable|in:on_site,stripe',
             'payment_account'       => 'nullable|in:default,custom',
             'stripe_test_site_key'  => 'nullable|string',
-            'stripe_test_secret_key' => 'nullable|string',
+            'stripe_test_secret_key'=> 'nullable|string',
             'stripe_live_site_key'  => 'nullable|string',
-            'stripe_live_secret_key' => 'nullable|string',
+            'stripe_live_secret_key'=> 'nullable|string',
             'payment__is_live'      => 'nullable|boolean',
             'remove_thumbnail'      => 'nullable|in:0,1',
         ]);
@@ -238,37 +239,32 @@ class ServiceController extends Controller
             'payment_account'       => $request->payment_account,
             'payment__is_live'      => $request->has('payment__is_live') ? 1 : 0,
         ]);
-
         $service->stripe_test_site_key   = $request->stripe_test_site_key;
         $service->stripe_test_secret_key = $request->stripe_test_secret_key;
         $service->stripe_live_site_key   = $request->stripe_live_site_key;
         $service->stripe_live_secret_key = $request->stripe_live_secret_key;
+        $newVendorIds = $request->input('vendor', []);
+        $service->vendor_id = $newVendorIds[0] ?? null;
 
         if ($request->hasFile('thumbnail')) {
-            // Remove old one if exists
             if ($service->thumbnail && Storage::disk('public')->exists($service->thumbnail)) {
                 Storage::disk('public')->delete($service->thumbnail);
             }
-            // Store new
             $service->thumbnail = $request->file('thumbnail')->store('thumbnails', 'public');
         } elseif ($request->input('remove_thumbnail') == '1') {
-            // If removal flag is set and no new image
             if ($service->thumbnail && Storage::disk('public')->exists($service->thumbnail)) {
                 Storage::disk('public')->delete($service->thumbnail);
             }
             $service->thumbnail = null;
         }
 
-        // Process gallery deletions
         $existingGallery = $request->input('existing_gallery', []);
         $deletedGallery = $request->input('delete_gallery', []);
-
         foreach ($deletedGallery as $deletedPath) {
             Storage::disk('public')->delete($deletedPath);
         }
         $finalGallery = array_diff($existingGallery, $deletedGallery);
 
-        // Upload new images
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $file) {
                 $finalGallery[] = $file->store('gallery', 'public');
@@ -277,7 +273,6 @@ class ServiceController extends Controller
         $service->gallery = json_encode(array_values($finalGallery));
         $service->save();
 
-        $newVendorIds = $request->input('vendor', []);
         $existingVendorIds = $service->vendors()->pluck('vendor_id')->toArray();
 
         VendorServiceAssociation::where('service_id', $id)
@@ -290,26 +285,8 @@ class ServiceController extends Controller
                 'vendor_id'  => $vendorId,
             ]);
         }
-        // $existingStaffIds = $service->getAssignedStaffIds();
-
-        // $toAdd = array_diff($newStaffIds, $existingStaffIds);
-        // foreach ($toAdd as $staffId) {
-        //     StaffServiceAssociation::create([
-        //         'service_id'   => $service->id,
-        //         'staff_member' => $staffId,
-        //     ]);
-        // }
-
-        // $toDelete = array_diff($existingStaffIds, $newStaffIds);
-        // if (!empty($toDelete)) {
-        //     StaffServiceAssociation::where('service_id', $service->id)
-        //         ->whereIn('staff_member', $toDelete)
-        //         ->delete();
-        // }
         return redirect()->route('service.list')->with('success', 'Service Updated Successfully!');
     }
-
-
     public function bulkDelete(Request $request)
     {
         $ids = $request->input('ids');
