@@ -250,6 +250,11 @@
                                 <a href="{{ route('booking.list') }}">All Bookings</a>
                             </li>
                             @endcan
+                            @can('view transaction')
+                            <li class="{{ request()->routeIs('transaction') ? 'active' : '' }}">
+                                <a href="{{ route('transaction') }}">All Transaction</a>
+                            </li>
+                            @endcan
                         </ul>
                     </li>
                     @endcanany

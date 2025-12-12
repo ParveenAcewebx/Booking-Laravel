@@ -9,7 +9,7 @@
 
   <!-- Tailwind CSS & Font Awesome -->
   <script src="https://cdn.tailwindcss.com"></script>
-
+  <link rel="stylesheet"href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
   <!-- jQuery & jQuery UI -->
@@ -73,6 +73,8 @@
   <script src="{{ asset('assets/js/frontend/calendar.js') }}?v={{ time() }}"></script>
   <script src="{{ asset('assets/js/frontend/vendor/vendor.js') }}?v={{ time() }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
   @stack('scripts')
 </body>
 </html>
