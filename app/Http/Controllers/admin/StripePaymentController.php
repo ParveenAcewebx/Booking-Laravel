@@ -1,18 +1,20 @@
 <?php
 
-namespace App\Http\Controllers;
 
+namespace App\Http\Controllers\admin;
+
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\Service;
 use App\Models\Vendor;
+use App\Models\Transaction;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
 use Stripe\StripeClient;
 
 class StripePaymentController extends Controller
 {
-
     public function stripeCheckout(Request $request)
     {
         $booking = Booking::find($request->booking_id);
@@ -20,20 +22,12 @@ class StripePaymentController extends Controller
         $vendor = Vendor::find($service->vendor_id);
         $secretKey = $vendor->stripe_test_secret_key;
         Stripe::setApiKey($secretKey);
-        $currency = strtolower(trim($service->currency));
-        $map = [
-            '$'  => 'usd',
-            '₹'  => 'inr',
-        ];
-        if (isset($map[$currency])) {
-            $currency = $map[$currency];
-        }
         $amount = intval($service->price * 100);
         $session = Session::create([
             'payment_method_types' => ['card'],
             'line_items' => [[
                 'price_data' => [
-                    'currency' => $currency,
+                    'currency' => 'USD',
                     'unit_amount' => $amount,
                     'product_data' => [
                         'name' => $service->name,
@@ -51,19 +45,41 @@ class StripePaymentController extends Controller
         ]);
         return redirect()->away($session->url);
     }
-
     public function stripeCheckoutSuccess(Request $request)
     {
         $sessionId = $request->session_id;
         $vendorId  = $request->vendor_id;
         $bookingId = $request->booking_id;
-        $vendor = Vendor::find($vendorId);
+
+        $booking = Booking::find($bookingId);
+        $service = Service::find($booking->service_id); 
+        $vendor  = Vendor::find($vendorId);
+
         $secretKey = $vendor->stripe_test_secret_key;
-        $stripe = new StripeClient($secretKey);
-        Booking::where('id', $bookingId)->update([
-            'status' => 'confirmed'
+
+        $stripe = new \Stripe\StripeClient($secretKey);
+        $session = $stripe->checkout->sessions->retrieve($sessionId);
+
+        $paymentId = $session->payment_intent;
+
+        $booking->update([
+            'status' => 'confirmed',
+        ]);
+
+        $amount = $booking->amount ?? ($service->price ?? 0);
+
+        Transaction::create([
+            'booking_id'   => $booking->id,
+            'customer_id'  => $booking->customer_id,
+            'vendor_id'    => $service->vendor_id,
+            'payment_id'   => $paymentId,
+            'status'       => 'success',
+            'amount'       => $amount,
+            'currency'     => 'USD',
+            'response'     => $session,
         ]);
         return redirect(session('return_form_url') ?? '/')
             ->with('success', 'Your booking is confirmed successfully!');
     }
+
 }

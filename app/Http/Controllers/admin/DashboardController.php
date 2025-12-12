@@ -24,7 +24,8 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
-$logoutTime = config('app.automatic_logout_time');        $countUsers   = $this->allUsers;
+        $logoutTime = config('app.automatic_logout_time');        
+        $countUsers   = $this->allUsers;
         $allusers     = User::orderBy('created_at', 'desc')->take(5)->get();
         $bookingForms = BookingTemplate::all();
         $services     = Service::all();

@@ -61,7 +61,7 @@ return [
         'bookings' => [
             'name' => "Bookings",
             'slug' => 'bookings',
-            'roles' => ['view bookings', 'create bookings', 'edit bookings', 'delete bookings']
+            'roles' => ['view bookings','view transaction','create bookings', 'edit bookings', 'delete bookings']
         ],
         'services' => [
             'name' => "Services",

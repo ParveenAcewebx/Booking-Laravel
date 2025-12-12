@@ -5,8 +5,9 @@
             'vendor.dashboard.view' => 'Profile', 
             'vendor.bookings.view' => 'Bookings', 
             'vendor.services.view' => 'Services', 
-            'vendor.staff.view' => 'Staff Members'
-        ] as $route => $label)
+            'vendor.staff.view' => 'Staff Members',
+            'vendor.transactions' => 'Bookings-Transaction'
+            ] as $route => $label)
             <li>
                 <a href="{{ route($route) }}"
                    class="w-full block px-4 py-2 rounded-lg text-left

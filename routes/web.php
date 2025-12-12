@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\BookingTemplateController;
@@ -29,11 +28,13 @@ use App\Http\Controllers\frontend\Vendor\VendorStaffController;
 use App\Http\Controllers\export\ExportBookingController;
 use App\Helpers\Shortcode;
 use App\Http\Controllers\admin\SubscriptionController;
-use App\Http\Controllers\StripePaymentController;
+use App\Http\Controllers\admin\TransactionController;
+use App\Http\Controllers\admin\StripePaymentController;
 use App\Http\Controllers\export\ExportStaffController;
 use App\Http\Controllers\export\ExportUserController;
 use App\Http\Controllers\admin\PageController;
 use App\Http\Controllers\frontend\ShowPageController;
+use App\Http\Controllers\frontend\Vendor\VendorTransactionsController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -161,6 +162,14 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     // Routes for viewing data (view users, view templates, etc.)
     Route::middleware('permission:view bookings')->group(function () {
         Route::get('/bookings', [BookingController::class, 'index'])->name('booking.list');
+    });
+    Route::middleware('permission:view transaction')->group(function () {
+        Route::get('/transactions', [TransactionController::class, 'index'])
+            ->name('transaction');
+        Route::get('/transactions/view/{id}', [TransactionController::class, 'view'])
+            ->name('transaction.view');
+        Route::post('/transactions/bulk-delete', [TransactionController::class, 'bulkDelete'])
+            ->name('transaction.bulk-delete');
     });
     Route::middleware('permission:create bookings')->group(function () {
         Route::get('/booking/add', [BookingController::class, 'bookingAdd'])->name('booking.add');
@@ -314,13 +323,14 @@ Route::post('/user/changepassword', [UserController::class, 'updatePassword'])->
 Route::post('/store/session', [FormController::class, 'storeSession'])->name('session.store');
 Route::get('/get/session', [FormController::class, 'getSession'])->name('session.get');
 Route::post('/form/session/destroyed', [FormController::class, 'sessiondestroy'])->name('session.destryoed');
-
 // Route::get('/profile', [UserProfileController::class, 'userEdit'])->name('Userprofile');
 Route::post('/profile/update', [VendorProfileController::class, 'UserprofileUpdate'])->name('ProfileUpdate');
 Route::middleware(['VendorRoleCheck'])->group(function () {
 
     Route::get('/dashboard/profile', [VendorInformationController::class, 'view'])->middleware('VendorRoleCheck')->name('vendor.dashboard.view');
-    // Bookings
+Route::get('/dashboard/transactions', 
+    [VendorTransactionsController::class, 'index']
+)->name('vendor.transactions');    
     Route::get('/dashboard/bookings', [VendorBookingController::class, 'view'])->name('vendor.bookings.view');
     Route::get('/bookings/view/{id}', [VendorBookingController::class, 'bookingview'])->name('bookings.view');
     Route::delete('/bookings/{id}', [VendorBookingController::class, 'bookingdestroy'])->name('vendor.booking.destroy');
@@ -344,7 +354,7 @@ Route::middleware(['VendorRoleCheck'])->group(function () {
 });
 Route::get('/{slug}', [ShowPageController::class, 'show'])->middleware('checkPageSlug')->name('page.show');
 
-Route::get('/',[LandingPageController::class, 'index'])->name('home');
+Route::get('/', [LandingPageController::class, 'index'])->name('home');
 Route::get('/email/logs', function () {
     $logPath = storage_path('logs/laravel.log');
     if (!File::exists($logPath)) {
@@ -362,4 +372,3 @@ Route::get('/check-smtp', function () {
 
     return 'SMTP is NOT properly configured.';
 });
-
