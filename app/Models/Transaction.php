@@ -9,6 +9,7 @@ class Transaction extends Model
     protected $fillable = [
         'booking_id',
         'customer_id',
+        'template_id',
         'vendor_id',
         'payment_id',
         'status',
@@ -30,5 +31,8 @@ class Transaction extends Model
     {
         return $this->belongsTo(Vendor::class, 'vendor_id');
     }
-    
+    public function bookingTemplate()
+    {
+        return $this->belongsTo(BookingTemplate::class, 'template_id');
+    }
 }
