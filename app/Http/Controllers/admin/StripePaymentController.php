@@ -76,6 +76,7 @@ class StripePaymentController extends Controller
         Transaction::create([
             'booking_id'   => $booking->id,
             'customer_id'  => $booking->customer_id,
+            'template_id' =>  $booking->booking_template_id,
             'vendor_id'    => $service->vendor_id,  
             'payment_id'   => $paymentId,
             'status'       => 'success',

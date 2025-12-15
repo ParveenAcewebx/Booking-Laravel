@@ -26,6 +26,7 @@ use App\Http\Controllers\frontend\Vendor\VendorBookingController;
 use App\Http\Controllers\frontend\Vendor\VendorServiceController;
 use App\Http\Controllers\frontend\Vendor\VendorStaffController;
 use App\Http\Controllers\export\ExportBookingController;
+use App\Http\Controllers\export\ExportBookingTransactionController;
 use App\Helpers\Shortcode;
 use App\Http\Controllers\admin\SubscriptionController;
 use App\Http\Controllers\admin\TransactionController;
@@ -105,6 +106,7 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     Route::get('/export/bookings', [ExportBookingController::class, 'exportBookings'])->name('export.booking.excel');
     Route::get('/export/staff', [ExportStaffcontroller::class, 'exportstaff'])->name('export.staff.excel');
     Route::get('/export/user', [ExportUserController::class, 'exportuser'])->name('export.user.excel');
+    Route::get('/export/transaction', [ExportBookingTransactionController::class, 'exportTransaction'])->name('export.booking-transaction.excel');
 
     /*======================= Page module Routes ================================*/
     Route::middleware('permission:view pages')->group(function () {
@@ -164,12 +166,9 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
         Route::get('/bookings', [BookingController::class, 'index'])->name('booking.list');
     });
     Route::middleware('permission:view transaction')->group(function () {
-        Route::get('/transactions', [TransactionController::class, 'index'])
-            ->name('transaction');
-        Route::get('/transactions/view/{id}', [TransactionController::class, 'view'])
-            ->name('transaction.view');
-        Route::post('/transactions/bulk-delete', [TransactionController::class, 'bulkDelete'])
-            ->name('transaction.bulk-delete');
+        Route::get('/transactions', [TransactionController::class, 'index'])->name('transaction');
+        Route::get('/transactions/view/{id}', [TransactionController::class, 'view'])->name('transaction.view');
+        Route::post('/transactions/bulk-delete', [TransactionController::class, 'bulkDelete'])->name('transaction.bulk-delete');
     });
     Route::middleware('permission:create bookings')->group(function () {
         Route::get('/booking/add', [BookingController::class, 'bookingAdd'])->name('booking.add');
