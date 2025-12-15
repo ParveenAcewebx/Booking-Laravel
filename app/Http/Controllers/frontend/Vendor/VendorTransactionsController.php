@@ -20,7 +20,9 @@ class VendorTransactionsController extends Controller
         if ($request->ajax()) {
             return datatables()->of($query)
                 ->addColumn('customer_name', function ($row) {
-                    return $row->booking->customer->name ?? 'N/A';
+                    return $row->customer
+                        ? '#' . $row->customer_id . ' - ' . $row->customer->name
+                        : 'N/A';
                 })
                 ->addColumn('created_date', function ($row) {
                     return $row->created_at->format('d M Y h:i A');
