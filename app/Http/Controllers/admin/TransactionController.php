@@ -21,27 +21,22 @@ class TransactionController extends Controller
                 ->addColumn('checkbox', function ($row) {
                     return '<input type="checkbox" class="row-checkbox" value="' . $row->id . '">';
                 })
-
                 ->addColumn('customer_display', function ($row) {
                     return $row->customer
-                        ? $row->customer->name . ' (' . $row->customer_id . ')'
+                        ? '#' . $row->customer_id . ' - ' . $row->customer->name
                         : 'N/A';
                 })
-
                 ->addColumn('vendor_display', function ($row) {
                     return $row->vendor
-                        ? $row->vendor->name . ' (' . $row->vendor_id . ')'
+                        ? '#' . $row->vendor_id . ' - ' . $row->vendor->name
                         : 'N/A';
                 })
-
                 ->addColumn('created_date', function ($row) {
                     return $row->created_at->format('d M Y h:i A');
                 })
-
                 ->rawColumns(['checkbox'])
                 ->make(true);
         }
-
         return view('admin.transaction.index');
     }
 }

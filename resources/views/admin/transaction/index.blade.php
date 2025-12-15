@@ -32,8 +32,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Transactions Table -->
         <div class="row">
             <div class="col-lg-12">
                 <div class="card user-profile-list">
@@ -45,8 +43,8 @@
                                         <th style="display:none;">ID</th>
                                         <th><input type="checkbox" id="selectAll"></th>
                                         <th>Booking ID</th>
-                                        <th>Customer Name</th>
-                                        <th>Vendor Name</th>
+                                        <th>#ID - Customer Name</th>
+                                        <th>#ID - Vendor Name</th>
                                         <th>Amount</th>
                                         <th>Payment ID</th>
                                         <th>Status</th>
@@ -62,60 +60,43 @@
         </div>
     </div>
 </div>
-
 <script type="text/javascript">
     $(function() {
         var table = $('#transaction-table').DataTable({
             processing: true,
             serverSide: true,
             ajax: "{{ route('transaction') }}",
-            columns: [{
-                    data: 'id',
-                    name: 'id',
-                    visible: false
-                },
-                {
-                    data: 'checkbox',
-                    name: 'checkbox',
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: 'booking_id',
-                    name: 'booking_id'
-                },
-                {
-                    data: 'customer_display',
-                    name: 'customer_display'
-                },
-                {
-                    data: 'vendor_display',
-                    name: 'vendor_display'
-                },
-                {
-                    data: 'amount',
-                    name: 'amount'
-                },
-                {
-                    data: 'payment_id',
-                    name: 'payment_id'
-                },
+            columns: [
+                { data: 'id', name: 'id', visible: false },
+                { data: 'checkbox', name: 'checkbox', orderable: false, searchable: false },
+                { data: 'booking_id', name: 'booking_id' },
+                { data: 'customer_display', name: 'customer_display' },
+                { data: 'vendor_display', name: 'vendor_display' },
+                { data: 'amount', name: 'amount' },
+                { data: 'payment_id', name: 'payment_id' },
                 {
                     data: 'status',
-                    name: 'status'
+                    name: 'status',
+                    render: function(data, type, row) {
+                        let status = data ? data.toLowerCase() : "";
+
+                        if (status === "success") {
+                            return `<span style="color: green; font-weight:600;">
+                                        <i class="fa fa-circle" style="font-size:10px; color:green;"></i> success
+                                    </span>`;
+                        }
+                        else if (status === "pending") {
+                            return `<span style="color: orange; font-weight:600;">
+                                        <i class="fa fa-circle" style="font-size:10px; color:orange;"></i> Pending
+                                    </span>`;
+                        }
+                        return data;
+                    }
                 },
-                {
-                    data: 'created_date',
-                    name: 'created_date'
-                },
+                { data: 'created_date', name: 'created_date' },
             ],
-            order: [
-                [0, 'desc']
-            ],
-            lengthMenu: [
-                [10, 25, 50, 100],
-                [10, 25, 50, 100]
-            ]
+            order: [[0, 'desc']],
+            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]]
         });
         bulkDelete("{{ route('transaction.bulk-delete') }}");
         toastr.options = {
@@ -124,10 +105,9 @@
             timeOut: 4000,
             positionClass: "toast-top-right"
         };
-        @if(session('success')) toastr.success("{{ session('success') }}");
-        @endif
-        @if(session('error')) toastr.error("{{ session('error') }}");
-        @endif
+
+        @if(session('success')) toastr.success("{{ session('success') }}"); @endif
+        @if(session('error')) toastr.error("{{ session('error') }}"); @endif
     });
 </script>
 @endsection
