@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\BookingTemplateController;
@@ -46,59 +47,59 @@ use App\Http\Controllers\frontend\Vendor\VendorTransactionsController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/', function () {
-    return view('frontend.landing');
-})->name('home');
-Route::get('/admin', function () {
-    return redirect()->route('dashboard');
-});
-Route::get('/admin/shortcodes/list', function () {
-    return response()->json(Shortcode::getRegisteredShortcodes());
-});
+
+    Route::get('/', function () {
+        return view('frontend.landing');
+    })->name('home');
+    Route::get('/admin', function () {
+        return redirect()->route('dashboard');
+    });
+    Route::get('/admin/shortcodes/list', function () {
+        return response()->json(Shortcode::getRegisteredShortcodes());
+    });
+
+    Route::get('/stripe/debug', [StripePaymentController::class, 'debugfunction']);
+    Route::get('/stripe/create', [StripePaymentController::class, 'stripeCheckout'])->name('stripe.checkout');
+    Route::get('/stripe/success', [StripePaymentController::class, 'stripeCheckoutSuccess'])->name('stripe.checkout.success');
+
+    Route::get('/booking', [BookingListingController::class, 'listing'])->name('booking.listing');
+    Route::get('/vendor/{id}', [VendorListingController::class, 'listing'])->name('vendor.show');
+    Route::get('/form/{slug}', [FormController::class, 'show'])->name('form.show');
+    Route::post('/form/{slug}', [FormController::class, 'store'])->name('form.store');
+    Route::get('/get/services/staff', [FormController::class, 'getservicesstaff'])->name('get.services.staff');
+    Route::get('/get/vendor/get_booking_calender', [FormController::class, 'getBookingCalender'])->name('service.vendor.calender');
+    Route::get('/get/slotbooked', [FormController::class, 'getBookingSlot'])->name('service.slotbooked');
+    Route::get('/contact', [ContactController::class, 'listing'])->name('contact.listing');
+    Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+    Route::get('/captcha-refresh', [ContactController::class, 'refreshCaptcha'])->name('captcha.refresh');
+
+    // Guest routes (not logged in)
+    Route::middleware('guest')->group(function () {
+        Route::get('/register', [UserController::class, 'showRegistrationForm'])->name('registration.form');
+        Route::post('/register', [UserController::class, 'register'])->name('register');
+        Route::get('/login', [UserController::class, 'showLoginForm'])->name("login.form");
+        Route::post('/login', [UserController::class, 'login'])->name('login');
+        Route::get('/forgot-password', [UserController::class, 'forgotPassword'])->name('password.request');
+        Route::post('password/email', [UserController::class, 'sendResetLinkEmail'])->name('password.email');
+        Route::get('password/reset/{token}', [UserController::class, 'showResetForm'])->name('password.reset');
+        Route::post('password/reset', [UserController::class, 'reset'])->name('password.update');
+    });
+
+    // Social Login 
+    Route::get('auth/google', [UserController::class, 'redirectToGoogle'])->name('auth.google.redirect');
+    Route::get('auth/google/callback', [UserController::class, 'handleGoogleCallback']);
+    Route::get('auth/facebook', [UserController::class, 'redirectToFacebook'])->name('auth.facebook.redirect');
+    Route::get('auth/facebook/callback', [UserController::class, 'handleFacebookCallback']);
 
 
-Route::get('/stripe/debug', [StripePaymentController::class, 'debugfunction']);
-Route::get('/stripe/create', [StripePaymentController::class, 'stripeCheckout'])->name('stripe.checkout');
-Route::get('/stripe/success', [StripePaymentController::class, 'stripeCheckoutSuccess'])->name('stripe.checkout.success');
+    // Mail approve link to users.
+    Route::get('/email/verify', function () {
+        return view('auth.verify-email');
+    })->middleware('auth')->name('verification.notice');
+    Route::get('/verify-email/{id}', [UserController::class, 'Emailverify']);
 
-Route::get('/booking', [BookingListingController::class, 'listing'])->name('booking.listing');
-Route::get('/vendor/{id}', [VendorListingController::class, 'listing'])->name('vendor.show');
-Route::get('/form/{slug}', [FormController::class, 'show'])->name('form.show');
-Route::post('/form/{slug}', [FormController::class, 'store'])->name('form.store');
-Route::get('/get/services/staff', [FormController::class, 'getservicesstaff'])->name('get.services.staff');
-Route::get('/get/vendor/get_booking_calender', [FormController::class, 'getBookingCalender'])->name('service.vendor.calender');
-Route::get('/get/slotbooked', [FormController::class, 'getBookingSlot'])->name('service.slotbooked');
-Route::get('/contact', [ContactController::class, 'listing'])->name('contact.listing');
-Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
-Route::get('/captcha-refresh', [ContactController::class, 'refreshCaptcha'])->name('captcha.refresh');
-
-// Guest routes (not logged in)
-Route::middleware('guest')->group(function () {
-    Route::get('/register', [UserController::class, 'showRegistrationForm'])->name('registration.form');
-    Route::post('/register', [UserController::class, 'register'])->name('register');
-    Route::get('/login', [UserController::class, 'showLoginForm'])->name("login.form");
-    Route::post('/login', [UserController::class, 'login'])->name('login');
-    Route::get('/forgot-password', [UserController::class, 'forgotPassword'])->name('password.request');
-    Route::post('password/email', [UserController::class, 'sendResetLinkEmail'])->name('password.email');
-    Route::get('password/reset/{token}', [UserController::class, 'showResetForm'])->name('password.reset');
-    Route::post('password/reset', [UserController::class, 'reset'])->name('password.update');
-});
-
-// Social Login 
-Route::get('auth/google', [UserController::class, 'redirectToGoogle'])->name('auth.google.redirect');
-Route::get('auth/google/callback', [UserController::class, 'handleGoogleCallback']);
-Route::get('auth/facebook', [UserController::class, 'redirectToFacebook'])->name('auth.facebook.redirect');
-Route::get('auth/facebook/callback', [UserController::class, 'handleFacebookCallback']);
-
-
-// Mail approve link to users.
-Route::get('/email/verify', function () {
-    return view('auth.verify-email');
-})->middleware('auth')->name('verification.notice');
-Route::get('/verify-email/{id}', [UserController::class, 'Emailverify']);
-
-// Authenticated routes
-Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(function () {
+    // Authenticated routes
+    Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(function () {
 
     Route::get('/users/import-view', [UserImportController::class, 'showImportView'])->name('import.view');
     Route::post('/user/import/save', [UserImportController::class, 'importSave'])->name('user.import.save');
@@ -130,29 +131,36 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     Route::post('/switch-back', [UserController::class, 'switchBack'])->name('user.switch.back');
     Route::get('/booking/load-template-html/{id}', [BookingController::class, 'loadTemplateHTML']);
     Route::get('/get/copytemplateid', [BookingTemplateController::class, 'copytemplate']);
+
     // Routes for editing (edit users, edit templates, etc.)
     Route::middleware('permission:view users')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('user.list');
     });
+
     Route::middleware('permission:create users')->group(function () {
         Route::get('/user/add', [UserController::class, 'userAdd'])->name('user.add');
         Route::post('/user/save', [UserController::class, 'userSave'])->name('user.save');
     });
+
     Route::middleware('permission:edit users')->group(function () {
         Route::get('/user/{id}/edit', [UserController::class, 'userEdit'])->name('user.edit');
         Route::post('/user/{id}/update', [UserController::class, 'userUpdate'])->middleware('permission:view')->name('user.update');
     });
+
     Route::middleware('permission:delete users')->group(function () {
         Route::delete('/user/{userid}/delete', [UserController::class, 'userDelete'])->name('user.delete');
         Route::post('/user/bulk-delete', [UserController::class, 'bulkDelete'])->name('user.bulk-delete');
     });
+
     Route::middleware('permission:view templates')->group(function () {
         Route::get('/templates', [BookingTemplateController::class, 'index'])->name('template.list');
     });
+
     Route::middleware('permission:create templates')->group(function () {
         Route::get('/template/add', [BookingTemplateController::class, 'templateAdd'])->name('template.add');
         Route::post('/template/save', [BookingTemplateController::class, 'templateSave'])->name('template.save');
     });
+    
     Route::middleware('permission:edit templates')->group(function () {
         Route::get('/template/{formid}/edit', [BookingTemplateController::class, 'templateEdit'])->name('template.edit');
     });
@@ -303,25 +311,31 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     Route::get('/todo', [UserController::class, 'todo'])->name('todo');
     Route::get('/welcome', [UserController::class, 'welcome']);
     Route::get('/userrole', [UserController::class, 'userrole']);
-});
-Route::post('/subscription', [SubscriptionsController::class, 'index'])->name('subscriptions.index');
+    });
 
-// Front profile 
-Route::get('/logout', [UserController::class, 'logout'])->name('logout');
-Route::get('/user/changepassword', [UserController::class, 'changePassword'])->name('changepassword');
-Route::post('/user/changepassword', [UserController::class, 'updatePassword'])->name('changepassword.update');
+    Route::post('/subscription', [SubscriptionsController::class, 'index'])->name('subscriptions.index');
 
-Route::post('/store/session', [FormController::class, 'storeSession'])->name('session.store');
-Route::get('/get/session', [FormController::class, 'getSession'])->name('session.get');
-Route::post('/form/session/destroyed', [FormController::class, 'sessiondestroy'])->name('session.destryoed');
-// Route::get('/profile', [UserProfileController::class, 'userEdit'])->name('Userprofile');
-Route::post('/profile/update', [VendorProfileController::class, 'UserprofileUpdate'])->name('ProfileUpdate');
-Route::middleware(['VendorRoleCheck'])->group(function () {
 
-    Route::get('/dashboard/profile', [VendorInformationController::class, 'view'])->middleware('VendorRoleCheck')->name('vendor.dashboard.view');
-Route::get('/dashboard/transactions', 
-    [VendorTransactionsController::class, 'index']
-)->name('vendor.transactions');    
+    // Front profile 
+    Route::get('/logout', [UserController::class, 'logout'])->name('logout');
+    Route::get('/user/changepassword', [UserController::class, 'changePassword'])->name('changepassword');
+    Route::post('/user/changepassword', [UserController::class, 'updatePassword'])->name('changepassword.update');
+
+    Route::post('/store/session', [FormController::class, 'storeSession'])->name('session.store');
+    Route::get('/get/session', [FormController::class, 'getSession'])->name('session.get');
+    Route::post('/form/session/destroyed', [FormController::class, 'sessiondestroy'])->name('session.destryoed');
+    // Route::get('/profile', [UserProfileController::class, 'userEdit'])->name('Userprofile');
+    Route::post('/profile/update', [VendorProfileController::class, 'UserprofileUpdate'])->name('ProfileUpdate');
+    Route::middleware(['VendorRoleCheck'])->group(function () {
+
+    Route::get('/dashboard/profile',[VendorInformationController::class, 'view'])->middleware('VendorRoleCheck')->name('vendor.dashboard.view');
+    Route::get('/dashboard/transactions',[VendorTransactionsController::class, 'index'])->name('vendor.transactions');
+    Route::get('/transactions/view/{id}', [VendorTransactionsController::class, 'view'])->name('vendor.transaction.view');
+    Route::delete('/transactions/{id}', [VendorTransactionsController::class, 'delete'])->name('vendor.transaction.delete');
+    Route::delete('/transactions/bulk-delete', [VendorTransactionsController::class, 'bulkDelete'])->name('vendor.transaction.bulk-delete');
+
+
+
     Route::get('/dashboard/bookings', [VendorBookingController::class, 'view'])->name('vendor.bookings.view');
     Route::get('/bookings/view/{id}', [VendorBookingController::class, 'bookingview'])->name('bookings.view');
     Route::delete('/bookings/{id}', [VendorBookingController::class, 'bookingdestroy'])->name('vendor.booking.destroy');
@@ -342,24 +356,24 @@ Route::get('/dashboard/transactions',
     Route::get('/dashboard/staff/edit/{id}', [VendorStaffController::class, 'edit'])->name('vendor.staff.edit');
     Route::put('/staff/{id}', [VendorStaffController::class, 'staffUpdate'])->name('vendor.staff.update');
     Route::delete('/staff/{id}', [VendorStaffController::class, 'staffDestroy'])->name('vendor.staff.destroy');
-});
-Route::get('/{slug}', [ShowPageController::class, 'show'])->middleware('checkPageSlug')->name('page.show');
+    });
+    Route::get('/{slug}', [ShowPageController::class, 'show'])->middleware('checkPageSlug')->name('page.show');
 
-Route::get('/', [LandingPageController::class, 'index'])->name('home');
-Route::get('/email/logs', function () {
-    $logPath = storage_path('logs/laravel.log');
-    if (!File::exists($logPath)) {
-        return response('Log file not found.', 404);
-    }
-    $logContents = File::get($logPath);
-    return response("<pre>$logContents</pre>");
-});
-Route::get('/check-smtp', function () {
-    $smtp = config('mail.mailers.smtp');
+    Route::get('/', [LandingPageController::class, 'index'])->name('home');
+    Route::get('/email/logs', function () {
+        $logPath = storage_path('logs/laravel.log');
+        if (!File::exists($logPath)) {
+            return response('Log file not found.', 404);
+        }
+        $logContents = File::get($logPath);
+        return response("<pre>$logContents</pre>");
+    });
+    Route::get('/check-smtp', function () {
+        $smtp = config('mail.mailers.smtp');
 
-    if ($smtp['host'] && $smtp['username'] && $smtp['password']) {
-        return $smtp;
-    }
+        if ($smtp['host'] && $smtp['username'] && $smtp['password']) {
+            return $smtp;
+        }
 
-    return 'SMTP is NOT properly configured.';
-});
+        return 'SMTP is NOT properly configured.';
+    });

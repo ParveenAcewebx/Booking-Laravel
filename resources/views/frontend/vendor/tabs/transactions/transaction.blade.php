@@ -11,25 +11,25 @@
         <x-vendor-sidebar />
 
         <div class="w-3/4 bg-white shadow rounded-2xl p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold text-gray-800">Transactions</h2>
-            </div>
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Transactions</h2>
 
             <div class="overflow-x-auto">
                 <table id="transaction-table" class="min-w-full border rounded-lg">
                     <thead class="bg-gray-100">
                         <tr>
-                            <th class="px-4 py-2">ID</th>
-                            <th class="px-4 py-2">#ID - Customer Name</th>
-                            <th class="px-4 py-2">Amount</th>
-                            <th class="px-4 py-2">Payment ID</th>
-                            <th class="px-4 py-2">Status</th>
-                            <th class="px-4 py-2">Created Date</th>
+                            <th style="display:none;">ID</th>
+                            <th><input type="checkbox" id="selectAll"></th>
+                            <th>Template</th>
+                            <th>Customer Name</th>
+                            <th>Amount</th>
+                            <th>Payment ID</th>
+                            <th>Status</th>
+                            <th>Created Date</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                 </table>
             </div>
-
         </div>
     </div>
 </div>
@@ -37,62 +37,38 @@
 
 @push('scripts')
 <script>
-    $(document).ready(function() {
+$(function () {
 
-        $('#transaction-table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('vendor.transactions') }}",
-                type: "GET",
-                error: function(xhr) {
-                    console.log("ERROR:", xhr.responseText);
+    let table = $('#transaction-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('vendor.transactions') }}",
+        columns: [
+            { data: 'id', visible: false },
+            { data: 'checkbox', orderable:false, searchable:false },
+            { data: 'template_name' },
+            { data: 'customer_display' },
+            { data: 'amount' },
+            { data: 'payment_id' },
+            {
+                data: 'status',
+                render: function(data) {
+                    let s = (data || '').toLowerCase();
+                    if (s === 'success') return '<span class="text-green-600 font-semibold">● Success</span>';
+                    if (s === 'pending') return '<span class="text-yellow-600 font-semibold">● Pending</span>';
+                    return '<span class="text-red-600 font-semibold">● Failed</span>';
                 }
             },
-            columns: [{
-                    data: 'id',
-                    name: 'id'
-                },
-                {
-                    data: 'customer_name',
-                    name: 'customer_name'
-                },
-                {
-                    data: 'amount',
-                    name: 'amount'
-                },
-                {
-                    data: 'payment_id',
-                    name: 'payment_id'
-                },
-                {
-                    data: 'status',
-                    name: 'status',
-                    render: function(data, type, row) {
-                        let status = data ? data.toLowerCase() : "";
-
-                        if (status === "success") {
-                            return `<span style="color: green; font-weight:600;">
-                                        <i class="fa fa-circle" style="font-size:10px; color:green;"></i> success
-                                    </span>`;
-                        } else if (status === "pending") {
-                            return `<span style="color: orange; font-weight:600;">
-                                        <i class="fa fa-circle" style="font-size:10px; color:orange;"></i> Pending
-                                    </span>`;
-                        }
-                        return data;
-                    }
-                },
-                {
-                    data: 'created_date',
-                    name: 'created_date'
-                }
-            ],
-            order: [
-                [5, 'desc']
-            ]
-        });
-
+            { data: 'created_date' },
+            { data: 'action', orderable:false, searchable:false }
+        ],
+        order: [[0,'desc']]
     });
+
+    $('#selectAll').on('click', function () {
+        $('.selectRow').prop('checked', this.checked);
+    });
+
+});
 </script>
 @endpush
