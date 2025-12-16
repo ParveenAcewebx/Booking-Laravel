@@ -165,10 +165,10 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
     Route::middleware('permission:view bookings')->group(function () {
         Route::get('/bookings', [BookingController::class, 'index'])->name('booking.list');
     });
-    Route::middleware('permission:view transaction')->group(function () {
+    Route::middleware('permission:view transactions')->group(function () {
         Route::get('/transactions', [TransactionController::class, 'index'])->name('transaction');
         Route::get('/transactions/view/{id}', [TransactionController::class, 'view'])->name('transaction.view');
-        Route::post('/transactions/bulk-delete', [TransactionController::class, 'bulkDelete'])->name('transaction.bulk-delete');
+        Route::delete('/transactions/delete/{id}', [TransactionController::class, 'delete'])->name('transaction.delete');
     });
     Route::middleware('permission:create bookings')->group(function () {
         Route::get('/booking/add', [BookingController::class, 'bookingAdd'])->name('booking.add');
@@ -212,7 +212,6 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
         Route::delete('/service/{service}/delete', [ServiceController::class, 'destroy'])->name('service.delete');
         Route::post('/service/bulk-delete', [ServiceController::class, 'bulkDelete'])->name('service.bulk-delete'); // Bulk Delete
     });
-
     Route::middleware('permission:view vendors')->group(function () {
         Route::get('/vendors', [VendorController::class, 'index'])->name('vendors.list');
     });
@@ -230,7 +229,6 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
         Route::delete('/vendor/{id}/delete', [VendorController::class, 'destroy'])->name('vendors.delete');
         Route::post('/vendor/bulk-delete', [VendorController::class, 'bulkDelete'])->name('vendors.bulk-delete');
     });
-
     Route::middleware('permission:view categories')->group(function () {
         Route::get('/categories', [CategoryController::class, 'index'])->name('category.list');
     });
@@ -246,16 +244,13 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
         Route::delete('/category/{category}', [CategoryController::class, 'destroy'])->name('category.destroy');
         Route::post('/category/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('category.bulk-delete');
     });
-
     Route::middleware('permission:view emails')->group(function () {
         Route::get('/emails', [EmailTemplateController::class, 'index'])->name('emails.list');
     });
-
     Route::middleware('permission:create emails')->group(function () {
         Route::get('/email/add', [EmailTemplateController::class, 'create'])->name('emails.create');
         Route::post('/email/store', [EmailTemplateController::class, 'store'])->name('emails.store');
     });
-
     Route::middleware('permission:edit emails')->group(function () {
         Route::get('/email/{email}/edit', [EmailTemplateController::class, 'edit'])->name('emails.edit');
         Route::put('/email/{email}', [EmailTemplateController::class, 'update'])->name('emails.update');
@@ -283,16 +278,13 @@ Route::prefix('admin')->middleware(['auth', 'checkCustomerRole'])->group(functio
         Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
         Route::post('/settings/store', [SettingsController::class, 'store'])->name('settings.store');
     });
-
     Route::middleware('permission:view subscriptions')->group(function () {
         Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscription.list');
     });
-
     Route::middleware('permission:delete subscriptions')->group(function () {
         Route::delete('/subscription/{id}', [SubscriptionController::class, 'destroy'])->name('subscription.destroy');
         Route::post('/subscriptions/bulk-delete', [SubscriptionController::class, 'bulkDelete'])->name('subscription.bulk-delete');
     });
-
     Route::middleware('permission:view enquires')->group(function () {
         Route::get('/enquires/{id}', [EnquiryController::class, 'show'])->name('enquiry.show'); // 👈 show enquiry details
         Route::get('/enquires', [EnquiryController::class, 'index'])->name('enquiry.list');
