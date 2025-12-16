@@ -256,6 +256,52 @@ function deleteBooking(id) {
         }
     });
 }
+function deleterow(id, event) {
+    event.preventDefault();
+
+    swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this transaction!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+
+        if (willDelete) {
+
+            var form = document.getElementById("deleterow-" + id);
+            var formData = new FormData(form);
+
+            fetch(form.action, {
+                method: "POST", 
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success === true) {
+                    swal("Transaction deleted successfully.", {
+                        icon: "success",
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    swal("There was an error!", { icon: "error" });
+                }
+            })
+            .catch(() => {
+                swal("There was an error processing your request.", {
+                    icon: "error",
+                });
+            });
+        }
+    });
+}
 function deleteVendor(id, event) {
     event.preventDefault();
 

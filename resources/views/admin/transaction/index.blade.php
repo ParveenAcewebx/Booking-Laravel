@@ -22,35 +22,35 @@
                 </div>
             </div>
         </div>
-            <div class="row mb-3 justify-content-end">
-                <div class="col-md-2">
-                    <select id="filter-customer" class="form-control">
-                        <option value="">Select Customer</option>
-                        @foreach($customers as $customer)
-                        <option value="{{ $customer->id }}">
-                            {{ $customer->name }}
-                        </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <select id="filter-status" class="form-control">
-                        <option value="">Select Status</option>
-                        <option value="success">Success</option>
-                        <option value="pending">Pending</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <input type="date" id="filter-date" class="form-control">
-                </div>
-                <div class="col-md-1">
-                    <button id="reset-filters" class="btn btn-primary w-100">Reset</button>
-                </div>
-                <div class="export_booking d-flex justify-content-end">
-                    <a href="{{route('export.booking-transaction.excel')}}" class="btn btn-primary btn-sm mr-3 p-2 d-flex align-items-center">Export To Excel</a>
-                </div>
+        <div class="row mb-3 justify-content-end">
+            <div class="col-md-2">
+                <select id="filter-customer" class="form-control">
+                    <option value="">Select Customer</option>
+                    @foreach($customers as $customer)
+                    <option value="{{ $customer->id }}">
+                        {{ $customer->name }}
+                    </option>
+                    @endforeach
+                </select>
             </div>
+
+            <div class="col-md-2">
+                <select id="filter-status" class="form-control">
+                    <option value="">Select Status</option>
+                    <option value="success">Success</option>
+                    <option value="pending">Pending</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="date" id="filter-date" class="form-control">
+            </div>
+            <div class="col-md-1">
+                <button id="reset-filters" class="btn btn-primary w-100">Reset</button>
+            </div>
+            <div class="export_booking d-flex justify-content-end">
+                <a href="{{route('export.booking-transaction.excel')}}" class="btn btn-primary btn-sm mr-3 p-2 d-flex align-items-center">Export To Excel</a>
+            </div>
+        </div>
         <div class="row">
             <div class="col-lg-12">
                 <div class="card user-profile-list">
@@ -86,30 +86,42 @@ $(document).ready(function () {
         serverSide: true,
         ajax: {
             url: "{{ route('transaction') }}",
+            type: "GET",
             data: function (d) {
                 d.customer_id = $('#filter-customer').val();
                 d.status      = $('#filter-status').val();
                 d.start_date  = $('#filter-date').val();
             }
         },
-       columns: [
+        columns: [
             { data: 'id', visible: false },
             { data: 'checkbox', orderable: false, searchable: false },
-            { data: 'template_name'},
+            { data: 'template_name' },
             { data: 'customer_display' },
             { data: 'amount' },
             { data: 'payment_id' },
-            { data: 'status' },
-            { data: 'created_date' },
             {
-                data: 'action',
-                orderable: false,
-                searchable: false
-            }
+                data: 'status',
+                name: 'status',
+                render: function(data, type, row) {
+                    let status = data ? data.toLowerCase() : "";
+                    if (status === "success") {
+                        return `<span style="color: green; font-weight:600;">
+                                    <i class="fa fa-circle" style="font-size:10px; color:green;"></i> Success
+                                </span>`;
+                    }
+                    else if (status === "pending") {
+                        return `<span style="color: orange; font-weight:600;">
+                                    <i class="fa fa-circle" style="font-size:10px; color:orange;"></i> Pending
+                                </span>`;
+                    }
+                    return data;
+                }
+            },
+            { data: 'created_date' },
+            { data: 'action', orderable: false, searchable: false }
         ],
-
-
-        order: [[0,'desc']]
+        order: [[0, 'desc']]
     });
 
     $('#filter-customer, #filter-status, #filter-date').on('change', function () {
@@ -122,8 +134,18 @@ $(document).ready(function () {
         $('#filter-date').val('');
         table.ajax.reload();
     });
+            toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            timeOut: 4000,
+            positionClass: "toast-top-right"
+        };
+        @if(session('success')) toastr.success("{{ session('success') }}");
+        @endif
+        @if(session('error')) toastr.error("{{ session('error') }}");
+        @endif
 
+        bulkDelete("{{ route('booking.bulk-delete') }}");
 });
 </script>
-
 @endsection

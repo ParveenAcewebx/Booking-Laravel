@@ -231,9 +231,8 @@
                         </ul>
                     </li>
                     @endcanany
-
                     {{-- Bookings --}}
-                    @canany(['view bookings', 'create bookings', 'edit bookings', 'delete bookings'])
+                    @canany(['view templates','create templates','edit templates','delete templates','view transaction','delete transactions'])
                     <li class="nav-item pcoded-hasmenu {{ request()->routeIs('booking.*') ? 'pcoded-trigger' : '' }}">
                         <a href="#!" class="nav-link">
                             <span class="pcoded-micon"><i class="feather icon-book"></i></span>
@@ -250,15 +249,14 @@
                                 <a href="{{ route('booking.list') }}">All Bookings</a>
                             </li>
                             @endcan
-                            @can('view transaction')
-                            <li class="{{ request()->routeIs('transaction') ? 'active' : '' }}">
-                                <a href="{{ route('transaction') }}">All Transaction</a>
+                            @can('view transactions')
+                            <li class="{{ request()->routeIs('transaction*') ? 'active' : '' }}">
+                                <a href="{{ route('transaction') }}">Transactions</a>
                             </li>
                             @endcan
                         </ul>
                     </li>
                     @endcanany
-
                     {{-- Subscriptions --}}
                     @canany(['view subscriptions', 'delete subscriptions'])
                     <li class="nav-item pcoded-hasmenu {{ request()->routeIs('subscription.*') ? 'pcoded-trigger' : '' }}">

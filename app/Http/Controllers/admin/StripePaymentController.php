@@ -21,8 +21,6 @@ class StripePaymentController extends Controller
         $vendor = Vendor::find($service->vendor_id);
         $secretKey = $vendor->stripe_test_secret_key;
         Stripe::setApiKey($secretKey);
-        // If multiple services exist → get from bookslots
-        // If not (old system) → use single service price
         $slots = json_decode($booking->bookslots, true);
         $totalAmount = 0;
         $serviceName = $service->name; 

@@ -13,8 +13,7 @@ class TransactionController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = Transaction::query()
-                ->with(['customer:id,name', 'vendor:id,name', 'bookingTemplate:id,template_name']);
+            $query = Transaction::query()->with(['customer:id,name', 'vendor:id,name', 'bookingTemplate:id,template_name']);
             if ($request->customer_id) {
                 $query->where('customer_id', $request->customer_id);
             }
@@ -39,18 +38,38 @@ class TransactionController extends Controller
                         : 'N/A';
                 })
                 ->addColumn('template_name', function ($row) {
-                return $row->bookingTemplate
-                    ? $row->bookingTemplate->template_name
-                    : 'N/A';
-            })
+                    return $row->bookingTemplate
+                        ? $row->bookingTemplate->template_name
+                        : 'N/A';
+                })
                 ->addColumn('created_date', function ($row) {
                     return $row->created_at->format('d M Y h:i A');
                 })
                 ->addColumn('action', function ($row) {
-                    return '<a href="' . route('transaction.view', $row->id) . '" 
-                class="btn btn-icon btn-success" title="View Transaction">
-                <i class="feather icon-eye"></i>
-            </a>';
+                    $btn = '';
+                    if (auth()->user()->can('view transactions')) {
+                        $btn .= '<a href="' . route('transaction.view', $row->id) . '" 
+                                    class="btn btn-icon btn-success" 
+                                    title="View Transaction">
+                                    <i class="feather icon-eye"></i>
+                                </a> ';
+                    }
+                    if (auth()->user()->can('delete transactions')) {
+                        $btn .= '<form id="deleterow-' . $row->id . '" 
+                        action="' . route('transaction.delete', $row->id) . '" 
+                        method="POST" 
+                        style="display:inline-block;">
+                        <input type="hidden" name="_method" value="DELETE">
+                        ' . csrf_field() . '
+                        <button type="button" 
+                                onclick="deleterow(' . $row->id . ', event)" 
+                                class="btn btn-icon btn-danger" 
+                                title="Delete row">
+                            <i class="feather icon-trash-2"></i>
+                        </button>
+                    </form>';
+                    }
+                    return $btn;
                 })
                 ->rawColumns(['checkbox', 'action'])
                 ->toJson();
@@ -64,5 +83,22 @@ class TransactionController extends Controller
             ->findOrFail($id);
 
         return view('admin.transaction.view', compact('transaction'));
+    }
+    public function delete($id)
+    {
+        $transaction = Transaction::findOrFail($id);
+        $transaction->delete();
+        return response()->json(['success' => true]);
+    }
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        Transaction::whereIn('id', $ids)->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Selected Transactions Deleted Successfully.'
+        ]);
     }
 }
