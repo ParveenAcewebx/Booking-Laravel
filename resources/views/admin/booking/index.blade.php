@@ -49,13 +49,11 @@
                             @endforeach
                         </select>
                     </div>
-
                     <div class="col-md-2 col-sm-6">
                         <div class="input-group">
                             <input type="text" id="filter-start-date" class="form-control" placeholder="Select Date" autocomplete="off">
                         </div>
                     </div>
-
                     <div class="col-md-1 col-sm-4">
                         <button id="reset-filters" class="btn btn-primary w-100 export_booking d-flex justify-content-center">Reset</button>
                         
@@ -67,8 +65,6 @@
 
             </div>
         </div>
-
-
         <div class="row">
             <div class="col-lg-12">
                 <div class="card user-profile-list">
@@ -147,28 +143,23 @@
                 [10, 25, 50, 100]
             ],
         });
-
         $('#filter-start-date').on('apply.daterangepicker', function(ev, picker) {
             $(this).val(picker.startDate.format('YYYY-MM-DD'));
             table.ajax.reload();
         });
-
         $('#filter-start-date').on('cancel.daterangepicker', function(ev, picker) {
             $(this).val('');
             table.ajax.reload();
         });
-
         $('#filter-template, #filter-customer').change(function() {
             table.ajax.reload();
         });
-
         $('#reset-filters').click(function() {
             $('#filter-template').val('').trigger('change');
             $('#filter-customer').val('').trigger('change');
             $('#filter-start-date').val('');
             table.ajax.reload();
         });
-
         toastr.options = {
             closeButton: true,
             progressBar: true,
@@ -179,7 +170,6 @@
         @endif
         @if(session('error')) toastr.error("{{ session('error') }}");
         @endif
-
         bulkDelete("{{ route('booking.bulk-delete') }}");
     });
 </script>
