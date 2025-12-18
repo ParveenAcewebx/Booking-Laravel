@@ -58,10 +58,9 @@ use App\Http\Controllers\frontend\Vendor\VendorTransactionsController;
         return response()->json(Shortcode::getRegisteredShortcodes());
     });
 
-    Route::get('/stripe/debug', [StripePaymentController::class, 'debugfunction']);
     Route::get('/stripe/create', [StripePaymentController::class, 'stripeCheckout'])->name('stripe.checkout');
     Route::get('/stripe/success', [StripePaymentController::class, 'stripeCheckoutSuccess'])->name('stripe.checkout.success');
-
+    Route::post('/stripe/refund/{id}', [StripePaymentController::class, 'stripeRefund'])->name('stripe.refund');
     Route::get('/booking', [BookingListingController::class, 'listing'])->name('booking.listing');
     Route::get('/vendor/{id}', [VendorListingController::class, 'listing'])->name('vendor.show');
     Route::get('/form/{slug}', [FormController::class, 'show'])->name('form.show');
@@ -332,10 +331,7 @@ use App\Http\Controllers\frontend\Vendor\VendorTransactionsController;
     Route::get('/dashboard/transactions',[VendorTransactionsController::class, 'index'])->name('vendor.transactions');
     Route::get('/transactions/view/{id}', [VendorTransactionsController::class, 'view'])->name('vendor.transaction.view');
     Route::delete('/transactions/{id}', [VendorTransactionsController::class, 'delete'])->name('vendor.transaction.delete');
-    Route::delete('/transactions/bulk-delete', [VendorTransactionsController::class, 'bulkDelete'])->name('vendor.transaction.bulk-delete');
-
-
-
+    
     Route::get('/dashboard/bookings', [VendorBookingController::class, 'view'])->name('vendor.bookings.view');
     Route::get('/bookings/view/{id}', [VendorBookingController::class, 'bookingview'])->name('bookings.view');
     Route::delete('/bookings/{id}', [VendorBookingController::class, 'bookingdestroy'])->name('vendor.booking.destroy');

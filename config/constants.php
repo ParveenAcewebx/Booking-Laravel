@@ -66,7 +66,7 @@ return [
         'transactions' => [
             'name' => "Transactions",
             'slug' => 'transactions',
-            'roles' => ['view transactions','delete transactions']
+            'roles' => ['view transactions','delete transactions','refund']
         ],
         'services' => [
             'name' => "Services",

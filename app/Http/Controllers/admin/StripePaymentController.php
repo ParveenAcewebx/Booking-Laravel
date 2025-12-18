@@ -26,7 +26,7 @@ class StripePaymentController extends Controller
         $serviceName = $service->name; 
         if (!empty($slots)) {
             foreach ($slots as $slot) {
-                $price = floatval(str_replace(['$', '₹'], '', $slot['price']));
+                $price = floatval(str_replace(['$'], '', $slot['price']));
                 $totalAmount += $price;
             }
             $serviceName = "Booking Payment (" . count($slots) . " Services)";
@@ -68,7 +68,7 @@ class StripePaymentController extends Controller
         $paymentId = $session->payment_intent;
         $paidAmount = $session->amount_total / 100;
         $booking->update([
-            'status' => 'confirmed',
+            'status' => 'completed',
             'amount' => $paidAmount,
         ]);
         Transaction::create([
@@ -77,12 +77,30 @@ class StripePaymentController extends Controller
             'template_id' =>  $booking->booking_template_id,
             'vendor_id'    => $service->vendor_id,  
             'payment_id'   => $paymentId,
-            'status'       => 'success',
+            'status'       => $booking->status,
             'amount'       => $paidAmount,
             'currency'     => 'USD',
             'response'     => $session,
         ]);
         return redirect(session('return_form_url') ?? '/')
             ->with('success', 'Your booking is confirmed successfully!');
+    }
+    public function stripeRefund(Request $request)
+    {
+        $transaction = Transaction::where('id', $request->id)->first();
+        if ($transaction->status === 'refunded') {
+            return redirect()->back();
+        }
+        $vendor = Vendor::find($transaction->vendor_id);
+        $stripe = new StripeClient($vendor->stripe_test_secret_key);
+        $refund = $stripe->refunds->create([
+            'payment_intent' => $transaction->payment_id,
+        ]);
+        if ($refund->status === 'succeeded') {
+            $transaction->update([
+                'status' => 'refunded',
+            ]);
+            return redirect()->back()->with('success', 'Payment refunded successfully.');
+        }
     }
 }

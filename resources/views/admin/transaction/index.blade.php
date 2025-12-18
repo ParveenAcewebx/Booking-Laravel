@@ -33,12 +33,12 @@
                     @endforeach
                 </select>
             </div>
-
             <div class="col-md-2">
                 <select id="filter-status" class="form-control">
                     <option value="">Select Status</option>
                     <option value="success">Success</option>
                     <option value="pending">Pending</option>
+                    <option value="refunded">Refunded</option>
                 </select>
             </div>
             <div class="col-md-2">
@@ -62,7 +62,7 @@
                                         <th style="display:none;">ID</th>
                                         <th><input type="checkbox" id="selectAll"></th>
                                         <th>Template</th>
-                                        <th>#ID - Customer Name</th>
+                                        <th>Customer Name</th>
                                         <th>Amount</th>
                                         <th>Payment ID</th>
                                         <th>Status</th>
@@ -70,7 +70,6 @@
                                         <th>Action</th>
                                     </tr>
                                 </thead>
-                                <tbody></tbody>
                             </table>
                         </div>
                     </div>
@@ -105,14 +104,18 @@ $(document).ready(function () {
                 name: 'status',
                 render: function(data, type, row) {
                     let status = data ? data.toLowerCase() : "";
-                    if (status === "success") {
+                    if (status === "completed") {
                         return `<span style="color: green; font-weight:600;">
-                                    <i class="fa fa-circle" style="font-size:10px; color:green;"></i> Success
+                                    <i class="fa fa-circle" style="font-size:10px; color:green;"></i> Completed
                                 </span>`;
                     }
                     else if (status === "pending") {
                         return `<span style="color: orange; font-weight:600;">
                                     <i class="fa fa-circle" style="font-size:10px; color:orange;"></i> Pending
+                                </span>`;
+                    }else if (status === "refunded") {
+                        return `<span style="color: red; font-weight:600;">
+                                    <i class="fa fa-circle" style="font-size:10px; color:red;"></i> Refunded
                                 </span>`;
                     }
                     return data;
@@ -134,18 +137,6 @@ $(document).ready(function () {
         $('#filter-date').val('');
         table.ajax.reload();
     });
-            toastr.options = {
-            closeButton: true,
-            progressBar: true,
-            timeOut: 4000,
-            positionClass: "toast-top-right"
-        };
-        @if(session('success')) toastr.success("{{ session('success') }}");
-        @endif
-        @if(session('error')) toastr.error("{{ session('error') }}");
-        @endif
-
-        bulkDelete("{{ route('booking.bulk-delete') }}");
 });
 </script>
 @endsection

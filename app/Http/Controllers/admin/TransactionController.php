@@ -28,19 +28,10 @@ class TransactionController extends Controller
                     return '<input type="checkbox" class="row-checkbox" value="' . $row->id . '">';
                 })
                 ->addColumn('customer_display', function ($row) {
-                    return $row->customer
-                        ? '#' . $row->customer_id . ' - ' . $row->customer->name
-                        : 'N/A';
-                })
-                ->addColumn('vendor_display', function ($row) {
-                    return $row->vendor
-                        ? '#' . $row->vendor_id . ' - ' . $row->vendor->name
-                        : 'N/A';
+                    return $row->customer->name;
                 })
                 ->addColumn('template_name', function ($row) {
-                    return $row->bookingTemplate
-                        ? $row->bookingTemplate->template_name
-                        : 'N/A';
+                    return  $row->bookingTemplate->template_name;
                 })
                 ->addColumn('created_date', function ($row) {
                     return $row->created_at->format('d M Y h:i A');
@@ -68,6 +59,17 @@ class TransactionController extends Controller
                             <i class="feather icon-trash-2"></i>
                         </button>
                     </form>';
+                    }if (auth()->user()->can('refund')) {
+                        $btn .= '<form action="' . route('stripe.refund', $row->id) . '" 
+                            method="POST" 
+                            style="display:inline-block;">
+                            ' . csrf_field() . '
+                            <button type="submit" 
+                                    class="btn btn-icon btn-warning btn-sm"
+                                    title="Refund">
+                                <i class="feather icon-rotate-ccw"></i>
+                            </button>
+                        </form> ';
                     }
                     return $btn;
                 })
@@ -89,16 +91,5 @@ class TransactionController extends Controller
         $transaction = Transaction::findOrFail($id);
         $transaction->delete();
         return response()->json(['success' => true]);
-    }
-    public function bulkDelete(Request $request)
-    {
-        $ids = $request->input('ids');
-
-        Transaction::whereIn('id', $ids)->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Selected Transactions Deleted Successfully.'
-        ]);
     }
 }
