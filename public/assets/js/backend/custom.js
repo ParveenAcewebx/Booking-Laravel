@@ -302,6 +302,75 @@ function deleterow(id, event) {
         }
     });
 }
+function refundtransaction(id, event) {
+    event.preventDefault();
+    swal({
+        title: "Are you sure?",
+        text: "Once refunded, you will not be able to recover this transaction!",
+        icon: "warning",
+        buttons: {
+            partially: { text: "Partially", value: "partially" },
+            confirm: { text: "Yes, Refund Fully Payment!", value: "full" },
+            cancel: true
+        },
+        dangerMode: true,
+    }).then((action) => {
+        if (!action) return;
+
+        const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "";
+
+        const doRefund = (formData) => {
+            const form = document.getElementById("refundtransaction-" + id);
+            fetch(form.action, {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN": csrf,
+                },
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.success) {
+                        swal("Refund successful!", { icon: "success" }).then(() => location.reload());
+                    } else {
+                        swal(data.message || "Failed to refund transaction.", { icon: "error" });
+                    }
+                })
+                .catch(() => swal("There was an error processing your request.", { icon: "error" }));
+        };
+
+        if (action === "full") {
+            const form = document.getElementById("refundtransaction-" + id);
+            const formData = new FormData(form);
+            formData.append("refund_type", "full");
+            doRefund(formData);
+        } else if (action === "partially") {
+            swal({
+                title: "Partial Refund",
+                text: "Enter the amount to refund:",
+                content: {
+                    element: "input",
+                    attributes: { type: "number", placeholder: "Amount" }
+                },
+                buttons: { cancel: true, confirm: { text: "Refund", value: "confirm" } },
+                dangerMode: true,
+            }).then((inputValue) => {
+                if (!inputValue) return;
+                const amount = Number(inputValue);
+                if (isNaN(amount) || amount <= 0) {
+                    swal("Please enter a valid amount!", { icon: "error" });
+                    return;
+                }
+                const form = document.getElementById("refundtransaction-" + id);
+                const formData = new FormData(form);
+                formData.append("refund_amount", amount);
+                formData.append("refund_type", "partial");
+                doRefund(formData);
+            });
+        }
+    });
+}
 function deleteVendor(id, event) {
     event.preventDefault();
 

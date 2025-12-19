@@ -60,17 +60,21 @@ class TransactionController extends Controller
                         </button>
                     </form>';
                     }if (auth()->user()->can('refund')) {
-                        $btn .= '<form action="' . route('stripe.refund', $row->id) . '" 
-                            method="POST" 
-                            style="display:inline-block;">
-                            ' . csrf_field() . '
-                            <button type="submit" 
-                                    class="btn btn-icon btn-warning btn-sm"
-                                    title="Refund">
-                                <i class="feather icon-rotate-ccw"></i>
-                            </button>
-                        </form> ';
-                    }
+                            $btn .= '
+                            <form id="refundtransaction-' . $row->id . '"  
+                                action="' . route('stripe.refund', $row->id) . '" 
+                                method="POST" 
+                                style="display:inline-block;">
+                                ' . csrf_field() . '
+                                <button type="button"
+                                        onclick="refundtransaction(' . $row->id . ', event)"
+                                        class="btn btn-icon btn-warning btn-sm"
+                                        title="Refund">
+                                    <i class="feather icon-rotate-ccw"></i>
+                                </button>
+                            </form>';
+                        }
+
                     return $btn;
                 })
                 ->rawColumns(['checkbox', 'action'])
