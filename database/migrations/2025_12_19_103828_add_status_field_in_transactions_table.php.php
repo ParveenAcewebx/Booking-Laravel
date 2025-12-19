@@ -6,23 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->string('status')->default('pending');
+            if (!Schema::hasColumn('transactions', 'status')) {
+                $table->string('status')->default('pending'); 
+            }
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::table('transactions', function (Blueprint $table) {
-            //
+        Schema::table('transactions', function (Blueprint $table) 
+        {
+            if (Schema::hasColumn('transactions', 'status')) 
+            {
+                $table->dropColumn('status');
+            }
         });
     }
 };
