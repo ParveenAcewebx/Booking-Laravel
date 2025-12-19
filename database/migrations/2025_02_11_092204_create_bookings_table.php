@@ -18,7 +18,6 @@ return new class extends Migration
             $table->timestamp('booking_datetime');
             $table->longText('booking_data');
             $table->string('selected_staff');
-            $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending');
             $table->timestamps();
         });
     }

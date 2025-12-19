@@ -18,7 +18,6 @@ return new class extends Migration
             $table->unsignedBigInteger('customer_id'); 
             $table->unsignedBigInteger('vendor_id');   
             $table->string('payment_id')->nullable();
-            $table->string('status')->default('pending');
             $table->decimal('amount', 10, 2)->default(0);
             $table->string('currency', 20)->default('INR');
             $table->timestamps();
