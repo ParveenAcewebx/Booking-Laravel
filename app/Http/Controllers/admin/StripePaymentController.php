@@ -87,20 +87,54 @@ class StripePaymentController extends Controller
     }
     public function stripeRefund(Request $request)
     {
-        $transaction = Transaction::where('id', $request->id)->first();
+        $transaction = Transaction::find($request->id);
         if ($transaction->status === 'refunded') {
-            return redirect()->back();
-        }
-        $vendor = Vendor::find($transaction->vendor_id);
-        $stripe = new StripeClient($vendor->stripe_test_secret_key);
-        $refund = $stripe->refunds->create([
-            'payment_intent' => $transaction->payment_id,
-        ]);
-        if ($refund->status === 'succeeded') {
-            $transaction->update([
-                'status' => 'refunded',
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaction already refunded'
             ]);
-            return redirect()->back()->with('success', 'Payment refunded successfully.');
         }
+        $totalAmount    = $transaction->amount; 
+        $refundedAmount = $transaction->refunded_amount ?? 0;
+        $refundAmount   = 0; 
+        $vendor = Vendor::find($transaction->vendor_id);
+        $stripe = new \Stripe\StripeClient($vendor->stripe_test_secret_key);
+        $refundData = ['payment_intent' => $transaction->payment_id,];
+        if ($request->refund_type === 'partial') {
+            $refundAmount = $request->refund_amount;
+            if ($refundAmount > $totalAmount) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Refund amount cannot be greater than remaining amount'
+                ]);
+            }
+            $refundData['amount'] = $refundAmount * 100;
+        }
+        if ($request->refund_type === 'full') {
+            $refundAmount = $totalAmount;
+        }
+        $refund = $stripe->refunds->create($refundData);
+        if ($refund->status === 'succeeded') {
+            $transaction->refunded_amount = $refundedAmount + $refundAmount;
+            $transaction->amount = $totalAmount - $refundAmount;
+            if ($transaction->amount <= 0) {
+                $transaction->amount = 0;
+                $transaction->status = 'refunded';
+            }
+            $transaction->save();
+            return response()->json([
+                'success' => true,
+                'message' => 'Refund successful',
+                'remaining_amount' => $transaction->amount,
+                'refunded_amount' => $transaction->refunded_amount
+            ]);
+        }
+        return response()->json([
+            'success' => false,
+            'message' => 'Refund failed'
+        ]);
     }
+
 }
+
+add_partial_payment_refund

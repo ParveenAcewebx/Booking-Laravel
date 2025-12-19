@@ -36,7 +36,7 @@
             <div class="col-md-2">
                 <select id="filter-status" class="form-control">
                     <option value="">Select Status</option>
-                    <option value="success">Success</option>
+                    <option value="completed">Completed</option>
                     <option value="pending">Pending</option>
                     <option value="refunded">Refunded</option>
                 </select>
@@ -64,6 +64,7 @@
                                         <th>Template</th>
                                         <th>Customer Name</th>
                                         <th>Amount</th>
+                                        <th>Refund</th>
                                         <th>Payment ID</th>
                                         <th>Status</th>
                                         <th>Created Date</th>
@@ -98,6 +99,7 @@ $(document).ready(function () {
             { data: 'template_name' },
             { data: 'customer_display' },
             { data: 'amount' },
+            { data: 'refunded_amount' },
             { data: 'payment_id' },
             {
                 data: 'status',
