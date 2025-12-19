@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('payment_id')->nullable();
             $table->string('status')->default('pending');
             $table->decimal('amount', 10, 2)->default(0);
-            $table->decimal('refunded_amount', 10, 2)->default(0);
             $table->string('currency', 20)->default('INR');
             $table->timestamps();
         });
