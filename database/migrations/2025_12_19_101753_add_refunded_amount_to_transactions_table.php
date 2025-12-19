@@ -6,23 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->decimal('refunded_amount', 10, 2)->default(0);
+            if (!Schema::hasColumn('transactions', 'refunded_amount')) {
+                $table->decimal('refunded_amount', 10, 2)->default(0)->after('amount'); 
+            }
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
-            //
+            if (Schema::hasColumn('transactions', 'refunded_amount')) {
+                $table->dropColumn('refunded_amount');
+            }
         });
     }
 };

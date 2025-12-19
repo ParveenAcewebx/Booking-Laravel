@@ -6,23 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('bookings', function (Blueprint $table) {
-            $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending');
+            if (!Schema::hasColumn('bookings', 'status')) {
+                $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending')->after('id'); 
+            }
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('bookings', function (Blueprint $table) {
-            //
+            if (Schema::hasColumn('bookings', 'status')) {$table->dropColumn('status');}
         });
     }
 };
