@@ -61,6 +61,7 @@ use App\Http\Controllers\frontend\Vendor\VendorTransactionsController;
     Route::get('/stripe/create', [StripePaymentController::class, 'stripeCheckout'])->name('stripe.checkout');
     Route::get('/stripe/success', [StripePaymentController::class, 'stripeCheckoutSuccess'])->name('stripe.checkout.success');
     Route::post('/stripe/refund/{id}', [StripePaymentController::class, 'stripeRefund'])->name('stripe.refund');
+    
     Route::get('/booking', [BookingListingController::class, 'listing'])->name('booking.listing');
     Route::get('/vendor/{id}', [VendorListingController::class, 'listing'])->name('vendor.show');
     Route::get('/form/{slug}', [FormController::class, 'show'])->name('form.show');
