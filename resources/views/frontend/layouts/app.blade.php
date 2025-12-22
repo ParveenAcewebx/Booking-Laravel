@@ -74,6 +74,7 @@
   <script src="{{ asset('assets/js/frontend/vendor/vendor.js') }}?v={{ time() }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
   @stack('scripts')
 </body>
