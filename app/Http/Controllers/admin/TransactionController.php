@@ -69,8 +69,8 @@ class TransactionController extends Controller
                                 <button type="button"
                                         onclick="refundtransaction(' . $row->id . ', event)"
                                         class="btn btn-icon btn-warning btn-sm"
-                                        title="Refund">
-                                    <i class="feather icon-rotate-ccw"></i>
+                                        title="Refund Money">
+                                        <i class="fas fa-hand-holding-usd"></i>
                                 </button>
                             </form>';
                         }

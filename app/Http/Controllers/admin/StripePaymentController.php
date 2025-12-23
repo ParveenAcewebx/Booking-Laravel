@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\Service;
 use App\Models\Vendor;
+use App\Models\User;
 use App\Models\Transaction;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
@@ -88,52 +89,72 @@ class StripePaymentController extends Controller
     public function stripeRefund(Request $request)
     {
         $transaction = Transaction::find($request->id);
-        if ($transaction->status === 'refunded') {
+        $remainingAmount = $transaction->amount;
+        $refundedAmount  = $transaction->refunded_amount;
+        
+        if ($remainingAmount <= 0) {
             return response()->json([
                 'success' => false,
                 'message' => 'Transaction already refunded'
             ]);
         }
-        $totalAmount    = $transaction->amount; 
-        $refundedAmount = $transaction->refunded_amount ?? 0;
-        $refundAmount   = 0; 
-        $vendor = Vendor::find($transaction->vendor_id);
-        $stripe = new \Stripe\StripeClient($vendor->stripe_test_secret_key);
-        $refundData = ['payment_intent' => $transaction->payment_id,];
+        $refundAmount = $remainingAmount;
         if ($request->refund_type === 'partial') {
-            $refundAmount = $request->refund_amount;
-            if ($refundAmount > $totalAmount) {
+            $refundAmount = (float) $request->refund_amount;
+            if ($refundAmount > $remainingAmount) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Refund amount cannot be greater than remaining amount'
+                    'message' => 'Refund amount cannot be greater than remaining balance'
                 ]);
             }
-            $refundData['amount'] = $refundAmount * 100;
+        } else if ($request->refund_type === 'full') {
+            $refundAmount = $remainingAmount;
         }
-        if ($request->refund_type === 'full') {
-            $refundAmount = $totalAmount;
+        $vendor = Vendor::find($transaction->vendor_id);
+        if (!$vendor || !$vendor->stripe_test_secret_key) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Stripe credentials not found'
+            ]);
         }
-        $refund = $stripe->refunds->create($refundData);
+
+        $stripe = new StripeClient($vendor->stripe_test_secret_key);
+        $refund = $stripe->refunds->create([
+            'payment_intent' => $transaction->payment_id,
+            'amount' => intval($refundAmount * 100),
+        ]);
+
         if ($refund->status === 'succeeded') {
             $transaction->refunded_amount = $refundedAmount + $refundAmount;
-            $transaction->amount = $totalAmount - $refundAmount;
-            if ($transaction->amount <= 0) {
-                $transaction->amount = 0;
-                $transaction->status = 'refunded';
-            }
+            $transaction->amount = $remainingAmount - $refundAmount;
+            $transaction->status = 'refund';
             $transaction->save();
+            
+            $user = User::find($transaction->customer_id);
+            if ($user) {
+                $macros = [
+                    '{SITE_TITLE}' => get_setting('site_title'),
+                    '{USER_NAME}' => $user->name,
+                    '{ORDER_ID}' => $transaction->id,
+                    '{REFUND_AMOUNT}' => number_format($refundAmount, 2),
+                    '{AMOUNT}' => number_format($transaction->amount, 2),
+                ];
+                $templateSlug = $request->refund_type === 'partial'
+                    ? 'refund_partial_payment'
+                    : 'refund_full_payment';
+                refundmailtemplate($templateSlug, $user->email, $macros);
+            }
             return response()->json([
                 'success' => true,
                 'message' => 'Refund successful',
                 'remaining_amount' => $transaction->amount,
-                'refunded_amount' => $transaction->refunded_amount
+                'refunded_amount' => $transaction->refunded_amount,
             ]);
         }
+        
         return response()->json([
             'success' => false,
             'message' => 'Refund failed'
         ]);
     }
-
 }
-

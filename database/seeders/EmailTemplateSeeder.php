@@ -125,7 +125,7 @@ class EmailTemplateSeeder extends Seeder
                     {SITE_TITLE} Website
                 ',
             ],
-              [
+            [
                 'slug'   => 'customer_reply_notification',
                 'title'   => 'Customer Reply Notification',
                 'subject' => 'New Reply from {USER_NAME}',
@@ -141,7 +141,45 @@ class EmailTemplateSeeder extends Seeder
                     {SITE_TITLE} Website
                 ',
             ],
+            [
+                'slug' => 'refund_partial_payment',
+                'title' => 'Partial Refund Processed Notification',
+                'subject' => 'Partial Refund Processed for Order #{ORDER_ID} on {SITE_TITLE}',
+                'email_content' => '
+                <p>Dear {USER_NAME},<br /><br />
 
+                We would like to inform you that a <strong>partial refund</strong> has been successfully processed on 
+                <strong>{SITE_TITLE}</strong>.<br /><br />
+
+                <strong>Refund Details:</strong><br />
+                Amount: <strong>{AMOUNT}</strong><br />
+                Refund Amount: <strong>{REFUND_AMOUNT}</strong><br />
+                
+                Best regards,
+                The Universal booking Team<br />
+                <strong>{SITE_TITLE}</strong>
+                </p>
+            ',
+            ],
+            [
+                'slug' => 'refund_full_payment',
+                'title' => 'Refund Processed Notification',
+                'subject' => 'Refund Processed for Order #{ORDER_ID} on {SITE_TITLE}',
+                'email_content' => '
+                    <p>Dear {USER_NAME},<br /><br />
+
+                    We would like to inform you that your refund has been successfully processed on 
+                    <strong>{SITE_TITLE}</strong>.<br /><br />
+
+                    <strong>Refund Details:</strong><br />
+                    Amount: <strong>{AMOUNT}</strong><br />
+                    Refund Amount: <strong>{REFUND_AMOUNT}</strong><br />
+                    Best regards,
+                    The Universal booking Team<br/>
+                    <strong>{SITE_TITLE}</strong>
+                    </p>
+                ',
+            ],
         ];
 
         foreach ($templates as $template) {
