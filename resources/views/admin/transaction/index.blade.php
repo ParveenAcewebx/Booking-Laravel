@@ -64,7 +64,6 @@
                                         <th>Template</th>
                                         <th>Customer Name</th>
                                         <th>Amount</th>
-                                        <th>Refund</th>
                                         <th>Payment ID</th>
                                         <th>Status</th>
                                         <th>Created Date</th>
@@ -99,26 +98,42 @@ $(document).ready(function () {
             { data: 'template_name' },
             { data: 'customer_display' },
             { data: 'amount' },
-            { data: 'refunded_amount' },
             { data: 'payment_id' },
-            {
-                data: 'status',
+            { data: 'status',
                 name: 'status',
-                render: function(data, type, row) {
+                render: function (data, type, row) {
                     let status = data ? data.toLowerCase() : "";
                     if (status === "completed") {
-                        return `<span style="color: green; font-weight:600;">
-                                    <i class="fa fa-circle" style="font-size:10px; color:green;"></i> Completed
-                                </span>`;
+                        return `
+                            <span style="color: green; font-weight:600;">
+                                <i class="fa fa-circle" style="font-size:10px; color:green;"></i>
+                                Completed
+                            </span>`;
                     }
-                    else if (status === "pending") {
-                        return `<span style="color: orange; font-weight:600;">
-                                    <i class="fa fa-circle" style="font-size:10px; color:orange;"></i> Pending
+                    if (status === "pending") {
+                        return `
+                            <span style="color: orange; font-weight:600;">
+                                <i class="fa fa-circle" style="font-size:10px; color:orange;"></i>
+                                Pending
+                            </span>`;
+                    }
+                    if (status === "refund") {
+                        let refunded  = parseFloat(row.refunded_amount || 0);
+                        let remaining = parseFloat(row.amount || 0);
+                        if (remaining <= 0) {
+                            return `
+                                <span style="color:red;font-weight:600;">
+                                    <i class="fa fa-circle" style="font-size:10px;color:red;"></i>
+                                    Refund
                                 </span>`;
-                    }else if (status === "refunded") {
-                        return `<span style="color: red; font-weight:600;">
-                                    <i class="fa fa-circle" style="font-size:10px; color:red;"></i> Refunded
+                        }
+                        if (refunded > 0) {
+                            return `
+                                <span style="color:#c0392b;font-weight:600;">
+                                    <i class="fa fa-circle" style="font-size:10px;color:#c0392b;"></i>
+                                    Refund (Partial - ${refunded})
                                 </span>`;
+                        }
                     }
                     return data;
                 }

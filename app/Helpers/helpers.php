@@ -129,6 +129,12 @@ if (!function_exists('sendCustomerReplyTemplateEmail')) {
         return sendTemplateEmail($slug, $toEmail, $macros);
     }
 }
+if (!function_exists('refundmailtemplate')) {
+    function refundmailtemplate($slug, $toEmail, $macros = [])
+    {
+        return sendTemplateEmail($slug, $toEmail, $macros);
+    }
+}
 /*========================== Generate HTML Table for Booking ==========================*/
 if (!function_exists('generateBookingDataTable')) {
     function generateBookingDataTable(array $data): string
