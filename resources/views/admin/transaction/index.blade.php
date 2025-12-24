@@ -97,7 +97,11 @@ $(document).ready(function () {
             { data: 'checkbox', orderable: false, searchable: false },
             { data: 'template_name' },
             { data: 'customer_display' },
-            { data: 'amount' },
+            { data: 'total_balance',
+                render: function (data, type, row) {
+                    return '$' + (data);
+                }
+            },
             { data: 'payment_id' },
             { data: 'status',
                 name: 'status',
@@ -132,7 +136,7 @@ $(document).ready(function () {
                                 return `
                                     <span style="color:#c0392b;font-weight:600;">
                                         <i class="fa fa-circle" style="font-size:10px;color:#c0392b;"></i>
-                                        Refund (Partial - ${refunded})
+                                        Refund (Partial - $${refunded})
                                     </span>`;
                             }
                         }
