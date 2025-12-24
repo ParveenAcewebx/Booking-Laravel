@@ -117,24 +117,25 @@ $(document).ready(function () {
                                 Pending
                             </span>`;
                     }
-                    if (status === "refund") {
-                        let refunded  = parseFloat(row.refunded_amount || 0);
-                        let remaining = parseFloat(row.amount || 0);
-                        if (remaining <= 0) {
-                            return `
-                                <span style="color:red;font-weight:600;">
-                                    <i class="fa fa-circle" style="font-size:10px;color:red;"></i>
-                                    Refund
-                                </span>`;
+                   if (status === "refunded" || status === "partial_refund") {
+                            let refunded  = parseFloat(row.refunded_amount || 0);
+                            let remaining = parseFloat(row.amount || 0);
+                            if (remaining <= 0) {
+                                return `
+                                    <span style="color:red;font-weight:600;">
+                                        <i class="fa fa-circle" style="font-size:10px;color:red;"></i>
+                                        Refunded
+                                    </span>`;
+                            }
+
+                            if (refunded > 0) {
+                                return `
+                                    <span style="color:#c0392b;font-weight:600;">
+                                        <i class="fa fa-circle" style="font-size:10px;color:#c0392b;"></i>
+                                        Refund (Partial - ${refunded})
+                                    </span>`;
+                            }
                         }
-                        if (refunded > 0) {
-                            return `
-                                <span style="color:#c0392b;font-weight:600;">
-                                    <i class="fa fa-circle" style="font-size:10px;color:#c0392b;"></i>
-                                    Refund (Partial - ${refunded})
-                                </span>`;
-                        }
-                    }
                     return data;
                 }
             },

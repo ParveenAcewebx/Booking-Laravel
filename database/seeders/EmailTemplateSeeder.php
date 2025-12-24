@@ -142,44 +142,50 @@ class EmailTemplateSeeder extends Seeder
                 ',
             ],
             [
-                'slug' => 'refund_partial_payment',
-                'title' => 'Partial Refund Processed Notification',
-                'subject' => 'Partial Refund Processed for Order #{ORDER_ID} on {SITE_TITLE}',
-                'email_content' => '
-                <p>Dear {USER_NAME},<br /><br />
+                    'slug' => 'refund_partial_payment',
+                    'title' => 'Partial Refund Processed Notification',
+                    'subject' => 'Partial Refund Processed for Order #{ORDER_ID} on {SITE_TITLE}',
+                    'email_content' => '
+                        <p>
+                            Dear {USER_NAME},<br /><br />
 
-                We would like to inform you that a <strong>partial refund</strong> has been successfully processed on 
-                <strong>{SITE_TITLE}</strong>.<br /><br />
+                            We would like to inform you that a <strong>partial refund</strong> has been successfully processed on
+                            <strong>{SITE_TITLE}</strong>.<br /><br />
 
-                <strong>Refund Details:</strong><br />
-                Amount: <strong>{AMOUNT}</strong><br />
-                Refund Amount: <strong>{REFUND_AMOUNT}</strong><br />
-                
-                Best regards,
-                The Universal booking Team<br />
-                <strong>{SITE_TITLE}</strong>
-                </p>
-            ',
-            ],
-            [
-                'slug' => 'refund_full_payment',
-                'title' => 'Refund Processed Notification',
-                'subject' => 'Refund Processed for Order #{ORDER_ID} on {SITE_TITLE}',
-                'email_content' => '
-                    <p>Dear {USER_NAME},<br /><br />
+                            <strong>Refund Details:</strong><br />
+                            Total Amount: <strong>{TOTAL_AMOUNT}</strong><br />
+                            Refund Amount: <strong>{REFUND_AMOUNT}</strong><br />
+                            Remaining Amount: <strong>{AMOUNT}</strong><br /><br />
 
-                    We would like to inform you that your refund has been successfully processed on 
-                    <strong>{SITE_TITLE}</strong>.<br /><br />
+                            Best regards,<br />
+                            The Universal Booking Team<br />
+                            <strong>{SITE_TITLE}</strong>
+                        </p>
+                    ',
+                ],
+                [
+                    'slug' => 'refund_full_payment',
+                    'title' => 'Refund Processed Notification',
+                    'subject' => 'Refund Processed for Order #{ORDER_ID} on {SITE_TITLE}',
+                    'email_content' => '
+                        <p>
+                            Dear {USER_NAME},<br /><br />
 
-                    <strong>Refund Details:</strong><br />
-                    Amount: <strong>{AMOUNT}</strong><br />
-                    Refund Amount: <strong>{REFUND_AMOUNT}</strong><br />
-                    Best regards,
-                    The Universal booking Team<br/>
-                    <strong>{SITE_TITLE}</strong>
-                    </p>
-                ',
-            ],
+                            We would like to inform you that your refund has been successfully processed on
+                            <strong>{SITE_TITLE}</strong>.<br /><br />
+
+                            <strong>Refund Details:</strong><br />
+                            Total Amount: <strong>{TOTAL_AMOUNT}</strong><br />
+                            Refund Amount: <strong>{REFUND_AMOUNT}</strong><br />
+                            Remaining Amount: <strong>{AMOUNT}</strong><br /><br />
+
+                            Best regards,<br />
+                            The Universal Booking Team<br />
+                            <strong>{SITE_TITLE}</strong>
+                        </p>
+                    ',
+                ],
+
         ];
 
         foreach ($templates as $template) {
