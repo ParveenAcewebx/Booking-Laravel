@@ -16,7 +16,6 @@ class UsersTable extends Seeder
     {
         $users = [
             [
-                'id' => 1,
                 'name' => 'Admin User',
                 'email' => 'admin@example.com',
                 'password' => Hash::make('password'),
@@ -26,7 +25,6 @@ class UsersTable extends Seeder
                 'status' => '1',
             ],
             [
-                'id' => 2,
                 'name' => 'Staff User',
                 'email' => 'staff@example.com',
                 'password' => Hash::make('password'),
@@ -36,7 +34,6 @@ class UsersTable extends Seeder
                 'status' => '1'
             ],
             [
-                'id' => 3,
                 'name' => 'Manager User',
                 'email' => 'manager@example.com',
                 'password' => Hash::make('password'),
@@ -46,7 +43,6 @@ class UsersTable extends Seeder
                 'status' => '1'
             ],
             [
-                'id' => 4,
                 'name' => 'Customer User',
                 'email' => 'customer@example.com',
                 'password' => Hash::make('password'),

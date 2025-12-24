@@ -60,12 +60,15 @@ class TransactionController extends Controller
                         </button>
                     </form>';
                     }if (auth()->user()->can('refund')) {
-                            $btn .= '
-                            <form id="refundtransaction-' . $row->id . '"  
-                                action="' . route('stripe.refund', $row->id) . '" 
-                                method="POST" 
-                                style="display:inline-block;">
-                                ' . csrf_field() . '
+                            if ($row->status === 'refunded' ) {
+                            $btn .= '<button type="button" class="btn btn-icon btn-secondary" disabled data-toggle="tooltip" title="Refund is desable">
+                                        <i class="fas fa-hand-holding-usd"></i>
+                                     </button>';
+                        } else {
+                            $btn .= 
+                            '<form id="refundtransaction-' . $row->id . '"  
+                                action="' . route('stripe.refund', $row->id) . '" method="POST" 
+                                style="display:inline-block;">' . csrf_field() . '
                                 <button type="button"
                                         onclick="refundtransaction(' . $row->id . ', event)"
                                         class="btn btn-icon btn-warning btn-sm"
@@ -74,6 +77,7 @@ class TransactionController extends Controller
                                 </button>
                             </form>';
                         }
+                    }
 
                     return $btn;
                 })
