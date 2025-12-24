@@ -14,6 +14,7 @@ class Transaction extends Model
         'payment_id',
         'status',
         'amount',
+        'total_balance',
         'currency',
     ];
 
