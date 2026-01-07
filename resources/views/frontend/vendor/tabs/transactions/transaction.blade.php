@@ -72,20 +72,24 @@
                         if (s === 'pending') {
                             return '<span class="text-yellow-600 font-semibold">● Pending</span>';
                         }
-                        if (s === 'refund') {
-                            let refunded = parseFloat(row.refunded_amount || 0);
-                            let remaining = parseFloat(row.amount || 0);
+                        if (s === "refunded" || s === "partial_refund") {
+                            let refunded  = row.refunded_amount || 0;
+                            let remaining = row.amount || 0;
                             if (remaining <= 0) {
-                                return '<span class="text-red-600 font-semibold">● Refund (Full)</span>';
+                                return `
+                                    <span style="color:red;font-weight:600;">
+                                        <i class="fa fa-circle" style="font-size:10px;color:red;"></i>
+                                        Refunded
+                                    </span>`;
                             }
                             if (refunded > 0) {
-                                return `<span class="text-red-500 font-semibold">● Refund (Partial - ₹${refunded})</span>`;
+                                return `
+                                    <span style="color:#c0392b;font-weight:600;">
+                                        <i class="fa fa-circle" style="font-size:10px;color:#c0392b;"></i>
+                                        Refund (Partial - $${refunded})
+                                    </span>`;
                             }
                         }
-                        if (s === 'refunded') {
-                            return '<span class="text-red-600 font-semibold">● Refund</span>';
-                        }
-                        return '<span class="text-red-600 font-semibold">● Failed</span>';
                     }
 
                 },

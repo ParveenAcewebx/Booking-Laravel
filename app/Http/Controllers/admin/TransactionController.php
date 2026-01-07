@@ -68,7 +68,7 @@ class TransactionController extends Controller
                             $btn .= 
                             '<form id="refundtransaction-' . $row->id . '"  
                                 action="' . route('stripe.refund', $row->id) . '" method="POST" 
-                                style="display:inline-block;">' . csrf_field() . '
+                                style="display:inline-block;margin-left: 4px;">' . csrf_field() . '
                                 <button type="button"
                                         onclick="refundtransaction(' . $row->id . ', event)"
                                         class="btn btn-icon btn-warning btn-sm"
