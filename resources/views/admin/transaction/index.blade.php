@@ -55,14 +55,15 @@
             <div class="col-lg-12">
                 <div class="card user-profile-list">
                     <div class="card-body">
-                        <div class="dt-responsive">
-                            <table class="table table-striped nowrap" id="transaction-table" width="100%">
+                        <div class="dt-responsive table-responsive" >
+                            <table id="transaction-table" class="table table-striped nowrap" width="100%">
                                 <thead>
                                     <tr>
                                         <th style="display:none;">ID</th>
                                         <th><input type="checkbox" id="selectAll"></th>
                                         <th>Template</th>
                                         <th>Customer Name</th>
+                                        <th>Remaining Amount</th>
                                         <th>Amount</th>
                                         <th>Payment ID</th>
                                         <th>Status</th>
@@ -97,6 +98,11 @@ $(document).ready(function () {
             { data: 'checkbox', orderable: false, searchable: false },
             { data: 'template_name' },
             { data: 'customer_display' },
+            { data: 'amount',
+                render: function (data, type, row) {
+                    return '$' + (data);
+                }
+            },
             { data: 'total_balance',
                 render: function (data, type, row) {
                     return '$' + (data);
@@ -122,8 +128,8 @@ $(document).ready(function () {
                             </span>`;
                     }
                    if (status === "refunded" || status === "partial_refund") {
-                            let refunded  = parseFloat(row.refunded_amount || 0);
-                            let remaining = parseFloat(row.amount || 0);
+                            let refunded  = row.refunded_amount || 0;
+                            let remaining = row.amount || 0;
                             if (remaining <= 0) {
                                 return `
                                     <span style="color:red;font-weight:600;">
@@ -131,7 +137,6 @@ $(document).ready(function () {
                                         Refunded
                                     </span>`;
                             }
-
                             if (refunded > 0) {
                                 return `
                                     <span style="color:#c0392b;font-weight:600;">

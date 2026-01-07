@@ -776,3 +776,24 @@ setTimeout(() => {
         setTimeout(() => alert.remove(), 500);
     }
 }, 5000);
+document.addEventListener('change', function (e) {
+    if (e.target && e.target.id === 'get_service_staff') {
+
+        let option = e.target.options[e.target.selectedIndex];
+        let imgData = option.getAttribute('data-img');
+        let preview = document.getElementById('servicePreviewImage');
+
+        preview.innerHTML = ''; 
+        if (!imgData) return;
+
+        let images = JSON.parse(imgData);
+        images.forEach(url => {
+            let img = document.createElement('img');
+            img.src = url;
+            img.style.width = '150px';
+            img.style.height = '100px';
+            img.style.border = '1px solid #ddd';
+            preview.appendChild(img);
+        });
+    }
+});

@@ -25,11 +25,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-            // $settings = Setting::pluck('value', 'key')->toArray();
-            // if (!empty($settings['timezone'])) {
-            //     Config::set('app.timezone', $settings['timezone']);
-            //     date_default_timezone_set($settings['timezone']);
-            // }
             Shortcode::register('services', function ($shortcodeAttrs, $class) {
             $services = Service::all();
             $c = $class;
@@ -38,26 +33,30 @@ class AppServiceProvider extends ServiceProvider
             })) {
                 return " No services available at the moment";
             }
-
             $selectedService = $shortcodeAttrs['service'] ?? '';
             $selectedvendor  = $shortcodeAttrs['vendor'] ?? '';
             $servicesForm    = '';
-
             // Service dropdown
             $servicesForm .= "<div class='form-group {$c['group']}'>";
             $servicesForm .= "<label for='service' class='{$c['label']} services-show'>Select Service <span class='text-red-500'>*</span></label>";
             $servicesForm .= "<select name='dynamic[service]' id='get_service_staff' class='get_service_staff {$c['select']}' required>";
-            $servicesForm .= '<option value="">---Select Service---</option>';
+            $servicesForm .= "<option value=''>--- Select Service ---</option>";
             foreach ($services as $service) {
                 $attributes = $service->getAttributes();
-                if ($attributes['status'] === 1) {
-                    $selected = $attributes['id'] == $selectedService ? 'selected' : '';
-                    $servicesForm .= "<option value='{$attributes['id']}' {$selected}>{$attributes['name']}</option>";
+                if ($attributes['status'] == 1) {
+                    $selected = ($attributes['id'] == $selectedService) ? 'selected' : '';
+                    $galleryArray = json_decode($attributes['gallery'], true) ?? [];
+                    $imageUrls = [];
+                    foreach ($galleryArray as $img) {
+                        $imageUrls[] = asset('storage/' . $img);
+                    }
+                    $imageJson = htmlspecialchars(json_encode($imageUrls), ENT_QUOTES, 'UTF-8');
+                    $servicesForm .= "<option value='{$attributes['id']}'data-img='{$imageJson}'{$selected}>{$attributes['name']}</option>";
                 }
             }
             $servicesForm .= "</select>";
+            $servicesForm .= "<div id='servicePreviewImage'style='margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;'></div>";
             $servicesForm .= "</div>";
-
             // Vendor dropdown
             $servicesForm .= "<div id='loader'class='vendor-loder d-none hidden'></div>";
             $servicesForm .= "<div class='form-group {$c['group']} select_service_vendor {$c['hidden']}'>";

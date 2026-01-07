@@ -245,7 +245,6 @@ class ServiceController extends Controller
         $service->stripe_live_secret_key = $request->stripe_live_secret_key;
         $newVendorIds = $request->input('vendor', []);
         $service->vendor_id = $newVendorIds[0] ?? null;
-
         if ($request->hasFile('thumbnail')) {
             if ($service->thumbnail && Storage::disk('public')->exists($service->thumbnail)) {
                 Storage::disk('public')->delete($service->thumbnail);
@@ -257,14 +256,12 @@ class ServiceController extends Controller
             }
             $service->thumbnail = null;
         }
-
         $existingGallery = $request->input('existing_gallery', []);
         $deletedGallery = $request->input('delete_gallery', []);
         foreach ($deletedGallery as $deletedPath) {
             Storage::disk('public')->delete($deletedPath);
         }
         $finalGallery = array_diff($existingGallery, $deletedGallery);
-
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $file) {
                 $finalGallery[] = $file->store('gallery', 'public');
@@ -290,11 +287,9 @@ class ServiceController extends Controller
     public function bulkDelete(Request $request)
     {
         $ids = $request->input('ids');
-    
         if (!$ids || !is_array($ids)) {
             return response()->json(['success' => false, 'message' => 'No Records Selected.'], 400);
         }
-
         Service::whereIn('id', $ids)->delete();    
         return response()->json(['success' => true, 'message' => 'Selected Services Deleted Successfully.']);
     }
