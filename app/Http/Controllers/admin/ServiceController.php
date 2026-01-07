@@ -27,7 +27,6 @@ class ServiceController extends Controller
 
         if ($request->ajax()) {
             $services = Service::with(['staffAssociations', 'category'])->get();
-
             return DataTables::of($services)
                 ->addColumn('status', function ($row) {
                     $statuses = config('constants.status');
@@ -76,7 +75,7 @@ class ServiceController extends Controller
         $defaultStatus = config('constants.status');
         $currencies = config('constants.currencies');
         $activeVendor = Vendor::where('status', config('constants.status.active'))->get();
-        $appointmentStats = config('constants.appointment_status');
+        $appointmentStats = config('constants.ap0000pointment_status');
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
@@ -90,8 +89,8 @@ class ServiceController extends Controller
             'duration'               => 'required',
             'description'            => 'nullable|string',
             // 'category'               => 'required|exists:categories,id',
-            'thumbnail'              => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:2048',
-            'gallery.*'              => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:2048',
+            'thumbnail'              => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:10240',
+            'gallery.*'              => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:10240',
             'status'                 => 'required|in:0,1',
             'price'                  => 'nullable|numeric',
             // 'currency'               => 'nullable|string|max:5',
@@ -199,8 +198,8 @@ class ServiceController extends Controller
             'duration'              => 'required',
             'description'           => 'nullable|string',
             'category'              => 'nullable|exists:categories,id',
-            'thumbnail'             => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:2048',
-            'gallery.*'             => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:2048',
+            'thumbnail'             => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:10240',
+            'gallery.*'             => 'nullable|file|mimes:jpg,jpeg,gif,png,webp|max:10240',
             'existing_gallery'      => 'nullable|array',
             'existing_gallery.*'    => 'string',
             'delete_gallery'        => 'nullable|array',
@@ -245,6 +244,7 @@ class ServiceController extends Controller
         $service->stripe_live_secret_key = $request->stripe_live_secret_key;
         $newVendorIds = $request->input('vendor', []);
         $service->vendor_id = $newVendorIds[0] ?? null;
+
         if ($request->hasFile('thumbnail')) {
             if ($service->thumbnail && Storage::disk('public')->exists($service->thumbnail)) {
                 Storage::disk('public')->delete($service->thumbnail);
@@ -256,6 +256,7 @@ class ServiceController extends Controller
             }
             $service->thumbnail = null;
         }
+
         $existingGallery = $request->input('existing_gallery', []);
         $deletedGallery = $request->input('delete_gallery', []);
         foreach ($deletedGallery as $deletedPath) {
@@ -269,7 +270,6 @@ class ServiceController extends Controller
         }
         $service->gallery = json_encode(array_values($finalGallery));
         $service->save();
-
         $existingVendorIds = $service->vendors()->pluck('vendor_id')->toArray();
 
         VendorServiceAssociation::where('service_id', $id)
@@ -287,9 +287,11 @@ class ServiceController extends Controller
     public function bulkDelete(Request $request)
     {
         $ids = $request->input('ids');
+    
         if (!$ids || !is_array($ids)) {
             return response()->json(['success' => false, 'message' => 'No Records Selected.'], 400);
         }
+
         Service::whereIn('id', $ids)->delete();    
         return response()->json(['success' => true, 'message' => 'Selected Services Deleted Successfully.']);
     }
