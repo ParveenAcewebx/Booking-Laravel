@@ -27,6 +27,7 @@ class ServiceController extends Controller
 
         if ($request->ajax()) {
             $services = Service::with(['staffAssociations', 'category'])->get();
+
             return DataTables::of($services)
                 ->addColumn('status', function ($row) {
                     $statuses = config('constants.status');
@@ -75,7 +76,7 @@ class ServiceController extends Controller
         $defaultStatus = config('constants.status');
         $currencies = config('constants.currencies');
         $activeVendor = Vendor::where('status', config('constants.status.active'))->get();
-        $appointmentStats = config('constants.ap0000pointment_status');
+        $appointmentStats = config('constants.appointment_status');
         $loginId = getOriginalUserId();
         $loginUser = $loginId ? User::find($loginId) : null;
 
@@ -263,6 +264,7 @@ class ServiceController extends Controller
             Storage::disk('public')->delete($deletedPath);
         }
         $finalGallery = array_diff($existingGallery, $deletedGallery);
+
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $file) {
                 $finalGallery[] = $file->store('gallery', 'public');
@@ -270,6 +272,7 @@ class ServiceController extends Controller
         }
         $service->gallery = json_encode(array_values($finalGallery));
         $service->save();
+
         $existingVendorIds = $service->vendors()->pluck('vendor_id')->toArray();
 
         VendorServiceAssociation::where('service_id', $id)
