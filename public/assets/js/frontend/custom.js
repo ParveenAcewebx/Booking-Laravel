@@ -321,6 +321,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const err = staffSelect.parentNode.querySelector('.error-message');
                     if (err) err.remove();
                 }
+                    loadServiceImage(ServiceStaffCode);
             },
             error: function (xhr, status, error) {
                 console.error("AJAX error:", status, error);
@@ -407,7 +408,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 }
                             }
                             // ---------- checkboxes ----------
-                            let checkboxElements = $('input[type="checkbox"][name="' + formattedKey + '"');
+                            let checkboxElements = $('input[type="checkbox"][name="' + formattedKey + '"]');
                             if (checkboxElements.length > 0) {
                                 let valuesToCheck = [];
                                 if (Array.isArray(val)) {
@@ -778,22 +779,31 @@ setTimeout(() => {
 }, 5000);
 document.addEventListener('change', function (e) {
     if (e.target && e.target.id === 'get_service_staff') {
-
-        let option = e.target.options[e.target.selectedIndex];
-        let imgData = option.getAttribute('data-img');
-        let preview = document.getElementById('servicePreviewImage');
-
-        preview.innerHTML = ''; 
-        if (!imgData) return;
-
-        let images = JSON.parse(imgData);
-        images.forEach(url => {
-            let img = document.createElement('img');
-            img.src = url;
-            img.style.width = '150px';
-            img.style.height = '100px';
-            img.style.border = '1px solid #ddd';
-            preview.appendChild(img);
-        });
+        loadServiceImage(e.target);
     }
 });
+function loadServiceImage(selectEl) {
+
+    let option = selectEl.options[selectEl.selectedIndex];
+    if (!option) return;
+
+    let imgData = option.getAttribute('data-img');
+    let preview = document.getElementById('servicePreviewImage');
+
+    if (!preview) return;
+
+    preview.innerHTML = '';
+    if (!imgData) return;
+
+    let images = JSON.parse(imgData);
+    images.forEach(url => {
+        let img = document.createElement('img');
+        img.src = url;
+        img.style.width = '150px';
+        img.style.height = '100px';
+        img.style.border = '1px solid #ddd';
+        img.style.marginRight = '6px';
+        preview.appendChild(img);
+    });
+}
+
